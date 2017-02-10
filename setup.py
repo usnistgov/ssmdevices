@@ -60,15 +60,17 @@ if __name__ == '__main__':
     from distutils.core import setup
     import setuptools
     
-    setup(name='remotelets',
+    setup(name='remotelets_drivers',
           version='0.0.1',
-          description='toolkit for simple instrument automation',
+          description='instrument automation drivers',
           author='Dan Kuester',
           author_email='daniel.kuester@nist.gov',
           url='',
           packages=setuptools.find_packages(),
           license='NIST',
-          install_requires=['pandas(>=0.19.0)',
+          install_requires=[
+                    'remotelets',
+                    'pandas(>=0.19.0)',
                     'pyserial',
                     'pyvisa(>=1.8)',
                     'ipywidgets',
