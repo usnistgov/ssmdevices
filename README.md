@@ -1,4 +1,4 @@
-# remotelets
+# remotelets_drivers
 The remotelets_drivers package contains implementations of lab instrument drivers for remotelets.
 It is separate in order to simplify future release of the remotelets core without trade name complications.
 
