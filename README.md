@@ -1,5 +1,6 @@
 # remotelets
-The remotelets_drivers package contains implementations of lab instrument drivers for remotelets. It is separate in order to simplify future release of the core remotelets on its own.
+The remotelets_drivers package contains implementations of lab instrument drivers for remotelets.
+It is separate in order to simplify future release of the remotelets core without trade name complications.
 
 ## Summary
 The basis of remotelets is [traitlets](https://github.com/ipython/traitlets), extended with hooks for remote fetch/put to a remote device.
