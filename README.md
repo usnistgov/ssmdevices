@@ -17,5 +17,5 @@ That's it.
 
 ## Supported instruments
 
-* RF power sensors
-  * Keysight U2040 X-Series
+RF power sensors
+* Keysight U2040 X-Series
