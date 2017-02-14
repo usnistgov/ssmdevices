@@ -36,3 +36,27 @@ class KeysightU2040XSeries(VISAInstrument):
         '''
         response = self.link.query('FETC?')
         return pd.Series([float(s) for s in response.split(',')])
+    
+if __name__ == '__main__':
+    from pylab import *
+    import seaborn as sns
+    sns.set(style='ticks')  
+
+    sensor = KeysightU2040XSeries('USB0::0x2A8D::0x1E01::SG56400003::INSTR') # Instantiate the driver
+    sensor.connected = True # Connect to the instrument
+    
+    try:
+        # Configure
+        sensor.preset()
+        sensor.frequency           = 1e9
+        sensor.measurement_rate    = 'FAST'
+        sensor.trigger_count       = 500
+        sensor.sweep_aperture      = 20e-6
+        sensor.trigger_source      = 'IMM'
+        sensor.initiate_continuous = True
+        
+        power = sensor.fetch()
+    finally:
+        sensor.disconnect()
+        
+    power.hist(figsize=(6,2)); xlabel('Power level'); ylabel('Count'); title('Histogram of power sensor readings')
