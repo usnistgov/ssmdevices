@@ -21,6 +21,7 @@ class KeysightU2040XSeries(VISAInstrument):
                                'write_termination': '\n'}
 
     identity                = SCPI(Bytes(), '*IDN')
+    dummy                    = SCPI(Bytes(), '*IDN')
     initiate_continuous     = SCPI(Bool(),                                         'INIT:CONT')    
     output_trigger          = SCPI(Bool(),                                         'OUTP:TRIG')
     trigger_source          = SCPI(EnumBytes(['IMM','INT','EXT','BUS','INT1']),    'TRIG:SOUR')
@@ -52,6 +53,7 @@ if __name__ == '__main__':
     
     try:
         print 'Connected to ', sensor.identity
+        sensor.identity = 'COOL INSTRUMENTZ'
 
         # Configure
         sensor.preset()
