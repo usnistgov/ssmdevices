@@ -12,10 +12,15 @@ __all__ = ['KeysightU2040XSeries']
 
 class KeysightU2040XSeries(VISAInstrument):
     ''' This is my cool driver for Keysight U2040 X-Series power sensors
+    
+        We have calibration data here:
+            
+            \\jake\bla\ajlsdjfalsdjf\Calibrations\cooldata.dat
     '''
     connection_settings     = {'read_termination':  '\n',
                                'write_termination': '\n'}
 
+    identity                = SCPI(Bytes(), '*IDN')
     initiate_continuous     = SCPI(Bool(),                                         'INIT:CONT')    
     output_trigger          = SCPI(Bool(),                                         'OUTP:TRIG')
     trigger_source          = SCPI(EnumBytes(['IMM','INT','EXT','BUS','INT1']),    'TRIG:SOUR')
@@ -42,15 +47,17 @@ if __name__ == '__main__':
     import seaborn as sns
     sns.set(style='ticks')  
 
-    sensor = KeysightU2040XSeries('USB0::0x2A8D::0x1E01::SG56400003::INSTR') # Instantiate the driver
+    sensor = KeysightU2040XSeries('USB0::0x2A8D::0x1E01::SG56360004::INSTR') # Instantiate the driver
     sensor.connected = True # Connect to the instrument
     
     try:
+        print 'Connected to ', sensor.identity
+
         # Configure
         sensor.preset()
         sensor.frequency           = 1e9
         sensor.measurement_rate    = 'FAST'
-        sensor.trigger_count       = 500
+        sensor.trigger_count       = 200
         sensor.sweep_aperture      = 20e-6
         sensor.trigger_source      = 'IMM'
         sensor.initiate_continuous = True
