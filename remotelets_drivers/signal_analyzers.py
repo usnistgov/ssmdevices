@@ -10,7 +10,7 @@ class RohdeSchwarzFSW26(VISAInstrument):
     frequency_start         = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:START')
     frequency_stop          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:STOP') 
 
-    initiate_continuous              = SCPI(Bool(), 'INIT:CONT')
+    initiate_continuous     = SCPI(Bool(), 'INIT:CONT')
 
     reference_level         = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV')
     reference_level_trace2  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV')
@@ -26,24 +26,7 @@ class RohdeSchwarzFSW26(VISAInstrument):
     amplitude_offset_trace5 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV:OFFS')
     amplitude_offset_trace6 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV:OFFS')
     
-    marker01_enabled         = SCPI(Bool(), 'CALC:MARK01:STATE')
-    marker02_enabled         = SCPI(Bool(), 'CALC:MARK02:STATE')
-    marker03_enabled         = SCPI(Bool(), 'CALC:MARK03:STATE')
-    marker04_enabled         = SCPI(Bool(), 'CALC:MARK04:STATE')
-    marker05_enabled         = SCPI(Bool(), 'CALC:MARK05:STATE')
-    marker06_enabled         = SCPI(Bool(), 'CALC:MARK06:STATE')
-    marker07_enabled         = SCPI(Bool(), 'CALC:MARK07:STATE')
-    marker08_enabled         = SCPI(Bool(), 'CALC:MARK08:STATE')
-    marker09_enabled         = SCPI(Bool(), 'CALC:MARK09:STATE')
-    marker10_enabled         = SCPI(Bool(), 'CALC:MARK10:STATE')
-    marker11_enabled         = SCPI(Bool(), 'CALC:MARK11:STATE')
-    marker12_enabled         = SCPI(Bool(), 'CALC:MARK12:STATE')
-    marker13_enabled         = SCPI(Bool(), 'CALC:MARK13:STATE')
-    marker14_enabled         = SCPI(Bool(), 'CALC:MARK14:STATE')
-    marker15_enabled         = SCPI(Bool(), 'CALC:MARK15:STATE')
-    marker16_enabled         = SCPI(Bool(), 'CALC:MARK16:STATE')
-    
-    def state_save (self, FileName, num="1"):
+    def save_state (self, FileName, num="1"):
         ''' Save current state of the device to the default directory.
             :param FileName: state file location on the instrument
             :type FileName: string
@@ -54,7 +37,7 @@ class RohdeSchwarzFSW26(VISAInstrument):
         '''
         self.write('MMEMory:STORe:STATe {},"{}""'.format(num,FileName))
     
-    def state_load(self, FileName, num="1"):
+    def load_state(self, FileName, num="1"):
         ''' Loads a previously saved state file in the instrument
         
             :param FileName: state file location on the instrument
