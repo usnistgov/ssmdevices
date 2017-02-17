@@ -193,6 +193,20 @@ class RohdeSchwarzFSW26(VISAInstrument):
         mark_cmd = "CALC:MARK{}:X?".format(marker)
         return float(self.query(mark_cmd))
     
+    def set_marker_position(self, marker, position):
+        ''' Get marker position (on horizontal axis)
+        
+            :param marker: marker number on instrument display
+            
+            :type marker: int
+            
+            :param axis: 'X' for x axis or 'Y' for y axis
+            
+            :type axis: str
+        '''
+        mark_cmd = "CALC:MARK{}:X {}".format(marker,position)
+        return self.write(mark_cmd)
+    
     def get_marker_band_power(self, marker):
         ''' Get marker band power measurement
         
@@ -225,6 +239,7 @@ class RohdeSchwarzFSW26(VISAInstrument):
 
 if __name__ == '__main__':
     with RohdeSchwarzFSW26('TCPIP::TILSIT::HISLIP0::INSTR') as fsw:
+        fsw.set_marker_position(5,1.58e9)
         fsw.trigger_single()
         fsw.wait()
         print fsw.get_marker_power_table()
