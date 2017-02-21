@@ -37,7 +37,7 @@ class KeysightU2040XSeries(rlts.VISAInstrument):
         if len(response)==1:
             return float(response[0])
         else:
-            return pd.Series([float(s) for s in response.split(',')])
+            return pd.to_numeric(pd.Series(response))
 
 if __name__ == '__main__':
     from pylab import *
