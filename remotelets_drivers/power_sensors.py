@@ -21,11 +21,11 @@ class KeysightU2040XSeries(rlts.VISAInstrument):
     class state(rlts.VISAInstrument.state):
         initiate_continuous     = rlts.SCPI(rlts.Bool(), 'INIT:CONT')
         output_trigger          = rlts.SCPI(rlts.Bool(), 'OUTP:TRIG')
-        trigger_source          = rlts.SCPI(rlts.EnumBytes(['IMM','INT','EXT','BUS','INT1']),   'TRIG:SOUR')
-        trigger_count           = rlts.SCPI(rlts.Int(min=1,max=200,step=1,help="help me"),      'TRIG:COUN')
-        measurement_rate        = rlts.SCPI(rlts.EnumBytes(['NORM','DOUB','FAST']),             'SENS:MRAT')
-        sweep_aperture          = rlts.SCPI(rlts.Float(min=20e-6, max=200e-3,label='s'),        'SWE:APER')
-        frequency               = rlts.SCPI(rlts.Float(min=10e6, max=18e9,step=1e-3,label='Hz'),'SENS:FREQ')
+        trigger_source          = rlts.SCPI(rlts.EnumBytes(['IMM','INT','EXT','BUS','INT1']), 'TRIG:SOUR')
+        trigger_count           = rlts.SCPI(rlts.Int(min=1,max=200,step=1,help="help me"), 'TRIG:COUN')
+        measurement_rate        = rlts.SCPI(rlts.EnumBytes(['NORM','DOUB','FAST']), 'SENS:MRAT')
+        sweep_aperture          = rlts.SCPI(rlts.Float(min=20e-6, max=200e-3,label='s'), 'SWE:APER')
+        frequency               = rlts.SCPI(rlts.Float(min=10e6, max=18e9,step=1e-3,label='Hz'), 'SENS:FREQ')
 
     def preset (self):
         self.write('SYST:PRES')
