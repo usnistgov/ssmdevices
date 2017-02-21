@@ -4,27 +4,28 @@ import numpy as np
 
 __all__ = ['RohdeSchwarzFSW26']
 
-class RohdeSchwarzFSW26(VISAInstrument):   
-    frequency_center        = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:CENT')
-    frequency_span          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:SPAN')
-    frequency_start         = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:START')
-    frequency_stop          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:STOP') 
-
-    initiate_continuous     = SCPI(Bool(), 'INIT:CONT')
-
-    reference_level         = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV')
-    reference_level_trace2  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV')
-    reference_level_trace3  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC3:Y:RLEV')
-    reference_level_trace4  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV')
-    reference_level_trace5  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV')
-    reference_level_trace6  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV')
+class RohdeSchwarzFSW26(VISAInstrument):
+    class state(VISAInstrument.state):
+        frequency_center        = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:CENT')
+        frequency_span          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:SPAN')
+        frequency_start         = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:START')
+        frequency_stop          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:STOP') 
     
-    amplitude_offset        = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV:OFFS')
-    amplitude_offset_trace2 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV:OFFS')
-    amplitude_offset_trace3 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC3:Y:RLEV:OFFS')
-    amplitude_offset_trace4 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV:OFFS')
-    amplitude_offset_trace5 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV:OFFS')
-    amplitude_offset_trace6 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV:OFFS')
+        initiate_continuous     = SCPI(Bool(), 'INIT:CONT')
+    
+        reference_level         = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV')
+        reference_level_trace2  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV')
+        reference_level_trace3  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC3:Y:RLEV')
+        reference_level_trace4  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV')
+        reference_level_trace5  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV')
+        reference_level_trace6  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV')
+        
+        amplitude_offset        = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV:OFFS')
+        amplitude_offset_trace2 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV:OFFS')
+        amplitude_offset_trace3 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC3:Y:RLEV:OFFS')
+        amplitude_offset_trace4 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV:OFFS')
+        amplitude_offset_trace5 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV:OFFS')
+        amplitude_offset_trace6 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV:OFFS')
     
     def save_state (self, FileName, num="1"):
         ''' Save current state of the device to the default directory.
