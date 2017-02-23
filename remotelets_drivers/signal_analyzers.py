@@ -82,11 +82,14 @@ class RohdeSchwarzFSW26(Instrument):
             
             :rtype: np.array
         '''
-        # Query FSW
+        if hasattr(trace, '__iter__'):
+            return pd.concat([self.fetch_trace(t,horizontal=horizontal) for t in trace])
+        
         if horizontal:
             index = self.fetch_horizontal(trace)
             values = self.link.query_ascii_values("TRAC:DATA? TRACE{trace}".format(trace=trace), container=pd.Series)
-            return pd.DataFrame(values.values, index=index)
+            name = 'Trace {}'.format(trace)
+            return pd.DataFrame(values.values, columns=[name], index=index)
         else:
             return self.link.query_ascii_values("TRAC:DATA? TRACE{trace}".format(trace=trace), container=pd.Series)
         
@@ -249,7 +252,5 @@ if __name__ == '__main__':
 #        fsw.trigger_single()
 #        fsw.wait()
 #        print fsw.get_marker_power_table()
-        df1 = fsw.fetch_trace(1,horizontal=True)
-        df2 = fsw.fetch_trace(2,horizontal=True)
-    df1.plot()
-    df2.plot()
+        df = fsw.fetch_trace([1,2,4],horizontal=True)
+    df.plot()
