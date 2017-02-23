@@ -1,34 +1,33 @@
 __all__ = ['RohdeSchwarzFSW26']
 
 from remotelets import Bool, Bytes, EnumBytes, Int, Float
-from remotelets.visa import SCPI, VISARemotelets, VISAInstrument
+from remotelets.visa import SCPI, Remotelets, Instrument
 import pandas as pd
 import numpy as np
 
-class FSWRemotelets(VISARemotelets):
-    frequency_center        = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:CENT')
-    frequency_span          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:SPAN')
-    frequency_start         = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:START')
-    frequency_stop          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:STOP') 
-
-    initiate_continuous     = SCPI(Bool(), 'INIT:CONT')
-
-    reference_level         = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV')
-    reference_level_trace2  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV')
-    reference_level_trace3  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC3:Y:RLEV')
-    reference_level_trace4  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV')
-    reference_level_trace5  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV')
-    reference_level_trace6  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV')
+class RohdeSchwarzFSW26(Instrument):
+    class state(Remotelets):
+        frequency_center        = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:CENT')
+        frequency_span          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:SPAN')
+        frequency_start         = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:START')
+        frequency_stop          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:STOP') 
     
-    amplitude_offset        = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV:OFFS')
-    amplitude_offset_trace2 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV:OFFS')
-    amplitude_offset_trace3 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC3:Y:RLEV:OFFS')
-    amplitude_offset_trace4 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV:OFFS')
-    amplitude_offset_trace5 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV:OFFS')
-    amplitude_offset_trace6 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV:OFFS')
+        initiate_continuous     = SCPI(Bool(), 'INIT:CONT')
+    
+        reference_level         = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV')
+        reference_level_trace2  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV')
+        reference_level_trace3  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC3:Y:RLEV')
+        reference_level_trace4  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV')
+        reference_level_trace5  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV')
+        reference_level_trace6  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV')
+        
+        amplitude_offset        = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV:OFFS')
+        amplitude_offset_trace2 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV:OFFS')
+        amplitude_offset_trace3 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC3:Y:RLEV:OFFS')
+        amplitude_offset_trace4 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV:OFFS')
+        amplitude_offset_trace5 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV:OFFS')
+        amplitude_offset_trace6 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV:OFFS')
 
-class RohdeSchwarzFSW26(VISAInstrument):
-    state = FSWRemotelets
     
     def save_state (self, FileName, num="1"):
         ''' Save current state of the device to the default directory.
@@ -85,7 +84,7 @@ class RohdeSchwarzFSW26(VISAInstrument):
         '''
         # Query FSW
         if horizontal:
-            index = self.fetch_x(trace)
+            index = self.fetch_horizontal(trace)
             values = self.link.query_ascii_values("TRAC:DATA? TRACE{trace}".format(trace=trace), container=pd.Series)
             return pd.DataFrame(values.values, index=index)
         else:
@@ -242,11 +241,15 @@ e
         return float(self.query(mark_cmd))
 
 if __name__ == '__main__':
-    import remotelets as rlts
-    rlts.log_to_screen('DEBUG')
+#    import remotelets as rlts
+#    rlts.log_to_screen('DEBUG')
     
     with RohdeSchwarzFSW26('TCPIP::TILSIT::HISLIP0::INSTR') as fsw:
-        fsw.set_marker_position(5,1.58e9)
-        fsw.trigger_single()
-        fsw.wait()
-        print fsw.get_marker_power_table()
+#        fsw.set_marker_position(5,1.58e9)
+#        fsw.trigger_single()
+#        fsw.wait()
+#        print fsw.get_marker_power_table()
+        df1 = fsw.fetch_trace(1,horizontal=True)
+        df2 = fsw.fetch_trace(2,horizontal=True)
+    df1.plot()
+    df2.plot()
