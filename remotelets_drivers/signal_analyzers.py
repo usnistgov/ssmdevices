@@ -1,6 +1,7 @@
 __all__ = ['RohdeSchwarzFSW26']
 
-from remotelets import VISAInstrument,VISARemotelets, SCPI, Bool, Bytes, EnumBytes, Int, Float
+from remotelets import Bool, Bytes, EnumBytes, Int, Float
+from remotelets.visa import SCPI, VISARemotelets, VISAInstrument
 import pandas as pd
 import numpy as np
 
@@ -214,7 +215,7 @@ class RohdeSchwarzFSW26(VISAInstrument):
         ''' Get marker band power measurement
         
             :param marker: marker number on instrument display
-            
+e            
             :type marker: int
             
             :return: power in dBm
@@ -241,6 +242,9 @@ class RohdeSchwarzFSW26(VISAInstrument):
         return float(self.query(mark_cmd))
 
 if __name__ == '__main__':
+    import remotelets as rlts
+    rlts.log_to_screen('DEBUG')
+    
     with RohdeSchwarzFSW26('TCPIP::TILSIT::HISLIP0::INSTR') as fsw:
         fsw.set_marker_position(5,1.58e9)
         fsw.trigger_single()

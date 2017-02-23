@@ -8,27 +8,22 @@ Created on Fri Feb 10 13:35:02 2017
 __all__ = ['KeysightU2040XSeries']
 
 import remotelets as rlts
-from remotelets.visa import SCPI, VISARemotelets, VISAInstrument
+from remotelets.visa import SCPI, Remotelets, Instrument
 import pandas as pd
 
-class KeysightU2040XSeriesState (VISARemotelets):
-    initiate_continuous = SCPI(rlts.Bool(), 'INIT:CONT')
-    output_trigger      = SCPI(rlts.Bool(), 'OUTP:TRIG')
-    trigger_source      = SCPI(rlts.EnumBytes(['IMM','INT','EXT','BUS','INT1']), 'TRIG:SOUR')
-    trigger_count       = SCPI(rlts.Int(min=1,max=200,step=1,help="help me"), 'TRIG:COUN')
-    measurement_rate    = SCPI(rlts.EnumBytes(['NORM','DOUB','FAST']), 'SENS:MRAT')
-    sweep_aperture      = SCPI(rlts.Float(min=20e-6, max=200e-3,label='s'), 'SWE:APER')
-    frequency           = SCPI(rlts.Float(min=10e6, max=18e9,step=1e-3,label='Hz'), 'SENS:FREQ')
 
-class KeysightU2040XSeries(VISAInstrument):
+class KeysightU2040XSeries(Instrument):
     ''' This is my cool driver for Keysight U2040 X-Series power sensors
-    
-        We have calibration data here:
-            
-            \\jake\bla\ajlsdjfalsdjf\Calibrations\cooldata.dat
     '''
 
-    state = KeysightU2040XSeriesState
+    class state (Remotelets):
+        initiate_continuous = SCPI(rlts.Bool(), 'INIT:CONT')
+        output_trigger      = SCPI(rlts.Bool(), 'OUTP:TRIG')
+        trigger_source      = SCPI(rlts.EnumBytes(['IMM','INT','EXT','BUS','INT1']), 'TRIG:SOUR')
+        trigger_count       = SCPI(rlts.Int(min=1,max=200,step=1,help="help me"), 'TRIG:COUN')
+        measurement_rate    = SCPI(rlts.EnumBytes(['NORM','DOUB','FAST']), 'SENS:MRAT')
+        sweep_aperture      = SCPI(rlts.Float(min=20e-6, max=200e-3,label='s'), 'SWE:APER')
+        frequency           = SCPI(rlts.Float(min=10e6, max=18e9,step=1e-3,label='Hz'), 'SENS:FREQ')
 
     def preset (self):
         self.write('SYST:PRES')
@@ -47,8 +42,8 @@ if __name__ == '__main__':
     import seaborn as sns
     sns.set(style='ticks')
 
-    # Enable pyvisa debug messages
-    rlts.log_to_screen()
+    # Enable remotelets debug messages
+    #log_to_screen()
 
     with KeysightU2040XSeries('USB0::0x2A8D::0x1E01::SG56360004::INSTR') as sensor:
         print 'Connected to ', sensor.state.identity
@@ -61,8 +56,6 @@ if __name__ == '__main__':
         sensor.state.sweep_aperture      = 20e-6
         sensor.state.trigger_source      = 'IMM'
         sensor.state.initiate_continuous = True
-        
-        print sensor.state
 
         power = sensor.fetch()
 
