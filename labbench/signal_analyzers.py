@@ -286,7 +286,7 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
             df = pd.DataFrame(df.iloc[1::2].values,index=df.iloc[::2].values)
             
         return df
-    
+
     def store_trace(self, path):
         self.write("MMEM:STOR:IQ:STAT 1, '{}'".format(path))
 
@@ -295,16 +295,16 @@ if __name__ == '__main__':
     rlts.log_to_screen('DEBUG')
 
     with RohdeSchwarzFSW26IQAnalyzer('TCPIP::TILSIT::HISLIP0::INSTR') as fsw:
-        fsw.state.iq_simple_enabled = True
-        fsw.wait()
-        fsw.state.iq_mode = 'IQ'
-        fsw.state.iq_record_length = 1000
+#        fsw.state.iq_simple_enabled = True
+#        fsw.wait()
+#        fsw.state.iq_mode = 'IQ'
+        fsw.state.iq_record_length = 80*1000*1000
         fsw.state.iq_format = 'RIM'        
         fsw.trigger_single()
         fsw.wait()
 
         # Give the timeout a long enough enough to complete
-        fsw.link.timeout = 1000*10 # in ms
+        fsw.link.timeout = 1000*60 # in ms
         with fsw.overlap_and_block:
-            fsw.store_trace(r'C:\R_S\Instr\user\test.iq.tar')
+            fsw.store_trace(r'C:\test.iq.tar')
         print 'Done!'
