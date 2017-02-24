@@ -1,4 +1,4 @@
-__all__ = ['RohdeSchwarzFSW26']
+__all__ = ['ThisPC']
 
 import remotelets as rlts
 import datetime
