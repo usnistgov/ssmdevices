@@ -1,11 +1,11 @@
-__all__ = ['RohdeSchwarzFSW26']
+__all__ = ['RohdeSchwarzFSW26Base']
 
 from remotelets import Bool, Bytes, EnumBytes, Int, Float
 from remotelets.visa import SCPI, Remotelets, Instrument
 import pandas as pd
 import numpy as np
 
-class RohdeSchwarzFSW26(Instrument):
+class RohdeSchwarzFSW26Base(Instrument):
     class state(Remotelets):
         frequency_center        = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:CENT')
         frequency_span          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:SPAN')
@@ -27,6 +27,9 @@ class RohdeSchwarzFSW26(Instrument):
         amplitude_offset_trace4 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV:OFFS')
         amplitude_offset_trace5 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV:OFFS')
         amplitude_offset_trace6 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV:OFFS')
+        
+        channel_type            = SCPI(EnumBytes(['SAN','IQ']),                     'INST')
+        sweep_points            = SCPI(Int(min=1, max=100001), 'SWE:POIN')
 
     
     def save_state (self, FileName, num="1"):
@@ -56,12 +59,14 @@ class RohdeSchwarzFSW26(Instrument):
     def trigger_single (self):
         ''' Trigger once.
         '''
+        self.state.initiate_continuous = False        
         self.write('INIT')
+        self.wait()
 
     def autolevel (self):
         ''' Run the signal analyzer autolevel tool.
         '''
-        
+
         self.write("ADJ:LEV") #see if this is enough, or if we need something more detailed
    
     def fetch_horizontal (self, trace=1):
@@ -242,15 +247,64 @@ e
         
         mark_cmd = "CALC:MARK{}:FUNC:BPOW:SPAN?".format(marker)
         return float(self.query(mark_cmd))
+    
+class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base):
+    pass
+#
+class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
+    class state(RohdeSchwarzFSW26Base.state):
+        iq_simple_enabled     = SCPI(Bool(),                                'CALC:IQ')
+        iq_evaluation_enabled = SCPI(Bool(),                                'CALC:IQ:EVAL')
+        iq_mode               = SCPI(EnumBytes(['TDOMain','FDOMain','IQ']), 'CALC:IQ:MODE')
+        iq_record_length      = SCPI(Int(min=1, max=461373440),             'TRAC:IQ:RLEN')
+        iq_sample_rate        = SCPI(Float(min=1e-9, max=160e6),            'TRAC:IQ:SRAT')
+        iq_format             = SCPI(EnumBytes(['FREQ','MAGN', 'MTAB',
+                                                'PEAK','RIM','VECT']),      'CALC:FORM')
+
+    def connect (self):
+        super(RohdeSchwarzFSW26Base, self).connect()
+        
+        if self.state.channel_type != 'IQ':
+            raise Exception('{} expects IQ mode, but insrument mode is {}'.format(type(self).__name__, self.state.channel_type))
+
+    def fetch_trace(self, horizontal=False):
+        fmt = self.state.iq_format
+        if fmt == 'VECT':
+            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,False)
+        else:
+            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,horizontal)
+        
+        if fmt == 'RIM':
+            if hasattr(df,'columns'):
+                df = pd.DataFrame(df.iloc[:len(df)//2].values+1j*df.iloc[len(df)//2:].values,
+                                  index=df.index[:len(df)//2],
+                                  columns=df.columns)
+            else:
+                df = pd.Series(df.iloc[:len(df)//2].values+1j*df.iloc[len(df)//2:].values,
+                                  index=df.index[:len(df)//2])
+        if fmt == 'VECT':
+            df = pd.DataFrame(df.iloc[1::2].values,index=df.iloc[::2].values)
+            
+        return df
+    
+    def store_trace(self, path):
+        self.write("MMEM:STOR:IQ:STAT 1, '{}'".format(path))
 
 if __name__ == '__main__':
-#    import remotelets as rlts
-#    rlts.log_to_screen('DEBUG')
+    import time
+    import remotelets as rlts
+    rlts.log_to_screen('DEBUG')
     
-    with RohdeSchwarzFSW26('TCPIP::TILSIT::HISLIP0::INSTR') as fsw:
+    with RohdeSchwarzFSW26IQAnalyzer('TCPIP::TILSIT::HISLIP0::INSTR') as fsw:
 #        fsw.set_marker_position(5,1.58e9)
-#        fsw.trigger_single()
-#        fsw.wait()
-#        print fsw.get_marker_power_table()
-        df = fsw.fetch_trace([1,2,4],horizontal=True)
-    df.plot()
+        fsw.state.iq_record_length = 1000
+        fsw.state.iq_format = 'RIM'        
+        fsw.trigger_single()
+        fsw.link.timeout = 1000*10
+        print 'Saving...'
+        with fsw.overlap_commands:
+            fsw.store_trace(r'C:\R_S\Instr\user\test.iq.tar')
+        print 'Done!'
+        
+#        df = fsw.fetch_trace(horizontal=True)
+#    df.plot()
