@@ -63,7 +63,7 @@ if __name__ == '__main__':
           description='instrument automation drivers',
           author='Dan Kuester',
           author_email='daniel.kuester@nist.gov',
-          url='',
+          url='https://git.ncnr.nist.gov/dkuester/labbench',
           packages=setuptools.find_packages(),
           license='NIST',
           install_requires=[
