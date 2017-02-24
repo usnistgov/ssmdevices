@@ -294,17 +294,17 @@ if __name__ == '__main__':
     import time
     import remotelets as rlts
     rlts.log_to_screen('DEBUG')
-    
+
     with RohdeSchwarzFSW26IQAnalyzer('TCPIP::TILSIT::HISLIP0::INSTR') as fsw:
-#        fsw.set_marker_position(5,1.58e9)
+        fsw.state.iq_simple_enabled = True
+        fsw.state.iq_mode = 'IQ'
         fsw.state.iq_record_length = 1000
         fsw.state.iq_format = 'RIM'        
         fsw.trigger_single()
+        fsw.wait()
+
+        # Give the timeout long enough to complete
         fsw.link.timeout = 1000*10
-        print 'Saving...'
-        with fsw.overlap_commands:
+        with fsw.overlap_and_block:
             fsw.store_trace(r'C:\R_S\Instr\user\test.iq.tar')
         print 'Done!'
-        
-#        df = fsw.fetch_trace(horizontal=True)
-#    df.plot()
