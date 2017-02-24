@@ -13,7 +13,7 @@ Installation instructions
   
   ::
 
-      pip install development\\python\\brainstem-2.3.0-py2-none-any.whl
+      pip install https://git.ncnr.nist.gov/dkuester/labbench
 
   on a command line.
   
@@ -24,8 +24,6 @@ Installation instructions
 	- For the repository url enter
 	  \\cfs2w.nist.gov\67Internal\DivisionProjects\NASCTN_GPS\gpslte
 	- Click OK
-- Set the testbed computer IP address
-	- Fixed IP address... 10.0.0.240 should work
 - Run the installer script in the code repository to install the remaining python package dependencies
 '''
 
@@ -60,7 +58,7 @@ if __name__ == '__main__':
     from distutils.core import setup
     import setuptools
     
-    setup(name='remotelets_drivers',
+    setup(name='labbench',
           version='0.0.1',
           description='instrument automation drivers',
           author='Dan Kuester',
