@@ -1,5 +1,6 @@
-# remotelets_drivers
-The remotelets_drivers package contains implementations of lab instrument drivers for remotelets.
+# labbench
+The labbench module contains implementations of lab instrument drivers. The drivers are implemented with [remotelets](https://git.ncnr.nist.gov/dkuester/remotelets),
+and provides data in [pandas](http://pandas.pydata.org/) data frames when possible to support rapid exploration of data.
 It is separate in order to simplify future release of the remotelets core without trade name complications.
 
 ## Installation
@@ -12,3 +13,6 @@ That's it.
 ## Supported instruments
 RF power sensors
 * Keysight U2040 X-Series
+
+RF signal analyzers
+* Rohde Schwarz FSW Series 
