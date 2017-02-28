@@ -1,12 +1,12 @@
 __all__ = ['ThisPC']
 
-import remotelets as rlts
+import labbench as lb
 import datetime
 
         
-class ThisPC(rlts.Device):
-    class state(rlts.Remotelets):
-        time = rlts.Bytes(read_only=True)
+class ThisPC(lb.Device):
+    class state(lb.Remotelets):
+        time = lb.Bytes(read_only=True)
     
         @time.getter
         def __get_time (self, device):
@@ -29,8 +29,8 @@ class ThisPC(rlts.Device):
     
     
 if __name__ == '__main__':
-    import remotelets as rlts
-    rlts.log_to_screen('DEBUG')
+    import labbench as lb
+    lb.log_to_screen('DEBUG')
     
     with ThisPC() as pc:
         print pc.state.time

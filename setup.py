@@ -58,7 +58,7 @@ if __name__ == '__main__':
     from distutils.core import setup
     import setuptools
     
-    setup(name='labbench',
+    setup(name='ssmdevices',
           version='0.0.1',
           description='instrument automation drivers',
           author='Dan Kuester',
@@ -67,7 +67,7 @@ if __name__ == '__main__':
           packages=setuptools.find_packages(),
           license='NIST',
           install_requires=[
-                    'remotelets',
+                    'labbench',
                     'pandas(>=0.19.0)',
                     'pyserial',
                     'pyvisa(>=1.8)',

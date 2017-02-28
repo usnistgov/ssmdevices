@@ -1,7 +1,7 @@
 __all__ = ['RohdeSchwarzFSW26Base']
 
-from remotelets import Bool, Bytes, EnumBytes, Int, Float
-from remotelets.visa import SCPI, Remotelets, Instrument
+from labbench import Bool, Bytes, EnumBytes, Int, Float
+from labbench.visa import SCPI, Remotelets, Instrument
 import pandas as pd
 import numpy as np
 
@@ -291,8 +291,8 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
         self.write("MMEM:STOR:IQ:STAT 1, '{}'".format(path))
 
 if __name__ == '__main__':
-    import remotelets as rlts
-    rlts.log_to_screen('DEBUG')
+    import labbench as lb
+    lb.log_to_screen('DEBUG')
 
     with RohdeSchwarzFSW26IQAnalyzer('TCPIP::TILSIT::HISLIP0::INSTR') as fsw:
 #        fsw.state.iq_simple_enabled = True

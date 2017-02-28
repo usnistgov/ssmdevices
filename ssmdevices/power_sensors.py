@@ -7,8 +7,8 @@ Created on Fri Feb 10 13:35:02 2017
 
 __all__ = ['KeysightU2040XSeries']
 
-import remotelets as rlts
-from remotelets.visa import SCPI, Remotelets, Instrument
+import labbench as lb
+from labbench.visa import SCPI, Remotelets, Instrument
 import pandas as pd
 
 
@@ -17,13 +17,13 @@ class KeysightU2040XSeries(Instrument):
     '''
 
     class state (Remotelets):
-        initiate_continuous = SCPI(rlts.Bool(), 'INIT:CONT')
-        output_trigger      = SCPI(rlts.Bool(), 'OUTP:TRIG')
-        trigger_source      = SCPI(rlts.EnumBytes(['IMM','INT','EXT','BUS','INT1']), 'TRIG:SOUR')
-        trigger_count       = SCPI(rlts.Int(min=1,max=200,step=1,help="help me"), 'TRIG:COUN')
-        measurement_rate    = SCPI(rlts.EnumBytes(['NORM','DOUB','FAST']), 'SENS:MRAT')
-        sweep_aperture      = SCPI(rlts.Float(min=20e-6, max=200e-3,label='s'), 'SWE:APER')
-        frequency           = SCPI(rlts.Float(min=10e6, max=18e9,step=1e-3,label='Hz'), 'SENS:FREQ')
+        initiate_continuous = SCPI(lb.Bool(), 'INIT:CONT')
+        output_trigger      = SCPI(lb.Bool(), 'OUTP:TRIG')
+        trigger_source      = SCPI(lb.EnumBytes(['IMM','INT','EXT','BUS','INT1']), 'TRIG:SOUR')
+        trigger_count       = SCPI(lb.Int(min=1,max=200,step=1,help="help me"), 'TRIG:COUN')
+        measurement_rate    = SCPI(lb.EnumBytes(['NORM','DOUB','FAST']), 'SENS:MRAT')
+        sweep_aperture      = SCPI(lb.Float(min=20e-6, max=200e-3,label='s'), 'SWE:APER')
+        frequency           = SCPI(lb.Float(min=10e6, max=18e9,step=1e-3,label='Hz'), 'SENS:FREQ')
 
     def preset (self):
         self.write('SYST:PRES')
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     import seaborn as sns
     sns.set(style='ticks')
 
-    # Enable remotelets debug messages
+    # Enable labbench debug messages
     #log_to_screen()
 
     with KeysightU2040XSeries('USB0::0x2A8D::0x1E01::SG56360004::INSTR') as sensor:
