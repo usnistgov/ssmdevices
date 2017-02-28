@@ -1,6 +1,6 @@
 # ssmdevices
-The ssmdevices module is a library of labbench drivers. The drivers are implemented with [labbench](https://git.ncnr.nist.gov/dkuester/labbench),
-and provides data in [pandas](http://pandas.pydata.org/) data frames when possible to support rapid exploration of data.
+The ssmdevices module is a library of python device drivers. The drivers are implemented with [labbench](https://git.ncnr.nist.gov/dkuester/labbench),
+and provide data in [pandas](http://pandas.pydata.org/) data frames when possible to support rapid exploration of data.
 It is separate in order to simplify future release of the remotelets core without trade name complications and to restrict
 access based on export control law.
 
