@@ -8,11 +8,11 @@ Created on Fri Feb 10 13:35:02 2017
 __all__ = ['KeysightU2040XSeries']
 
 import labbench as lb
-from labbench.visa import SCPI, Remotelets, Instrument
+from labbench.visa import SCPI, Remotelets, VISADevice
 import pandas as pd
 
 
-class KeysightU2040XSeries(Instrument):
+class KeysightU2040XSeries(VISADevice):
     ''' This is my cool driver for Keysight U2040 X-Series power sensors
     '''
 

@@ -1,11 +1,11 @@
 __all__ = ['RohdeSchwarzFSW26Base']
 
 from labbench import Bool, Bytes, EnumBytes, Int, Float
-from labbench.visa import SCPI, Remotelets, Instrument
+from labbench.visa import SCPI, Remotelets, VISADevice
 import pandas as pd
 import numpy as np
 
-class RohdeSchwarzFSW26Base(Instrument):
+class RohdeSchwarzFSW26Base(VISADevice):
     class state(Remotelets):
         frequency_center        = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:CENT')
         frequency_span          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:SPAN')
