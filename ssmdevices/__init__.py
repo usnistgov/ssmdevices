@@ -5,4 +5,4 @@ Created on Fri Feb 10 13:35:02 2017
 @author: dkuester
 """
 
-from . import power_sensors
+import instruments
