@@ -65,6 +65,9 @@ if __name__ == '__main__':
           author_email='daniel.kuester@nist.gov',
           url='https://git.ncnr.nist.gov/dkuester/labbench',
           packages=setuptools.find_packages(),
+#          package_dir={'ssmdevices': 'ssmdevices'},
+#          package_data={'ssmdevices': ['lib/*']},
+          include_package_data=True,
           license='NIST',
           install_requires=[
                     'labbench',

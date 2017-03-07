@@ -67,7 +67,7 @@ class SpirentGSS8000(lb.SerialDevice):
     resource='COM17'
     'serial port resource name (COMnn in windows or /dev/xxxx in unix/Linux)'
     
-    connection_settings = lb.SerialDevice.update(baudrate=9600)
+    connection_settings = dict(baudrate=9600)
 
     status_messages=['no scenario',
                      'loading',
