@@ -7,9 +7,14 @@
 
 import time,re
 import labbench as lb
+import traitlets as tl
 
 import logging
 logger = logging.getLogger('labbench')
+
+class AutoMessage(object):
+    def __new__ (cls, trait_type, command=None):
+        return trait_type.tag(command=command)
 
 class SpirentGSS8000(lb.SerialDevice):   
     ''' Control a Spirent GPS GSS8000 simulator over a serial connection.
@@ -19,13 +24,15 @@ class SpirentGSS8000(lb.SerialDevice):
     '''
 
     class state(lb.SerialDevice.state):
-        current_scenario = lb.Bytes(read_only=True)
+        status           = tl.Bytes()
+        current_scenario = AutoMessage(lb.Bytes(read_only=True), 'SC_NAME,includepath')
+        gps_week         = AutoMessage(lb.Int(read_only=True), '-,ZCNT_TOW')
         running          = lb.Bool(read_only=True)
         utc_time         = lb.Bytes(read_only=True)
         
-        @current_scenario.getter
-        def __get_current_scenario (self, device):
-            return device.query('SC_NAME,includepath')
+#        @current_scenario.getter
+#        def __get_current_scenario (self, device):
+#            return device.query('SC_NAME,includepath')
         
         @utc_time.getter
         def __get_utc_time(self, device):
@@ -35,24 +42,25 @@ class SpirentGSS8000(lb.SerialDevice):
             '''
             timeformat = 'utc'
             
-            device.inst.read(self.inst.inWaiting())
-            resp=[]
-            if timeformat=='TOW':
-                timecmd='ZCNT_TOW'
-            else:
-                timecmd='UTC_TIME'
-            device.link.write('-,%s\n'%(timecmd))
-    
-            for m in range(0,4):
-                resp+=[m,device.inst.readline()]
-                
-            utc_unformatted=resp[1::2][2][8:-9]
+            utc_unformatted = device.query('-,UTC_TIME')
+            utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
+            frac = utc_unformatted.split('.')[-1]
+
+            return time.strftime('%Y-%m-%d %H:%M:%S', utc_struct)+'.'+frac
+
+        @utc_time.getter
+        def __get_utc_time(self, device):
+            ''' Get the UTC time of the current running scenario.
             
-            try:
-                utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
-            except:
-                utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S')
-            return time.strftime('%Y-%m-%d %H:%M:%S', utc_struct)
+                :param timeformat: 'UTC' for UTC timestamp, or 'TOW' for Time of week in seconds
+            '''
+            timeformat = 'utc'
+            
+            utc_unformatted = device.query('-,UTC_TIME')
+            utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
+            frac = utc_unformatted.split('.')[-1]
+
+            return time.strftime('%Y-%m-%d %H:%M:%S', utc_struct)+'.'+frac
         
         @running.getter
         def __get_running(self, device):
@@ -66,8 +74,8 @@ class SpirentGSS8000(lb.SerialDevice):
     resource='COM17'
     'serial port resource name (COMnn in windows or /dev/xxxx in unix/Linux)'
     
-    connection_settings = dict(baudrate=9600)
-
+#    connection_settings = dict(baud_rate=9600)
+#
     status_messages=['no scenario',
                      'loading',
                      'ready',
@@ -75,7 +83,14 @@ class SpirentGSS8000(lb.SerialDevice):
                      'armed',
                      'running',
                      'paused',
-                     'ended']    
+                     'ended']
+                     
+    def state_get (self, attr):        
+        # Alternatively, check to see if there is an command
+        command = self.state.trait_metadata(attr, 'command')
+        if command is not None:
+            return self.query(command)
+            
     'Status messages that may be received from the instrument'
 
     def load_scenario(self,path):
@@ -86,7 +101,7 @@ class SpirentGSS8000(lb.SerialDevice):
         '''
         #write scenario path as 'c:\folder\folder\name.scn'
         loadpath = self.fix_path_name(path)
-        self.inst.read(self.inst.inWaiting())
+        self.link.read(self.link.inWaiting())
         self.link.write('SC,%s\n'%(loadpath))
         self.state.current_scenario
 
@@ -100,7 +115,7 @@ class SpirentGSS8000(lb.SerialDevice):
         # write folderpath as 'c:\folder\folder'
         writepath=self.fix_path_name(folderpath)
 
-        self.inst.read(self.inst.inWaiting())
+        self.link.read(self.link.inWaiting())
         self.link.write('SAVE_SCENARIO,with_changes,as_simgen,%s/\n'%(writepath))
         self.state.current_scenario
         
@@ -108,58 +123,62 @@ class SpirentGSS8000(lb.SerialDevice):
     def fix_path_name (path):
         return path.replace('\\','/')
 
-    def write (self, command):
+    def write (self, command, returns=False):
         ''' Send a message to the spirent, and check the status message
             returned by the spirent.
             
             :return: returned status code (possible codes listed in `self.status_messages`)
         '''
-        self.inst.read(self.inst.inWaiting())        
+        self.link.read(self.link.inWaiting())        
         logger.debug('\nGPS SIMULATOR SEND\n{}'.format(repr(command)))        
         self.link.write('{}\n'.format(command))
         
         response = ''
         while '</msg>' not in response.lower():
-            response += self.inst.readline()
+            response += self.link.readline()
         logger.debug('\nGPS SIMULATOR RECEIVE\n{}'.format(repr(response)))
 
         status_code = int(re.match('.*<status>[\W*]*(\d+)[\W*]</status>.*',response,flags=re.S).group(1))
+        self.state.status = self.status_messages[status_code]
+        
         returncheck = re.match('.*<data>[\W*]*(.*)[\W*]</data>.*',response,flags=re.S)
-        if returncheck is not None:
-            raise Exception(returncheck.group(1))
-        self.inst.read(self.inst.inWaiting())
-        return self.status_messages[status_code]
-    
+        self.link.read(self.link.inWaiting())
+        if not returns:
+            if returncheck is not None:
+                raise Exception(returncheck.group(1))
+        else:
+            return returncheck.group(1)
+
     def query (self, command):
-        ret = self.write(command+'\n')
-        return ret[1::2][2][8:-9]        
+        return self.write(command+'\n', returns=True)
     
     def run(self):
         ''' Start running the current scenario. Requires that there is time left in
             the scenario, otherwise run `rewind()` first.
         '''
-        return self.write('RU')
+        self.write('RU')
 
     def end(self):
         ''' Stop running the current scenario. If a scenario is not
             running, an exception is raised.
         '''
-        return self.write('-,EN')
+        self.write('-,EN')
 
     def rewind(self):
         ''' Rewind the current scenario to the beginning.
         '''
-        return self.write('RW')
+        self.write('RW')
            
     def abort(self):
         ''' Force stop the current scenario.
         '''        
-        return self.write('-,EN,1,0')
+        self.write('-,EN,1,0')
 
     def get_status(self):
         ''' Get current instrument status.
         '''
-        return self.write('NULL')
+        print self.write('NULL')
+        return self.state.status
             
     def reset(self):
         ''' End any currently running scenario, then rewind
@@ -173,28 +192,9 @@ class SpirentGSS8000(lb.SerialDevice):
         
 #%%
 if __name__ == '__main__':
-    spirent = SpirentGSS8000()
-    spirent.connect()
-
-#    try:
-#        spirent.rewind()
+    lb.debug_to_screen('DEBUG')
+    with SpirentGSS8000('COM14') as spirent:
+#        spirent.reset()
 #        spirent.run()
-#        spirent.utc_time
-#
-#    finally:
-#        spirent.close()
-#    time.sleep(0.1)
-    #    spirent.run()
-    
-    #    starttime=datetime.timedelta(hours=1,minutes=40,seconds=1)
-    #    endtime=datetime.timedelta(seconds=65)+starttime
-    #    print endtime    
-    #    spirent.TimedEnd(str(endtime))
-    #    [bb,cc]=spirent.poll_time('UTC')
-    #    time.sleep(1)
-#        spirent.run()
-#        utc_time = spirent.utc_time
-#        print utc_time
-#    finally:
-##        spirent.close()
-#        pass
+        scn = spirent.state.current_scenario
+        utc = spirent.state.utc_time
