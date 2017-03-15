@@ -43,23 +43,13 @@ class SpirentGSS8000(lb.SerialDevice):
             timeformat = 'utc'
             
             utc_unformatted = device.query('-,UTC_TIME')
-            utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
-            frac = utc_unformatted.split('.')[-1]
-
-            return time.strftime('%Y-%m-%d %H:%M:%S', utc_struct)+'.'+frac
-
-        @utc_time.getter
-        def __get_utc_time(self, device):
-            ''' Get the UTC time of the current running scenario.
-            
-                :param timeformat: 'UTC' for UTC timestamp, or 'TOW' for Time of week in seconds
-            '''
-            timeformat = 'utc'
-            
-            utc_unformatted = device.query('-,UTC_TIME')
-            utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
-            frac = utc_unformatted.split('.')[-1]
-
+            try:
+                utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
+                frac = utc_unformatted.split('.')[-1]
+            except:
+                utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S')
+                frac = '000'
+                
             return time.strftime('%Y-%m-%d %H:%M:%S', utc_struct)+'.'+frac
         
         @running.getter
@@ -194,7 +184,10 @@ class SpirentGSS8000(lb.SerialDevice):
 if __name__ == '__main__':
     lb.debug_to_screen('DEBUG')
     with SpirentGSS8000('COM14') as spirent:
-#        spirent.reset()
-#        spirent.run()
+        spirent.reset()
+        spirent.run()
         scn = spirent.state.current_scenario
         utc = spirent.state.utc_time
+
+    print scn
+    print utc
