@@ -15,7 +15,8 @@ try:
                         search=['.','..',ssmdevices])
 except Exception,e:
     print 'ssmdevices: could not load dll; no support for MiniCircuits variable attenuators'
-
+    print e.message
+    
 else:
     import labbench as core
     
