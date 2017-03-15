@@ -25,8 +25,7 @@ class SpirentGSS8000(lb.SerialDevice):
         
         @current_scenario.getter
         def __get_current_scenario (self, device):
-            ret = int(device.write('SC_NAME,includepath\n'))
-            return ret[1::2][2][8:-9]
+            return device.query('SC_NAME,includepath')
         
         @utc_time.getter
         def __get_utc_time(self, device):
@@ -131,6 +130,10 @@ class SpirentGSS8000(lb.SerialDevice):
         self.inst.read(self.inst.inWaiting())
         return self.status_messages[status_code]
     
+    def query (self, command):
+        ret = self.write(command+'\n')
+        return ret[1::2][2][8:-9]        
+    
     def run(self):
         ''' Start running the current scenario. Requires that there is time left in
             the scenario, otherwise run `rewind()` first.
@@ -147,7 +150,7 @@ class SpirentGSS8000(lb.SerialDevice):
         ''' Rewind the current scenario to the beginning.
         '''
         return self.write('RW')
-        
+           
     def abort(self):
         ''' Force stop the current scenario.
         '''        

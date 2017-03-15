@@ -5,14 +5,14 @@ Created on Tue Mar 07 14:38:10 2017
 @author: dkuester
 """
 
-__all__ = ['MiniCircuitsRCDAT']
+#__all__ = ['MiniCircuitsRCDAT']
 
 from labbench.dotnet import import_dotnet
 import ssmdevices
 
 try:
     dll = import_dotnet('ssmdevices/lib/mcl_RUDAT64.dll',
-                        path=['.','..',ssmdevices])
+                        search=['.','..',ssmdevices])
 except Exception,e:
     print 'ssmdevices: could not load dll; no support for MiniCircuits variable attenuators'
 
