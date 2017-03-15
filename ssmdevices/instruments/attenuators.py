@@ -11,8 +11,7 @@ from labbench.dotnet import import_dotnet
 import ssmdevices
 
 try:
-    dll = import_dotnet('ssmdevices/lib/mcl_RUDAT64.dll',
-                        search=['.','..',ssmdevices])
+    dll = import_dotnet('mcl_RUDAT64.dll', ssmdevices.lib)
 except Exception,e:
     print 'ssmdevices: could not load dll; no support for MiniCircuits variable attenuators'
     print e.message
