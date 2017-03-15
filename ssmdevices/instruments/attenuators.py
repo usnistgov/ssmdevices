@@ -8,13 +8,13 @@ Created on Tue Mar 07 14:38:10 2017
 #__all__ = ['MiniCircuitsRCDAT']
 
 from labbench.dotnet import import_dotnet
-import ssmdevices
+import ssmdevices.lib
 
 try:
     dll = import_dotnet('mcl_RUDAT64.dll', ssmdevices.lib)
 except Exception,e:
     print 'ssmdevices: could not load dll; no support for MiniCircuits variable attenuators'
-    print e.message
+    print e
     
 else:
     import labbench as core
