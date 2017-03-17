@@ -8,7 +8,7 @@ Created on Fri Feb 10 13:35:02 2017
 __all__ = ['KeysightU2040XSeries']
 
 import labbench as lb
-from labbench.visa import SCPI, Remotelets, VISADevice
+from labbench.visa import VISADevice
 import pandas as pd
 
 
@@ -16,14 +16,14 @@ class KeysightU2040XSeries(VISADevice):
     ''' This is my cool driver for Keysight U2040 X-Series power sensors
     '''
 
-    class state (Remotelets):
-        initiate_continuous = SCPI(lb.Bool(), 'INIT:CONT')
-        output_trigger      = SCPI(lb.Bool(), 'OUTP:TRIG')
-        trigger_source      = SCPI(lb.EnumBytes(['IMM','INT','EXT','BUS','INT1']), 'TRIG:SOUR')
-        trigger_count       = SCPI(lb.Int(min=1,max=200,step=1,help="help me"), 'TRIG:COUN')
-        measurement_rate    = SCPI(lb.EnumBytes(['NORM','DOUB','FAST']), 'SENS:MRAT')
-        sweep_aperture      = SCPI(lb.Float(min=20e-6, max=200e-3,label='s'), 'SWE:APER')
-        frequency           = SCPI(lb.Float(min=10e6, max=18e9,step=1e-3,label='Hz'), 'SENS:FREQ')
+    class state (VISADevice.state):
+        initiate_continuous = lb.Bool      (command='INIT:CONT')
+        output_trigger      = lb.Bool      (command='OUTP:TRIG')
+        trigger_source      = lb.EnumBytes (command='TRIG:SOUR', values=['IMM','INT','EXT','BUS','INT1'])
+        trigger_count       = lb.Int       (command='TRIG:COUN', min=1,max=200,step=1,help="help me")
+        measurement_rate    = lb.EnumBytes (command='SENS:MRAT', values=['NORM','DOUB','FAST'])
+        sweep_aperture      = lb.Float     (command='SWE:APER',  min=20e-6, max=200e-3,label='s')
+        frequency           = lb.Float     (command='SENS:FREQ', min=10e6, max=18e9,step=1e-3,label='Hz')
 
     def preset (self):
         self.write('SYST:PRES')

@@ -12,10 +12,6 @@ import traitlets as tl
 import logging
 logger = logging.getLogger('labbench')
 
-class AutoMessage(object):
-    def __new__ (cls, trait_type, command=None):
-        return trait_type.tag(command=command)
-
 class SpirentGSS8000(lb.SerialDevice):   
     ''' Control a Spirent GPS GSS8000 simulator over a serial connection.
     
@@ -25,9 +21,9 @@ class SpirentGSS8000(lb.SerialDevice):
 
     class state(lb.SerialDevice.state):
         status           = tl.Bytes()
-        current_scenario = AutoMessage(lb.Bytes(read_only=True), 'SC_NAME,includepath')
-        gps_week         = AutoMessage(lb.Int(read_only=True), '-,ZCNT_TOW')
-        running          = lb.Bool(read_only=True)
+        current_scenario = lb.Bytes(read_only=True, command='SC_NAME,includepath')
+        gps_week         = lb.Int  (read_only=True, command='-,ZCNT_TOW')
+        running          = lb.Bool (read_only=True)
         utc_time         = lb.Bytes(read_only=True)
         
 #        @current_scenario.getter
@@ -73,11 +69,10 @@ class SpirentGSS8000(lb.SerialDevice):
                      'paused',
                      'ended']
                      
-    def state_get (self, attr):        
+    def command_get (self, attr):        
         # Alternatively, check to see if there is an command
         command = self.state.trait_metadata(attr, 'command')
-        if command is not None:
-            return self.query(command)
+        return self.query(command)
             
     'Status messages that may be received from the instrument'
 

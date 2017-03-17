@@ -1,35 +1,35 @@
 __all__ = ['RohdeSchwarzFSW26Base']
 
 from labbench import Bool, Bytes, EnumBytes, Int, Float
-from labbench.visa import SCPI, Remotelets, VISADevice
+from labbench.visa import VISADevice
 import pandas as pd
 import numpy as np
 
 class RohdeSchwarzFSW26Base(VISADevice):
-    class state(Remotelets):
-        frequency_center        = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:CENT')
-        frequency_span          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:SPAN')
-        frequency_start         = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:START')
-        frequency_stop          = SCPI(Float(min=2, max=26.5e9, step=1e-9, label='Hz'), 'FREQ:STOP') 
+    class state(VISADevice.state):
+        frequency_center        = Float     (command='FREQ:CENT',  min=2, max=26.5e9, step=1e-9, label='Hz')
+        frequency_span          = Float     (command='FREQ:SPAN',  min=2, max=26.5e9, step=1e-9, label='Hz')
+        frequency_start         = Float     (command='FREQ:START', min=2, max=26.5e9, step=1e-9, label='Hz')
+        frequency_stop          = Float     (command='FREQ:STOP',  min=2, max=26.5e9, step=1e-9, label='Hz')
     
-        initiate_continuous     = SCPI(Bool(), 'INIT:CONT')
+        initiate_continuous     = Bool      (command='INIT:CONT')
     
-        reference_level         = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV')
-        reference_level_trace2  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV')
-        reference_level_trace3  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC3:Y:RLEV')
-        reference_level_trace4  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV')
-        reference_level_trace5  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV')
-        reference_level_trace6  = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV')
+        reference_level         = Float     (command='DISP:TRAC1:Y:RLEV', step=1e-3,label='dB')
+        reference_level_trace2  = Float     (command='DISP:TRAC2:Y:RLEV', step=1e-3,label='dB')
+        reference_level_trace3  = Float     (command='DISP:TRAC3:Y:RLEV', step=1e-3,label='dB')
+        reference_level_trace4  = Float     (command='DISP:TRAC4:Y:RLEV', step=1e-3,label='dB')
+        reference_level_trace5  = Float     (command='DISP:TRAC5:Y:RLEV', step=1e-3,label='dB')
+        reference_level_trace6  = Float     (command='DISP:TRAC6:Y:RLEV', step=1e-3,label='dB')
         
-        amplitude_offset        = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC1:Y:RLEV:OFFS')
-        amplitude_offset_trace2 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC2:Y:RLEV:OFFS')
-        amplitude_offset_trace3 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC3:Y:RLEV:OFFS')
-        amplitude_offset_trace4 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC4:Y:RLEV:OFFS')
-        amplitude_offset_trace5 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC5:Y:RLEV:OFFS')
-        amplitude_offset_trace6 = SCPI(Float(step=1e-3,label='dB'), 'DISP:TRAC6:Y:RLEV:OFFS')
+        amplitude_offset        = Float     (command='DISP:TRAC1:Y:RLEV:OFFS',step=1e-3,label='dB')
+        amplitude_offset_trace2 = Float     (command='DISP:TRAC2:Y:RLEV:OFFS',step=1e-3,label='dB')
+        amplitude_offset_trace3 = Float     (command='DISP:TRAC3:Y:RLEV:OFFS',step=1e-3,label='dB')
+        amplitude_offset_trace4 = Float     (command='DISP:TRAC4:Y:RLEV:OFFS',step=1e-3,label='dB')
+        amplitude_offset_trace5 = Float     (command='DISP:TRAC5:Y:RLEV:OFFS',step=1e-3,label='dB')
+        amplitude_offset_trace6 = Float     (command='DISP:TRAC6:Y:RLEV:OFFS',step=1e-3,label='dB')
         
-        channel_type            = SCPI(EnumBytes(['SAN','IQ']),                     'INST')
-        sweep_points            = SCPI(Int(min=1, max=100001), 'SWE:POIN')
+        channel_type            = EnumBytes (command='INST',     values=['SAN','IQ'])
+        sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
 
     
     def save_state (self, FileName, num="1"):
@@ -253,13 +253,12 @@ class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base):
 
 class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     class state(RohdeSchwarzFSW26Base.state):
-        iq_simple_enabled     = SCPI(Bool(),                                'CALC:IQ')
-        iq_evaluation_enabled = SCPI(Bool(),                                'CALC:IQ:EVAL')
-        iq_mode               = SCPI(EnumBytes(['TDOMain','FDOMain','IQ']), 'CALC:IQ:MODE')
-        iq_record_length      = SCPI(Int(min=1, max=461373440),             'TRAC:IQ:RLEN')
-        iq_sample_rate        = SCPI(Float(min=1e-9, max=160e6),            'TRAC:IQ:SRAT')
-        iq_format             = SCPI(EnumBytes(['FREQ','MAGN', 'MTAB',
-                                                'PEAK','RIM','VECT']),      'CALC:FORM')
+        iq_simple_enabled     = Bool      (command='CALC:IQ')
+        iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL')
+        iq_mode               = EnumBytes (command='CALC:IQ:MODE', values=['TDOMain','FDOMain','IQ']))
+        iq_record_length      = Int       (command='TRAC:IQ:RLEN', min=1, max=461373440))
+        iq_sample_rate        = Float     (command='TRAC:IQ:SRAT', min=1e-9, max=160e6)
+        iq_format             = EnumBytes (command='CALC:FORM', values=['FREQ','MAGN', 'MTAB','PEAK','RIM','VECT'])
 
     def connect (self):
         super(RohdeSchwarzFSW26Base, self).connect()
