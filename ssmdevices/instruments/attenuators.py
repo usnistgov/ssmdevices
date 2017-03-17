@@ -45,16 +45,12 @@ class MiniCircuitsRCDAT(core.Device):
     def connect (self):
         ''' Open the device resource.
         '''
-        self.driver = dll.USB_RUDAT()
-        if self.driver.Connect(self.resource)[0] != 1:
+        dll = dll.USB_RUDAT()
+        if dll.Connect(self.resource)[0] != 1:
             raise Exception('Cannot connect to attenuator resource {}'.format(self.resource))
-        self.state.connected = True
+        return dll
 
     def disconnect(self):
         ''' Release the attenuator hardware resource via the driver DLL.
         '''
-        try:
-            self.driver.Disconnect()
-        except:
-            self.state.connected = False
-            self.driver = None
+        self.backend.Disconnect()

@@ -92,11 +92,11 @@ class RohdeSchwarzFSW26Base(VISADevice):
         
         if horizontal:
             index = self.fetch_horizontal(trace)
-            values = self.link.query_ascii_values("TRAC:DATA? TRACE{trace}".format(trace=trace), container=pd.Series)
+            values = self.backend.query_ascii_values("TRAC:DATA? TRACE{trace}".format(trace=trace), container=pd.Series)
             name = 'Trace {}'.format(trace)
             return pd.DataFrame(values.values, columns=[name], index=index)
         else:
-            return self.link.query_ascii_values("TRAC:DATA? TRACE{trace}".format(trace=trace), container=pd.Series)
+            return self.backend.query_ascii_values("TRAC:DATA? TRACE{trace}".format(trace=trace), container=pd.Series)
         
     def fetch_marker(self, marker, axis):
         ''' Get marker value

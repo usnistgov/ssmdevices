@@ -40,8 +40,6 @@ class SpirentGSS8000(lb.SerialDevice):
             
                 :param timeformat: 'UTC' for UTC timestamp, or 'TOW' for Time of week in seconds
             '''
-            timeformat = 'utc'
-            
             utc_unformatted = device.query('-,UTC_TIME')
             try:
                 utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
@@ -91,8 +89,8 @@ class SpirentGSS8000(lb.SerialDevice):
         '''
         #write scenario path as 'c:\folder\folder\name.scn'
         loadpath = self.fix_path_name(path)
-        self.link.read(self.link.inWaiting())
-        self.link.write('SC,%s\n'%(loadpath))
+        self.backend.read(self.backend.inWaiting())
+        self.backend.write('SC,%s\n'%(loadpath))
         self.state.current_scenario
 
     def save_scenario(self, folderpath):
@@ -105,8 +103,8 @@ class SpirentGSS8000(lb.SerialDevice):
         # write folderpath as 'c:\folder\folder'
         writepath=self.fix_path_name(folderpath)
 
-        self.link.read(self.link.inWaiting())
-        self.link.write('SAVE_SCENARIO,with_changes,as_simgen,%s/\n'%(writepath))
+        self.backend.read(self.backend.inWaiting())
+        self.backend.write('SAVE_SCENARIO,with_changes,as_simgen,%s/\n'%(writepath))
         self.state.current_scenario
         
     @staticmethod
@@ -119,20 +117,20 @@ class SpirentGSS8000(lb.SerialDevice):
             
             :return: returned status code (possible codes listed in `self.status_messages`)
         '''
-        self.link.read(self.link.inWaiting())        
+        self.backend.read(self.backend.inWaiting())        
         logger.debug('\nGPS SIMULATOR SEND\n{}'.format(repr(command)))        
-        self.link.write('{}\n'.format(command))
+        self.backend.write('{}\n'.format(command))
         
         response = ''
         while '</msg>' not in response.lower():
-            response += self.link.readline()
+            response += self.backend.readline()
         logger.debug('\nGPS SIMULATOR RECEIVE\n{}'.format(repr(response)))
 
         status_code = int(re.match('.*<status>[\W*]*(\d+)[\W*]</status>.*',response,flags=re.S).group(1))
         self.state.status = self.status_messages[status_code]
         
         returncheck = re.match('.*<data>[\W*]*(.*)[\W*]</data>.*',response,flags=re.S)
-        self.link.read(self.link.inWaiting())
+        self.backend.read(self.backend.inWaiting())
         if not returns:
             if returncheck is not None:
                 raise Exception(returncheck.group(1))
