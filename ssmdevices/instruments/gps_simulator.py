@@ -24,36 +24,7 @@ class SpirentGSS8000(lb.SerialDevice):
         current_scenario = lb.Bytes(read_only=True, command='SC_NAME,includepath')
         gps_week         = lb.Int  (read_only=True, command='-,ZCNT_TOW')
         running          = lb.Bool (read_only=True)
-        utc_time         = lb.Bytes(read_only=True)
-        
-#        @current_scenario.getter
-#        def __get_current_scenario (self, device):
-#            return device.query('SC_NAME,includepath')
-        
-        @utc_time.getter
-        def __get_utc_time(self, device):
-            ''' Get the UTC time of the current running scenario.
-            
-                :param timeformat: 'UTC' for UTC timestamp, or 'TOW' for Time of week in seconds
-            '''
-            utc_unformatted = device.query('-,UTC_TIME')
-            try:
-                utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
-                frac = utc_unformatted.split('.')[-1]
-            except:
-                utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S')
-                frac = '000'
-                
-            return time.strftime('%Y-%m-%d %H:%M:%S', utc_struct)+'.'+frac
-        
-        @running.getter
-        def __get_running(self, device):
-            ''' Check whether a scenario is running.
-            
-                :return: True if a scenario is running, otherwise False
-            '''
-            return device.get_status() == 'running'
-        
+        utc_time         = lb.Bytes(read_only=True)        
         
     resource='COM17'
     'serial port resource name (COMnn in windows or /dev/xxxx in unix/Linux)'
@@ -172,6 +143,30 @@ class SpirentGSS8000(lb.SerialDevice):
         except:
             pass
         self.rewind()
+
+    @state.utc_time.getter
+    def _ (self):
+        ''' Get the UTC time of the current running scenario.
+        
+            :param timeformat: 'UTC' for UTC timestamp, or 'TOW' for Time of week in seconds
+        '''
+        utc_unformatted = self.query('-,UTC_TIME')
+        try:
+            utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
+            frac = utc_unformatted.split('.')[-1]
+        except:
+            utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S')
+            frac = '000'
+            
+        return time.strftime('%Y-%m-%d %H:%M:%S', utc_struct)+'.'+frac
+    
+    @state.running.getter
+    def _ (self):
+        ''' Check whether a scenario is running.
+        
+            :return: True if a scenario is running, otherwise False
+        '''
+        return self.get_status() == 'running'
         
 #%%
 if __name__ == '__main__':

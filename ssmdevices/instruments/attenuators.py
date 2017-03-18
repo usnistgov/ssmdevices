@@ -33,24 +33,24 @@ class MiniCircuitsRCDAT(core.Device):
     
     class state(core.Device.state):
         attenuation = core.Float(min=0, max=115, step=0.25)
-        
-        @attenuation.getter
-        def attenuation(self, device):
-            return device.driver.Read_Att(0)[1]
-    
-        @attenuation.setter
-        def attenuation(self, device, value):
-            device.driver.SetAttenuation(value)
-       
+               
     def connect (self):
         ''' Open the device resource.
         '''
-        dll = dll.USB_RUDAT()
-        if dll.Connect(self.resource)[0] != 1:
+        backend = dll.USB_RUDAT()
+        if backend.Connect(self.resource)[0] != 1:
             raise Exception('Cannot connect to attenuator resource {}'.format(self.resource))
-        return dll
+        return backend
 
     def disconnect(self):
         ''' Release the attenuator hardware resource via the driver DLL.
         '''
         self.backend.Disconnect()
+        
+    @state.attenuation.getter
+    def _ (self):
+        return self.backend.Read_Att(0)[1]
+
+    @state.attenuation.setter
+    def _ (self, value):
+        self.backend.SetAttenuation(value)
