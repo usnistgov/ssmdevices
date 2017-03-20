@@ -1,4 +1,4 @@
-__all__ = ['RohdeSchwarzFSW26Base']
+__all__ = ['RohdeSchwarzFSW26SpectrumAnalyzer', 'RohdeSchwarzFSW26IQAnalyzer']
 
 from labbench import Bool, Bytes, EnumBytes, Int, Float
 from labbench.visa import VISADevice

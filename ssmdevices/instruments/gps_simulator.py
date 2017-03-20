@@ -5,12 +5,23 @@
 :author: Duncan McGillivray <duncan.mcgillivray@nist.gov>, Daniel Kuester <daniel.kuester@nist.gov>
 """
 
+__all__ = ['SpirentGSS8000']
+
 import time,re
 import labbench as lb
 import traitlets as tl
 
 import logging
 logger = logging.getLogger('labbench')
+
+status_messages=['no scenario',
+                 'loading',
+                 'ready',
+                 'arming',
+                 'armed',
+                 'running',
+                 'paused',
+                 'ended']
 
 class SpirentGSS8000(lb.SerialDevice):   
     ''' Control a Spirent GPS GSS8000 simulator over a serial connection.
@@ -20,25 +31,19 @@ class SpirentGSS8000(lb.SerialDevice):
     '''
 
     class state(lb.SerialDevice.state):
-        status           = tl.Bytes()
-        current_scenario = lb.Bytes(read_only=True, command='SC_NAME,includepath')
-        gps_week         = lb.Int  (read_only=True, command='-,ZCNT_TOW')
-        running          = lb.Bool (read_only=True)
-        utc_time         = lb.Bytes(read_only=True)        
+        status           = lb.EnumBytes(read_only=True, values=status_messages)
+        'UTC time of the current running scenario.'
+
+        current_scenario = lb.Bytes    (command='SC_NAME,includepath', read_only=True)
+        gps_week         = lb.Int      (command='-,ZCNT_TOW', read_only=True)
+        running          = lb.Bool     (read_only=True)
+        utc_time         = lb.Bytes    (read_only=True)        
         
     resource='COM17'
     'serial port resource name (COMnn in windows or /dev/xxxx in unix/Linux)'
     
 #    connection_settings = dict(baud_rate=9600)
 #
-    status_messages=['no scenario',
-                     'loading',
-                     'ready',
-                     'arming',
-                     'armed',
-                     'running',
-                     'paused',
-                     'ended']
                      
     def command_get (self, attr):        
         # Alternatively, check to see if there is an command
@@ -72,36 +77,44 @@ class SpirentGSS8000(lb.SerialDevice):
         self.backend.read(self.backend.inWaiting())
         self.backend.write('SAVE_SCENARIO,with_changes,as_simgen,%s/\n'%(writepath))
         self.state.current_scenario
-        
+
     @staticmethod
     def fix_path_name (path):
         return path.replace('\\','/')
 
-    def write (self, command, returns=False):
+    def write (self, command, returns=None):
         ''' Send a message to the spirent, and check the status message
             returned by the spirent.
             
-            :return: returned status code (possible codes listed in `self.status_messages`)
+            :return: Either 'value' (return the data response), 'status'
+                     (return the instrument status), or None (raise an
+                     exception if a data value is returned)
         '''
         self.backend.read(self.backend.inWaiting())        
         logger.debug('\nGPS SIMULATOR SEND\n{}'.format(repr(command)))        
         self.backend.write('{}\n'.format(command))
         
+        # Get the response
         response = ''
         while '</msg>' not in response.lower():
             response += self.backend.readline()
         logger.debug('\nGPS SIMULATOR RECEIVE\n{}'.format(repr(response)))
-
-        status_code = int(re.match('.*<status>[\W*]*(\d+)[\W*]</status>.*',response,flags=re.S).group(1))
-        self.state.status = self.status_messages[status_code]
+        self.backend.read(self.backend.inWaiting()) # Clear out any remaining data
         
-        returncheck = re.match('.*<data>[\W*]*(.*)[\W*]</data>.*',response,flags=re.S)
-        self.backend.read(self.backend.inWaiting())
-        if not returns:
-            if returncheck is not None:
-                raise Exception(returncheck.group(1))
+        # Pull the data/error message payload
+        data = re.match('.*<data>[\W*]*(.*)[\W*]</data>.*',response,flags=re.S)
+        if returns.lower() == 'value' or returns == None:
+            raise Exception(data.group(1))
+
+        if returns.lower() == 'status':            
+            status = int(re.match('.*<status>[\W*]*(\d+)[\W*]</status>.*',response,flags=re.S).group(1))
+            return status_messages[status]
+        elif returns.lower() == 'value':
+            return data.group(1)
+        elif returns == None:
+            return
         else:
-            return returncheck.group(1)
+            raise Exception("Expected return type in ['value', 'status', None], but got {}".format(repr(returns)))
 
     def query (self, command):
         return self.write(command+'\n', returns=True)
@@ -127,12 +140,6 @@ class SpirentGSS8000(lb.SerialDevice):
         ''' Force stop the current scenario.
         '''        
         self.write('-,EN,1,0')
-
-    def get_status(self):
-        ''' Get current instrument status.
-        '''
-        print self.write('NULL')
-        return self.state.status
             
     def reset(self):
         ''' End any currently running scenario, then rewind
@@ -146,10 +153,6 @@ class SpirentGSS8000(lb.SerialDevice):
 
     @state.utc_time.getter
     def _ (self):
-        ''' Get the UTC time of the current running scenario.
-        
-            :param timeformat: 'UTC' for UTC timestamp, or 'TOW' for Time of week in seconds
-        '''
         utc_unformatted = self.query('-,UTC_TIME')
         try:
             utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
@@ -167,6 +170,12 @@ class SpirentGSS8000(lb.SerialDevice):
             :return: True if a scenario is running, otherwise False
         '''
         return self.get_status() == 'running'
+        
+    @state.status.getter
+    def _ (self):
+        ''' Get current instrument status.
+        '''
+        return self.write('NULL', return_status=True)
         
 #%%
 if __name__ == '__main__':

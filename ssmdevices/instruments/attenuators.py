@@ -5,21 +5,10 @@ Created on Tue Mar 07 14:38:10 2017
 @author: dkuester
 """
 
-#__all__ = ['MiniCircuitsRCDAT']
+__all__ = ['MiniCircuitsRCDAT']
 
 from labbench.dotnet import DotNetDevice
 import ssmdevices.lib
-
-
-#import logging
-#logger = logging.getLogger('labbench')
-#dll = None
-#
-#try:
-#    dll = import_dotnet('mcl_RUDAT64.dll', ssmdevices.lib)
-#except Exception,e:
-#    print logger.warn('could not load mcl_RUDAT64.dll; MiniCircuits variable attenuator driver will not work')
-    
 import labbench as core
 
 class MiniCircuitsRCDAT(DotNetDevice):
@@ -33,10 +22,10 @@ class MiniCircuitsRCDAT(DotNetDevice):
         to support 64-bit python.
     '''
     
-    library = ssmdevices.lib # Must be a module
-    dll_name = None    
+    library  = ssmdevices.lib    # Must be a module
+    dll_name = 'mcl_RUDAT64.dll'
     
-    class state(core.Device.state):
+    class state(DotNetDevice.state):
         attenuation = core.Float(min=0, max=115, step=0.25)
 
     def connect (self):
