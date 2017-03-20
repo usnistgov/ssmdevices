@@ -45,9 +45,7 @@ class SpirentGSS8000(lb.SerialDevice):
 #    connection_settings = dict(baud_rate=9600)
 #
                      
-    def command_get (self, attr):        
-        # Alternatively, check to see if there is an command
-        command = self.state.trait_metadata(attr, 'command')
+    def command_get (self, command, trait):        
         return self.query(command)
             
     'Status messages that may be received from the instrument'
