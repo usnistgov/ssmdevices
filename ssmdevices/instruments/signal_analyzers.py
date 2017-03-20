@@ -3,7 +3,6 @@ __all__ = ['RohdeSchwarzFSW26Base']
 from labbench import Bool, Bytes, EnumBytes, Int, Float
 from labbench.visa import VISADevice
 import pandas as pd
-import numpy as np
 
 class RohdeSchwarzFSW26Base(VISADevice):
     class state(VISADevice.state):
@@ -255,8 +254,8 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     class state(RohdeSchwarzFSW26Base.state):
         iq_simple_enabled     = Bool      (command='CALC:IQ')
         iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL')
-        iq_mode               = EnumBytes (command='CALC:IQ:MODE', values=['TDOMain','FDOMain','IQ']))
-        iq_record_length      = Int       (command='TRAC:IQ:RLEN', min=1, max=461373440))
+        iq_mode               = EnumBytes (command='CALC:IQ:MODE', values=['TDOMain','FDOMain','IQ'])
+        iq_record_length      = Int       (command='TRAC:IQ:RLEN', min=1, max=461373440)
         iq_sample_rate        = Float     (command='TRAC:IQ:SRAT', min=1e-9, max=160e6)
         iq_format             = EnumBytes (command='CALC:FORM', values=['FREQ','MAGN', 'MTAB','PEAK','RIM','VECT'])
 

@@ -7,20 +7,22 @@ Created on Tue Mar 07 14:38:10 2017
 
 #__all__ = ['MiniCircuitsRCDAT']
 
-from labbench.dotnet import import_dotnet
+from labbench.dotnet import DotNetDevice
 import ssmdevices.lib
 
-import logging
-logger = logging.getLogger('labbench')
 
-try:
-    dll = import_dotnet('mcl_RUDAT64.dll', ssmdevices.lib)
-except Exception,e:
-    print logger.warn('could not load mcl_RUDAT64.dll; MiniCircuits variable attenuator driver will not work')
+#import logging
+#logger = logging.getLogger('labbench')
+#dll = None
+#
+#try:
+#    dll = import_dotnet('mcl_RUDAT64.dll', ssmdevices.lib)
+#except Exception,e:
+#    print logger.warn('could not load mcl_RUDAT64.dll; MiniCircuits variable attenuator driver will not work')
     
 import labbench as core
 
-class MiniCircuitsRCDAT(core.Device):
+class MiniCircuitsRCDAT(DotNetDevice):
     ''' A digitally controlled, 0 to 110 dB variable attenuator.
     
         Ensure that the windows DLL driver is installed by copying mcl_RUDAT64.dll from
@@ -31,13 +33,16 @@ class MiniCircuitsRCDAT(core.Device):
         to support 64-bit python.
     '''
     
+    library = ssmdevices.lib # Must be a module
+    dll_name = None    
+    
     class state(core.Device.state):
         attenuation = core.Float(min=0, max=115, step=0.25)
-               
+
     def connect (self):
         ''' Open the device resource.
         '''
-        backend = dll.USB_RUDAT()
+        backend = self.dll.USB_RUDAT()
         if backend.Connect(self.resource)[0] != 1:
             raise Exception('Cannot connect to attenuator resource {}'.format(self.resource))
         return backend
