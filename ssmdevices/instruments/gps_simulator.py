@@ -101,21 +101,22 @@ class SpirentGSS8000(lb.SerialDevice):
         
         # Pull the data/error message payload
         data = re.match('.*<data>[\W*]*(.*)[\W*]</data>.*',response,flags=re.S)
-        if returns.lower() == 'value' or returns == None:
-            raise Exception(data.group(1))
-
-        if returns.lower() == 'status':            
+        
+        
+        if returns is None:
+            if data is not None:
+                raise Exception(data.group(1))
+            return
+        elif returns.lower() == 'value':
+            return data.group(1)        
+        if returns.lower() == 'status':
             status = int(re.match('.*<status>[\W*]*(\d+)[\W*]</status>.*',response,flags=re.S).group(1))
             return status_messages[status]
-        elif returns.lower() == 'value':
-            return data.group(1)
-        elif returns == None:
-            return
         else:
             raise Exception("Expected return type in ['value', 'status', None], but got {}".format(repr(returns)))
 
     def query (self, command):
-        return self.write(command+'\n', returns=True)
+        return self.write(command+'\n', returns='value')
     
     def run(self):
         ''' Start running the current scenario. Requires that there is time left in
@@ -142,11 +143,12 @@ class SpirentGSS8000(lb.SerialDevice):
     def reset(self):
         ''' End any currently running scenario, then rewind
         '''
-        try:
-            if self.get_status() != 'ended':
+        if self.state.status != 'ended':
+            try:            
                 self.end()
-        except:
-            pass
+            except:
+                pass
+
         self.rewind()
 
     @state.utc_time.getter
@@ -167,18 +169,19 @@ class SpirentGSS8000(lb.SerialDevice):
         
             :return: True if a scenario is running, otherwise False
         '''
-        return self.get_status() == 'running'
+        return self.state.status == 'running'
         
     @state.status.getter
     def _ (self):
         ''' Get current instrument status.
         '''
-        return self.write('NULL', return_status=True)
+        return self.write('NULL', returns='status')
         
 #%%
 if __name__ == '__main__':
     lb.debug_to_screen('DEBUG')
-    with SpirentGSS8000('COM14') as spirent:
+    with SpirentGSS8000('COM17') as spirent:
+        print spirent.state.status
         spirent.reset()
         spirent.run()
         scn = spirent.state.current_scenario
