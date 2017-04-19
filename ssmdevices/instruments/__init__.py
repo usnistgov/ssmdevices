@@ -9,3 +9,9 @@ from .attenuators import *
 from .gps_simulator import *
 from .power_sensors import *
 from .signal_analyzers import *
+
+# Clear out submodules from namespace
+from inspect import ismodule as _ismodule
+__l = locals()
+[__l.pop(_k) for _k,_v in __l.items() if not _k.startswith('_') and _ismodule(_v)]
+del __l,_k,_v,_ismodule
