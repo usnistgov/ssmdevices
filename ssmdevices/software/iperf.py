@@ -6,12 +6,13 @@ import pandas as pd
 import labbench as lb
 import traitlets as tl
 import os
+import ssmdevices.lib 
 
 class IPerfClient(lb.Device):
     ''' Run an IPerfClient. Set the resource to the location of iperf.
         The default value is the path that installs with 64-bit cygwin.
     '''
-    resource = r'C:\cygwin64\bin\iperf.exe'
+    resource = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
     
     class state(lb.Device.state):
         interval = tl.CFloat(1,min=.5)
