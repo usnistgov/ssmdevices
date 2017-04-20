@@ -59,17 +59,19 @@ class IPerfClient(lb.Device):
 
         columns = 'timestamp','source_address',\
                   'source_port','destination_address','destination_port',\
-                  'interval','transferred_bytes','bits_per_second'
+                  'test_id','interval','transferred_bytes','bits_per_second'
         
         columns = ['iperf_'+c for c in columns]
         data = pd.read_csv(proc.stdout, header=None,index_col=False,
                            names=columns)
         
+#        print data
         if len(data.index)>1:
             data.drop(data.index[-1],inplace=True)
         elif len(data)==0:
             data = data.append([None])
-        data.drop(['iperf_timestamp','iperf_interval','iperf_transferred_bytes'],inplace=True,axis=1)
+#        print data
+        data.drop(['iperf_timestamp','iperf_interval','iperf_transferred_bytes','iperf_test_id'],inplace=True,axis=1)
 
         data['iperf_unknown_host'] = unknown_host
         return data
