@@ -14,6 +14,7 @@ class IPerfClient(lb.Device):
         The default value is the path that installs with 64-bit cygwin.
     '''
     resource = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
+    _stop_event = None
     
     class state(lb.Device.state):
         interval = tl.CFloat(1,min=.5)
@@ -23,7 +24,6 @@ class IPerfClient(lb.Device):
         if not os.path.exists(self.resource):
             raise OSError('iperf does not exist at supplied resource (path {})'\
                           .format(self.resource))
-        self._stop_event = None
         # Quick dummy run to sanity check connectivity
 #        self.acquire(.5,.5)
         
