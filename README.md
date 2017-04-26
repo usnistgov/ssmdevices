@@ -17,3 +17,12 @@ RF power sensors
 
 RF signal analyzers
 * Rohde Schwarz FSW Series 
+
+RF signal generators
+* Spirent GSS8000 GNSS Simulator
+
+RF attenuators
+* MiniCircuits RCDAT series
+
+Virtual software "instruments"
+* IPerfClient - iperf
