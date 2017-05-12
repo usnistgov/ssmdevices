@@ -6,8 +6,8 @@ access based on export control law.
 
 ## Installation
 1. Install your favorite python distribution
-2. In a command prompt `pip install git+https://git.ncnr.nist.gov/ssm/labbench`
-3. In a command prompt `pip install git+https://git.ncnr.nist.gov/ssm/ssmdevices`
+2. In a command prompt `pip install git+https://gitlab.nist.gov/gitlab/ssm/labbench`
+3. In a command prompt `pip install git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
 4. Install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
 That's it.
 
