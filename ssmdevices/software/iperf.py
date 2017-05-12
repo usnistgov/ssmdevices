@@ -22,7 +22,7 @@ class IPerfClient(lb.CommandLineWrapper):
     
     class state(lb.CommandLineWrapper.state):
         interval = tl.CFloat(1,min=.5)
-        duration = tl.CFloat(0,min=0)
+#        duration = tl.CFloat(0,min=0)
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
@@ -52,7 +52,7 @@ class IPerfClient(lb.CommandLineWrapper):
     def execute (self, server):
         # Call the iperf binary
         cmd = self.resource,'-i',str(self.state.interval),\
-              '-t',str(self.state.duration),'-y','C',\
+              '-t','0','-y','C',\
               '-c', str(server)
               
         self.state.timeout = self.state.interval*2
