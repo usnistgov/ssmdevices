@@ -39,7 +39,7 @@ class IPerfClient(lb.Device):
             interval = self.state.interval
         if duration is None:
             duration = self.state.duration
-        if self._stop_event is not None:
+        if hasattr(self, '_stop_event') and self._stop_event is not None:
             assert isinstance(self._stop_event, threading._Event)
 
         # Call the iperf binary
@@ -59,7 +59,7 @@ class IPerfClient(lb.Device):
         except Exception,e:
             raise e
 
-        if self._stop_event is not None:
+        if hasattr(self, '_stop_event') and self._stop_event is not None:
             self._stop_event.wait()
             terminated = proc.poll() is None
             if terminated:
