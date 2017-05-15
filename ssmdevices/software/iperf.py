@@ -26,7 +26,6 @@ class IPerfClient(lb.CommandLineWrapper):
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
-        print result
         
         columns = 'timestamp','source_address',\
                   'source_port','destination_address','destination_port',\
