@@ -18,11 +18,12 @@ class IPerfClient(lb.CommandLineWrapper):
     ''' Run an IPerfClient. Set the resource to the location of iperf.
         The default value is the path that installs with 64-bit cygwin.
     '''
-    resource = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
+    resource = '127.0.0.1'
+    binary_path = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
     
     class state(lb.CommandLineWrapper.state):
-        interval = tl.CFloat(1,min=.5)
-#        duration = tl.CFloat(0,min=0)
+        interval = tl.CFloat(0.5,min=.5)
+        timeout  = tl.CFloat(6,min=0)
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
@@ -48,14 +49,15 @@ class IPerfClient(lb.CommandLineWrapper):
         data.index = range(len(data))
         return data
     
-    def execute (self, server):
+    def connect (self):
         # Call the iperf binary
-        cmd = self.resource,'-i',str(self.state.interval),\
+        cmd = self.binary_path,'-i',str(self.state.interval),\
               '-t','0','-y','C',\
-              '-c', str(server)
+              '-c', str(self.resource)
               
-        self.state.timeout = self.state.interval*2
-              
+#        self.state.timeout = self.state.interval*2
+        
+        super(IPerfClient,self).connect()
         super(IPerfClient,self).execute(cmd)
 
 if __name__ == '__main__':
