@@ -1,5 +1,5 @@
 # ssmdevices
-The ssmdevices module is a library of python device drivers. The drivers are implemented with [labbench](https://git.ncnr.nist.gov/ssm/labbench),
+The ssmdevices module is a library of python device drivers. The drivers are implemented with [labbench](../labbench),
 and provide data in [pandas](http://pandas.pydata.org/) data frames when possible to support rapid exploration of data.
 It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name complications and to restrict
 access based on export control law.
