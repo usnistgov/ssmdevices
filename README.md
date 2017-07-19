@@ -25,5 +25,5 @@ RF attenuators
 * MiniCircuits RCDAT series
 
 Virtual software "instruments"
-* IPerfClient - iperf
+* iperf version 2
 * UDP sockets control interface for exchanging data with LabView
