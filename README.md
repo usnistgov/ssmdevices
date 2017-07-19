@@ -26,3 +26,4 @@ RF attenuators
 
 Virtual software "instruments"
 * IPerfClient - iperf
+* UDP sockets control interface for exchanging data with LabView
