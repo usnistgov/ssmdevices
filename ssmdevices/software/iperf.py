@@ -27,7 +27,7 @@ class IPerfClient(lb.CommandLineWrapper):
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
-        
+
         columns = 'timestamp','source_address',\
                   'source_port','destination_address','destination_port',\
                   'test_id','interval','transferred_bytes','bits_per_second'
@@ -52,7 +52,7 @@ class IPerfClient(lb.CommandLineWrapper):
     def connect (self):
         # Call the iperf binary
         cmd = self.binary_path,'-i',str(self.state.interval),\
-              '-t','0','-y','C',\
+              '-n','-1','-y','C',\
               '-c', str(self.resource)
               
 #        self.state.timeout = self.state.interval*2
