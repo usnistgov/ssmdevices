@@ -250,6 +250,24 @@ e
 class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base):
     pass
 
+class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
+
+    def get_ascii_window_trace(self,window,trace):
+        self.write('FORM ASCII')
+        data = self.backend.query_ascii_values("TRAC{window}:DATA? TRACE{trace}".format(window=window,trace=trace), container=pd.Series)
+        return data
+
+    def get_binary_window_trace(self,window,trace):
+        self.write('FORM REAL')
+        data=self.backend.query_binary_values("TRAC{window}:DATA? TRACE{trace}".format(window=window,trace=trace), datatype='f', is_big_endian=False, container=pd.Series)
+        return data
+
+    def get_allocation_summary(self,window):
+        self.write('FORM ASCII')
+        data=self.query("TRAC{window}:DATA? TRACE1".format(window=window)).split(',')
+        return data
+    
+    
 class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     class state(RohdeSchwarzFSW26Base.state):
         iq_simple_enabled     = Bool      (command='CALC:IQ')
