@@ -6,7 +6,8 @@ access based on export control law.
 
 ## Basic Installation
 1. Install a 64-bit python 2.7 distribution (you can use your favorite, though this process has been tested mainly with Anaconda)
-2. In a command prompt `pip install --process-dependency-links git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
+2. In an administrator command prompt, type
+   `pip install --process-dependency-links git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
 3. Install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
 That's it.
 
