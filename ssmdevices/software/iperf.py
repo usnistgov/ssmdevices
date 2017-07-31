@@ -48,12 +48,17 @@ class IPerfClient(lb.CommandLineWrapper):
 #        data['iperf_unknown_host'] = unknown_host
         data.index = range(len(data))
         return data
-    
+
     def connect (self):
+        loop_path = os.path.join(os.path.dirname(self.binary_path),
+                                 'loop.bat')
+        
         # Call the iperf binary
-        cmd = self.binary_path,'-i',str(self.state.interval),\
+        cmd = loop_path,self.binary_path,'-i',str(self.state.interval),\
               '-n','-1','-y','C',\
               '-c', str(self.resource)
+              
+        print cmd
               
 #        self.state.timeout = self.state.interval*2
         
@@ -63,8 +68,11 @@ class IPerfClient(lb.CommandLineWrapper):
 if __name__ == '__main__':
     import time
     
-    ipc = IPerfClient()
-    ipc.execute('127.0.0.1')
-    time.sleep(5)
-    ipc.stop()
-    print ipc.fetch()
+    ipc = IPerfClient('132.163.252.73')
+    ipc.binary_path = r'..\lib\iperf.exe'
+    
+    with ipc:
+        ipc.clear()
+        while True:
+            print ipc.fetch()
+            time.sleep(1)
