@@ -9,6 +9,7 @@ from .attenuators import *
 from .gps_simulator import *
 from .power_sensors import *
 from .signal_analyzers import *
+from .signal_generators import *
 
 # Clear out submodules from namespace
 from inspect import ismodule as _ismodule

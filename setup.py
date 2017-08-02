@@ -77,5 +77,8 @@ if __name__ == '__main__':
                     'ipywidgets',
                     'notebook',
                     'sphinx',
+                    ],
+          dependency_links=[
+  		    	    'git+https://gitlab.nist.gov/gitlab/ssm/labbench',
                     ]
          )
