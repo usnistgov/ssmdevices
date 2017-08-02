@@ -22,8 +22,10 @@ class IPerfClient(lb.CommandLineWrapper):
     binary_path = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
     
     class state(lb.CommandLineWrapper.state):
-        interval = tl.CFloat(0.5,min=.5)
-        timeout  = tl.CFloat(6,min=0)
+        tcp_window_size = tl.CInt  (65535, min=1024, max=65535)
+        buffer_size     = tl.CInt  (1024,  min=1,    max=65535)
+        interval        = tl.CFloat(0.5,   min=.5)
+        timeout         = tl.CFloat(6,     min=0)
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
@@ -48,11 +50,16 @@ class IPerfClient(lb.CommandLineWrapper):
 #        data['iperf_unknown_host'] = unknown_host
         data.index = range(len(data))
         return data
-    
+
     def connect (self):
+        loop_path = os.path.join(os.path.dirname(self.binary_path),
+                                 'loop.bat')
+        
         # Call the iperf binary
-        cmd = self.binary_path,'-i',str(self.state.interval),\
+        cmd = loop_path,self.binary_path,'-i',str(self.state.interval),\
               '-n','-1','-y','C',\
+              '-l', str(self.state.buffer_size),\
+              '-w', str(self.state.tcp_window_size),\
               '-c', str(self.resource)
               
 #        self.state.timeout = self.state.interval*2
@@ -63,8 +70,11 @@ class IPerfClient(lb.CommandLineWrapper):
 if __name__ == '__main__':
     import time
     
-    ipc = IPerfClient()
-    ipc.execute('127.0.0.1')
-    time.sleep(5)
-    ipc.stop()
-    print ipc.fetch()
+    ipc = IPerfClient('132.163.252.73')
+    ipc.binary_path = r'..\lib\iperf.exe'
+    
+    with ipc:
+        ipc.clear()
+        while True:
+            print ipc.fetch()
+            time.sleep(1)
