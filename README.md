@@ -12,12 +12,13 @@ That's it.
 
 ## Supported devices
 RF power sensors
-* Keysight U2040 X-Series
+* Keysight U2040 X series
 
 RF signal analyzers
-* Rohde Schwarz FSW Series 
+* Rohde Schwarz FSW series 
 
 RF signal generators
+* Rohde Schwarz SMW series
 * Spirent GSS8000 GNSS Simulator
 
 RF attenuators
