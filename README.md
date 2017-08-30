@@ -6,18 +6,20 @@ access based on export control law.
 
 ## Basic Installation
 1. Install a 64-bit python 2.7 distribution (you can use your favorite, though this process has been tested mainly with Anaconda)
-2. In an administrator command prompt, type `pip install --process-dependency-links git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
-3. Install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
+2. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/labbench`
+3. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
+4. If you need support for VISA instruments, install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
 That's it.
 
-## Supported instruments
+## Supported devices
 RF power sensors
-* Keysight U2040 X-Series
+* Keysight U2040 X series
 
 RF signal analyzers
-* Rohde Schwarz FSW Series 
+* Rohde Schwarz FSW series 
 
 RF signal generators
+* Rohde Schwarz SMW series
 * Spirent GSS8000 GNSS Simulator
 
 RF attenuators
@@ -26,6 +28,12 @@ RF attenuators
 Virtual software "instruments"
 * iperf version 2
 * UDP sockets control interface for exchanging data with LabView
+
+Misc. Test Electronics
+* Acroname USBHub 2x4
+
+GPS Receivers
+* SwiftNav Piksi
 
 ## Examples
 These can be a jumping-off point for making your own scripts.
