@@ -10,7 +10,7 @@ access based on export control law.
 3. Install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
 That's it.
 
-## Supported instruments
+## Supported devices
 RF power sensors
 * Keysight U2040 X-Series
 
@@ -27,6 +27,10 @@ Virtual software "instruments"
 * iperf version 2
 * UDP sockets control interface for exchanging data with LabView
 
+Misc. Test Electronics
+* Acroname USBHub 2x4
+* GPS Receivers
+  * Hi
 ## Examples
 These can be a jumping-off point for making your own scripts.
 
