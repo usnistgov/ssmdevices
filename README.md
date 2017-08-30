@@ -30,7 +30,8 @@ Virtual software "instruments"
 Misc. Test Electronics
 * Acroname USBHub 2x4
 * GPS Receivers
-  * Hi
+  * SwiftNav Piksi
+
 ## Examples
 These can be a jumping-off point for making your own scripts.
 
