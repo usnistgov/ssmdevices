@@ -28,7 +28,8 @@ RF attenuators
 Virtual software "instruments"
 * iperf version 2
 * UDP sockets control interface for exchanging data with LabView
-
+* Windows WLAN connection information
+ 
 Misc. Test Electronics
 * Acroname USBHub 2x4
 
