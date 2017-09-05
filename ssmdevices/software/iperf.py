@@ -49,9 +49,9 @@ class IPerfClient(lb.CommandLineWrapper):
 #        print data
         data.drop(['iperf_interval','iperf_transferred_bytes','iperf_test_id'],inplace=True,axis=1)
         data['iperf_timestamp'] = pd.to_datetime(data['iperf_timestamp'], format='%Y%m%d%H%M%S')
-
-#        data['iperf_unknown_host'] = unknown_host
-        data.index = range(len(data))
+        data['iperf_timestamp'] = data['iperf_timestamp']+\
+                                  pd.TimedeltaIndex((data.index*self.interval)%1,'s')
+        
         return data
 
     def connect (self):
@@ -82,11 +82,11 @@ class IPerfClient(lb.CommandLineWrapper):
 if __name__ == '__main__':
     import time
     
-    ipc = IPerfClient('132.163.252.73')
+    ipc = IPerfClient('10.0.0.3',interval=0.25)
     ipc.binary_path = r'..\lib\iperf.exe'
     
     with ipc:
         ipc.clear()
         while True:
             print ipc.fetch()
-            time.sleep(1)
+            time.sleep(3)
