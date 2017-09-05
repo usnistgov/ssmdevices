@@ -16,13 +16,23 @@ __all__ = ['Netsh','WLANStatus']
 
 import labbench as lb
 import traitlets as tl
-import re
+import re,threading,time,logging
+import subprocess as sp
+
+logger = logging.getLogger('labbench')
 
 class Netsh(lb.CommandLineWrapper):
     ''' Parse calls to netsh to get information about available WLAN access
         points.
     '''
     binary_path = r'C:\Windows\System32\netsh.exe'
+    
+    def wait (self):
+        try:
+            while self.running():
+                pass
+        except:
+            pass
     
     def get_wlan_ssids (self):
         def pairs_to_dict(lines):
@@ -40,14 +50,11 @@ class Netsh(lb.CommandLineWrapper):
         
         # Execute the binary
         args = ['wlan','show','networks','mode=bssid']
+        self.wait()
         super(Netsh,self).execute([self.binary_path]+args)
         
         # Block until the call finishes, then fetch the output text
-        try:
-            while self.running():
-                pass
-        except:
-            pass
+        self.wait()
         txt = self.fetch()
         
         # Parse into (key, value) pairs separated by whitespace and a colon
@@ -73,45 +80,87 @@ class Netsh(lb.CommandLineWrapper):
         
         # Execute the binary
         args = ['wlan','show','interfaces']
+        self.wait()
         super(Netsh,self).execute([self.binary_path]+args)
         
         # Block until the call finishes, then fetch the output text
-        try:
-            while self.running():
-                pass
-        except:
-            pass
+        self.wait()
         txt = self.fetch()
         
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r'^\s*(\S+.*?)\s+:\s+(\S+.*?)\s*$',txt,flags=re.MULTILINE)
 
         return pairs_to_dict(lines)
+    
+    def set_interface_connected (self, interface, profile):
+        args = ['wlan', 'connect', 'name="{}"'.format(profile),'interface="{}"'.format(interface)]
+        self.wait()
+        si = sp.STARTUPINFO()
+        si.dwFlags |= sp.STARTF_USESHOWWINDOW
+        args = [self.binary_path]+args
+        proc = sp.Popen(args, stdout=sp.PIPE, startupinfo=si,
+                        bufsize=1, universal_newlines=True,
+                        creationflags=sp.CREATE_NEW_PROCESS_GROUP,
+                        stderr=sp.PIPE)
+        proc.wait()
 
 class WLANStatus(lb.Device):
-    resource = 'Wi-Fi'
+    resource = {'interface': 'Wi-Fi',
+                'ssid': None}
 
     class state(lb.Device.state):
         bssid              = lb.Bytes(readonly=True)
-        channel            = lb.Int(min=1,readonly=True)
+        channel            = lb.Int(min=0,readonly=True)
         signal             = lb.Int(min=0,max=100,readonly=True)
         ssid               = lb.Bytes(readonly=True)
         transmit_rate_mbps = lb.Int(min=0,readonly=True)
         radio_type         = lb.Bytes(readonly=True)
         state              = lb.Bytes(readonly=True)
-    
+        force_reconnect    = tl.Bool(True)
+
     def connect (self):
         self.backend = Netsh()
         self.backend.connect()
+        
+        def reconnect():
+            states = {}
+            def onchange (args):
+                states[args['name']] = args['new']
+            self.state.observe(onchange)
+            
+            logger.debug('starting WLAN reconnect watchdog')
+            iface,target_ssid = self.resource['interface'],self.resource['ssid']
+            time.sleep(0.1)
+            
+            while True:
+                if not self.state.connected:
+                    return
+#                self.state.state
+                if states.get('state',None) != 'disconnected':
+                    if target_ssid is None:
+                        target_ssid = states.get('ssid', None)
+                elif self.state.force_reconnect:
+                    if target_ssid is None:
+                        logger.warn("{}, but don't know SSID for reconnection".format(iface))
+                    else:
+                        logger.warn("{}, reconnecting to {}".format(iface,target_ssid))
+                        self.backend.set_interface_connected(self.resource['interface'],
+                                                             target_ssid)
+                        
+                time.sleep(.1)
+        
+        threading.Thread(target=reconnect).start()
         
     def disconnect (self):
         pass
     
     def command_get (self, command, trait):
         d = self.backend.get_wlan_interfaces()
-        if self.resource not in d:
-            raise Exception('windows reports no WLAN interface named "{}"'.format(self.resource))
-        d = d[self.resource]
+        if self.resource['interface'] not in d:
+            #raise Exception('windows reports no WLAN interface named "{}"'.format(self.resource['interface']))
+            logger.warn('windows reports no WLAN interface named "{}"'.format(self.resource['interface']))
+            return None
+        d = d[self.resource['interface']]
         
         # Set the other traits with the other dictionary values
         for other in self.state.traits().values():
@@ -123,6 +172,15 @@ class WLANStatus(lb.Device):
         return d[trait.name]
 
 if __name__ == '__main__':
-    with WLANStatus() as wlan:
-        wlan.state.observe(notify)
-        print 'hello there ssid! ', wlan.state.ssid
+    import time
+        
+    with WLANStatus({'interface': 'Wi-Fi', 'ssid': 'EnGenius1'}) as wlan:
+        while True:
+            if wlan.state.state == 'connected':
+                try:
+                    print '{}%'.format(wlan.state.signal)
+                except:
+                    pass
+            else:
+                print 'not connected'
+            time.sleep(.25)
