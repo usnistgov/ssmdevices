@@ -91,7 +91,7 @@ class Netsh(lb.CommandLineWrapper):
         lines = re.findall(r'^\s*(\S+.*?)\s+:\s+(\S+.*?)\s*$',txt,flags=re.MULTILINE)
 
         return pairs_to_dict(lines)
-    
+
     def set_interface_connected (self, interface, profile):
         args = ['wlan', 'connect', 'name="{}"'.format(profile),'interface="{}"'.format(interface)]
         self.wait()
@@ -150,7 +150,7 @@ class WLANStatus(lb.Device):
                 time.sleep(.1)
         
         threading.Thread(target=reconnect).start()
-        
+
     def disconnect (self):
         pass
     

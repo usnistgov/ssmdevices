@@ -6,6 +6,7 @@ Created on Fri Feb 10 13:35:02 2017
 """
 
 from .iperf import *
+from .windows import *
 
 # Clear out submodules from namespace
 from inspect import ismodule as _ismodule
