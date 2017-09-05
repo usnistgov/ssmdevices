@@ -19,15 +19,16 @@ class IPerfClient(lb.CommandLineWrapper):
         The default value is the path that installs with 64-bit cygwin.
     '''
     resource = '127.0.0.1'
+    port = None
+    bind = None
+    tcp_window_size = None
+    buffer_size = 1024
+    interval = 0.5
+    
     binary_path = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
     
     class state(lb.CommandLineWrapper.state):
-        tcp_window_size = tl.CInt  (65535, min=1024, max=65535)
-        buffer_size     = tl.CInt  (1024,  min=1,    max=65535)
-        interval        = tl.CFloat(0.5,   min=.5)
         timeout         = tl.CFloat(6,     min=0)
-        port            = tl.CInt  (min=1)
-        bind            = tl.CBytes()
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
@@ -58,16 +59,21 @@ class IPerfClient(lb.CommandLineWrapper):
                                  'loop.bat')
         
         # Call the iperf binary
-        cmd = loop_path,self.binary_path,'-i',str(self.state.interval),\
+        cmd = loop_path,self.binary_path,\
               '-n','-1','-y','C',\
-              '-l', str(self.state.buffer_size),\
-              '-w', str(self.state.tcp_window_size),\
               '-c', str(self.resource)
               
-        if self.state.port != tl.Undefined:
-            cmd = cmd + ('-p',str(self.state.port))
-        if self.state.bind != tl.Undefined:
-            cmd = cmd + ('-B',str(self.state.bind))              
+        if self.port is not None:
+            cmd = cmd + ('-p',str(self.port))
+        if self.bind is not None:
+            cmd = cmd + ('-B',str(self.bind))
+        if self.tcp_window_size is not None:
+            cmd = cmd + ('-w',str(self.tcp_window_size))
+        if self.buffer_size is not None:
+            cmd = cmd + ('-l',str(self.buffer_size))
+        if self.interval is not None:
+            cmd = cmd + ('-i',str(self.interval))            
+
 #        self.state.timeout = self.state.interval*2
         
         super(IPerfClient,self).connect()

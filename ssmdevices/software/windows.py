@@ -47,7 +47,7 @@ class Netsh(lb.CommandLineWrapper):
                 elif ssid is not None:
                     d[ssid][k] = v
             return d
-        
+
         # Execute the binary
         args = ['wlan','show','networks','mode=bssid']
         self.wait()
@@ -105,8 +105,8 @@ class Netsh(lb.CommandLineWrapper):
         proc.wait()
 
 class WLANStatus(lb.Device):
-    resource = {'interface': 'Wi-Fi',
-                'ssid': None}
+    resource = 'Wi-Fi'
+    ssid = None
 
     class state(lb.Device.state):
         bssid              = lb.Bytes(readonly=True)
@@ -129,7 +129,7 @@ class WLANStatus(lb.Device):
             self.state.observe(onchange)
             
             logger.debug('starting WLAN reconnect watchdog')
-            iface,target_ssid = self.resource['interface'],self.resource['ssid']
+            iface,target_ssid = self.resource,self.ssid
             time.sleep(0.1)
             
             while True:
@@ -144,7 +144,7 @@ class WLANStatus(lb.Device):
                         logger.warn("{}, but don't know SSID for reconnection".format(iface))
                     else:
                         logger.warn("{}, reconnecting to {}".format(iface,target_ssid))
-                        self.backend.set_interface_connected(self.resource['interface'],
+                        self.backend.set_interface_connected(self.resource,
                                                              target_ssid)
                         
                 time.sleep(.1)
@@ -174,7 +174,7 @@ class WLANStatus(lb.Device):
 if __name__ == '__main__':
     import time
         
-    with WLANStatus({'interface': 'Wi-Fi', 'ssid': 'EnGenius1'}) as wlan:
+    with WLANStatus('Wi-Fi', ssid='EnGenius1') as wlan:
         while True:
             if wlan.state.state == 'connected':
                 try:
