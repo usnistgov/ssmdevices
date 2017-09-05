@@ -26,6 +26,8 @@ class IPerfClient(lb.CommandLineWrapper):
         buffer_size     = tl.CInt  (1024,  min=1,    max=65535)
         interval        = tl.CFloat(0.5,   min=.5)
         timeout         = tl.CFloat(6,     min=0)
+        port            = tl.CInt  (min=1)
+        bind            = tl.CBytes()
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
@@ -62,6 +64,10 @@ class IPerfClient(lb.CommandLineWrapper):
               '-w', str(self.state.tcp_window_size),\
               '-c', str(self.resource)
               
+        if self.state.port != tl.Undefined:
+            cmd = cmd + ('-p',str(self.state.port))
+        if self.state.bind != tl.Undefined:
+            cmd = cmd + ('-B',str(self.state.bind))              
 #        self.state.timeout = self.state.interval*2
         
         super(IPerfClient,self).connect()
