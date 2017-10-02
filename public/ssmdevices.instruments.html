@@ -1,0 +1,535 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ssmdevices.instruments package &#8212; ssmdevices 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ssmdevices.lib package" href="ssmdevices.lib.html" />
+    <link rel="prev" title="ssmdevices.electronics package" href="ssmdevices.electronics.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>ssmdevices 0.0.1 documentation</span></a></h1>
+        <h2 class="heading"><span>ssmdevices.instruments package</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="ssmdevices.electronics.html">ssmdevices.electronics package</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="ssmdevices.lib.html">ssmdevices.lib package</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="ssmdevices-instruments-package">
+<h1>ssmdevices.instruments package<a class="headerlink" href="#ssmdevices-instruments-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ssmdevices.instruments.attenuators">
+<span id="ssmdevices-instruments-attenuators-module"></span><h2>ssmdevices.instruments.attenuators module<a class="headerlink" href="#module-ssmdevices.instruments.attenuators" title="Permalink to this headline">¶</a></h2>
+<p>Created on Tue Mar 07 14:38:10 2017</p>
+<p>&#64;author: dkuester</p>
+<dl class="class">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT">
+<em class="property">class </em><code class="descclassname">ssmdevices.instruments.attenuators.</code><code class="descname">MiniCircuitsRCDAT</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/attenuators.html#MiniCircuitsRCDAT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.dotnet.DotNetDevice</span></code></p>
+<p>A digitally controlled, 0 to 110 dB variable attenuator.</p>
+<p>Ensure that the windows DLL driver is installed by copying mcl_RUDAT64.dll from
+the manufacturer website or install CD into C:WindowsSysWOW64.</p>
+<p>This implementation calls the .NET drivers provided by the manufacturer
+instead of the C DLL drivers recommended by the manufacturer in order
+to support 64-bit python.</p>
+<dl class="method">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/attenuators.html#MiniCircuitsRCDAT.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the device resource.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/attenuators.html#MiniCircuitsRCDAT.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Release the attenuator hardware resource via the driver DLL.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.dll_name">
+<code class="descname">dll_name</code><em class="property"> = 'mcl_RUDAT64.dll'</em><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.dll_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.library">
+<code class="descname">library</code><em class="property"> = &lt;module 'ssmdevices.lib' from 'C:\Users\dkuester\Documents\Source\ssmdevices\ssmdevices\lib\__init__.py'&gt;</em><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.library" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/attenuators.html#MiniCircuitsRCDAT.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.RemoteStates</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state.attenuation">
+<code class="descname">attenuation</code><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state.attenuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0,max=115,step=0.25,command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssmdevices.instruments.gps_simulator">
+<span id="ssmdevices-instruments-gps-simulator-module"></span><h2>ssmdevices.instruments.gps_simulator module<a class="headerlink" href="#module-ssmdevices.instruments.gps_simulator" title="Permalink to this headline">¶</a></h2>
+<p>GPS simulator control classes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Duncan McGillivray &lt;<a class="reference external" href="mailto:duncan&#46;mcgillivray&#37;&#52;&#48;nist&#46;gov">duncan<span>&#46;</span>mcgillivray<span>&#64;</span>nist<span>&#46;</span>gov</a>&gt;, Daniel Kuester &lt;<a class="reference external" href="mailto:daniel&#46;kuester&#37;&#52;&#48;nist&#46;gov">daniel<span>&#46;</span>kuester<span>&#64;</span>nist<span>&#46;</span>gov</a>&gt;</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000">
+<em class="property">class </em><code class="descclassname">ssmdevices.instruments.gps_simulator.</code><code class="descname">SpirentGSS8000</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.serial_.SerialDevice</span></code></p>
+<p>Control a Spirent GPS GSS8000 simulator over a serial connection.</p>
+<p>Responses from the Spirent seem to be incompatible with
+pyvisa, so this driver uses plain serial.</p>
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.abort">
+<code class="descname">abort</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.abort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.abort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Force stop the current scenario.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.command_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.command_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.end">
+<code class="descname">end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop running the current scenario. If a scenario is not
+running, an exception is raised.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.fix_path_name">
+<em class="property">static </em><code class="descname">fix_path_name</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.fix_path_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.fix_path_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.load_scenario">
+<code class="descname">load_scenario</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.load_scenario"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.load_scenario" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a GPS scenario from a file stored on the instrument.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; Full path to scenario file on the instrument.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.query" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>End any currently running scenario, then rewind</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.resource">
+<code class="descname">resource</code><em class="property"> = 'COM17'</em><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>serial port resource name (COMnn in windows or /dev/xxxx in unix/Linux)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.rewind">
+<code class="descname">rewind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.rewind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.rewind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rewind the current scenario to the beginning.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start running the current scenario. Requires that there is time left in
+the scenario, otherwise run <cite>rewind()</cite> first.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.save_scenario">
+<code class="descname">save_scenario</code><span class="sig-paren">(</span><em>folderpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.save_scenario"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.save_scenario" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current GPS scenario to a file stored on the instrument.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; Full path to scenario file on the instrument.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.serial_.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.current_scenario">
+<code class="descname">current_scenario</code><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.current_scenario" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=&#8217;SC_NAME,includepath&#8217;,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.gps_week">
+<code class="descname">gps_week</code><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.gps_week" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=None,max=None,command=&#8217;-,ZCNT_TOW&#8217;,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.running">
+<code class="descname">running</code><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.running" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.status">
+<code class="descname">status</code><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>UTC time of the current running scenario.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.utc_time">
+<code class="descname">utc_time</code><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.utc_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>command</em>, <em>returns=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a message to the spirent, and check the status message
+returned by the spirent.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Either &#8216;value&#8217; (return the data response), &#8216;status&#8217;
+(return the instrument status), or None (raise an
+exception if a data value is returned)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssmdevices.instruments.power_sensors">
+<span id="ssmdevices-instruments-power-sensors-module"></span><h2>ssmdevices.instruments.power_sensors module<a class="headerlink" href="#module-ssmdevices.instruments.power_sensors" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Feb 10 13:35:02 2017</p>
+<p>&#64;author: dkuester</p>
+<dl class="class">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries">
+<em class="property">class </em><code class="descclassname">ssmdevices.instruments.power_sensors.</code><code class="descname">KeysightU2040XSeries</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/power_sensors.html#KeysightU2040XSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.VISADevice</span></code></p>
+<p>This is my cool driver for Keysight U2040 X-Series power sensors</p>
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.fetch">
+<code class="descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/power_sensors.html#KeysightU2040XSeries.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a single number or pandas Series containing the power readings</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.preset">
+<code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/power_sensors.html#KeysightU2040XSeries.preset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.preset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/power_sensors.html#KeysightU2040XSeries.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.frequency">
+<code class="descname">frequency</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=10000000.0,max=18000000000.0,step=0.001,command=&#8217;SENS:FREQ&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.initiate_continuous">
+<code class="descname">initiate_continuous</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.initiate_continuous" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=&#8217;INIT:CONT&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.measurement_rate">
+<code class="descname">measurement_rate</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.measurement_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.EnumBytes(values=[&#8216;NORM&#8217;, &#8216;DOUB&#8217;, &#8216;FAST&#8217;],case_sensitive=False,command=&#8217;SENS:MRAT&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.output_trigger">
+<code class="descname">output_trigger</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.output_trigger" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=&#8217;OUTP:TRIG&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.sweep_aperture">
+<code class="descname">sweep_aperture</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.sweep_aperture" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=2e-05,max=0.2,step=None,command=&#8217;SWE:APER&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.trigger_count">
+<code class="descname">trigger_count</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.trigger_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=200,command=&#8217;TRIG:COUN&#8217;,read_only=False,write_only=False,cache=False)
+help me</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.trigger_source">
+<code class="descname">trigger_source</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.trigger_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.EnumBytes(values=[&#8216;IMM&#8217;, &#8216;INT&#8217;, &#8216;EXT&#8217;, &#8216;BUS&#8217;, &#8216;INT1&#8217;],case_sensitive=False,command=&#8217;TRIG:SOUR&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssmdevices.instruments.signal_analyzers">
+<span id="ssmdevices-instruments-signal-analyzers-module"></span><h2>ssmdevices.instruments.signal_analyzers module<a class="headerlink" href="#module-ssmdevices.instruments.signal_analyzers" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer">
+<em class="property">class </em><code class="descclassname">ssmdevices.instruments.signal_analyzers.</code><code class="descname">RohdeSchwarzFSW26SpectrumAnalyzer</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26SpectrumAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer">
+<em class="property">class </em><code class="descclassname">ssmdevices.instruments.signal_analyzers.</code><code class="descname">RohdeSchwarzFSW26IQAnalyzer</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26IQAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base</span></code></p>
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26IQAnalyzer.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_trace">
+<code class="descname">fetch_trace</code><span class="sig-paren">(</span><em>horizontal=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26IQAnalyzer.fetch_trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_trace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26IQAnalyzer.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ssmdevices.instruments.signal_analyzers.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_evaluation_enabled">
+<code class="descname">iq_evaluation_enabled</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_evaluation_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=&#8217;CALC:IQ:EVAL&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_format">
+<code class="descname">iq_format</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.EnumBytes(values=[&#8216;FREQ&#8217;, &#8216;MAGN&#8217;, &#8216;MTAB&#8217;, &#8216;PEAK&#8217;, &#8216;RIM&#8217;, &#8216;VECT&#8217;],case_sensitive=False,command=&#8217;CALC:FORM&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_mode">
+<code class="descname">iq_mode</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.EnumBytes(values=[&#8216;TDOMain&#8217;, &#8216;FDOMain&#8217;, &#8216;IQ&#8217;],case_sensitive=False,command=&#8217;CALC:IQ:MODE&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_record_length">
+<code class="descname">iq_record_length</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_record_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=461373440,command=&#8217;TRAC:IQ:RLEN&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_sample_rate">
+<code class="descname">iq_sample_rate</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_sample_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=1e-09,max=160000000.0,step=None,command=&#8217;TRAC:IQ:SRAT&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_simple_enabled">
+<code class="descname">iq_simple_enabled</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_simple_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=&#8217;CALC:IQ&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.store_trace">
+<code class="descname">store_trace</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26IQAnalyzer.store_trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.store_trace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssmdevices.instruments.signal_generators">
+<span id="ssmdevices-instruments-signal-generators-module"></span><h2>ssmdevices.instruments.signal_generators module<a class="headerlink" href="#module-ssmdevices.instruments.signal_generators" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A">
+<em class="property">class </em><code class="descclassname">ssmdevices.instruments.signal_generators.</code><code class="descname">RohdeSchwarzSMW200A</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_generators.html#RohdeSchwarzSMW200A"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.VISADevice</span></code></p>
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.load_state">
+<code class="descname">load_state</code><span class="sig-paren">(</span><em>FileName</em>, <em>opc=False</em>, <em>num='4'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_generators.html#RohdeSchwarzSMW200A.load_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.load_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a previously saved state file in the instrument</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>FileName</strong> (<em>string</em>) &#8211; state file location on the instrument</li>
+<li><strong>opc</strong> (<em>bool</em>) &#8211; set the VISA op complete flag?</li>
+<li><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.rf_output_enable">
+<code class="descname">rf_output_enable</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.rf_output_enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set RF enable state getter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.rf_output_freq">
+<code class="descname">rf_output_freq</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.rf_output_freq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set RF LO frequency</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.rf_output_power">
+<code class="descname">rf_output_power</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.rf_output_power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set RF output power level</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.save_state">
+<code class="descname">save_state</code><span class="sig-paren">(</span><em>FileName</em>, <em>num='4'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_generators.html#RohdeSchwarzSMW200A.save_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.save_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save current state of the device to the default directory.
+:param FileName: state file location on the instrument
+:type FileName: string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_generators.html#RohdeSchwarzSMW200A.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.frequency_baseband">
+<code class="descname">frequency_baseband</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.frequency_baseband" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=2000.0,max=26500000000.0,step=1000.0,command=&#8217;:freq&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.power_out">
+<code class="descname">power_out</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.power_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-60,max=20,step=0.01,command=&#8217;:pow&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.rf_enable">
+<code class="descname">rf_enable</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.rf_enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=&#8217;OUTP&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssmdevices.instruments">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ssmdevices.instruments" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Feb 10 13:35:02 2017</p>
+<p>&#64;author: dkuester</p>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="ssmdevices.electronics.html">ssmdevices.electronics package</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="ssmdevices.lib.html">ssmdevices.lib package</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

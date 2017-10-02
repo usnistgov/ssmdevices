@@ -1,0 +1,32 @@
+ssmdevices package
+==================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    ssmdevices.electronics
+    ssmdevices.instruments
+    ssmdevices.lib
+    ssmdevices.software
+
+Submodules
+----------
+
+ssmdevices\.pc module
+---------------------
+
+.. automodule:: ssmdevices.pc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: ssmdevices
+    :members:
+    :undoc-members:
+    :show-inheritance:

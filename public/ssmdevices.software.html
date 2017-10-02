@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ssmdevices.software package &#8212; ssmdevices 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="ssmdevices.lib package" href="ssmdevices.lib.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>ssmdevices 0.0.1 documentation</span></a></h1>
+        <h2 class="heading"><span>ssmdevices.software package</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="ssmdevices.lib.html">ssmdevices.lib package</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="ssmdevices-software-package">
+<h1>ssmdevices.software package<a class="headerlink" href="#ssmdevices-software-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ssmdevices.software.iperf">
+<span id="ssmdevices-software-iperf-module"></span><h2>ssmdevices.software.iperf module<a class="headerlink" href="#module-ssmdevices.software.iperf" title="Permalink to this headline">¶</a></h2>
+<p>Created on Thu May 11 09:39:43 2017</p>
+<p>&#64;author: dkuester</p>
+<dl class="class">
+<dt id="ssmdevices.software.iperf.IPerfClient">
+<em class="property">class </em><code class="descclassname">ssmdevices.software.iperf.</code><code class="descname">IPerfClient</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.commandline.CommandLineWrapper</span></code></p>
+<p>Run an IPerfClient. Set the resource to the location of iperf.
+The default value is the path that installs with 64-bit cygwin.</p>
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.binary_path">
+<code class="descname">binary_path</code><em class="property"> = 'C:\\Users\\dkuester\\Documents\\Source\\ssmdevices\\ssmdevices\\lib\\iperf.exe'</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.binary_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.bind">
+<code class="descname">bind</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.bind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.buffer_size">
+<code class="descname">buffer_size</code><em class="property"> = 1024</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.buffer_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfClient.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfClient.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfClient.fetch">
+<code class="descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfClient.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.fetch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.interval">
+<code class="descname">interval</code><em class="property"> = 0.5</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.interval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.port">
+<code class="descname">port</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.resource">
+<code class="descname">resource</code><em class="property"> = '127.0.0.1'</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.software.iperf.IPerfClient.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfClient.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.commandline.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.state.timeout">
+<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A casting version of the float trait.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.tcp_window_size">
+<code class="descname">tcp_window_size</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.tcp_window_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssmdevices.software.windows">
+<span id="ssmdevices-software-windows-module"></span><h2>ssmdevices.software.windows module<a class="headerlink" href="#module-ssmdevices.software.windows" title="Permalink to this headline">¶</a></h2>
+<p>Created on Thu Aug 31 10:19:14 2017</p>
+<p>&#64;author: dkuester</p>
+<dl class="class">
+<dt id="ssmdevices.software.windows.Netsh">
+<em class="property">class </em><code class="descclassname">ssmdevices.software.windows.</code><code class="descname">Netsh</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.commandline.CommandLineWrapper</span></code></p>
+<p>Parse calls to netsh to get information about available WLAN access
+points.</p>
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.Netsh.binary_path">
+<code class="descname">binary_path</code><em class="property"> = 'C:\\Windows\\System32\\netsh.exe'</em><a class="headerlink" href="#ssmdevices.software.windows.Netsh.binary_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.get_wlan_interfaces">
+<code class="descname">get_wlan_interfaces</code><span class="sig-paren">(</span><em>name=None</em>, <em>param=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh.get_wlan_interfaces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh.get_wlan_interfaces" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.get_wlan_ssids">
+<code class="descname">get_wlan_ssids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh.get_wlan_ssids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh.get_wlan_ssids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.set_interface_connected">
+<code class="descname">set_interface_connected</code><span class="sig-paren">(</span><em>interface</em>, <em>profile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh.set_interface_connected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh.set_interface_connected" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.wait">
+<code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh.wait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh.wait" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.software.windows.WLANStatus">
+<em class="property">class </em><code class="descclassname">ssmdevices.software.windows.</code><code class="descname">WLANStatus</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.Device</span></code></p>
+<dl class="method">
+<dt id="ssmdevices.software.windows.WLANStatus.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.command_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.command_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.WLANStatus.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.WLANStatus.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.resource">
+<code class="descname">resource</code><em class="property"> = 'Wi-Fi'</em><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.ssid">
+<code class="descname">ssid</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.ssid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.software.windows.WLANStatus.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.RemoteStates</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.bssid">
+<code class="descname">bssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.channel">
+<code class="descname">channel</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=None,command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.force_reconnect">
+<code class="descname">force_reconnect</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.force_reconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.radio_type">
+<code class="descname">radio_type</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.radio_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.signal">
+<code class="descname">signal</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=100,command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.ssid">
+<code class="descname">ssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.ssid" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.state">
+<code class="descname">state</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.transmit_rate_mbps">
+<code class="descname">transmit_rate_mbps</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.transmit_rate_mbps" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=None,command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssmdevices.software">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ssmdevices.software" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Feb 10 13:35:02 2017</p>
+<p>&#64;author: dkuester</p>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="ssmdevices.lib.html">ssmdevices.lib package</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+ssmdevices\.software package
+============================
+
+Submodules
+----------
+
+ssmdevices\.software\.iperf module
+----------------------------------
+
+.. automodule:: ssmdevices.software.iperf
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.software\.windows module
+------------------------------------
+
+.. automodule:: ssmdevices.software.windows
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: ssmdevices.software
+    :members:
+    :undoc-members:
+    :show-inheritance:

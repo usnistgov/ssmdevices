@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>setup module &#8212; ssmdevices 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ssmdevices package" href="ssmdevices.html" />
+    <link rel="prev" title="Welcome to ssmdevices’s documentation!" href="index.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>ssmdevices 0.0.1 documentation</span></a></h1>
+        <h2 class="heading"><span>setup module</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="index.html">Welcome to ssmdevices&#8217;s documentation!</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="ssmdevices.html">ssmdevices package</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="module-setup">
+<span id="setup-module"></span><h1>setup module<a class="headerlink" href="#module-setup" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation-instructions">
+<h2>Installation instructions<a class="headerlink" href="#installation-instructions" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Install git for windows (recent version?):            <a class="reference external" href="https://git-scm.com/download/win">https://git-scm.com/download/win</a></p>
+</li>
+<li><p class="first">Install tortoisegit (version&gt;2.0):                    <a class="reference external" href="https://tortoisegit.org/download/">https://tortoisegit.org/download/</a></p>
+</li>
+<li><p class="first">Install anaconda python 4.1.1 (64 bit python 2.7):    <a class="reference external" href="https://www.continuum.io/downloads">https://www.continuum.io/downloads</a></p>
+</li>
+<li><p class="first">Install acroname brainstem development kit v2.3.0     <a class="reference external" href="https://acroname.com/software/brainstem-development-kit-ms-windows-ms-windows">https://acroname.com/software/brainstem-development-kit-ms-windows-ms-windows</a>
+Extract the folders into a convenient location on your computer.
+Open a command prompt, and use cd to enter the root of the extracted folder.
+Use pip to install the python drivers for the acroname brainstem by typing</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">ncnr</span><span class="o">.</span><span class="n">nist</span><span class="o">.</span><span class="n">gov</span><span class="o">/</span><span class="n">dkuester</span><span class="o">/</span><span class="n">labbench</span>
+</pre></div>
+</div>
+<p>on a command line.</p>
+</li>
+<li><dl class="first docutils">
+<dt>Install the minicircuits driver mcl_RUDAT64.dll               <a class="reference external" href="http://www.minicircuits.com/support/software_download.html">http://www.minicircuits.com/support/software_download.html</a></dt>
+<dd><ul class="first last simple">
+<li>Copy mcl_RUDAT64.dll out of the zipfile into C:windowssyswow64</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Use tortoisegit to clone the source code </dt>
+<dd><ul class="first last simple">
+<li>Right click in a windows explorer window where you want to clone the source directory, and click &#8220;Clone...&#8221;</li>
+<li>For the repository url enter
+cfs2w.nist.gov7InternalDivisionProjectsNASCTN_GPSgpslte</li>
+<li>Click OK</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Run the installer script in the code repository to install the remaining python package dependencies</p>
+</li>
+</ul>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="index.html">Welcome to ssmdevices&#8217;s documentation!</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="ssmdevices.html">ssmdevices package</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>
