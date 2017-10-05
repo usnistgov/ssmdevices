@@ -7,6 +7,7 @@ Created on Fri Feb 10 13:35:02 2017
 
 from .attenuators import *
 from .gps_simulator import *
+from .oscilloscopes import *
 from .power_sensors import *
 from .signal_analyzers import *
 from .signal_generators import *
