@@ -4,23 +4,20 @@ and provide data in [pandas](http://pandas.pydata.org/) data frames when possibl
 It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name complications and to restrict
 access based on export control law.
 
-## Basic Installation
+## Getting started
 1. Install a 64-bit python 2.7 distribution (you can use your favorite, though this process has been tested mainly with Anaconda)
 2. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/labbench`
 3. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
 4. If you need support for VISA instruments, install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
 That's it.
 
-## Using ssmdevices
-
-### Documentation
-* [API reference](http://ssm.ipages.nist.gov/ssmdevices/)
-
-### Examples
-#### Data acquisition and instrument control
+### Data acquisition and instrument control examples
 * [Coexistence tests of LTE-LAA and WLAN](examples/lte-laa-wlan.ipynb)
 * [Receiver system noise tests of a WLAN client adapter](examples/wlan-noise-sweep.ipynb)
 * [Receiver system noise tests of a GPS receiver](examples/gps-noise-sweep.ipynb)
+
+## References
+* [API reference](http://ssm.ipages.nist.gov/ssmdevices/)
 
 ## Supported devices
 RF power sensors
