@@ -11,6 +11,16 @@ access based on export control law.
 4. If you need support for VISA instruments, install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
 That's it.
 
+## Using ssmdevices
+
+### Documentation
+* [API reference](http://ssm.ipages.nist.gov/ssmdevices/)
+
+### Examples
+* [Acquisitions for coexistence testing between LTE-LAA and WLAN](examples/lte-laa-wlan.ipynb)
+
+
+
 ## Supported devices
 RF power sensors
 * Keysight U2040 X series
@@ -36,8 +46,3 @@ Misc. Test Electronics
 GPS Receivers
 * SwiftNav Piksi
 
-## Examples
-These can be a jumping-off point for making your own scripts.
-
-### Acquisition
-* [Coexistence tests for LTE-LAA and WLAN](examples/lte-laa-wlan.ipynb)
