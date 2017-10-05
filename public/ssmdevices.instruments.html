@@ -86,7 +86,7 @@ to support 64-bit python.</p>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.library">
-<code class="descname">library</code><em class="property"> = &lt;module 'ssmdevices.lib' from 'C:\Users\dkuester\Documents\Source\ssmdevices\ssmdevices\lib\__init__.py'&gt;</em><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.library" title="Permalink to this definition">¶</a></dt>
+<code class="descname">library</code><em class="property"> = &lt;module 'ssmdevices.lib' from 'C:\Users\dkuester\Documents\Source\ssmdevices\ssmdevices\lib\__init__.pyc'&gt;</em><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.library" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="class">
@@ -254,6 +254,48 @@ exception if a data value is returned)</td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssmdevices.instruments.oscilloscopes">
+<span id="ssmdevices-instruments-oscilloscopes-module"></span><h2>ssmdevices.instruments.oscilloscopes module<a class="headerlink" href="#module-ssmdevices.instruments.oscilloscopes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope">
+<em class="property">class </em><code class="descclassname">ssmdevices.instruments.oscilloscopes.</code><code class="descname">RigolOscilloscope</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/oscilloscopes.html#RigolOscilloscope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.VISADevice</span></code></p>
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>horizontal=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/oscilloscopes.html#RigolOscilloscope.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.fetch">
+<code class="descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/oscilloscopes.html#RigolOscilloscope.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.fetch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.fetch_rms">
+<code class="descname">fetch_rms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/oscilloscopes.html#RigolOscilloscope.fetch_rms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.fetch_rms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/oscilloscopes.html#RigolOscilloscope.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.time_offset">
+<code class="descname">time_offset</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.time_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=None,command=&#8217;:TIM:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.time_scale">
+<code class="descname">time_scale</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.time_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=None,command=&#8217;:TIM:SCAL&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
 </dd></dl>
 
 </dd></dl>
