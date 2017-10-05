@@ -17,9 +17,10 @@ That's it.
 * [API reference](http://ssm.ipages.nist.gov/ssmdevices/)
 
 ### Examples
-* [Acquisitions for coexistence testing between LTE-LAA and WLAN](examples/lte-laa-wlan.ipynb)
-
-
+#### Data acquisition and instrument control
+* [Coexistence tests of LTE-LAA and WLAN](examples/lte-laa-wlan.ipynb)
+* [Receiver system noise tests of a WLAN client adapter](examples/wlan-noise-sweep.ipynb)
+* [Receiver system noise tests of a GPS receiver](examples/gps-noise-sweep.ipynb)
 
 ## Supported devices
 RF power sensors
