@@ -38,7 +38,7 @@
         <p>
         «&#160;&#160;<a href="ssmdevices.lib.html">ssmdevices.lib package</a>
         &#160;&#160;::&#160;&#160;
-        <a class="uplink" href="index.html">Contents</a>
+        <a class="uplink" href="ssmdevices.html">Contents</a>
         </p>
 
       </div>
@@ -61,6 +61,11 @@
 <p>Run an IPerfClient. Set the resource to the location of iperf.
 The default value is the path that installs with 64-bit cygwin.</p>
 <dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.binary_path">
 <code class="descname">binary_path</code><em class="property"> = 'C:\\Users\\dkuester\\Documents\\Source\\ssmdevices\\ssmdevices\\lib\\iperf.exe'</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.binary_path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -76,8 +81,38 @@ The default value is the path that installs with 64-bit cygwin.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfClient.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Empty</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfClient.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.command_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a setting from a remote instrument that has a trait attribute
+<a href="#id1"><span class="problematic" id="id2">``</span></a>attr&#8217;&#8217; in type(self).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfClient.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.command_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value&#8217;&#8217;
+will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr&#8217;&#8217; in type(self).</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfClient.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfClient.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfClient.execute">
+<code class="descname">execute</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.execute" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -100,10 +135,28 @@ The default value is the path that installs with 64-bit cygwin.</p>
 <code class="descname">resource</code><em class="property"> = '127.0.0.1'</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.resource" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfClient.running">
+<code class="descname">running</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.running" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfClient.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called each time a device is instantiated
+after everything else is ready.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="ssmdevices.software.iperf.IPerfClient.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfClient.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.commandline.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.state.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.timeout" title="Permalink to this definition">¶</a></dt>
@@ -131,9 +184,55 @@ The default value is the path that installs with 64-bit cygwin.</p>
 <p>Parse calls to netsh to get information about available WLAN access
 points.</p>
 <dl class="attribute">
+<dt id="ssmdevices.software.windows.Netsh.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.software.windows.Netsh.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.binary_path">
 <code class="descname">binary_path</code><em class="property"> = 'C:\\Windows\\System32\\netsh.exe'</em><a class="headerlink" href="#ssmdevices.software.windows.Netsh.binary_path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Empty</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.command_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a setting from a remote instrument that has a trait attribute
+<a href="#id7"><span class="problematic" id="id8">``</span></a>attr&#8217;&#8217; in type(self).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.command_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id9"><span class="problematic" id="id10">``</span></a>value&#8217;&#8217;
+will be applied to the trait attriute <a href="#id11"><span class="problematic" id="id12">``</span></a>attr&#8217;&#8217; in type(self).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.execute">
+<code class="descname">execute</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.execute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.fetch">
+<code class="descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve any queued results from standard output</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.get_wlan_interfaces">
@@ -145,10 +244,45 @@ points.</p>
 <code class="descname">get_wlan_ssids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh.get_wlan_ssids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh.get_wlan_ssids" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.Netsh.resource">
+<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.windows.Netsh.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.running">
+<code class="descname">running</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.running" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.set_interface_connected">
 <code class="descname">set_interface_connected</code><span class="sig-paren">(</span><em>interface</em>, <em>profile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh.set_interface_connected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh.set_interface_connected" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called each time a device is instantiated
+after everything else is ready.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.software.windows.Netsh.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.RemoteStates</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.Netsh.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.Netsh.state.timeout">
+<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A casting version of the float trait.</p>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.wait">
@@ -161,10 +295,22 @@ points.</p>
 <dt id="ssmdevices.software.windows.WLANStatus">
 <em class="property">class </em><code class="descclassname">ssmdevices.software.windows.</code><code class="descname">WLANStatus</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.Device</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.software.windows.WLANStatus.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.command_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.command_get" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.WLANStatus.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.command_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id13"><span class="problematic" id="id14">``</span></a>value&#8217;&#8217;
+will be applied to the trait attriute <a href="#id15"><span class="problematic" id="id16">``</span></a>attr&#8217;&#8217; in type(self).</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.WLANStatus.connect">
@@ -180,6 +326,13 @@ points.</p>
 <dt id="ssmdevices.software.windows.WLANStatus.resource">
 <code class="descname">resource</code><em class="property"> = 'Wi-Fi'</em><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.resource" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.WLANStatus.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called each time a device is instantiated
+after everything else is ready.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.ssid">
@@ -200,6 +353,12 @@ points.</p>
 <dt id="ssmdevices.software.windows.WLANStatus.state.channel">
 <code class="descname">channel</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.channel" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Int(min=0,max=None,command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -257,13 +416,14 @@ points.</p>
         <p>
         «&#160;&#160;<a href="ssmdevices.lib.html">ssmdevices.lib package</a>
         &#160;&#160;::&#160;&#160;
-        <a class="uplink" href="index.html">Contents</a>
+        <a class="uplink" href="ssmdevices.html">Contents</a>
         </p>
 
       </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 
+
 This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
 Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
 copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,

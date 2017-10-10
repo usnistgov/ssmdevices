@@ -39,7 +39,7 @@
         <p>
         «&#160;&#160;<a href="ssmdevices.electronics.html">ssmdevices.electronics package</a>
         &#160;&#160;::&#160;&#160;
-        <a class="uplink" href="index.html">Contents</a>
+        <a class="uplink" href="ssmdevices.html">Contents</a>
         &#160;&#160;::&#160;&#160;
         <a href="ssmdevices.lib.html">ssmdevices.lib package</a>&#160;&#160;»
         </p>
@@ -67,6 +67,25 @@ the manufacturer website or install CD into C:WindowsSysWOW64.</p>
 <p>This implementation calls the .NET drivers provided by the manufacturer
 instead of the C DLL drivers recommended by the manufacturer in order
 to support 64-bit python.</p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.command_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a setting from a remote instrument that has a trait attribute
+<a href="#id1"><span class="problematic" id="id2">``</span></a>attr&#8217;&#8217; in type(self).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.command_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value&#8217;&#8217;
+will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr&#8217;&#8217; in type(self).</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/attenuators.html#MiniCircuitsRCDAT.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.connect" title="Permalink to this definition">¶</a></dt>
@@ -89,6 +108,22 @@ to support 64-bit python.</p>
 <code class="descname">library</code><em class="property"> = &lt;module 'ssmdevices.lib' from 'C:\Users\dkuester\Documents\Source\ssmdevices\ssmdevices\lib\__init__.pyc'&gt;</em><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.library" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.resource">
+<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>DotNetDevice loads the DLL; importing in the
+class definition tries to load a lot of DLLs
+on import
+of ssmdevices, which would 1) break platforms
+that do not support the DLL, and 2) waste
+memory, and 3)</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/attenuators.html#MiniCircuitsRCDAT.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state" title="Permalink to this definition">¶</a></dt>
@@ -97,6 +132,12 @@ to support 64-bit python.</p>
 <dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state.attenuation">
 <code class="descname">attenuation</code><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state.attenuation" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Float(min=0,max=115,step=0.25,command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
 </dd></dl>
 
 </dd></dl>
@@ -128,9 +169,44 @@ pyvisa, so this driver uses plain serial.</p>
 <dd><p>Force stop the current scenario.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.baud_rate">
+<code class="descname">baud_rate</code><em class="property"> = 9600</em><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.baud_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.command_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.command_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.command_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id7"><span class="problematic" id="id8">``</span></a>value&#8217;&#8217;
+will be applied to the trait attriute <a href="#id9"><span class="problematic" id="id10">``</span></a>attr&#8217;&#8217; in type(self).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to the serial device with the VISA resource string defined
+in self.resource</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect the serial instrument</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.dsrdtr">
+<code class="descname">dsrdtr</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.dsrdtr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -146,6 +222,29 @@ running, an exception is raised.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.from_hwid">
+<code class="descname">from_hwid</code><span class="sig-paren">(</span><em>hwid=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.from_hwid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate a new SerialDevice from a <a href="#id11"><span class="problematic" id="id12">`</span></a>hwid&#8217; resource instead
+of a comport resource. A hwid string in windows might look something
+like:</p>
+<p>r&#8217;PCIVEN_8086&amp;DEV_9D3D&amp;SUBSYS_06DC1028&amp;REV_213&amp;11583659&amp;1&amp;B3&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.list_ports">
+<code class="descname">list_ports</code><span class="sig-paren">(</span><em>hwid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.list_ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>List USB serial devices on the computer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of port resource information</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.load_scenario">
 <code class="descname">load_scenario</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.load_scenario"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.load_scenario" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a GPS scenario from a file stored on the instrument.</p>
@@ -158,6 +257,11 @@ running, an exception is raised.</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.parity">
+<code class="descname">parity</code><em class="property"> = 'N'</em><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.parity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.query">
@@ -182,6 +286,11 @@ running, an exception is raised.</p>
 <dd><p>Rewind the current scenario to the beginning.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.rtscts">
+<code class="descname">rtscts</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.rtscts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.run">
 <code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.run" title="Permalink to this definition">¶</a></dt>
@@ -203,10 +312,23 @@ the scenario, otherwise run <cite>rewind()</cite> first.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called each time a device is instantiated
+after everything else is ready.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.serial_.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.current_scenario">
 <code class="descname">current_scenario</code><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.current_scenario" title="Permalink to this definition">¶</a></dt>
@@ -239,6 +361,16 @@ the scenario, otherwise run <cite>rewind()</cite> first.</p>
 
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.stopbits">
+<code class="descname">stopbits</code><em class="property"> = 1</em><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.stopbits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.timeout">
+<code class="descname">timeout</code><em class="property"> = 2</em><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.timeout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>command</em>, <em>returns=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/gps_simulator.html#SpirentGSS8000.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.write" title="Permalink to this definition">¶</a></dt>
@@ -256,6 +388,16 @@ exception if a data value is returned)</td>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.write_termination">
+<code class="descname">write_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.write_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.xonxoff">
+<code class="descname">xonxoff</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.xonxoff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -265,10 +407,31 @@ exception if a data value is returned)</td>
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope">
 <em class="property">class </em><code class="descclassname">ssmdevices.instruments.oscilloscopes.</code><code class="descname">RigolOscilloscope</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/oscilloscopes.html#RigolOscilloscope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.VISADevice</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><em>horizontal=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/oscilloscopes.html#RigolOscilloscope.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.connect" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect the VISA instrument (if connected)</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.fetch">
@@ -280,10 +443,74 @@ exception if a data value is returned)</td>
 <code class="descname">fetch_rms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/oscilloscopes.html#RigolOscilloscope.fetch_rms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.fetch_rms" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.overlap_and_block">
+<code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.overlap_and_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
+send an &#8216;<a href="#id13"><span class="problematic" id="id14">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.preset">
+<code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.preset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.query" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.read_termination">
+<code class="descname">read_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.read_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.resource">
+<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.set_backend">
+<code class="descname">set_backend</code><span class="sig-paren">(</span><em>backend_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.set_backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>backend_name can be &#8216;py&#8217; or &#8216;ni&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called each time a device is instantiated
+after everything else is ready.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/oscilloscopes.html#RigolOscilloscope.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.identity">
+<code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.options">
+<code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.options" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.status_byte">
+<code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.status_byte" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Dict(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.time_offset">
 <code class="descname">time_offset</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.time_offset" title="Permalink to this definition">¶</a></dt>
@@ -298,6 +525,21 @@ exception if a data value is returned)</td>
 
 </dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.wait">
+<code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.wait" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.write_termination">
+<code class="descname">write_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.write_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -310,10 +552,45 @@ exception if a data value is returned)</td>
 <em class="property">class </em><code class="descclassname">ssmdevices.instruments.power_sensors.</code><code class="descname">KeysightU2040XSeries</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/power_sensors.html#KeysightU2040XSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.VISADevice</span></code></p>
 <p>This is my cool driver for Keysight U2040 X-Series power sensors</p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to the VISA instrument with the VISA resource string defined
+in self.resource</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect the VISA instrument (if connected)</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.fetch">
 <code class="descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/power_sensors.html#KeysightU2040XSeries.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.fetch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a single number or pandas Series containing the power readings</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.overlap_and_block">
+<code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.overlap_and_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
+send an &#8216;<a href="#id15"><span class="problematic" id="id16">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
 </dd></dl>
 
 <dl class="method">
@@ -321,14 +598,54 @@ exception if a data value is returned)</td>
 <code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/power_sensors.html#KeysightU2040XSeries.preset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.preset" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.query" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.read_termination">
+<code class="descname">read_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.read_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.resource">
+<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.set_backend">
+<code class="descname">set_backend</code><span class="sig-paren">(</span><em>backend_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.set_backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>backend_name can be &#8216;py&#8217; or &#8216;ni&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called each time a device is instantiated
+after everything else is ready.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/power_sensors.html#KeysightU2040XSeries.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.state</span></code></p>
 <dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.frequency">
 <code class="descname">frequency</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Float(min=10000000.0,max=18000000000.0,step=0.001,command=&#8217;SENS:FREQ&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.identity">
+<code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -344,9 +661,21 @@ exception if a data value is returned)</td>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.options">
+<code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.options" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.output_trigger">
 <code class="descname">output_trigger</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.output_trigger" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Bool(command=&#8217;OUTP:TRIG&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.status_byte">
+<code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.status_byte" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Dict(command=None,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -370,6 +699,21 @@ help me</p>
 
 </dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.wait">
+<code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.wait" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.write_termination">
+<code class="descname">write_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.write_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -379,6 +723,476 @@ help me</p>
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer">
 <em class="property">class </em><code class="descclassname">ssmdevices.instruments.signal_analyzers.</code><code class="descname">RohdeSchwarzFSW26SpectrumAnalyzer</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26SpectrumAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base</span></code></p>
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.autolevel">
+<code class="descname">autolevel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.autolevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the signal analyzer autolevel tool.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to the VISA instrument with the VISA resource string defined
+in self.resource</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect the VISA instrument (if connected)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_horizontal">
+<code class="descname">fetch_horizontal</code><span class="sig-paren">(</span><em>trace=1</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_horizontal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_marker">
+<code class="descname">fetch_marker</code><span class="sig-paren">(</span><em>marker</em>, <em>axis</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_marker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_marker_bpow">
+<code class="descname">fetch_marker_bpow</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_marker_bpow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker band power measurement</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">power in dBm</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_marker_bpow_span">
+<code class="descname">fetch_marker_bpow_span</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_marker_bpow_span" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker band power measurement</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bandwidth</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_trace">
+<code class="descname">fetch_trace</code><span class="sig-paren">(</span><em>trace=1</em>, <em>horizontal=False</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get and return the current trace data.</p>
+<p>If necessary, we can read the count, set count to 1, read, adjust level
+then set the count back, and read again like this:</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>count = inst.query(&#8220;SENSE:SWEEP:COUNT?&#8221;)
+self.write(&#8220;SENSE:SWEEP:COUNT 1&#8221;)</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">x and y data formatted as np.array([xdata,ydata])</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_band_power">
+<code class="descname">get_marker_band_power</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_band_power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker band power measurement</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param marker:</th><td class="field-body">marker number on instrument display</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="docutils">
+<dt>e            </dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type marker:</th><td class="field-body">int</td>
+</tr>
+<tr class="field-even field"><th class="field-name">return:</th><td class="field-body">power in dBm</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rtype:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_band_span">
+<code class="descname">get_marker_band_span</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_band_span" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get span of marker band power measurement</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bandwidth</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_enables">
+<code class="descname">get_marker_enables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_enables" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_position">
+<code class="descname">get_marker_position</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker position (on horizontal axis)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_power">
+<code class="descname">get_marker_power</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker value (on vertical axis)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_power_table">
+<code class="descname">get_marker_power_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_power_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the values of all markers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.load_state">
+<code class="descname">load_state</code><span class="sig-paren">(</span><em>FileName</em>, <em>num='1'</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.load_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a previously saved state file in the instrument</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>FileName</strong> (<em>string</em>) &#8211; state file location on the instrument</li>
+<li><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.overlap_and_block">
+<code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.overlap_and_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
+send an &#8216;<a href="#id17"><span class="problematic" id="id18">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.preset">
+<code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.preset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.query" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.read_termination">
+<code class="descname">read_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.read_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.resource">
+<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.save_state">
+<code class="descname">save_state</code><span class="sig-paren">(</span><em>FileName</em>, <em>num='1'</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.save_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save current state of the device to the default directory.
+:param FileName: state file location on the instrument
+:type FileName: string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.set_backend">
+<code class="descname">set_backend</code><span class="sig-paren">(</span><em>backend_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.set_backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>backend_name can be &#8216;py&#8217; or &#8216;ni&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.set_marker_position">
+<code class="descname">set_marker_position</code><span class="sig-paren">(</span><em>marker</em>, <em>position</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.set_marker_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker position (on horizontal axis)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called each time a device is instantiated
+after everything else is ready.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset">
+<code class="descname">amplitude_offset</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC1:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace2">
+<code class="descname">amplitude_offset_trace2</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace2" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC2:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace3">
+<code class="descname">amplitude_offset_trace3</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace3" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC3:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace4">
+<code class="descname">amplitude_offset_trace4</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace4" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC4:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace5">
+<code class="descname">amplitude_offset_trace5</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace5" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC5:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace6">
+<code class="descname">amplitude_offset_trace6</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace6" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC6:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.channel_type">
+<code class="descname">channel_type</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.channel_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.EnumBytes(values=[&#8216;SAN&#8217;, &#8216;IQ&#8217;],case_sensitive=False,command=&#8217;INST&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_center">
+<code class="descname">frequency_center</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:CENT&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_span">
+<code class="descname">frequency_span</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_span" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:SPAN&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_start">
+<code class="descname">frequency_start</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:START&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_stop">
+<code class="descname">frequency_stop</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:STOP&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.identity">
+<code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.initiate_continuous">
+<code class="descname">initiate_continuous</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.initiate_continuous" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=&#8217;INIT:CONT&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.options">
+<code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.options" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level">
+<code class="descname">reference_level</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC1:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace2">
+<code class="descname">reference_level_trace2</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace2" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC2:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace3">
+<code class="descname">reference_level_trace3</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace3" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC3:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace4">
+<code class="descname">reference_level_trace4</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace4" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC4:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace5">
+<code class="descname">reference_level_trace5</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace5" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC5:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace6">
+<code class="descname">reference_level_trace6</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace6" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC6:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.status_byte">
+<code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.status_byte" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Dict(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.sweep_points">
+<code class="descname">sweep_points</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.sweep_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=100001,command=&#8217;SWE:POIN&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.trigger_single">
+<code class="descname">trigger_single</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.trigger_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trigger once.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.wait">
+<code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.wait" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.write_termination">
+<code class="descname">write_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.write_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -386,19 +1200,378 @@ help me</p>
 <em class="property">class </em><code class="descclassname">ssmdevices.instruments.signal_analyzers.</code><code class="descname">RohdeSchwarzFSW26IQAnalyzer</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26IQAnalyzer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base</span></code></p>
 <dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.autolevel">
+<code class="descname">autolevel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.autolevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the signal analyzer autolevel tool.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26IQAnalyzer.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.connect" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect the VISA instrument (if connected)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_horizontal">
+<code class="descname">fetch_horizontal</code><span class="sig-paren">(</span><em>trace=1</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_horizontal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_marker">
+<code class="descname">fetch_marker</code><span class="sig-paren">(</span><em>marker</em>, <em>axis</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_marker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_marker_bpow">
+<code class="descname">fetch_marker_bpow</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_marker_bpow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker band power measurement</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">power in dBm</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_marker_bpow_span">
+<code class="descname">fetch_marker_bpow_span</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_marker_bpow_span" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker band power measurement</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bandwidth</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_trace">
 <code class="descname">fetch_trace</code><span class="sig-paren">(</span><em>horizontal=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26IQAnalyzer.fetch_trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_trace" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_band_power">
+<code class="descname">get_marker_band_power</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_band_power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker band power measurement</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param marker:</th><td class="field-body">marker number on instrument display</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="docutils">
+<dt>e            </dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type marker:</th><td class="field-body">int</td>
+</tr>
+<tr class="field-even field"><th class="field-name">return:</th><td class="field-body">power in dBm</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rtype:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_band_span">
+<code class="descname">get_marker_band_span</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_band_span" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get span of marker band power measurement</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bandwidth</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_enables">
+<code class="descname">get_marker_enables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_enables" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_position">
+<code class="descname">get_marker_position</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker position (on horizontal axis)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_power">
+<code class="descname">get_marker_power</code><span class="sig-paren">(</span><em>marker</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker value (on vertical axis)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_power_table">
+<code class="descname">get_marker_power_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.get_marker_power_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the values of all markers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.load_state">
+<code class="descname">load_state</code><span class="sig-paren">(</span><em>FileName</em>, <em>num='1'</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.load_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a previously saved state file in the instrument</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>FileName</strong> (<em>string</em>) &#8211; state file location on the instrument</li>
+<li><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.overlap_and_block">
+<code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.overlap_and_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
+send an &#8216;<a href="#id19"><span class="problematic" id="id20">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.preset">
+<code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.preset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.query" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.read_termination">
+<code class="descname">read_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.read_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.resource">
+<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.save_state">
+<code class="descname">save_state</code><span class="sig-paren">(</span><em>FileName</em>, <em>num='1'</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.save_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save current state of the device to the default directory.
+:param FileName: state file location on the instrument
+:type FileName: string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.set_backend">
+<code class="descname">set_backend</code><span class="sig-paren">(</span><em>backend_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.set_backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>backend_name can be &#8216;py&#8217; or &#8216;ni&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.set_marker_position">
+<code class="descname">set_marker_position</code><span class="sig-paren">(</span><em>marker</em>, <em>position</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.set_marker_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get marker position (on horizontal axis)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called each time a device is instantiated
+after everything else is ready.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26IQAnalyzer.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ssmdevices.instruments.signal_analyzers.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset">
+<code class="descname">amplitude_offset</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC1:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace2">
+<code class="descname">amplitude_offset_trace2</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace2" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC2:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace3">
+<code class="descname">amplitude_offset_trace3</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace3" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC3:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace4">
+<code class="descname">amplitude_offset_trace4</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace4" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC4:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace5">
+<code class="descname">amplitude_offset_trace5</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace5" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC5:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace6">
+<code class="descname">amplitude_offset_trace6</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace6" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC6:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.channel_type">
+<code class="descname">channel_type</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.channel_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.EnumBytes(values=[&#8216;SAN&#8217;, &#8216;IQ&#8217;],case_sensitive=False,command=&#8217;INST&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_center">
+<code class="descname">frequency_center</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:CENT&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_span">
+<code class="descname">frequency_span</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_span" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:SPAN&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_start">
+<code class="descname">frequency_start</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:START&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_stop">
+<code class="descname">frequency_stop</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:STOP&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.identity">
+<code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.initiate_continuous">
+<code class="descname">initiate_continuous</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.initiate_continuous" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=&#8217;INIT:CONT&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_evaluation_enabled">
 <code class="descname">iq_evaluation_enabled</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_evaluation_enabled" title="Permalink to this definition">¶</a></dt>
@@ -435,11 +1608,86 @@ help me</p>
 <dd><p>labbench.Bool(command=&#8217;CALC:IQ&#8217;,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.options">
+<code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.options" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level">
+<code class="descname">reference_level</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC1:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace2">
+<code class="descname">reference_level_trace2</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace2" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC2:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace3">
+<code class="descname">reference_level_trace3</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace3" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC3:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace4">
+<code class="descname">reference_level_trace4</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace4" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC4:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace5">
+<code class="descname">reference_level_trace5</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace5" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC5:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace6">
+<code class="descname">reference_level_trace6</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace6" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC6:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.status_byte">
+<code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.status_byte" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Dict(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.sweep_points">
+<code class="descname">sweep_points</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.sweep_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=100001,command=&#8217;SWE:POIN&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.store_trace">
 <code class="descname">store_trace</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_analyzers.html#RohdeSchwarzFSW26IQAnalyzer.store_trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.store_trace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.trigger_single">
+<code class="descname">trigger_single</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.trigger_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trigger once.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.wait">
+<code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.wait" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.write_termination">
+<code class="descname">write_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.write_termination" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -451,6 +1699,34 @@ help me</p>
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A">
 <em class="property">class </em><code class="descclassname">ssmdevices.instruments.signal_generators.</code><code class="descname">RohdeSchwarzSMW200A</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_generators.html#RohdeSchwarzSMW200A"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.VISADevice</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to the VISA instrument with the VISA resource string defined
+in self.resource</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect the VISA instrument (if connected)</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.load_state">
 <code class="descname">load_state</code><span class="sig-paren">(</span><em>FileName</em>, <em>opc=False</em>, <em>num='4'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_generators.html#RohdeSchwarzSMW200A.load_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.load_state" title="Permalink to this definition">¶</a></dt>
@@ -469,6 +1745,33 @@ help me</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.overlap_and_block">
+<code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.overlap_and_block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
+send an &#8216;<a href="#id21"><span class="problematic" id="id22">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.preset">
+<code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.preset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.query" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.read_termination">
+<code class="descname">read_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.read_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.resource">
+<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.rf_output_enable">
@@ -504,14 +1807,45 @@ help me</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.set_backend">
+<code class="descname">set_backend</code><span class="sig-paren">(</span><em>backend_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.set_backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>backend_name can be &#8216;py&#8217; or &#8216;ni&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called each time a device is instantiated
+after everything else is ready.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/signal_generators.html#RohdeSchwarzSMW200A.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.visa.state</span></code></p>
 <dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.frequency_baseband">
 <code class="descname">frequency_baseband</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.frequency_baseband" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Float(min=2000.0,max=26500000000.0,step=1000.0,command=&#8217;:freq&#8217;,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.identity">
+<code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.options">
+<code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.options" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -526,7 +1860,28 @@ help me</p>
 <dd><p>labbench.Bool(command=&#8217;OUTP&#8217;,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.status_byte">
+<code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.status_byte" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Dict(command=None,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.wait">
+<code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.wait" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.write_termination">
+<code class="descname">write_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.write_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -545,7 +1900,7 @@ help me</p>
         <p>
         «&#160;&#160;<a href="ssmdevices.electronics.html">ssmdevices.electronics package</a>
         &#160;&#160;::&#160;&#160;
-        <a class="uplink" href="index.html">Contents</a>
+        <a class="uplink" href="ssmdevices.html">Contents</a>
         &#160;&#160;::&#160;&#160;
         <a href="ssmdevices.lib.html">ssmdevices.lib package</a>&#160;&#160;»
         </p>
@@ -554,6 +1909,7 @@ help me</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 
+
 This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
 Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
 copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,

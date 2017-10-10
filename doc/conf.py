@@ -18,7 +18,7 @@ import os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath(r'..\..'))
+sys.path.insert(0, os.path.abspath(r'..'))
 
 # -- General configuration ------------------------------------------------
 
@@ -33,8 +33,8 @@ extensions = [
     'sphinxcontrib.restbuilder',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
-#    'sphinx.ext.inheritance_diagram',
-#    'sphinx.ext.graphviz',
+    'sphinx.ext.inheritance_diagram',
+    'sphinx.ext.graphviz',
     'sphinx_pyreverse'
     ]
 
@@ -50,11 +50,12 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'ssmdevices'
 
 # General information about the project.
 project = u'ssmdevices'
 copyright = '''
+
 This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
 Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
 copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
@@ -117,6 +118,34 @@ exclude_patterns = []
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
 #show_authors = False
+
+autodoc_default_flags = ['inherited-members']
+
+import traitlets as tl
+
+def maybe_skip_member(app, what, name, obj, skip, options):
+    ''' Skip extra cruft from Device.state objects
+    '''
+    if skip:
+        return True
+
+    whitelist = []
+
+    if name not in whitelist and hasattr(tl.HasTraits, name):
+        tlobj = getattr(tl.HasTraits, name)
+        if tlobj == obj or (hasattr(tlobj,'im_func') and tlobj.im_func == obj.im_func):
+            with open('test.txt', 'a') as f:
+                f.write('skip: '+repr(what)+' with name '+name+' in '+repr(obj)+'\r\n')
+            return True
+        else:
+            with open('test.txt', 'a') as f:
+                f.write('nearly skip: '+repr(what)+' with name '+name+' in '+repr(obj)+'\r\n')
+
+    return False
+
+def setup(app):
+    app.connect('autodoc-skip-member', maybe_skip_member)
+    # app.connect('autodoc-process-signature', resignature)
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
