@@ -19,6 +19,6 @@ for _k,_v in __l.items():
     if not _k.startswith('_'):
         if _ismodule(_v):
             __l.pop(_k)
-        __l.__module__ = '.'.join(__l.__module__.split('.')[:-1])
+        _v.__module__ = '.'.join(_v.__module__.split('.')[:-1])
     
 del __l,_k,_v,_ismodule
