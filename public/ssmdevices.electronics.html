@@ -64,6 +64,182 @@
 </tr>
 </tbody>
 </table>
+<dl class="class">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi">
+<em class="property">class </em><code class="descclassname">ssmdevices.electronics.gps.</code><code class="descname">SwiftNavPiksi</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/gps.html#SwiftNavPiksi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.serial_.SerialLoggingDevice</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.baud_rate">
+<code class="descname">baud_rate</code><em class="property"> = 1000000</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.baud_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.clear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.command_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a setting from a remote instrument that has a trait attribute
+<a href="#id1"><span class="problematic" id="id2">``</span></a>attr&#8217;&#8217; in type(self).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.command_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value&#8217;&#8217;
+will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr&#8217;&#8217; in type(self).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.configure">
+<code class="descname">configure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.configure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to the serial device with the VISA resource string defined
+in self.resource</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.data_format">
+<code class="descname">data_format</code><em class="property"> = ''</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.data_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.dsrdtr">
+<code class="descname">dsrdtr</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.dsrdtr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.fetch">
+<code class="descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.fetch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.from_hwid">
+<code class="descname">from_hwid</code><span class="sig-paren">(</span><em>hwid=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.from_hwid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate a new SerialDevice from a <a href="#id7"><span class="problematic" id="id8">`</span></a>hwid&#8217; resource instead
+of a comport resource. A hwid string in windows might look something
+like:</p>
+<p>r&#8217;PCIVEN_8086&amp;DEV_9D3D&amp;SUBSYS_06DC1028&amp;REV_213&amp;11583659&amp;1&amp;B3&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.list_ports">
+<code class="descname">list_ports</code><span class="sig-paren">(</span><em>hwid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.list_ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>List USB serial devices on the computer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of port resource information</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.max_queue_size">
+<code class="descname">max_queue_size</code><em class="property"> = 100000</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.max_queue_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.parity">
+<code class="descname">parity</code><em class="property"> = 'N'</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.parity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.poll_rate">
+<code class="descname">poll_rate</code><em class="property"> = 0.1</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.poll_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.resource">
+<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.rtscts">
+<code class="descname">rtscts</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.rtscts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.running">
+<code class="descname">running</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.running" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called each time a device is instantiated
+after everything else is ready.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a background thread that acquires log data into a queue.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
+<p>Use bare-bones core Device state definitions</p>
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.stop_timeout">
+<code class="descname">stop_timeout</code><em class="property"> = 0.5</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.stop_timeout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.stopbits">
+<code class="descname">stopbits</code><em class="property"> = 1</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.stopbits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.timeout">
+<code class="descname">timeout</code><em class="property"> = 2</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.timeout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.write_termination">
+<code class="descname">write_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.write_termination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.xonxoff">
+<code class="descname">xonxoff</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.xonxoff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-ssmdevices.electronics.usb">
 <span id="ssmdevices-electronics-usb-module"></span><h2>ssmdevices.electronics.usb module<a class="headerlink" href="#module-ssmdevices.electronics.usb" title="Permalink to this headline">¶</a></h2>
@@ -76,14 +252,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="module-ssmdevices.electronics">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ssmdevices.electronics" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Feb 10 13:35:02 2017</p>
-<p>&#64;author: dkuester</p>
 <dl class="class">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4">
-<em class="property">class </em><code class="descclassname">ssmdevices.electronics.</code><code class="descname">AcronameUSBHub2x4</code><span class="sig-paren">(</span><em>resource=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4">
+<em class="property">class </em><code class="descclassname">ssmdevices.electronics.usb.</code><code class="descname">AcronameUSBHub2x4</code><span class="sig-paren">(</span><em>resource=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.Device</span></code></p>
 <p>This class wraps brainstem drivers to simplify control over USB hubs
 via the brainstem package.</p>
@@ -100,38 +271,38 @@ to dynamically enable and disable USB 3.0 ports.</p>
 <p>If None (default), the brainstem driver will try to automatically choose
 a connected device.</p>
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.backend">
-<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.backend" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.backend">
+<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.backend" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.command_get">
-<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.command_get" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a setting from a remote instrument that has a trait attribute
-<a href="#id1"><span class="problematic" id="id2">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<a href="#id9"><span class="problematic" id="id10">``</span></a>attr&#8217;&#8217; in type(self).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.command_set">
-<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.command_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value&#8217;&#8217;
-will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.command_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id11"><span class="problematic" id="id12">``</span></a>value&#8217;&#8217;
+will be applied to the trait attriute <a href="#id13"><span class="problematic" id="id14">``</span></a>attr&#8217;&#8217; in type(self).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.connect" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.connect" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.disconnect">
-<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.disconnect" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.disconnect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Release control over the device.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.enable">
-<code class="descname">enable</code><span class="sig-paren">(</span><em>data=True</em>, <em>power=True</em>, <em>channel='all'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.enable" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.enable">
+<code class="descname">enable</code><span class="sig-paren">(</span><em>data=True</em>, <em>power=True</em>, <em>channel='all'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.enable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enable or disable of USB port features at one or all hub ports.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -151,77 +322,77 @@ ports on the hub.</li>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.model">
-<code class="descname">model</code><em class="property"> = 17</em><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.model" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.model">
+<code class="descname">model</code><em class="property"> = 17</em><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.model" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.resource">
-<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.resource" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.resource">
+<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.resource" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.setup" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called each time a device is instantiated
 after everything else is ready.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.state">
-<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.state" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.state.connected">
-<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.state.connected" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected" title="Permalink to this definition">¶</a></dt>
 <dd><p>A boolean (True, False) trait.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.state.data0_enabled">
-<code class="descname">data0_enabled</code><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.state.data0_enabled" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data0_enabled">
+<code class="descname">data0_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data0_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.state.data1_enabled">
-<code class="descname">data1_enabled</code><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.state.data1_enabled" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data1_enabled">
+<code class="descname">data1_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data1_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.state.data2_enabled">
-<code class="descname">data2_enabled</code><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.state.data2_enabled" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data2_enabled">
+<code class="descname">data2_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data2_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.state.data3_enabled">
-<code class="descname">data3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.state.data3_enabled" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data3_enabled">
+<code class="descname">data3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data3_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.state.power0_enabled">
-<code class="descname">power0_enabled</code><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.state.power0_enabled" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power0_enabled">
+<code class="descname">power0_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power0_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.state.power1_enabled">
-<code class="descname">power1_enabled</code><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.state.power1_enabled" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power1_enabled">
+<code class="descname">power1_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power1_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.state.power2_enabled">
-<code class="descname">power2_enabled</code><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.state.power2_enabled" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power2_enabled">
+<code class="descname">power2_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power2_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.AcronameUSBHub2x4.state.power3_enabled">
-<code class="descname">power3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.AcronameUSBHub2x4.state.power3_enabled" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power3_enabled">
+<code class="descname">power3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power3_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
@@ -229,182 +400,11 @@ after everything else is ready.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="ssmdevices.electronics.SwiftNavPiksi">
-<em class="property">class </em><code class="descclassname">ssmdevices.electronics.</code><code class="descname">SwiftNavPiksi</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.serial_.SerialLoggingDevice</span></code></p>
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.backend">
-<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.backend" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.baud_rate">
-<code class="descname">baud_rate</code><em class="property"> = 1000000</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.baud_rate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.clear">
-<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.clear" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.command_get">
-<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.command_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a setting from a remote instrument that has a trait attribute
-<a href="#id7"><span class="problematic" id="id8">``</span></a>attr&#8217;&#8217; in type(self).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.command_set">
-<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id9"><span class="problematic" id="id10">``</span></a>value&#8217;&#8217;
-will be applied to the trait attriute <a href="#id11"><span class="problematic" id="id12">``</span></a>attr&#8217;&#8217; in type(self).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.configure">
-<code class="descname">configure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.configure" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connect to the serial device with the VISA resource string defined
-in self.resource</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.data_format">
-<code class="descname">data_format</code><em class="property"> = ''</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.data_format" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.disconnect">
-<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.dsrdtr">
-<code class="descname">dsrdtr</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.dsrdtr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.fetch">
-<code class="descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.fetch" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.from_hwid">
-<code class="descname">from_hwid</code><span class="sig-paren">(</span><em>hwid=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.from_hwid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instantiate a new SerialDevice from a <a href="#id13"><span class="problematic" id="id14">`</span></a>hwid&#8217; resource instead
-of a comport resource. A hwid string in windows might look something
-like:</p>
-<p>r&#8217;PCIVEN_8086&amp;DEV_9D3D&amp;SUBSYS_06DC1028&amp;REV_213&amp;11583659&amp;1&amp;B3&#8217;</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.list_ports">
-<code class="descname">list_ports</code><span class="sig-paren">(</span><em>hwid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.list_ports" title="Permalink to this definition">¶</a></dt>
-<dd><p>List USB serial devices on the computer</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of port resource information</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.max_queue_size">
-<code class="descname">max_queue_size</code><em class="property"> = 100000</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.max_queue_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.parity">
-<code class="descname">parity</code><em class="property"> = 'N'</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.parity" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.poll_rate">
-<code class="descname">poll_rate</code><em class="property"> = 0.1</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.poll_rate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.resource">
-<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.resource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.rtscts">
-<code class="descname">rtscts</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.rtscts" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.running">
-<code class="descname">running</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.running" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called each time a device is instantiated
-after everything else is ready.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.start">
-<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start a background thread that acquires log data into a queue.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.state">
-<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
-<p>Use bare-bones core Device state definitions</p>
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.state.connected">
-<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>A boolean (True, False) trait.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.stop">
-<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.stop" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.stop_timeout">
-<code class="descname">stop_timeout</code><em class="property"> = 0.5</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.stop_timeout" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.stopbits">
-<code class="descname">stopbits</code><em class="property"> = 1</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.stopbits" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.timeout">
-<code class="descname">timeout</code><em class="property"> = 2</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.timeout" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.write_termination">
-<code class="descname">write_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.write_termination" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.SwiftNavPiksi.xonxoff">
-<code class="descname">xonxoff</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.electronics.SwiftNavPiksi.xonxoff" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+</div>
+<div class="section" id="module-ssmdevices.electronics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ssmdevices.electronics" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Feb 10 13:35:02 2017</p>
+<p>&#64;author: dkuester</p>
 </div>
 </div>
 

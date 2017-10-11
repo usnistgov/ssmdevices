@@ -14,12 +14,9 @@ import labbench as core
 class MiniCircuitsRCDAT(DotNetDevice):
     ''' A digitally controlled, 0 to 110 dB variable attenuator.
     
-        Ensure that the windows DLL driver is installed by copying mcl_RUDAT64.dll from
-        the manufacturer website or install CD into C:\Windows\SysWOW64\.
- 
-        This implementation calls the .NET drivers provided by the manufacturer
-        instead of the C DLL drivers recommended by the manufacturer in order
-        to support 64-bit python.
+        This implementation calls the .NET drivers provided by the
+        manufacturer instead of the recommended C DLL drivers in order to
+        support 64-bit python.
     '''
     
     library  = ssmdevices.lib    # Must be a module
