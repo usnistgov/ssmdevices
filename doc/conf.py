@@ -54,7 +54,7 @@ master_doc = 'ssmdevices'
 
 # General information about the project.
 project = u'ssmdevices'
-copyright = '''
+copyright = ''' does not apply.
 
 This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
 Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
@@ -207,7 +207,7 @@ html_static_path = ['_static']
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
-#html_use_smartypants = True
+html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
