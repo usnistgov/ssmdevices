@@ -83,7 +83,7 @@ The default value is the path that installs with 64-bit cygwin.</p>
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.clear">
 <code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.clear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Empty</p>
+<dd><p>Clear queued standard output</p>
 </dd></dl>
 
 <dl class="method">
@@ -113,7 +113,19 @@ will be applied to the trait attriute <a href="#id5"><span class="problematic" i
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.execute">
 <code class="descname">execute</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.execute" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Execute the binary as a background thread.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cmd</strong> &#8211; iterable containing the binary path, then
+each argument to be passed to the binary.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.fetch">
@@ -138,7 +150,16 @@ will be applied to the trait attriute <a href="#id5"><span class="problematic" i
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.running">
 <code class="descname">running</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.running" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return whether the executable is currently running</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if running, otherwise False</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.setup">
@@ -196,7 +217,7 @@ points.</p>
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.clear">
 <code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.clear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Empty</p>
+<dd><p>Clear queued standard output</p>
 </dd></dl>
 
 <dl class="method">
@@ -216,7 +237,11 @@ will be applied to the trait attriute <a href="#id11"><span class="problematic" 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.connect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The <a class="reference internal" href="#ssmdevices.software.windows.Netsh.connect" title="ssmdevices.software.windows.Netsh.connect"><code class="xref py py-meth docutils literal"><span class="pre">connect()</span></code></a> method exists to comply with the
+<code class="xref py py-class docutils literal"><span class="pre">Device</span></code> object protocol. Call the
+<a class="reference internal" href="#ssmdevices.software.windows.Netsh.execute" title="ssmdevices.software.windows.Netsh.execute"><code class="xref py py-meth docutils literal"><span class="pre">execute()</span></code></a> method when connected to
+execute the binary.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.disconnect">
@@ -226,7 +251,19 @@ will be applied to the trait attriute <a href="#id11"><span class="problematic" 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.execute">
 <code class="descname">execute</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.execute" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Execute the binary as a background thread.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cmd</strong> &#8211; iterable containing the binary path, then
+each argument to be passed to the binary.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.fetch">
@@ -252,7 +289,16 @@ will be applied to the trait attriute <a href="#id11"><span class="problematic" 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.running">
 <code class="descname">running</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.running" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return whether the executable is currently running</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if running, otherwise False</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.set_interface_connected">
@@ -269,7 +315,7 @@ after everything else is ready.</p>
 <dl class="class">
 <dt id="ssmdevices.software.windows.Netsh.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.RemoteStates</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.connected" title="Permalink to this definition">¶</a></dt>
@@ -342,7 +388,7 @@ after everything else is ready.</p>
 <dl class="class">
 <dt id="ssmdevices.software.windows.WLANStatus.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.RemoteStates</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid">
 <code class="descname">bssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid" title="Permalink to this definition">¶</a></dt>

@@ -59,6 +59,9 @@
 <span class="k">class</span> <span class="nc">RemoteStateError</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">TraitError</span><span class="p">):</span>
     <span class="k">pass</span>
 
+<span class="k">class</span> <span class="nc">CommandNotImplementedError</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
 <span class="k">class</span> <span class="nc">RemoteTraitMixIn</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; This is a mix-in class that injects instrument gets and sets into</span>
 <span class="sd">        traitlet decriptors.</span>
@@ -108,8 +111,8 @@
         <span class="k">return</span> <span class="s1">&#39;labbench.</span><span class="si">{name}</span><span class="s1">(</span><span class="si">{attrs}</span><span class="s1">)</span><span class="se">\n</span><span class="si">{help}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Overload the traitlet&#39;s get method to inject a `get&#39; from the</span>
-<span class="sd">            remote device</span>
+        <span class="sd">&#39;&#39;&#39; Overload the traitlet&#39;s get method to inject a call to get</span>
+<span class="sd">            from the remote device</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_only</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__last</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span><span class="s1">&#39;tried to read remotelet value, but it is write-only and has not been set yet&#39;</span><span class="p">)</span>
@@ -118,10 +121,11 @@
 
         <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;getter&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)):</span>
             <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;getter&#39;</span><span class="p">](</span><span class="n">obj</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">new</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">command_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">RemoteStateError</span><span class="p">(</span><span class="s1">&#39;no command or getter defined - cannot get state from device&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span><span class="c1"># self.command is not None:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">command_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">CommandNotImplementedError</span><span class="p">,</span><span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">RemoteStateError</span><span class="p">(</span><span class="s1">&#39;no command or getter defined - cannot get state from device&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_trait_cls</span><span class="p">()</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_cls</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
@@ -129,8 +133,8 @@
             <span class="k">raise</span> <span class="n">e</span>
 
     <span class="k">def</span> <span class="nf">set</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Overload the traitlet&#39;s get method to inject a `set&#39; to the</span>
-<span class="sd">            remote device.</span>
+        <span class="sd">&#39;&#39;&#39; Overload the traitlet&#39;s get method to inject a call to a</span>
+<span class="sd">            method to set the state on a remote device.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">assert</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         
@@ -138,10 +142,11 @@
         
         <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;setter&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;setter&#39;</span><span class="p">](</span><span class="n">obj</span><span class="o">.</span><span class="n">_device</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">command_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">RemoteStateError</span><span class="p">(</span><span class="s1">&#39;no command or setter defined - cannot set state to device&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span><span class="c1"># self.command is not None:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">command_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">CommandNotImplementedError</span><span class="p">,</span><span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">RemoteStateError</span><span class="p">(</span><span class="s1">&#39;no command or setter defined - cannot set state to device&#39;</span><span class="p">)</span>
 
         <span class="n">rd_only</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span>
         <span class="k">try</span><span class="p">:</span>        
@@ -256,16 +261,6 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_falses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
 
-<span class="k">class</span> <span class="nc">RemoteStates</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; A vanilla base definition of remote states that includes only a connection</span>
-<span class="sd">        state traitlet</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">connected</span> <span class="o">=</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
-
 <span class="k">class</span> <span class="nc">DisconnectedBackend</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; This &quot;Null Backend&quot; implementation exists to give sensible error</span>
 <span class="sd">        messages on attempts to use a backend that is not connected.        </span>
@@ -287,18 +282,60 @@
                                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">clsname</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__dev__</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span>
 
 <span class="k">class</span> <span class="nc">Device</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Base class for connected devices that have remote traits.</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;`Device` is the base class common to all labbench</span>
+<span class="sd">        drivers, regardless of backend types.</span>
+<span class="sd">                </span>
+<span class="sd">        Drivers that subclass `Device` inherit</span>
+<span class="sd">        </span>
+<span class="sd">        * device connection management via context management (the `with` statement)</span>
+<span class="sd">        * test state management for easy test logging and extension to UI</span>
+<span class="sd">        * a simple object protocol for stylistic consistency between drivers</span>
+<span class="sd">        </span>
+<span class="sd">        :param resource: resource identifier, with type and format determined by backend (see specific subclasses for details)</span>
+<span class="sd">        :param **connection_params: additional backend-specific connection parameters</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Use `Device` by subclassing it only if you are</span>
+<span class="sd">            implementing a driver that needs a new type of backend. </span>
+
+<span class="sd">            Several types of backends have already been implemented</span>
+<span class="sd">            as part of labbench:</span>
+<span class="sd">                </span>
+<span class="sd">                * VISADevice exposes a pyvisa backend for VISA Instruments</span>
+<span class="sd">                * CommandLineWrapper exposes a threaded pipes backend for command line tools</span>
+<span class="sd">                * Serial exposes a pyserial backend for serial port communication</span>
+<span class="sd">                * DotNetDevice exposes a pythonnet for wrapping dotnet libraries</span>
+<span class="sd">                </span>
+<span class="sd">            (and others). If you are implementing a driver that uses one of</span>
+<span class="sd">            these backends, inherit from the corresponding class above, not</span>
+<span class="sd">            `Device`.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
+    
     <span class="n">resource</span>  <span class="o">=</span> <span class="kc">None</span>
-    <span class="s1">&#39;default resource used if connection is not specified&#39;</span>
+    <span class="s1">&#39;.. attribute::resource is the data needed to make a connection to a device. its type and format are determined by the subclass implementation&#39;</span>
     
-    <span class="n">state</span> <span class="o">=</span> <span class="n">RemoteStates</span>  <span class="c1"># </span>
-    <span class="s1">&#39;default Remolets subclass that can be overridden in __init__ (or in a subclass definition)&#39;</span>
+    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            Base class for accessing the local and remote state</span>
+<span class="sd">            parameters of a device.  Normally,</span>
+<span class="sd">            a device driver implemented as a :class:`Device` subclass</span>
+<span class="sd">            should add driver-specific states by subclassing this class.</span>
+<span class="sd">            </span>
+<span class="sd">            Instantiating :class:`Device` (or one of its subclasses)</span>
+<span class="sd">            automatically instantiate this class as well, so there</span>
+<span class="sd">            is no need to instantiate it manually.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">connected</span> <span class="o">=</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="sd">&#39;&#39;&#39; indicates whether the :class:`Device` instance is connected &#39;&#39;&#39;</span>
     
+        <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
+
     <span class="n">backend</span> <span class="o">=</span> <span class="n">DisconnectedBackend</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-    <span class="sd">&#39;&#39;&#39; instance of a backend driver that controls the device. subclasses </span>
-<span class="sd">        set this by returning a useful control object (API reference, string</span>
-<span class="sd">        stream interface, etc.) from its connect method.</span>
+    <span class="sd">&#39;&#39;&#39; .. attribute::state is the backend that controls communication with the device.</span>
+<span class="sd">        it is to be set in `connect` and `disconnect` by the subclass that implements the backend.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="c1"># Backend classes *must* overload these</span>
@@ -321,14 +358,14 @@
         <span class="sd">&#39;&#39;&#39; Read a setting from a remote instrument that has a trait attribute</span>
 <span class="sd">            ``attr&#39;&#39; in type(self).</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;state &quot;</span><span class="si">{attr}</span><span class="s1">&quot; is defined but not implemented! implement </span><span class="si">{cls}</span><span class="s1">.command_set, or implement a setter for </span><span class="si">{cls}</span><span class="s1">.state.</span><span class="si">{attr}</span><span class="s1">&#39;</span>\
+        <span class="k">raise</span> <span class="n">CommandNotImplementedError</span><span class="p">(</span><span class="s1">&#39;state &quot;</span><span class="si">{attr}</span><span class="s1">&quot; is defined but not implemented! implement </span><span class="si">{cls}</span><span class="s1">.command_set, or implement a setter for </span><span class="si">{cls}</span><span class="s1">.state.</span><span class="si">{attr}</span><span class="s1">&#39;</span>\
                                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="n">trait</span><span class="p">))</span>
         
     <span class="k">def</span> <span class="nf">command_set</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Apply an instrument setting to the instrument. The value ``value&#39;&#39;</span>
 <span class="sd">            will be applied to the trait attriute ``attr&#39;&#39; in type(self).</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;state &quot;</span><span class="si">{attr}</span><span class="s1">&quot; is defined but not implemented! implement </span><span class="si">{cls}</span><span class="s1">.command_get, or implement a getter for </span><span class="si">{cls}</span><span class="s1">.state.</span><span class="si">{attr}</span><span class="s1">&#39;</span>\
+        <span class="k">raise</span> <span class="n">CommandNotImplementedError</span><span class="p">(</span><span class="s1">&#39;state &quot;</span><span class="si">{attr}</span><span class="s1">&quot; is defined but not implemented! implement </span><span class="si">{cls}</span><span class="s1">.command_get, or implement a getter for </span><span class="si">{cls}</span><span class="s1">.state.</span><span class="si">{attr}</span><span class="s1">&#39;</span>\
                                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="n">trait</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">setup</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>

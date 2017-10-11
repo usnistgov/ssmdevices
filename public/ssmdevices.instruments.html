@@ -127,7 +127,7 @@ memory, and 3)</p>
 <dl class="class">
 <dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/attenuators.html#MiniCircuitsRCDAT.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.RemoteStates</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state.attenuation">
 <code class="descname">attenuation</code><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state.attenuation" title="Permalink to this definition">¶</a></dt>
@@ -415,12 +415,46 @@ exception if a data value is returned)</td>
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send an SCPI command to get a state value from the
+device. This function
+adds a &#8216;?&#8217; to match SCPI convention. This is
+automatically called for <cite>state</cite> attributes that
+define a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
+<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send an SCPI command to set a state value on the
+device. This function adds a &#8216;?&#8217; to match SCPI convention. This is
+automatically called for <cite>state</cite> attributes that
+define a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
+<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+<li><strong>value</strong> (<em>str</em>) &#8211; The value to assign to the parameter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.connect">
@@ -430,7 +464,17 @@ exception if a data value is returned)</td>
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnect the VISA instrument (if connected)</p>
+<dd><p>Disconnect the VISA instrument. If you use a <cite>with</cite> block
+this is handled automatically and you do not need to 
+call this method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -448,17 +492,42 @@ exception if a data value is returned)</td>
 <code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.overlap_and_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
 send an &#8216;<a href="#id13"><span class="problematic" id="id14">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+<p>This is meant to be used in <cite>with</cite> blocks as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">inst</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">:</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 1&#39;</span><span class="p">)</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At the end of the <cite>with</cite> block, a &#8216;<a href="#id15"><span class="problematic" id="id16">*</span></a>OPC?&#8217; query is sent
+that blocks until the instrument signals it has finished
+with the commands.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.preset">
 <code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.preset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id17"><span class="problematic" id="id18">*</span></a>RST&#8217;</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.query">
 <code class="descname">query</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.query" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Query an SCPI command to the device with pyvisa,
+and return a string containing the device response.</p>
+<p>Handles debug logging, and extra <a href="#id19"><span class="problematic" id="id20">*</span></a>OPC
+commands (when in an overlap_and_block context),
+then sends a command string to the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the response to the query from the device</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.read_termination">
@@ -473,7 +542,17 @@ send an &#8216;<a href="#id13"><span class="problematic" id="id14">*</span></a>O
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.set_backend">
 <code class="descname">set_backend</code><span class="sig-paren">(</span><em>backend_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.set_backend" title="Permalink to this definition">¶</a></dt>
-<dd><p>backend_name can be &#8216;py&#8217; or &#8216;ni&#8217;</p>
+<dd><p>Set the pyvisa resource manager for all VISA objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) &#8211; <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">'<span>&#64;</span>ni</a>&#8216; (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">'<span>&#64;</span>py</a>&#8216;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -496,19 +575,19 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.identity">
 <code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=&#8217;<a href="#id21"><span class="problematic" id="id22">*</span></a>idn&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.options">
 <code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.options" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=&#8217;<a href="#id23"><span class="problematic" id="id24">*</span></a>opt&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.status_byte">
 <code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.status_byte" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Dict(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Dict(command=&#8217;<a href="#id25"><span class="problematic" id="id26">*</span></a>stb&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -528,12 +607,27 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.wait" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id27"><span class="problematic" id="id28">*</span></a>WAI&#8217;</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.write" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Write an SCPI command to the device with pyvisa.</p>
+<p>Handles debug logging, and extra <a href="#id29"><span class="problematic" id="id30">*</span></a>OPC
+commands (when in an overlap_and_block context),
+then sends a command string to the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.write_termination">
@@ -560,24 +654,90 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send an SCPI command to get a state value from the
+device. This function
+adds a &#8216;?&#8217; to match SCPI convention. This is
+automatically called for <cite>state</cite> attributes that
+define a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
+<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send an SCPI command to set a state value on the
+device. This function adds a &#8216;?&#8217; to match SCPI convention. This is
+automatically called for <cite>state</cite> attributes that
+define a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
+<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+<li><strong>value</strong> (<em>str</em>) &#8211; The value to assign to the parameter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connect to the VISA instrument with the VISA resource string defined
-in self.resource</p>
+<dd><p>Connect to the VISA instrument defined by the VISA resource
+set by <cite>self.resource</cite>. The pyvisa backend object is assigned
+to <cite>self.backend</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>Instead of calling <cite>connect</cite> directly, consider using 
+<cite>with</cite> statements to guarantee proper disconnection
+if there is an error. For example, the following
+sets up a connected instance:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">VISADevice</span><span class="p">(</span><span class="s1">&#39;USB0::0x2A8D::0x1E01::SG56360004::INSTR&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inst</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="n">inst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">identity</span>
+    <span class="nb">print</span> <span class="n">inst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">status_byte</span>
+    <span class="nb">print</span> <span class="n">inst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">options</span>                
+</pre></div>
+</div>
+<p>would instantiate a <cite>VISADevice</cite> and guarantee
+it is disconnected either at the successful completion
+of the <cite>with</cite> block, or if there is any exception.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnect the VISA instrument (if connected)</p>
+<dd><p>Disconnect the VISA instrument. If you use a <cite>with</cite> block
+this is handled automatically and you do not need to 
+call this method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -590,7 +750,16 @@ in self.resource</p>
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.overlap_and_block">
 <code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.overlap_and_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
-send an &#8216;<a href="#id15"><span class="problematic" id="id16">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+send an &#8216;<a href="#id31"><span class="problematic" id="id32">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+<p>This is meant to be used in <cite>with</cite> blocks as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">inst</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">:</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 1&#39;</span><span class="p">)</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At the end of the <cite>with</cite> block, a &#8216;<a href="#id33"><span class="problematic" id="id34">*</span></a>OPC?&#8217; query is sent
+that blocks until the instrument signals it has finished
+with the commands.</p>
 </dd></dl>
 
 <dl class="method">
@@ -601,7 +770,22 @@ send an &#8216;<a href="#id15"><span class="problematic" id="id16">*</span></a>O
 <dl class="method">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.query">
 <code class="descname">query</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.query" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Query an SCPI command to the device with pyvisa,
+and return a string containing the device response.</p>
+<p>Handles debug logging, and extra <a href="#id35"><span class="problematic" id="id36">*</span></a>OPC
+commands (when in an overlap_and_block context),
+then sends a command string to the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the response to the query from the device</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.read_termination">
@@ -616,7 +800,17 @@ send an &#8216;<a href="#id15"><span class="problematic" id="id16">*</span></a>O
 <dl class="method">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.set_backend">
 <code class="descname">set_backend</code><span class="sig-paren">(</span><em>backend_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.set_backend" title="Permalink to this definition">¶</a></dt>
-<dd><p>backend_name can be &#8216;py&#8217; or &#8216;ni&#8217;</p>
+<dd><p>Set the pyvisa resource manager for all VISA objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) &#8211; <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">'<span>&#64;</span>ni</a>&#8216; (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">'<span>&#64;</span>py</a>&#8216;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -645,7 +839,7 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.identity">
 <code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=&#8217;<a href="#id37"><span class="problematic" id="id38">*</span></a>idn&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -663,7 +857,7 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.options">
 <code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.options" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=&#8217;<a href="#id39"><span class="problematic" id="id40">*</span></a>opt&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -675,7 +869,7 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.status_byte">
 <code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.status_byte" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Dict(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Dict(command=&#8217;<a href="#id41"><span class="problematic" id="id42">*</span></a>stb&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -702,12 +896,27 @@ help me</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.wait" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id43"><span class="problematic" id="id44">*</span></a>WAI&#8217;</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.write" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Write an SCPI command to the device with pyvisa.</p>
+<p>Handles debug logging, and extra <a href="#id45"><span class="problematic" id="id46">*</span></a>OPC
+commands (when in an overlap_and_block context),
+then sends a command string to the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.write_termination">
@@ -737,24 +946,90 @@ help me</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send an SCPI command to get a state value from the
+device. This function
+adds a &#8216;?&#8217; to match SCPI convention. This is
+automatically called for <cite>state</cite> attributes that
+define a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
+<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send an SCPI command to set a state value on the
+device. This function adds a &#8216;?&#8217; to match SCPI convention. This is
+automatically called for <cite>state</cite> attributes that
+define a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
+<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+<li><strong>value</strong> (<em>str</em>) &#8211; The value to assign to the parameter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connect to the VISA instrument with the VISA resource string defined
-in self.resource</p>
+<dd><p>Connect to the VISA instrument defined by the VISA resource
+set by <cite>self.resource</cite>. The pyvisa backend object is assigned
+to <cite>self.backend</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>Instead of calling <cite>connect</cite> directly, consider using 
+<cite>with</cite> statements to guarantee proper disconnection
+if there is an error. For example, the following
+sets up a connected instance:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">VISADevice</span><span class="p">(</span><span class="s1">&#39;USB0::0x2A8D::0x1E01::SG56360004::INSTR&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inst</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="n">inst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">identity</span>
+    <span class="nb">print</span> <span class="n">inst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">status_byte</span>
+    <span class="nb">print</span> <span class="n">inst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">options</span>                
+</pre></div>
+</div>
+<p>would instantiate a <cite>VISADevice</cite> and guarantee
+it is disconnected either at the successful completion
+of the <cite>with</cite> block, or if there is any exception.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnect the VISA instrument (if connected)</p>
+<dd><p>Disconnect the VISA instrument. If you use a <cite>with</cite> block
+this is handled automatically and you do not need to 
+call this method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -958,18 +1233,43 @@ self.write(&#8220;SENSE:SWEEP:COUNT 1&#8221;)</dd>
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.overlap_and_block">
 <code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.overlap_and_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
-send an &#8216;<a href="#id17"><span class="problematic" id="id18">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+send an &#8216;<a href="#id47"><span class="problematic" id="id48">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+<p>This is meant to be used in <cite>with</cite> blocks as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">inst</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">:</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 1&#39;</span><span class="p">)</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At the end of the <cite>with</cite> block, a &#8216;<a href="#id49"><span class="problematic" id="id50">*</span></a>OPC?&#8217; query is sent
+that blocks until the instrument signals it has finished
+with the commands.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.preset">
 <code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.preset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id51"><span class="problematic" id="id52">*</span></a>RST&#8217;</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.query">
 <code class="descname">query</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.query" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Query an SCPI command to the device with pyvisa,
+and return a string containing the device response.</p>
+<p>Handles debug logging, and extra <a href="#id53"><span class="problematic" id="id54">*</span></a>OPC
+commands (when in an overlap_and_block context),
+then sends a command string to the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the response to the query from the device</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.read_termination">
@@ -1000,7 +1300,17 @@ send an &#8216;<a href="#id17"><span class="problematic" id="id18">*</span></a>O
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.set_backend">
 <code class="descname">set_backend</code><span class="sig-paren">(</span><em>backend_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.set_backend" title="Permalink to this definition">¶</a></dt>
-<dd><p>backend_name can be &#8216;py&#8217; or &#8216;ni&#8217;</p>
+<dd><p>Set the pyvisa resource manager for all VISA objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) &#8211; <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">'<span>&#64;</span>ni</a>&#8216; (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">'<span>&#64;</span>py</a>&#8216;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -1107,7 +1417,7 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.identity">
 <code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=&#8217;<a href="#id55"><span class="problematic" id="id56">*</span></a>idn&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1119,7 +1429,7 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.options">
 <code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.options" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=&#8217;<a href="#id57"><span class="problematic" id="id58">*</span></a>opt&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1161,7 +1471,7 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.status_byte">
 <code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.status_byte" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Dict(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Dict(command=&#8217;<a href="#id59"><span class="problematic" id="id60">*</span></a>stb&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1181,12 +1491,27 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.wait" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id61"><span class="problematic" id="id62">*</span></a>WAI&#8217;</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.write" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Write an SCPI command to the device with pyvisa.</p>
+<p>Handles debug logging, and extra <a href="#id63"><span class="problematic" id="id64">*</span></a>OPC
+commands (when in an overlap_and_block context),
+then sends a command string to the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.write_termination">
@@ -1213,12 +1538,46 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send an SCPI command to get a state value from the
+device. This function
+adds a &#8216;?&#8217; to match SCPI convention. This is
+automatically called for <cite>state</cite> attributes that
+define a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
+<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send an SCPI command to set a state value on the
+device. This function adds a &#8216;?&#8217; to match SCPI convention. This is
+automatically called for <cite>state</cite> attributes that
+define a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
+<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+<li><strong>value</strong> (<em>str</em>) &#8211; The value to assign to the parameter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.connect">
@@ -1228,7 +1587,17 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnect the VISA instrument (if connected)</p>
+<dd><p>Disconnect the VISA instrument. If you use a <cite>with</cite> block
+this is handled automatically and you do not need to 
+call this method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -1414,18 +1783,43 @@ after everything else is ready.</p>
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.overlap_and_block">
 <code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.overlap_and_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
-send an &#8216;<a href="#id19"><span class="problematic" id="id20">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+send an &#8216;<a href="#id65"><span class="problematic" id="id66">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+<p>This is meant to be used in <cite>with</cite> blocks as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">inst</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">:</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 1&#39;</span><span class="p">)</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At the end of the <cite>with</cite> block, a &#8216;<a href="#id67"><span class="problematic" id="id68">*</span></a>OPC?&#8217; query is sent
+that blocks until the instrument signals it has finished
+with the commands.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.preset">
 <code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.preset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id69"><span class="problematic" id="id70">*</span></a>RST&#8217;</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.query">
 <code class="descname">query</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.query" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Query an SCPI command to the device with pyvisa,
+and return a string containing the device response.</p>
+<p>Handles debug logging, and extra <a href="#id71"><span class="problematic" id="id72">*</span></a>OPC
+commands (when in an overlap_and_block context),
+then sends a command string to the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the response to the query from the device</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.read_termination">
@@ -1456,7 +1850,17 @@ send an &#8216;<a href="#id19"><span class="problematic" id="id20">*</span></a>O
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.set_backend">
 <code class="descname">set_backend</code><span class="sig-paren">(</span><em>backend_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.set_backend" title="Permalink to this definition">¶</a></dt>
-<dd><p>backend_name can be &#8216;py&#8217; or &#8216;ni&#8217;</p>
+<dd><p>Set the pyvisa resource manager for all VISA objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) &#8211; <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">'<span>&#64;</span>ni</a>&#8216; (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">'<span>&#64;</span>py</a>&#8216;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -1563,7 +1967,7 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.identity">
 <code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=&#8217;<a href="#id73"><span class="problematic" id="id74">*</span></a>idn&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1611,7 +2015,7 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.options">
 <code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.options" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=&#8217;<a href="#id75"><span class="problematic" id="id76">*</span></a>opt&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1653,7 +2057,7 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.status_byte">
 <code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.status_byte" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Dict(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Dict(command=&#8217;<a href="#id77"><span class="problematic" id="id78">*</span></a>stb&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1678,12 +2082,27 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.wait" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id79"><span class="problematic" id="id80">*</span></a>WAI&#8217;</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.write" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Write an SCPI command to the device with pyvisa.</p>
+<p>Handles debug logging, and extra <a href="#id81"><span class="problematic" id="id82">*</span></a>OPC
+commands (when in an overlap_and_block context),
+then sends a command string to the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.write_termination">
@@ -1707,24 +2126,90 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send an SCPI command to get a state value from the
+device. This function
+adds a &#8216;?&#8217; to match SCPI convention. This is
+automatically called for <cite>state</cite> attributes that
+define a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
+<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Send an SCPI command to set a state value on the
+device. This function adds a &#8216;?&#8217; to match SCPI convention. This is
+automatically called for <cite>state</cite> attributes that
+define a message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
+<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+<li><strong>value</strong> (<em>str</em>) &#8211; The value to assign to the parameter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connect to the VISA instrument with the VISA resource string defined
-in self.resource</p>
+<dd><p>Connect to the VISA instrument defined by the VISA resource
+set by <cite>self.resource</cite>. The pyvisa backend object is assigned
+to <cite>self.backend</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>Instead of calling <cite>connect</cite> directly, consider using 
+<cite>with</cite> statements to guarantee proper disconnection
+if there is an error. For example, the following
+sets up a connected instance:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">VISADevice</span><span class="p">(</span><span class="s1">&#39;USB0::0x2A8D::0x1E01::SG56360004::INSTR&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inst</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="n">inst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">identity</span>
+    <span class="nb">print</span> <span class="n">inst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">status_byte</span>
+    <span class="nb">print</span> <span class="n">inst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">options</span>                
+</pre></div>
+</div>
+<p>would instantiate a <cite>VISADevice</cite> and guarantee
+it is disconnected either at the successful completion
+of the <cite>with</cite> block, or if there is any exception.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnect the VISA instrument (if connected)</p>
+<dd><p>Disconnect the VISA instrument. If you use a <cite>with</cite> block
+this is handled automatically and you do not need to 
+call this method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -1750,18 +2235,43 @@ in self.resource</p>
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.overlap_and_block">
 <code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.overlap_and_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
-send an &#8216;<a href="#id21"><span class="problematic" id="id22">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+send an &#8216;<a href="#id83"><span class="problematic" id="id84">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+<p>This is meant to be used in <cite>with</cite> blocks as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">inst</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">:</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 1&#39;</span><span class="p">)</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At the end of the <cite>with</cite> block, a &#8216;<a href="#id85"><span class="problematic" id="id86">*</span></a>OPC?&#8217; query is sent
+that blocks until the instrument signals it has finished
+with the commands.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.preset">
 <code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.preset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id87"><span class="problematic" id="id88">*</span></a>RST&#8217;</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.query">
 <code class="descname">query</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.query" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Query an SCPI command to the device with pyvisa,
+and return a string containing the device response.</p>
+<p>Handles debug logging, and extra <a href="#id89"><span class="problematic" id="id90">*</span></a>OPC
+commands (when in an overlap_and_block context),
+then sends a command string to the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the response to the query from the device</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.read_termination">
@@ -1810,7 +2320,17 @@ send an &#8216;<a href="#id21"><span class="problematic" id="id22">*</span></a>O
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.set_backend">
 <code class="descname">set_backend</code><span class="sig-paren">(</span><em>backend_name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.set_backend" title="Permalink to this definition">¶</a></dt>
-<dd><p>backend_name can be &#8216;py&#8217; or &#8216;ni&#8217;</p>
+<dd><p>Set the pyvisa resource manager for all VISA objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) &#8211; <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">'<span>&#64;</span>ni</a>&#8216; (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">'<span>&#64;</span>py</a>&#8216;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -1839,13 +2359,13 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.identity">
 <code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=&#8217;<a href="#id91"><span class="problematic" id="id92">*</span></a>idn&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.options">
 <code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.options" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=&#8217;<a href="#id93"><span class="problematic" id="id94">*</span></a>opt&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1863,7 +2383,7 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.status_byte">
 <code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.status_byte" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Dict(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Dict(command=&#8217;<a href="#id95"><span class="problematic" id="id96">*</span></a>stb&#8217;,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 </dd></dl>
@@ -1871,12 +2391,27 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.wait" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id97"><span class="problematic" id="id98">*</span></a>WAI&#8217;</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.write" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Write an SCPI command to the device with pyvisa.</p>
+<p>Handles debug logging, and extra <a href="#id99"><span class="problematic" id="id100">*</span></a>OPC
+commands (when in an overlap_and_block context),
+then sends a command string to the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.write_termination">
