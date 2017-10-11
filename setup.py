@@ -1,30 +1,9 @@
 #!/usr/bin/env python
 
 '''
-Installation instructions
+Getting started
 =========================================================================================================================================
-- Install git for windows (recent version?):		https://git-scm.com/download/win
-- Install tortoisegit (version>2.0): 			https://tortoisegit.org/download/
-- Install anaconda python 4.1.1 (64 bit python 2.7):	https://www.continuum.io/downloads
-- Install acroname brainstem development kit v2.3.0	https://acroname.com/software/brainstem-development-kit-ms-windows-ms-windows
-  Extract the folders into a convenient location on your computer.
-  Open a command prompt, and use cd to enter the root of the extracted folder.
-  Use pip to install the python drivers for the acroname brainstem by typing
-  
-  ::
-
-      pip install https://git.ncnr.nist.gov/dkuester/labbench
-
-  on a command line.
-  
-- Install the minicircuits driver mcl_RUDAT64.dll		http://www.minicircuits.com/support/software_download.html
-	- Copy mcl_RUDAT64.dll out of the zipfile into C:\windows\syswow64
-- Use tortoisegit to clone the source code 
-	- Right click in a windows explorer window where you want to clone the source directory, and click "Clone..."
-	- For the repository url enter
-	  \\cfs2w.nist.gov\67Internal\DivisionProjects\NASCTN_GPS\gpslte
-	- Click OK
-- Run the installer script in the code repository to install the remaining python package dependencies
+- Installation instructions are hosted at https://gitlab.nist.gov/gitlab/ssm/ssmdevices#installation
 '''
 
 """
