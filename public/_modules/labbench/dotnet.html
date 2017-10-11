@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>labbench.dotnet &#8212; ssmdevices 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>ssmdevices 0.0.1 documentation</span></a></h1>
+        <h2 class="heading"><span>labbench.dotnet</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for labbench.dotnet</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Tue Mar 07 14:38:10 2017</span>
+
+<span class="sd">@author: dkuester</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DotNetDevice&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">core</span> <span class="k">import</span> <span class="n">Device</span>
+<span class="c1"># dotnet tomfoolery</span>
+
+<span class="n">_dlls</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">def</span> <span class="nf">import_dotnet</span><span class="p">(</span><span class="n">path_to_dll</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">libname</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Return a module imported from the provided path to a dll</span>
+<span class="sd">        that contains a .NET library called `libname.`</span>
+<span class="sd">        </span>
+<span class="sd">        :param path_to_dll: an absolute or relative path on the filesystem, or</span>
+<span class="sd">        (if that fails) a file in the ssmdevices installed distribution.</span>
+<span class="sd">        </span>
+<span class="sd">        :search_locations: a list where each element is a string</span>
+<span class="sd">        (indicating file system path search locations) or module</span>
+<span class="sd">        that may contain the dll name</span>
+<span class="sd">        :param libname: name of the .NET library to import. if None (default),</span>
+<span class="sd">        guess the library name is the same as the dll file without its extension</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">import</span> <span class="nn">clr</span><span class="o">,</span><span class="nn">os</span>
+    <span class="n">clr</span><span class="o">.</span><span class="n">setPreload</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># CPython and .NET libraries: Are they friends?</span>
+    <span class="n">clr</span><span class="o">.</span><span class="n">AddReference</span><span class="p">(</span><span class="s1">&#39;System.Reflection&#39;</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">System.Reflection</span> <span class="k">import</span> <span class="n">Assembly</span>
+    <span class="kn">import</span> <span class="nn">System</span>
+
+    <span class="k">if</span> <span class="n">libname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">libname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path_to_dll</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;__loader__&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; If the python module is packaged as a .egg file,</span>
+<span class="sd">            then use some introspection and the module&#39;s</span>
+<span class="sd">            __loader__ to load the contents of the dll</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">relpath</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+        <span class="n">path_to_dll</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">relpath</span><span class="p">,</span><span class="n">path_to_dll</span><span class="p">)</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">__loader__</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">path_to_dll</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">path_to_dll</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">contents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">_dlls</span><span class="p">[</span><span class="n">path_to_dll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Assembly</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">System</span><span class="o">.</span><span class="n">Array</span><span class="p">[</span><span class="n">System</span><span class="o">.</span><span class="n">Byte</span><span class="p">](</span><span class="n">contents</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">libname</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">DotNetDevice</span><span class="p">(</span><span class="n">Device</span><span class="p">):</span>
+    <span class="n">library</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Must be a module</span>
+    <span class="n">dll_name</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="k">def</span> <span class="nf">setup</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; DotNetDevice loads the DLL; importing in the</span>
+<span class="sd">            class definition tries to load a lot of DLLs</span>
+<span class="sd">            on import</span>
+<span class="sd">            of ssmdevices, which would 1) break platforms</span>
+<span class="sd">            that do not support the DLL, and 2) waste</span>
+<span class="sd">            memory, and 3) </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Need file name of a dll binary&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Need the python module that shares the library path&#39;</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">dll</span> <span class="o">=</span> <span class="n">import_dotnet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">ssmdevices.lib</span>
+    <span class="n">import_dotnet</span><span class="p">(</span><span class="s1">&#39;mcl_RUDAT64.dll&#39;</span><span class="p">,</span> <span class="n">ssmdevices</span><span class="o">.</span><span class="n">lib</span><span class="p">)</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 
+
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

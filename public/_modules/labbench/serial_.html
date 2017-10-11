@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>labbench.serial_ &#8212; ssmdevices 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>ssmdevices 0.0.1 documentation</span></a></h1>
+        <h2 class="heading"><span>labbench.serial_</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for labbench.serial_</h1><div class="highlight"><pre>
+<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SerialDevice&#39;</span><span class="p">,</span><span class="s1">&#39;SerialLoggingDevice&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">serial</span> <span class="k">import</span> <span class="n">Serial</span><span class="p">,</span><span class="n">SerialException</span>
+<span class="kn">from</span> <span class="nn">serial.tools</span> <span class="k">import</span> <span class="n">list_ports</span>
+<span class="kn">from</span> <span class="nn">labbench</span> <span class="k">import</span> <span class="n">core</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Event</span>
+<span class="kn">from</span> <span class="nn">Queue</span> <span class="k">import</span> <span class="n">Queue</span><span class="p">,</span><span class="n">Empty</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;labbench&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">map_serial_hwid_to_label</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39; Map of the comports and their names.</span>
+<span class="sd">    </span>
+<span class="sd">        :return: mapping {&lt;comport name&gt;: &lt;comport ID&gt;} </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">port</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">port</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">()])</span>
+
+<span class="k">def</span> <span class="nf">map_serial_hwid_to_port</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39; Map of the comports and their names.</span>
+<span class="sd">    </span>
+<span class="sd">        :return: mapping {&lt;comport name&gt;: &lt;comport ID&gt;} </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">port</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">port</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">()])</span>
+
+<span class="k">class</span> <span class="nc">SerialDevice</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Device</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; A general base class for communication with serial devices.</span>
+<span class="sd">        Unlike (for example) VISA instruments, there is no</span>
+<span class="sd">        standardized command format like SCPI. The implementation is</span>
+<span class="sd">        therefore limited to connect and disconnect, which open</span>
+<span class="sd">        or close a pyserial connection object: the `link` attribute.</span>
+<span class="sd">        Subclasses can read or write with the link attribute like they</span>
+<span class="sd">        would any other serial instance.</span>
+<span class="sd">        </span>
+<span class="sd">        A SerialDevice resource string is the same as the</span>
+<span class="sd">        platform-dependent `port` argument to new serial.Serial</span>
+<span class="sd">        objects.</span>
+<span class="sd">        </span>
+<span class="sd">        Subclassed devices that need state descriptors will need</span>
+<span class="sd">        to implement state_get and state_set methods in order to define</span>
+<span class="sd">        how the state descriptors set and get operations.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Use bare-bones core Device state definitions</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Connection settings</span>
+    <span class="n">timeout</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">write_termination</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">baud_rate</span> <span class="o">=</span> <span class="mi">9600</span>
+    <span class="n">parity</span> <span class="o">=</span> <span class="s1">&#39;N&#39;</span>
+    <span class="n">stopbits</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">xonxoff</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">rtscts</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">dsrdtr</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1">#    def __init__ (self, resource=None, **pyserial_kwargs):</span>
+<span class="c1">#        &#39;&#39;&#39; :param resource: A visa resource string</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        super(SerialDevice,self).__init__(resource)</span>
+<span class="c1">#        </span>
+<span class="c1">#        self.__dict__.update(pyserial_kwargs)</span>
+<span class="c1">#        self.link = None</span>
+<span class="c1">#        self.__opc = False</span>
+
+    <span class="c1"># Overload methods as needed to implement the Device object protocol </span>
+    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Connect to the serial device with the VISA resource string defined</span>
+<span class="sd">            in self.resource</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="s1">&#39;timeout&#39;</span><span class="p">,</span><span class="s1">&#39;parity&#39;</span><span class="p">,</span> <span class="s1">&#39;stopbits&#39;</span><span class="p">,</span>\
+               <span class="s1">&#39;xonxoff&#39;</span><span class="p">,</span> <span class="s1">&#39;rtscts&#39;</span><span class="p">,</span><span class="s1">&#39;dsrdtr&#39;</span> 
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">Serial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">baud_rate</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> connected&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Disconnect the serial instrument</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> disconnected&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;could not close serial device </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span>
+            <span class="k">pass</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_hwid</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">hwid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">connection_params</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Instantiate a new SerialDevice from a `hwid&#39; resource instead</span>
+<span class="sd">            of a comport resource. A hwid string in windows might look something</span>
+<span class="sd">            like:</span>
+<span class="sd">            </span>
+<span class="sd">            r&#39;PCI\\VEN_8086&amp;DEV_9D3D&amp;SUBSYS_06DC1028&amp;REV_21\\3&amp;11583659&amp;1&amp;B3&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">usb_map</span> <span class="o">=</span> <span class="n">map_serial_hwid_to_port</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">hwid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">usb_map</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Cannot find serial port with hwid &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hwid</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">usb_map</span><span class="p">[</span><span class="n">hwid</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">connection_params</span><span class="p">)</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">list_ports</span> <span class="p">(</span><span class="n">hwid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; List USB serial devices on the computer</span>
+<span class="sd">        </span>
+<span class="sd">            :return: list of port resource information</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ports</span> <span class="o">=</span> <span class="p">[(</span><span class="n">port</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;hwid&#39;</span><span class="p">:</span> <span class="n">port</span><span class="o">.</span><span class="n">hwid</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">port</span><span class="o">.</span><span class="n">description</span><span class="p">})</span>
+                 <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">()]</span>
+        <span class="n">ports</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">ports</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">hwid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ports</span> <span class="o">=</span> <span class="p">[(</span><span class="n">port</span><span class="p">,</span><span class="n">meta</span><span class="p">)</span> <span class="k">for</span> <span class="n">port</span><span class="p">,</span><span class="n">meta</span> <span class="ow">in</span> <span class="n">ports</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">hwid</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ports</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">TimeoutException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">SerialLoggingDevice</span><span class="p">(</span><span class="n">SerialDevice</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Manage connection, acquisition, and data retreival on a single GPS device.</span>
+<span class="sd">        The goal is to make GPS devices controllable somewhat like instruments:</span>
+<span class="sd">        maintaining their own threads, and blocking during setup or stop</span>
+<span class="sd">        command execution.</span>
+<span class="sd">        </span>
+<span class="sd">        Listener objects must implement an attach method with one argument</span>
+<span class="sd">        consisting of the queue that the device manager uses to push data</span>
+<span class="sd">        from the serial port.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">poll_rate</span>            <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="sd">&#39;&#39;&#39; Data retreival rate from the device (in seconds) &#39;&#39;&#39;</span>
+    
+    <span class="n">data_format</span>          <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># data format name here</span>
+    <span class="sd">&#39;&#39;&#39; Data format metadata &#39;&#39;&#39;</span>
+    
+    <span class="n">stop_timeout</span>         <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="sd">&#39;&#39;&#39; Delay after a call to `stop` before terminating the runloop thread &#39;&#39;&#39;</span>
+    
+    <span class="n">max_queue_size</span>       <span class="o">=</span> <span class="mi">100000</span>
+    <span class="sd">&#39;&#39;&#39; Number of bytes to allocate in the data retreival buffer &#39;&#39;&#39;</span>
+    
+    <span class="k">def</span> <span class="nf">configure</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: no device-specific configuration implemented&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">start</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Start a background thread that acquires log data into a queue.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">def</span> <span class="nf">accumulate</span> <span class="p">():</span>
+            <span class="n">timeout</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span><span class="mi">0</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span>
+            <span class="n">stop_event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: configuring log acquisition&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: starting log acquisition&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">while</span> <span class="n">stop_event</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">poll_rate</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">baud_rate</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">poll_rate</span><span class="p">))</span>
+            <span class="k">except</span> <span class="n">SerialException</span><span class="p">,</span><span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">e</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> ending log acquisition&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;already running&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+        <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">accumulate</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">stop</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">running</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_stop&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">fetch</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">ret</span>
+    
+    <span class="k">def</span> <span class="nf">clear</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">disconnect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 
+
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>
