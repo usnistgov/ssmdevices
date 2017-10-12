@@ -49,5 +49,7 @@ GPS Receivers
 ## Authors
 | Author  |   |
 |---|---|
-| Dan Kuester (maintainer)  |  daniel.kuester@nist.gov |
-| Duncan McGillivray  | duncan.a.mcgillivray@nist.gov  |
+| Dan Kuester (maintainer)  |  <daniel.kuester@nist.gov> |
+| Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
+| Ryan Jacobs | <ryan.jacobs@nist.gov> |
+| John Ladbury | <john.ladbury@nist.gov> |
