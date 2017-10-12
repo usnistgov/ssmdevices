@@ -47,7 +47,7 @@ GPS Receivers
 * SwiftNav Piksi
 
 ## Authors
+| Author  |   |
+|---|---|
 | Dan Kuester (maintainer)  |  daniel.kuester@nist.gov |
-|   |   |
-|   |   |
-|   |   |
+| Duncan McGillivray  | duncan.a.mcgillivray@nist.gov  |
