@@ -46,3 +46,9 @@ Misc. Test Electronics
 GPS Receivers
 * SwiftNav Piksi
 
+## Authors
+| Dan Kuester (maintainer)  |  daniel.kuester@nist.gov |
+|---|---|
+|   |   |
+|   |   |
+|   |   |
