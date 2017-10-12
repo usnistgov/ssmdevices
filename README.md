@@ -1,6 +1,6 @@
 # ssmdevices
-`ssmdevices` is a module of drivers that support python lab automation for shared-spectrum metrology. The drivers are implemented with [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench),
-and provide data in [pandas](http://pandas.pydata.org/) data frames when possible to support rapid exploration of data.
+`ssmdevices` is a module of python device drivers developed for experiments in shared-spectrum metrology.
+The drivers are implemented with [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench), and wrap data into [pandas](http://pandas.pydata.org/) data frames when possible to support rapid exploration of data.
 It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name complications and to restrict
 access based on export control law.
 
