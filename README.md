@@ -13,15 +13,15 @@ access based on export control law.
 That's it.
 
 ## The Directions
-### Data acquisition and instrument control examples
+#### Data acquisition and instrument control examples
 * [Coexistence tests of LTE-LAA and WLAN](examples/lte-laa-wlan.ipynb)
 * [Receiver system noise tests of a WLAN client adapter](examples/wlan-noise-sweep.ipynb)
 * [Receiver system noise tests of a GPS receiver](examples/gps-noise-sweep.ipynb)
 
-### Manuals
+#### Manuals
 * [API reference](http://ssm.ipages.nist.gov/ssmdevices/)
 
-### List of supported laboratory devices
+## Directory of supported laboratory devices
 RF power sensors
 * Keysight U2040 X series
 
