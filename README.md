@@ -19,7 +19,8 @@ That's it.
 * [Receiver system noise tests of a GPS receiver](examples/gps-noise-sweep.ipynb)
 
 #### Manuals
-* [API reference](http://ssm.ipages.nist.gov/ssmdevices/)
+* [ssmdevices API](http://ssm.ipages.nist.gov/ssmdevices/)
+* [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench#manual) ()
 
 ## Device Support
 RF power sensors
