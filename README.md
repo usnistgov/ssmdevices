@@ -18,7 +18,7 @@ That's it.
 * [Receiver system noise tests of a WLAN client adapter](examples/wlan-noise-sweep.ipynb)
 * [Receiver system noise tests of a GPS receiver](examples/gps-noise-sweep.ipynb)
 
-### References
+### Manuals
 * [API reference](http://ssm.ipages.nist.gov/ssmdevices/)
 
 ### List of supported laboratory devices
