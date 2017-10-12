@@ -48,7 +48,6 @@ GPS Receivers
 
 ## Authors
 | Dan Kuester (maintainer)  |  daniel.kuester@nist.gov |
-|---|---|
 |   |   |
 |   |   |
 |   |   |
