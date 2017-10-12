@@ -21,7 +21,7 @@ That's it.
 ## References
 * [API reference](http://ssm.ipages.nist.gov/ssmdevices/)
 
-## Supported laboratory devices
+### Supported laboratory devices
 RF power sensors
 * Keysight U2040 X series
 
@@ -46,7 +46,7 @@ Misc. Test Electronics
 GPS Receivers
 * SwiftNav Piksi
 
-## Authors
+### Authors
 | Author  |   |
 |---|---|
 | Dan Kuester (maintainer)  |  <daniel.kuester@nist.gov> |
