@@ -12,7 +12,7 @@ access based on export control law.
 5. If you need support for VISA instruments, install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
 That's it.
 
-## The Directions
+## "How To"
 #### Examples of data acquisition
 * [Coexistence tests of LTE-LAA and WLAN](examples/lte-laa-wlan.ipynb)
 * [Receiver system noise tests of a WLAN client adapter](examples/wlan-noise-sweep.ipynb)
@@ -21,7 +21,7 @@ That's it.
 #### Manuals
 * [API reference](http://ssm.ipages.nist.gov/ssmdevices/)
 
-## Directory of supported laboratory devices
+## Device Support
 RF power sensors
 * Keysight U2040 X series
 
