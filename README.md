@@ -13,7 +13,7 @@ access based on export control law.
 That's it.
 
 ## The Directions
-#### Data acquisition and instrument control examples
+#### Examples of data acquisition
 * [Coexistence tests of LTE-LAA and WLAN](examples/lte-laa-wlan.ipynb)
 * [Receiver system noise tests of a WLAN client adapter](examples/wlan-noise-sweep.ipynb)
 * [Receiver system noise tests of a GPS receiver](examples/gps-noise-sweep.ipynb)
