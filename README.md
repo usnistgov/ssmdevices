@@ -20,7 +20,7 @@ That's it.
 
 #### Manuals
 * [ssmdevices API](http://ssm.ipages.nist.gov/ssmdevices/)
-* [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench#how-to) ()
+* [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench#how-to)
 
 ## Device Support
 RF power sensors
