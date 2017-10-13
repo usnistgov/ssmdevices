@@ -54,3 +54,4 @@ GPS Receivers
 | Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
 | Ryan Jacobs | <ryan.jacobs@nist.gov> |
 | John Ladbury | <john.ladbury@nist.gov> |
+| Yao Ma | <yao.ma@nist.gov> |
