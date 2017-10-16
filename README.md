@@ -14,7 +14,7 @@ That's it.
 
 ## Documentation
 * [ssmdevices API](http://ssm.ipages.nist.gov/ssmdevices/)
-* [example scripts from previous projects](example)
+* [example scripts from previous projects](tree/master/examples)
 * [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench#how-to)
 
 ## Device Support
