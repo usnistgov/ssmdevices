@@ -25,8 +25,9 @@ class IPerfClient(lb.CommandLineWrapper):
     buffer_size = 1024
     interval = 0.5
     
-    binary_path = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
-    
+    binary_path = os.path.join(ssmdevices.lib.__path__[0], 'loop.bat')
+    iperf_path = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
+
     class state(lb.CommandLineWrapper.state):
         timeout         = tl.CFloat(6,     min=0)
 
@@ -55,11 +56,9 @@ class IPerfClient(lb.CommandLineWrapper):
         return data
 
     def connect (self):
-        loop_path = os.path.join(os.path.dirname(self.binary_path),
-                                 'loop.bat')
         
         # Call the iperf binary
-        cmd = loop_path,self.binary_path,\
+        cmd = self.iperf_path,\
               '-n','-1','-y','C',\
               '-c', str(self.resource)
               
@@ -83,7 +82,7 @@ if __name__ == '__main__':
     import time
     
     ipc = IPerfClient('10.0.0.3',interval=0.25)
-    ipc.binary_path = r'..\lib\iperf.exe'
+    ipc.iperf_path = r'..\lib\iperf.exe'
     
     with ipc:
         ipc.clear()

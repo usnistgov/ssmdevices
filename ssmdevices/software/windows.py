@@ -51,7 +51,7 @@ class Netsh(lb.CommandLineWrapper):
         # Execute the binary
         args = ['wlan','show','networks','mode=bssid']
         self.wait()
-        super(Netsh,self).execute([self.binary_path]+args)
+        super(Netsh,self).execute(args)
         
         # Block until the call finishes, then fetch the output text
         self.wait()
@@ -81,7 +81,7 @@ class Netsh(lb.CommandLineWrapper):
         # Execute the binary
         args = ['wlan','show','interfaces']
         self.wait()
-        super(Netsh,self).execute([self.binary_path]+args)
+        super(Netsh,self).execute(args)
         
         # Block until the call finishes, then fetch the output text
         self.wait()
@@ -97,7 +97,6 @@ class Netsh(lb.CommandLineWrapper):
         self.wait()
         si = sp.STARTUPINFO()
         si.dwFlags |= sp.STARTF_USESHOWWINDOW
-        args = [self.binary_path]+args
         proc = sp.Popen(args, stdout=sp.PIPE, startupinfo=si,
                         bufsize=1, universal_newlines=True,
                         creationflags=sp.CREATE_NEW_PROCESS_GROUP,
