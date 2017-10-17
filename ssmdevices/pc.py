@@ -1,3 +1,4 @@
+from __future__ import print_function
 __all__ = ['ThisPC']
 
 import labbench as lb
@@ -29,4 +30,4 @@ if __name__ == '__main__':
     lb.log_to_screen('DEBUG')
     
     with ThisPC() as pc:
-        print pc.state.time
+        print(pc.state.time)

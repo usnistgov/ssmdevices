@@ -4,6 +4,7 @@ Created on Fri Feb 10 13:35:02 2017
 
 @author: dkuester
 """
+from __future__ import print_function
 
 __all__ = ['KeysightU2040XSeries']
 
@@ -46,7 +47,7 @@ if __name__ == '__main__':
     #log_to_screen()
 
     with KeysightU2040XSeries('USB0::0x2A8D::0x1E01::SG56360004::INSTR') as sensor:
-        print 'Connected to ', sensor.state.identity
+        print('Connected to ', sensor.state.identity)
 
         # Configure
         sensor.preset()

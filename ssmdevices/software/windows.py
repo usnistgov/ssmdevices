@@ -11,6 +11,7 @@ Created on Thu May 11 09:39:43 2017
 
 @author: dkuester
 """
+from __future__ import print_function
 
 __all__ = ['Netsh','WLANStatus']
 
@@ -162,7 +163,7 @@ class WLANStatus(lb.Device):
         d = d[self.resource['interface']]
         
         # Set the other traits with the other dictionary values
-        for other in self.state.traits().values():
+        for other in list(self.state.traits().values()):
             if other.name in d and other.name != trait.name:
                 # sneak in under the hood and set the other traits directly 
                 # with traitlets
@@ -177,9 +178,9 @@ if __name__ == '__main__':
         while True:
             if wlan.state.state == 'connected':
                 try:
-                    print '{}%'.format(wlan.state.signal)
+                    print('{}%'.format(wlan.state.signal))
                 except:
                     pass
             else:
-                print 'not connected'
+                print('not connected')
             time.sleep(.25)

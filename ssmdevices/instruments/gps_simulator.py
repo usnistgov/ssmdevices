@@ -4,6 +4,7 @@
 
 :author: Duncan McGillivray <duncan.mcgillivray@nist.gov>, Daniel Kuester <daniel.kuester@nist.gov>
 """
+from __future__ import print_function
 
 __all__ = ['SpirentGSS8000']
 
@@ -181,11 +182,11 @@ class SpirentGSS8000(lb.SerialDevice):
 if __name__ == '__main__':
     lb.debug_to_screen('DEBUG')
     with SpirentGSS8000('COM17') as spirent:
-        print spirent.state.status
+        print(spirent.state.status)
         spirent.reset()
         spirent.run()
         scn = spirent.state.current_scenario
         utc = spirent.state.utc_time
 
-    print scn
-    print utc
+    print(scn)
+    print(utc)

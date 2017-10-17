@@ -1,3 +1,6 @@
+from __future__ import print_function
+from builtins import str
+from builtins import range
 __all__ = ['RohdeSchwarzFSW26SpectrumAnalyzer', 'RohdeSchwarzFSW26IQAnalyzer']
 
 from labbench import Bool, Bytes, EnumBytes, Int, Float
@@ -148,7 +151,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         enable_cmd = 'CALC:MARK{}:STATE?'
         bw_cmd = 'CALC:MARK{}:FUNC:BPOW:STATE?'
 
-        markers = range(1,17)
+        markers = list(range(1,17))
         states = [[self.query(enable_cmd.format(m)),
                    self.query(bw_cmd.format(m))] for m in markers]
 
@@ -323,4 +326,4 @@ if __name__ == '__main__':
         fsw.link.timeout = 1000*60 # in ms
         with fsw.overlap_and_block:
             fsw.store_trace(r'C:\test.iq.tar')
-        print 'Done!'
+        print('Done!')

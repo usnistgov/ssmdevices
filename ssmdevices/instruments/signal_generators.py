@@ -30,6 +30,7 @@
 :author: Ryan Jacobs <ryan.jacobs@nist.gov>, Aziz Kord <aziz.kord@nist.gov>, Daniel Kuester <daniel.kuester@nist.gov>
 Paul.Blanchard <paul.blanchard@nist.gov>
 '''
+from __future__ import print_function
 
 from labbench import Bool, Bytes, EnumBytes, Int, Float
 from labbench.visa import VISADevice
@@ -53,9 +54,9 @@ class RohdeSchwarzSMW200A(VISADevice):
             :type num: int
         
         '''
-        print "Saving State"
+        print("Saving State")
         self.write('MMEMory:STORe:STATe {},"{}.savrcltxt"'.format(num,FileName))
-        print "Complete"
+        print("Complete")
     
     def load_state(self, FileName, opc=False, num="4"):
         ''' Loads a previously saved state file in the instrument

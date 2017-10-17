@@ -133,7 +133,7 @@ def maybe_skip_member(app, what, name, obj, skip, options):
 
     if name not in whitelist and hasattr(tl.HasTraits, name):
         tlobj = getattr(tl.HasTraits, name)
-        if tlobj == obj or (hasattr(tlobj,'im_func') and tlobj.im_func == obj.im_func):
+        if tlobj == obj or (hasattr(tlobj,'im_func') and tlobj.__func__ == obj.__func__):
             with open('test.txt', 'a') as f:
                 f.write('skip: '+repr(what)+' with name '+name+' in '+repr(obj)+'\r\n')
             return True

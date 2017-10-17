@@ -3,6 +3,8 @@ Drivers for USB peripherals
 
 :author: Dan Kuester <daniel.kuester@nist.gov>, Andre Rosete <andre.rosete@nist.gov>
 '''
+from builtins import str
+from builtins import range
 import labbench as lb
 
 import logging
@@ -39,7 +41,7 @@ class AcronameUSBHub2x4(lb.Device):
         
         try:
             import brainstem
-        except Exception,e:
+        except Exception as e:
             logger.error('Could not import the brainstem package, a prerequisite for {} control'\
                          .format(type(self).__name__))
             raise e
@@ -88,7 +90,7 @@ class AcronameUSBHub2x4(lb.Device):
              ports on the hub.
         '''
         if channel == "all":
-            channels = range(4)
+            channels = list(range(4))
         elif isinstance(channel, collections.Iterable):
             channels = channel
         else:

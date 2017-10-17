@@ -4,7 +4,11 @@ Created on Thu May 11 09:39:43 2017
 
 @author: dkuester
 """
+from __future__ import print_function
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 __all__ = ['IPerfClient']
 
 import pandas as pd
@@ -12,7 +16,7 @@ import labbench as lb
 import traitlets as tl
 import os
 import ssmdevices.lib 
-from StringIO import StringIO
+from io import StringIO
 
 class IPerfClient(lb.CommandLineWrapper):
     ''' Run an IPerfClient. Set the resource to the location of iperf.
@@ -87,5 +91,5 @@ if __name__ == '__main__':
     with ipc:
         ipc.clear()
         while True:
-            print ipc.fetch()
+            print(ipc.fetch())
             time.sleep(3)

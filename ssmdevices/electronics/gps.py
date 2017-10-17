@@ -3,6 +3,7 @@ Drivers for USB peripherals
 
 :author: Dan Kuester <daniel.kuester@nist.gov>, Andre Rosete <andre.rosete@nist.gov>
 '''
+from __future__ import print_function
 import labbench as lb
 
 class SwiftNavPiksi(lb.SerialLoggingDevice):
@@ -18,4 +19,4 @@ if __name__ == '__main__':
         time.sleep(5)
         piksi.stop()
         result = piksi.fetch()
-        print 'Received:\n', result
+        print('Received:\n', result)
