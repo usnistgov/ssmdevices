@@ -21,10 +21,10 @@ class KeysightU2040XSeries(VISADevice):
         initiate_continuous = lb.Bool      (command='INIT:CONT')
         output_trigger      = lb.Bool      (command='OUTP:TRIG')
         trigger_source      = lb.EnumBytes (command='TRIG:SOUR', values=['IMM','INT','EXT','BUS','INT1'])
-        trigger_count       = lb.Int       (command='TRIG:COUN', min=1,max=200,step=1,help="help me")
+        trigger_count       = lb.Int       (command='TRIG:COUN', min=1,max=200,step=1)
         measurement_rate    = lb.EnumBytes (command='SENS:MRAT', values=['NORM','DOUB','FAST'])
-        sweep_aperture      = lb.Float     (command='SWE:APER',  min=20e-6, max=200e-3,label='s')
-        frequency           = lb.Float     (command='SENS:FREQ', min=10e6, max=18e9,step=1e-3,label='Hz')
+        sweep_aperture      = lb.Float     (command='SWE:APER',  min=20e-6, max=200e-3,help='time (in s)')
+        frequency           = lb.Float     (command='SENS:FREQ', min=10e6, max=18e9,step=1e-3,help='input signal center frequency (in Hz)')
 
     def preset (self):
         self.write('SYST:PRES')

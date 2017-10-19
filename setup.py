@@ -36,9 +36,10 @@ Getting started
 if __name__ == '__main__':
     from distutils.core import setup
     import setuptools
+    from ssmdevices import __version__ as version
     
     setup(name='ssmdevices',
-          version='0.0.1',
+          version=version,
           description='instrument automation drivers',
           author='Dan Kuester',
           author_email='daniel.kuester@nist.gov',
@@ -49,15 +50,14 @@ if __name__ == '__main__':
           include_package_data=True,
           license='NIST',
           install_requires=[
-  		    	    'labbench',
+  		    	        'labbench(>=0.2)',
                     'pandas(>=0.19.0)',
                     'pyserial(>3.0)',
                     'pyvisa(>=1.8)',
                     'ipywidgets',
                     'notebook',
                     'sphinx',
+                    'sphinx_pyreverse',
+                    'sphinxcontrib-restbuilder'                    
                     ],
-          dependency_links=[
-  		    	    'git+https://gitlab.nist.gov/gitlab/ssm/labbench',
-                    ]
          )

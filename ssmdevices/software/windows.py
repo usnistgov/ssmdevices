@@ -1,16 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Aug 31 10:19:14 2017
-
-@author: dkuester
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Thu May 11 09:39:43 2017
-
-@author: dkuester
-"""
 from __future__ import print_function
 
 __all__ = ['Netsh','WLANStatus']
