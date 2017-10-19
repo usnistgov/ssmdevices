@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>labbench.visa &#8212; ssmdevices 0.0.1 documentation</title>
-    
+    <title>labbench.visa &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.0.1',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -27,9 +24,9 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head>
-  <body role="document">
+  <body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
-          <span>ssmdevices 0.0.1 documentation</span></a></h1>
+          <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>labbench.visa</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -43,7 +40,9 @@
         
         
   <h1>Source code for labbench.visa</h1><div class="highlight"><pre>
-<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;VISADevice&#39;</span><span class="p">]</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">str</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;VISADevice&#39;</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">pyvisa</span><span class="o">,</span> <span class="nn">pyvisa.constants</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">core</span>
@@ -96,7 +95,7 @@
     <span class="c1"># The resource manager is &quot;global&quot; at the class level here</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">_rm</span> <span class="o">=</span> <span class="n">pyvisa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">(</span><span class="s1">&#39;@ni&#39;</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">OSError</span><span class="p">,</span><span class="n">e</span><span class="p">:</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;NI VISA is a dependency of labbench; is it installed?</span><span class="se">\n</span><span class="s1">http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe&#39;</span><span class="p">,)</span>
         <span class="k">raise</span> <span class="n">e</span>
             
@@ -144,7 +143,7 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;VISA: could not release remote control&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span><span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;VISA: could not disconnect. Traceback: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
     <span class="nd">@classmethod</span>
@@ -264,9 +263,9 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="k">with</span> <span class="n">VISADevice</span><span class="p">(</span><span class="s1">&#39;USB0::0x2A8D::0x1E01::SG56360004::INSTR&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sensor</span><span class="p">:</span>
-        <span class="nb">print</span> <span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">identity</span>
-        <span class="nb">print</span> <span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">status_byte</span>
-        <span class="nb">print</span> <span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">options</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">identity</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">status_byte</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
 </pre></div>
 
       </div>
@@ -298,7 +297,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

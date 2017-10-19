@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>ssmdevices.instruments package &#8212; ssmdevices 0.0.1 documentation</title>
-    
+    <title>ssmdevices.instruments package &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.0.1',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -29,9 +26,9 @@
     <link rel="next" title="ssmdevices.lib package" href="ssmdevices.lib.html" />
     <link rel="prev" title="ssmdevices.electronics package" href="ssmdevices.electronics.html" /> 
   </head>
-  <body role="document">
+  <body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>ssmdevices 0.0.1 documentation</span></a></h1>
+          <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.instruments package</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -74,14 +71,14 @@ support 64-bit python.</p>
 <dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a setting from a remote instrument that has a trait attribute
-<a href="#id1"><span class="problematic" id="id2">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<a href="#id1"><span class="problematic" id="id2">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value&#8217;&#8217;
-will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value’’
+will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
@@ -104,6 +101,11 @@ will be applied to the trait attriute <a href="#id5"><span class="problematic" i
 <dl class="attribute">
 <dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.library">
 <code class="descname">library</code><em class="property"> = &lt;module 'ssmdevices.lib' from 'C:\Users\dkuester\Documents\Source\ssmdevices\ssmdevices\lib\__init__.pyc'&gt;</em><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.library" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.next" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -185,8 +187,8 @@ pyvisa, so this driver uses plain serial.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id7"><span class="problematic" id="id8">``</span></a>value&#8217;&#8217;
-will be applied to the trait attriute <a href="#id9"><span class="problematic" id="id10">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id7"><span class="problematic" id="id8">``</span></a>value’’
+will be applied to the trait attriute <a href="#id9"><span class="problematic" id="id10">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
@@ -222,10 +224,10 @@ running, an exception is raised.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.from_hwid">
 <code class="descname">from_hwid</code><span class="sig-paren">(</span><em>hwid=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.from_hwid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instantiate a new SerialDevice from a <a href="#id11"><span class="problematic" id="id12">`</span></a>hwid&#8217; resource instead
+<dd><p>Instantiate a new SerialDevice from a <a href="#id11"><span class="problematic" id="id12">`</span></a>hwid’ resource instead
 of a comport resource. A hwid string in windows might look something
 like:</p>
-<p>r&#8217;PCIVEN_8086&amp;DEV_9D3D&amp;SUBSYS_06DC1028&amp;REV_213&amp;11583659&amp;1&amp;B3&#8217;</p>
+<p>r’PCIVEN_8086&amp;DEV_9D3D&amp;SUBSYS_06DC1028&amp;REV_213&amp;11583659&amp;1&amp;B3’</p>
 </dd></dl>
 
 <dl class="method">
@@ -250,11 +252,16 @@ like:</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; Full path to scenario file on the instrument.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – Full path to scenario file on the instrument.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.parity">
@@ -304,7 +311,7 @@ the scenario, otherwise run <cite>rewind()</cite> first.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; Full path to scenario file on the instrument.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – Full path to scenario file on the instrument.</td>
 </tr>
 </tbody>
 </table>
@@ -330,13 +337,13 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.current_scenario">
 <code class="descname">current_scenario</code><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.current_scenario" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;SC_NAME,includepath&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’SC_NAME,includepath’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.gps_week">
 <code class="descname">gps_week</code><a class="headerlink" href="#ssmdevices.instruments.gps_simulator.SpirentGSS8000.state.gps_week" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=None,max=None,command=&#8217;-,ZCNT_TOW&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Int(min=None,max=None,command=’-,ZCNT_TOW’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -378,7 +385,7 @@ returned by the spirent.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Either &#8216;value&#8217; (return the data response), &#8216;status&#8217;
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Either ‘value’ (return the data response), ‘status’
 (return the instrument status), or None (raise an
 exception if a data value is returned)</td>
 </tr>
@@ -415,7 +422,7 @@ exception if a data value is returned)</td>
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an SCPI command to get a state value from the
 device. This function
-adds a &#8216;?&#8217; to match SCPI convention. This is
+adds a ‘?’ to match SCPI convention. This is
 automatically called for <cite>state</cite> attributes that
 define a message.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -423,8 +430,8 @@ define a message.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
-<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+<li><strong>command</strong> (<em>str</em>) – The SCPI command to send</li>
+<li><strong>trait</strong> – The trait state corresponding with the command (ignored)</li>
 </ul>
 </td>
 </tr>
@@ -436,7 +443,7 @@ define a message.</p>
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.command_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an SCPI command to set a state value on the
-device. This function adds a &#8216;?&#8217; to match SCPI convention. This is
+device. This function adds a ‘?’ to match SCPI convention. This is
 automatically called for <cite>state</cite> attributes that
 define a message.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -444,9 +451,9 @@ define a message.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
-<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
-<li><strong>value</strong> (<em>str</em>) &#8211; The value to assign to the parameter</li>
+<li><strong>command</strong> (<em>str</em>) – The SCPI command to send</li>
+<li><strong>trait</strong> – The trait state corresponding with the command (ignored)</li>
+<li><strong>value</strong> (<em>str</em>) – The value to assign to the parameter</li>
 </ul>
 </td>
 </tr>
@@ -485,18 +492,23 @@ call this method.</p>
 <code class="descname">fetch_rms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/instruments/oscilloscopes.html#RigolOscilloscope.fetch_rms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.fetch_rms" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.overlap_and_block">
 <code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.overlap_and_block" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
-send an &#8216;<a href="#id13"><span class="problematic" id="id14">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+<dd><p>Append ‘;*OPC’ to each command sent during the block, then
+send an ‘<a href="#id13"><span class="problematic" id="id14">*</span></a>OPC?’ query to block until the measurement is done</p>
 <p>This is meant to be used in <cite>with</cite> blocks as follows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">inst</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">:</span>
     <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 1&#39;</span><span class="p">)</span>
     <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 2&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>At the end of the <cite>with</cite> block, a &#8216;<a href="#id15"><span class="problematic" id="id16">*</span></a>OPC?&#8217; query is sent
+<p>At the end of the <cite>with</cite> block, a ‘<a href="#id15"><span class="problematic" id="id16">*</span></a>OPC?’ query is sent
 that blocks until the instrument signals it has finished
 with the commands.</p>
 </dd></dl>
@@ -504,7 +516,7 @@ with the commands.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.preset">
 <code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.preset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id17"><span class="problematic" id="id18">*</span></a>RST&#8217;</p>
+<dd><p>Convenience function to send standard SCPI ‘<a href="#id17"><span class="problematic" id="id18">*</span></a>RST’</p>
 </dd></dl>
 
 <dl class="method">
@@ -519,7 +531,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) – the SCPI command to send by VISA</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the response to the query from the device</td>
 </tr>
@@ -545,7 +557,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) &#8211; <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">'<span>&#64;</span>ni</a>&#8216; (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">'<span>&#64;</span>py</a>&#8216;</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) – <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">‘<span>&#64;</span>ni</a>’ (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">‘<span>&#64;</span>py</a>’</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
@@ -573,31 +585,31 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.identity">
 <code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;<a href="#id21"><span class="problematic" id="id22">*</span></a>idn&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’<a href="#id21"><span class="problematic" id="id22">*</span></a>idn’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.options">
 <code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.options" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;<a href="#id23"><span class="problematic" id="id24">*</span></a>opt&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’<a href="#id23"><span class="problematic" id="id24">*</span></a>opt’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.status_byte">
 <code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.status_byte" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Dict(command=&#8217;<a href="#id25"><span class="problematic" id="id26">*</span></a>stb&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Dict(command=’<a href="#id25"><span class="problematic" id="id26">*</span></a>stb’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.time_offset">
 <code class="descname">time_offset</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.time_offset" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=None,command=&#8217;:TIM:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=None,command=’:TIM:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.time_scale">
 <code class="descname">time_scale</code><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.state.time_scale" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=None,command=&#8217;:TIM:SCAL&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=None,command=’:TIM:SCAL’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 </dd></dl>
@@ -605,7 +617,7 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.oscilloscopes.RigolOscilloscope.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.wait" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id27"><span class="problematic" id="id28">*</span></a>WAI&#8217;</p>
+<dd><p>Convenience function to send standard SCPI ‘<a href="#id27"><span class="problematic" id="id28">*</span></a>WAI’</p>
 </dd></dl>
 
 <dl class="method">
@@ -619,7 +631,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) – the SCPI command to send by VISA</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
@@ -654,7 +666,7 @@ then sends a command string to the device.</p>
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an SCPI command to get a state value from the
 device. This function
-adds a &#8216;?&#8217; to match SCPI convention. This is
+adds a ‘?’ to match SCPI convention. This is
 automatically called for <cite>state</cite> attributes that
 define a message.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -662,8 +674,8 @@ define a message.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
-<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+<li><strong>command</strong> (<em>str</em>) – The SCPI command to send</li>
+<li><strong>trait</strong> – The trait state corresponding with the command (ignored)</li>
 </ul>
 </td>
 </tr>
@@ -675,7 +687,7 @@ define a message.</p>
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.command_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an SCPI command to set a state value on the
-device. This function adds a &#8216;?&#8217; to match SCPI convention. This is
+device. This function adds a ‘?’ to match SCPI convention. This is
 automatically called for <cite>state</cite> attributes that
 define a message.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -683,9 +695,9 @@ define a message.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
-<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
-<li><strong>value</strong> (<em>str</em>) &#8211; The value to assign to the parameter</li>
+<li><strong>command</strong> (<em>str</em>) – The SCPI command to send</li>
+<li><strong>trait</strong> – The trait state corresponding with the command (ignored)</li>
+<li><strong>value</strong> (<em>str</em>) – The value to assign to the parameter</li>
 </ul>
 </td>
 </tr>
@@ -744,18 +756,23 @@ call this method.</p>
 <dd><p>Return a single number or pandas Series containing the power readings</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.overlap_and_block">
 <code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.overlap_and_block" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
-send an &#8216;<a href="#id31"><span class="problematic" id="id32">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+<dd><p>Append ‘;*OPC’ to each command sent during the block, then
+send an ‘<a href="#id31"><span class="problematic" id="id32">*</span></a>OPC?’ query to block until the measurement is done</p>
 <p>This is meant to be used in <cite>with</cite> blocks as follows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">inst</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">:</span>
     <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 1&#39;</span><span class="p">)</span>
     <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 2&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>At the end of the <cite>with</cite> block, a &#8216;<a href="#id33"><span class="problematic" id="id34">*</span></a>OPC?&#8217; query is sent
+<p>At the end of the <cite>with</cite> block, a ‘<a href="#id33"><span class="problematic" id="id34">*</span></a>OPC?’ query is sent
 that blocks until the instrument signals it has finished
 with the commands.</p>
 </dd></dl>
@@ -777,7 +794,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) – the SCPI command to send by VISA</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the response to the query from the device</td>
 </tr>
@@ -803,7 +820,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) &#8211; <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">'<span>&#64;</span>ni</a>&#8216; (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">'<span>&#64;</span>py</a>&#8216;</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) – <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">‘<span>&#64;</span>ni</a>’ (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">‘<span>&#64;</span>py</a>’</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
@@ -831,62 +848,63 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.frequency">
 <code class="descname">frequency</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.frequency" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=10000000.0,max=18000000000.0,step=0.001,command=&#8217;SENS:FREQ&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=10000000.0,max=18000000000.0,step=0.001,command=’SENS:FREQ’,read_only=False,write_only=False,cache=False)
+input signal center frequency (in Hz)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.identity">
 <code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;<a href="#id37"><span class="problematic" id="id38">*</span></a>idn&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’<a href="#id37"><span class="problematic" id="id38">*</span></a>idn’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.initiate_continuous">
 <code class="descname">initiate_continuous</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.initiate_continuous" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=&#8217;INIT:CONT&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=’INIT:CONT’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.measurement_rate">
 <code class="descname">measurement_rate</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.measurement_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.EnumBytes(values=[&#8216;NORM&#8217;, &#8216;DOUB&#8217;, &#8216;FAST&#8217;],case_sensitive=False,command=&#8217;SENS:MRAT&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.EnumBytes(values=[b’NORM’, b’DOUB’, b’FAST’],case_sensitive=False,command=’SENS:MRAT’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.options">
 <code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.options" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;<a href="#id39"><span class="problematic" id="id40">*</span></a>opt&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’<a href="#id39"><span class="problematic" id="id40">*</span></a>opt’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.output_trigger">
 <code class="descname">output_trigger</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.output_trigger" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=&#8217;OUTP:TRIG&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=’OUTP:TRIG’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.status_byte">
 <code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.status_byte" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Dict(command=&#8217;<a href="#id41"><span class="problematic" id="id42">*</span></a>stb&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Dict(command=’<a href="#id41"><span class="problematic" id="id42">*</span></a>stb’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.sweep_aperture">
 <code class="descname">sweep_aperture</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.sweep_aperture" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=2e-05,max=0.2,step=None,command=&#8217;SWE:APER&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=2e-05,max=0.2,step=None,command=’SWE:APER’,read_only=False,write_only=False,cache=False)
+time (in s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.trigger_count">
 <code class="descname">trigger_count</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.trigger_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=200,command=&#8217;TRIG:COUN&#8217;,read_only=False,write_only=False,cache=False)
-help me</p>
+<dd><p>labbench.Int(min=1,max=200,command=’TRIG:COUN’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.trigger_source">
 <code class="descname">trigger_source</code><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.state.trigger_source" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.EnumBytes(values=[&#8216;IMM&#8217;, &#8216;INT&#8217;, &#8216;EXT&#8217;, &#8216;BUS&#8217;, &#8216;INT1&#8217;],case_sensitive=False,command=&#8217;TRIG:SOUR&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.EnumBytes(values=[b’IMM’, b’INT’, b’EXT’, b’BUS’, b’INT1’],case_sensitive=False,command=’TRIG:SOUR’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 </dd></dl>
@@ -894,7 +912,7 @@ help me</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.power_sensors.KeysightU2040XSeries.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.power_sensors.KeysightU2040XSeries.wait" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id43"><span class="problematic" id="id44">*</span></a>WAI&#8217;</p>
+<dd><p>Convenience function to send standard SCPI ‘<a href="#id43"><span class="problematic" id="id44">*</span></a>WAI’</p>
 </dd></dl>
 
 <dl class="method">
@@ -908,7 +926,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) – the SCPI command to send by VISA</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
@@ -946,7 +964,7 @@ then sends a command string to the device.</p>
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an SCPI command to get a state value from the
 device. This function
-adds a &#8216;?&#8217; to match SCPI convention. This is
+adds a ‘?’ to match SCPI convention. This is
 automatically called for <cite>state</cite> attributes that
 define a message.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -954,8 +972,8 @@ define a message.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
-<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+<li><strong>command</strong> (<em>str</em>) – The SCPI command to send</li>
+<li><strong>trait</strong> – The trait state corresponding with the command (ignored)</li>
 </ul>
 </td>
 </tr>
@@ -967,7 +985,7 @@ define a message.</p>
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.command_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an SCPI command to set a state value on the
-device. This function adds a &#8216;?&#8217; to match SCPI convention. This is
+device. This function adds a ‘?’ to match SCPI convention. This is
 automatically called for <cite>state</cite> attributes that
 define a message.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -975,9 +993,9 @@ define a message.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
-<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
-<li><strong>value</strong> (<em>str</em>) &#8211; The value to assign to the parameter</li>
+<li><strong>command</strong> (<em>str</em>) – The SCPI command to send</li>
+<li><strong>trait</strong> – The trait state corresponding with the command (ignored)</li>
+<li><strong>value</strong> (<em>str</em>) – The value to assign to the parameter</li>
 </ul>
 </td>
 </tr>
@@ -1044,8 +1062,8 @@ call this method.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
-<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+<li><strong>marker</strong> (<em>int</em>) – marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) – ‘X’ for x axis or ‘Y’ for y axis</li>
 </ul>
 </td>
 </tr>
@@ -1061,7 +1079,7 @@ call this method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) – marker number on instrument display</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">power in dBm</td>
 </tr>
@@ -1079,7 +1097,7 @@ call this method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) – marker number on instrument display</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bandwidth</td>
 </tr>
@@ -1097,8 +1115,8 @@ call this method.</p>
 then set the count back, and read again like this:</p>
 <dl class="docutils">
 <dt>::</dt>
-<dd>count = inst.query(&#8220;SENSE:SWEEP:COUNT?&#8221;)
-self.write(&#8220;SENSE:SWEEP:COUNT 1&#8221;)</dd>
+<dd>count = inst.query(“SENSE:SWEEP:COUNT?”)
+self.write(“SENSE:SWEEP:COUNT 1”)</dd>
 </dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1152,7 +1170,7 @@ self.write(&#8220;SENSE:SWEEP:COUNT 1&#8221;)</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) – marker number on instrument display</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bandwidth</td>
 </tr>
@@ -1176,8 +1194,8 @@ self.write(&#8220;SENSE:SWEEP:COUNT 1&#8221;)</dd>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
-<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+<li><strong>marker</strong> (<em>int</em>) – marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) – ‘X’ for x axis or ‘Y’ for y axis</li>
 </ul>
 </td>
 </tr>
@@ -1194,8 +1212,8 @@ self.write(&#8220;SENSE:SWEEP:COUNT 1&#8221;)</dd>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
-<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+<li><strong>marker</strong> (<em>int</em>) – marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) – ‘X’ for x axis or ‘Y’ for y axis</li>
 </ul>
 </td>
 </tr>
@@ -1218,8 +1236,8 @@ self.write(&#8220;SENSE:SWEEP:COUNT 1&#8221;)</dd>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>FileName</strong> (<em>string</em>) &#8211; state file location on the instrument</li>
-<li><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</li>
+<li><strong>FileName</strong> (<em>string</em>) – state file location on the instrument</li>
+<li><strong>num</strong> (<em>int</em>) – state number in the saved filename</li>
 </ul>
 </td>
 </tr>
@@ -1227,18 +1245,23 @@ self.write(&#8220;SENSE:SWEEP:COUNT 1&#8221;)</dd>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.overlap_and_block">
 <code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.overlap_and_block" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
-send an &#8216;<a href="#id47"><span class="problematic" id="id48">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+<dd><p>Append ‘;*OPC’ to each command sent during the block, then
+send an ‘<a href="#id47"><span class="problematic" id="id48">*</span></a>OPC?’ query to block until the measurement is done</p>
 <p>This is meant to be used in <cite>with</cite> blocks as follows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">inst</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">:</span>
     <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 1&#39;</span><span class="p">)</span>
     <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 2&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>At the end of the <cite>with</cite> block, a &#8216;<a href="#id49"><span class="problematic" id="id50">*</span></a>OPC?&#8217; query is sent
+<p>At the end of the <cite>with</cite> block, a ‘<a href="#id49"><span class="problematic" id="id50">*</span></a>OPC?’ query is sent
 that blocks until the instrument signals it has finished
 with the commands.</p>
 </dd></dl>
@@ -1246,7 +1269,7 @@ with the commands.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.preset">
 <code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.preset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id51"><span class="problematic" id="id52">*</span></a>RST&#8217;</p>
+<dd><p>Convenience function to send standard SCPI ‘<a href="#id51"><span class="problematic" id="id52">*</span></a>RST’</p>
 </dd></dl>
 
 <dl class="method">
@@ -1261,7 +1284,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) – the SCPI command to send by VISA</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the response to the query from the device</td>
 </tr>
@@ -1289,7 +1312,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) – state number in the saved filename</td>
 </tr>
 </tbody>
 </table>
@@ -1303,7 +1326,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) &#8211; <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">'<span>&#64;</span>ni</a>&#8216; (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">'<span>&#64;</span>py</a>&#8216;</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) – <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">‘<span>&#64;</span>ni</a>’ (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">‘<span>&#64;</span>py</a>’</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
@@ -1320,8 +1343,8 @@ then sends a command string to the device.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
-<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+<li><strong>marker</strong> (<em>int</em>) – marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) – ‘X’ for x axis or ‘Y’ for y axis</li>
 </ul>
 </td>
 </tr>
@@ -1343,43 +1366,43 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset">
 <code class="descname">amplitude_offset</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC1:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC1:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace2">
 <code class="descname">amplitude_offset_trace2</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace2" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC2:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC2:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace3">
 <code class="descname">amplitude_offset_trace3</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace3" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC3:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC3:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace4">
 <code class="descname">amplitude_offset_trace4</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace4" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC4:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC4:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace5">
 <code class="descname">amplitude_offset_trace5</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace5" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC5:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC5:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace6">
 <code class="descname">amplitude_offset_trace6</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.amplitude_offset_trace6" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC6:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC6:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.channel_type">
 <code class="descname">channel_type</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.channel_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.EnumBytes(values=[&#8216;SAN&#8217;, &#8216;IQ&#8217;],case_sensitive=False,command=&#8217;INST&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.EnumBytes(values=[b’SAN’, b’IQ’],case_sensitive=False,command=’INST’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1391,91 +1414,91 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_center">
 <code class="descname">frequency_center</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_center" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:CENT&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=’FREQ:CENT’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_span">
 <code class="descname">frequency_span</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_span" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:SPAN&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=’FREQ:SPAN’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_start">
 <code class="descname">frequency_start</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:START&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=’FREQ:START’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_stop">
 <code class="descname">frequency_stop</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.frequency_stop" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:STOP&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=’FREQ:STOP’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.identity">
 <code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;<a href="#id55"><span class="problematic" id="id56">*</span></a>idn&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’<a href="#id55"><span class="problematic" id="id56">*</span></a>idn’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.initiate_continuous">
 <code class="descname">initiate_continuous</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.initiate_continuous" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=&#8217;INIT:CONT&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=’INIT:CONT’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.options">
 <code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.options" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;<a href="#id57"><span class="problematic" id="id58">*</span></a>opt&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’<a href="#id57"><span class="problematic" id="id58">*</span></a>opt’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level">
 <code class="descname">reference_level</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC1:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC1:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace2">
 <code class="descname">reference_level_trace2</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace2" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC2:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC2:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace3">
 <code class="descname">reference_level_trace3</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace3" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC3:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC3:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace4">
 <code class="descname">reference_level_trace4</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace4" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC4:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC4:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace5">
 <code class="descname">reference_level_trace5</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace5" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC5:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC5:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace6">
 <code class="descname">reference_level_trace6</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.reference_level_trace6" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC6:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC6:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.status_byte">
 <code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.status_byte" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Dict(command=&#8217;<a href="#id59"><span class="problematic" id="id60">*</span></a>stb&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Dict(command=’<a href="#id59"><span class="problematic" id="id60">*</span></a>stb’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.sweep_points">
 <code class="descname">sweep_points</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.state.sweep_points" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=100001,command=&#8217;SWE:POIN&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Int(min=1,max=100001,command=’SWE:POIN’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 </dd></dl>
@@ -1489,7 +1512,7 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.wait" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id61"><span class="problematic" id="id62">*</span></a>WAI&#8217;</p>
+<dd><p>Convenience function to send standard SCPI ‘<a href="#id61"><span class="problematic" id="id62">*</span></a>WAI’</p>
 </dd></dl>
 
 <dl class="method">
@@ -1503,7 +1526,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) – the SCPI command to send by VISA</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
@@ -1538,7 +1561,7 @@ then sends a command string to the device.</p>
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an SCPI command to get a state value from the
 device. This function
-adds a &#8216;?&#8217; to match SCPI convention. This is
+adds a ‘?’ to match SCPI convention. This is
 automatically called for <cite>state</cite> attributes that
 define a message.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1546,8 +1569,8 @@ define a message.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
-<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+<li><strong>command</strong> (<em>str</em>) – The SCPI command to send</li>
+<li><strong>trait</strong> – The trait state corresponding with the command (ignored)</li>
 </ul>
 </td>
 </tr>
@@ -1559,7 +1582,7 @@ define a message.</p>
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.command_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an SCPI command to set a state value on the
-device. This function adds a &#8216;?&#8217; to match SCPI convention. This is
+device. This function adds a ‘?’ to match SCPI convention. This is
 automatically called for <cite>state</cite> attributes that
 define a message.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1567,9 +1590,9 @@ define a message.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
-<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
-<li><strong>value</strong> (<em>str</em>) &#8211; The value to assign to the parameter</li>
+<li><strong>command</strong> (<em>str</em>) – The SCPI command to send</li>
+<li><strong>trait</strong> – The trait state corresponding with the command (ignored)</li>
+<li><strong>value</strong> (<em>str</em>) – The value to assign to the parameter</li>
 </ul>
 </td>
 </tr>
@@ -1612,8 +1635,8 @@ call this method.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
-<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+<li><strong>marker</strong> (<em>int</em>) – marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) – ‘X’ for x axis or ‘Y’ for y axis</li>
 </ul>
 </td>
 </tr>
@@ -1629,7 +1652,7 @@ call this method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) – marker number on instrument display</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">power in dBm</td>
 </tr>
@@ -1647,7 +1670,7 @@ call this method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) – marker number on instrument display</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bandwidth</td>
 </tr>
@@ -1702,7 +1725,7 @@ call this method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>marker</strong> (<em>int</em>) – marker number on instrument display</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bandwidth</td>
 </tr>
@@ -1726,8 +1749,8 @@ call this method.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
-<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+<li><strong>marker</strong> (<em>int</em>) – marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) – ‘X’ for x axis or ‘Y’ for y axis</li>
 </ul>
 </td>
 </tr>
@@ -1744,8 +1767,8 @@ call this method.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
-<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+<li><strong>marker</strong> (<em>int</em>) – marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) – ‘X’ for x axis or ‘Y’ for y axis</li>
 </ul>
 </td>
 </tr>
@@ -1768,8 +1791,8 @@ call this method.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>FileName</strong> (<em>string</em>) &#8211; state file location on the instrument</li>
-<li><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</li>
+<li><strong>FileName</strong> (<em>string</em>) – state file location on the instrument</li>
+<li><strong>num</strong> (<em>int</em>) – state number in the saved filename</li>
 </ul>
 </td>
 </tr>
@@ -1777,18 +1800,23 @@ call this method.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.overlap_and_block">
 <code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.overlap_and_block" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
-send an &#8216;<a href="#id65"><span class="problematic" id="id66">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+<dd><p>Append ‘;*OPC’ to each command sent during the block, then
+send an ‘<a href="#id65"><span class="problematic" id="id66">*</span></a>OPC?’ query to block until the measurement is done</p>
 <p>This is meant to be used in <cite>with</cite> blocks as follows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">inst</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">:</span>
     <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 1&#39;</span><span class="p">)</span>
     <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 2&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>At the end of the <cite>with</cite> block, a &#8216;<a href="#id67"><span class="problematic" id="id68">*</span></a>OPC?&#8217; query is sent
+<p>At the end of the <cite>with</cite> block, a ‘<a href="#id67"><span class="problematic" id="id68">*</span></a>OPC?’ query is sent
 that blocks until the instrument signals it has finished
 with the commands.</p>
 </dd></dl>
@@ -1796,7 +1824,7 @@ with the commands.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.preset">
 <code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.preset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id69"><span class="problematic" id="id70">*</span></a>RST&#8217;</p>
+<dd><p>Convenience function to send standard SCPI ‘<a href="#id69"><span class="problematic" id="id70">*</span></a>RST’</p>
 </dd></dl>
 
 <dl class="method">
@@ -1811,7 +1839,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) – the SCPI command to send by VISA</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the response to the query from the device</td>
 </tr>
@@ -1839,7 +1867,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) – state number in the saved filename</td>
 </tr>
 </tbody>
 </table>
@@ -1853,7 +1881,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) &#8211; <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">'<span>&#64;</span>ni</a>&#8216; (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">'<span>&#64;</span>py</a>&#8216;</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) – <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">‘<span>&#64;</span>ni</a>’ (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">‘<span>&#64;</span>py</a>’</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
@@ -1870,8 +1898,8 @@ then sends a command string to the device.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>marker</strong> (<em>int</em>) &#8211; marker number on instrument display</li>
-<li><strong>axis</strong> (<em>str</em>) &#8211; &#8216;X&#8217; for x axis or &#8216;Y&#8217; for y axis</li>
+<li><strong>marker</strong> (<em>int</em>) – marker number on instrument display</li>
+<li><strong>axis</strong> (<em>str</em>) – ‘X’ for x axis or ‘Y’ for y axis</li>
 </ul>
 </td>
 </tr>
@@ -1893,43 +1921,43 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset">
 <code class="descname">amplitude_offset</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC1:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC1:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace2">
 <code class="descname">amplitude_offset_trace2</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace2" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC2:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC2:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace3">
 <code class="descname">amplitude_offset_trace3</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace3" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC3:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC3:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace4">
 <code class="descname">amplitude_offset_trace4</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace4" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC4:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC4:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace5">
 <code class="descname">amplitude_offset_trace5</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace5" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC5:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC5:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace6">
 <code class="descname">amplitude_offset_trace6</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.amplitude_offset_trace6" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC6:Y:RLEV:OFFS&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC6:Y:RLEV:OFFS’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.channel_type">
 <code class="descname">channel_type</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.channel_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.EnumBytes(values=[&#8216;SAN&#8217;, &#8216;IQ&#8217;],case_sensitive=False,command=&#8217;INST&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.EnumBytes(values=[b’SAN’, b’IQ’],case_sensitive=False,command=’INST’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1941,127 +1969,127 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_center">
 <code class="descname">frequency_center</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_center" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:CENT&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=’FREQ:CENT’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_span">
 <code class="descname">frequency_span</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_span" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:SPAN&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=’FREQ:SPAN’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_start">
 <code class="descname">frequency_start</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:START&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=’FREQ:START’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_stop">
 <code class="descname">frequency_stop</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.frequency_stop" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=&#8217;FREQ:STOP&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=2,max=26500000000.0,step=1e-09,command=’FREQ:STOP’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.identity">
 <code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;<a href="#id73"><span class="problematic" id="id74">*</span></a>idn&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’<a href="#id73"><span class="problematic" id="id74">*</span></a>idn’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.initiate_continuous">
 <code class="descname">initiate_continuous</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.initiate_continuous" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=&#8217;INIT:CONT&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=’INIT:CONT’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_evaluation_enabled">
 <code class="descname">iq_evaluation_enabled</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_evaluation_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=&#8217;CALC:IQ:EVAL&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=’CALC:IQ:EVAL’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_format">
 <code class="descname">iq_format</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_format" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.EnumBytes(values=[&#8216;FREQ&#8217;, &#8216;MAGN&#8217;, &#8216;MTAB&#8217;, &#8216;PEAK&#8217;, &#8216;RIM&#8217;, &#8216;VECT&#8217;],case_sensitive=False,command=&#8217;CALC:FORM&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.EnumBytes(values=[b’FREQ’, b’MAGN’, b’MTAB’, b’PEAK’, b’RIM’, b’VECT’],case_sensitive=False,command=’CALC:FORM’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_mode">
 <code class="descname">iq_mode</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.EnumBytes(values=[&#8216;TDOMain&#8217;, &#8216;FDOMain&#8217;, &#8216;IQ&#8217;],case_sensitive=False,command=&#8217;CALC:IQ:MODE&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.EnumBytes(values=[b’TDOMain’, b’FDOMain’, b’IQ’],case_sensitive=False,command=’CALC:IQ:MODE’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_record_length">
 <code class="descname">iq_record_length</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_record_length" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=461373440,command=&#8217;TRAC:IQ:RLEN&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Int(min=1,max=461373440,command=’TRAC:IQ:RLEN’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_sample_rate">
 <code class="descname">iq_sample_rate</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_sample_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=1e-09,max=160000000.0,step=None,command=&#8217;TRAC:IQ:SRAT&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=1e-09,max=160000000.0,step=None,command=’TRAC:IQ:SRAT’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_simple_enabled">
 <code class="descname">iq_simple_enabled</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.iq_simple_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=&#8217;CALC:IQ&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=’CALC:IQ’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.options">
 <code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.options" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;<a href="#id75"><span class="problematic" id="id76">*</span></a>opt&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’<a href="#id75"><span class="problematic" id="id76">*</span></a>opt’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level">
 <code class="descname">reference_level</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC1:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC1:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace2">
 <code class="descname">reference_level_trace2</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace2" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC2:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC2:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace3">
 <code class="descname">reference_level_trace3</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace3" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC3:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC3:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace4">
 <code class="descname">reference_level_trace4</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace4" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC4:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC4:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace5">
 <code class="descname">reference_level_trace5</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace5" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC5:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC5:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace6">
 <code class="descname">reference_level_trace6</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.reference_level_trace6" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=&#8217;DISP:TRAC6:Y:RLEV&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-inf,max=inf,step=0.001,command=’DISP:TRAC6:Y:RLEV’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.status_byte">
 <code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.status_byte" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Dict(command=&#8217;<a href="#id77"><span class="problematic" id="id78">*</span></a>stb&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Dict(command=’<a href="#id77"><span class="problematic" id="id78">*</span></a>stb’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.sweep_points">
 <code class="descname">sweep_points</code><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state.sweep_points" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=100001,command=&#8217;SWE:POIN&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Int(min=1,max=100001,command=’SWE:POIN’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 </dd></dl>
@@ -2080,7 +2108,7 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.wait" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id79"><span class="problematic" id="id80">*</span></a>WAI&#8217;</p>
+<dd><p>Convenience function to send standard SCPI ‘<a href="#id79"><span class="problematic" id="id80">*</span></a>WAI’</p>
 </dd></dl>
 
 <dl class="method">
@@ -2094,7 +2122,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) – the SCPI command to send by VISA</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
@@ -2126,7 +2154,7 @@ then sends a command string to the device.</p>
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an SCPI command to get a state value from the
 device. This function
-adds a &#8216;?&#8217; to match SCPI convention. This is
+adds a ‘?’ to match SCPI convention. This is
 automatically called for <cite>state</cite> attributes that
 define a message.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -2134,8 +2162,8 @@ define a message.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
-<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
+<li><strong>command</strong> (<em>str</em>) – The SCPI command to send</li>
+<li><strong>trait</strong> – The trait state corresponding with the command (ignored)</li>
 </ul>
 </td>
 </tr>
@@ -2147,7 +2175,7 @@ define a message.</p>
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.command_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send an SCPI command to set a state value on the
-device. This function adds a &#8216;?&#8217; to match SCPI convention. This is
+device. This function adds a ‘?’ to match SCPI convention. This is
 automatically called for <cite>state</cite> attributes that
 define a message.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -2155,9 +2183,9 @@ define a message.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) &#8211; The SCPI command to send</li>
-<li><strong>trait</strong> &#8211; The trait state corresponding with the command (ignored)</li>
-<li><strong>value</strong> (<em>str</em>) &#8211; The value to assign to the parameter</li>
+<li><strong>command</strong> (<em>str</em>) – The SCPI command to send</li>
+<li><strong>trait</strong> – The trait state corresponding with the command (ignored)</li>
+<li><strong>value</strong> (<em>str</em>) – The value to assign to the parameter</li>
 </ul>
 </td>
 </tr>
@@ -2219,9 +2247,9 @@ call this method.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>FileName</strong> (<em>string</em>) &#8211; state file location on the instrument</li>
-<li><strong>opc</strong> (<em>bool</em>) &#8211; set the VISA op complete flag?</li>
-<li><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</li>
+<li><strong>FileName</strong> (<em>string</em>) – state file location on the instrument</li>
+<li><strong>opc</strong> (<em>bool</em>) – set the VISA op complete flag?</li>
+<li><strong>num</strong> (<em>int</em>) – state number in the saved filename</li>
 </ul>
 </td>
 </tr>
@@ -2229,18 +2257,23 @@ call this method.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.overlap_and_block">
 <code class="descname">overlap_and_block</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.overlap_and_block" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append &#8216;;*OPC&#8217; to each command sent during the block, then
-send an &#8216;<a href="#id83"><span class="problematic" id="id84">*</span></a>OPC?&#8217; query to block until the measurement is done</p>
+<dd><p>Append ‘;*OPC’ to each command sent during the block, then
+send an ‘<a href="#id83"><span class="problematic" id="id84">*</span></a>OPC?’ query to block until the measurement is done</p>
 <p>This is meant to be used in <cite>with</cite> blocks as follows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">inst</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">:</span>
     <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 1&#39;</span><span class="p">)</span>
     <span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;long running command 2&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>At the end of the <cite>with</cite> block, a &#8216;<a href="#id85"><span class="problematic" id="id86">*</span></a>OPC?&#8217; query is sent
+<p>At the end of the <cite>with</cite> block, a ‘<a href="#id85"><span class="problematic" id="id86">*</span></a>OPC?’ query is sent
 that blocks until the instrument signals it has finished
 with the commands.</p>
 </dd></dl>
@@ -2248,7 +2281,7 @@ with the commands.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.preset">
 <code class="descname">preset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.preset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id87"><span class="problematic" id="id88">*</span></a>RST&#8217;</p>
+<dd><p>Convenience function to send standard SCPI ‘<a href="#id87"><span class="problematic" id="id88">*</span></a>RST’</p>
 </dd></dl>
 
 <dl class="method">
@@ -2263,7 +2296,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) – the SCPI command to send by VISA</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the response to the query from the device</td>
 </tr>
@@ -2309,7 +2342,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) &#8211; state number in the saved filename</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<em>int</em>) – state number in the saved filename</td>
 </tr>
 </tbody>
 </table>
@@ -2323,7 +2356,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) &#8211; <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">'<span>&#64;</span>ni</a>&#8216; (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">'<span>&#64;</span>py</a>&#8216;</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str</strong> (<em>backend_name</em>) – <a class="reference external" href="mailto:'&#37;&#52;&#48;ni">‘<span>&#64;</span>ni</a>’ (the default) or <a class="reference external" href="mailto:'&#37;&#52;&#48;py">‘<span>&#64;</span>py</a>’</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
@@ -2351,37 +2384,37 @@ after everything else is ready.</p>
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.frequency_baseband">
 <code class="descname">frequency_baseband</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.frequency_baseband" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=2000.0,max=26500000000.0,step=1000.0,command=&#8217;:freq&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=2000.0,max=26500000000.0,step=1000.0,command=’:freq’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.identity">
 <code class="descname">identity</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;<a href="#id91"><span class="problematic" id="id92">*</span></a>idn&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’<a href="#id91"><span class="problematic" id="id92">*</span></a>idn’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.options">
 <code class="descname">options</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.options" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=&#8217;<a href="#id93"><span class="problematic" id="id94">*</span></a>opt&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Bytes(command=’<a href="#id93"><span class="problematic" id="id94">*</span></a>opt’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.power_out">
 <code class="descname">power_out</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.power_out" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=-60,max=20,step=0.01,command=&#8217;:pow&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Float(min=-60,max=20,step=0.01,command=’:pow’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.rf_enable">
 <code class="descname">rf_enable</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.rf_enable" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=&#8217;OUTP&#8217;,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=’OUTP’,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.status_byte">
 <code class="descname">status_byte</code><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state.status_byte" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Dict(command=&#8217;<a href="#id95"><span class="problematic" id="id96">*</span></a>stb&#8217;,read_only=True,write_only=False,cache=False)</p>
+<dd><p>labbench.Dict(command=’<a href="#id95"><span class="problematic" id="id96">*</span></a>stb’,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 </dd></dl>
@@ -2389,7 +2422,7 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.wait" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function to send standard SCPI &#8216;<a href="#id97"><span class="problematic" id="id98">*</span></a>WAI&#8217;</p>
+<dd><p>Convenience function to send standard SCPI ‘<a href="#id97"><span class="problematic" id="id98">*</span></a>WAI’</p>
 </dd></dl>
 
 <dl class="method">
@@ -2403,7 +2436,7 @@ then sends a command string to the device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) &#8211; the SCPI command to send by VISA</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<em>str</em>) – the SCPI command to send by VISA</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
 </tr>
@@ -2460,7 +2493,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

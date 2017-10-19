@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>ssmdevices.electronics package &#8212; ssmdevices 0.0.1 documentation</title>
-    
+    <title>ssmdevices.electronics package &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.0.1',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -29,9 +26,9 @@
     <link rel="next" title="ssmdevices.instruments package" href="ssmdevices.instruments.html" />
     <link rel="prev" title="ssmdevices package" href="ssmdevices.html" /> 
   </head>
-  <body role="document">
+  <body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>ssmdevices 0.0.1 documentation</span></a></h1>
+          <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.electronics package</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -87,14 +84,14 @@
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a setting from a remote instrument that has a trait attribute
-<a href="#id1"><span class="problematic" id="id2">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<a href="#id1"><span class="problematic" id="id2">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value&#8217;&#8217;
-will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value’’
+will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
@@ -132,10 +129,10 @@ in self.resource</p>
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.from_hwid">
 <code class="descname">from_hwid</code><span class="sig-paren">(</span><em>hwid=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.from_hwid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instantiate a new SerialDevice from a <a href="#id7"><span class="problematic" id="id8">`</span></a>hwid&#8217; resource instead
+<dd><p>Instantiate a new SerialDevice from a <a href="#id7"><span class="problematic" id="id8">`</span></a>hwid’ resource instead
 of a comport resource. A hwid string in windows might look something
 like:</p>
-<p>r&#8217;PCIVEN_8086&amp;DEV_9D3D&amp;SUBSYS_06DC1028&amp;REV_213&amp;11583659&amp;1&amp;B3&#8217;</p>
+<p>r’PCIVEN_8086&amp;DEV_9D3D&amp;SUBSYS_06DC1028&amp;REV_213&amp;11583659&amp;1&amp;B3’</p>
 </dd></dl>
 
 <dl class="method">
@@ -155,6 +152,11 @@ like:</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.max_queue_size">
 <code class="descname">max_queue_size</code><em class="property"> = 100000</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.max_queue_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.next" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -264,7 +266,7 @@ to dynamically enable and disable USB 3.0 ports.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource</strong> &#8211; Serial number string specifying the device to connect to.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource</strong> – Serial number string specifying the device to connect to.</td>
 </tr>
 </tbody>
 </table>
@@ -279,14 +281,14 @@ a connected device.</p>
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a setting from a remote instrument that has a trait attribute
-<a href="#id9"><span class="problematic" id="id10">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<a href="#id9"><span class="problematic" id="id10">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.command_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id11"><span class="problematic" id="id12">``</span></a>value&#8217;&#8217;
-will be applied to the trait attriute <a href="#id13"><span class="problematic" id="id14">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id11"><span class="problematic" id="id12">``</span></a>value’’
+will be applied to the trait attriute <a href="#id13"><span class="problematic" id="id14">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
@@ -309,10 +311,10 @@ will be applied to the trait attriute <a href="#id13"><span class="problematic" 
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data</strong> &#8211; Enables data on the port (if evaluates to true)</li>
-<li><strong>power</strong> &#8211; Enables power on the port (if evaluates to true)</li>
-<li><strong>channel</strong> &#8211; An integer port number specifies the port to act on,
-otherwise &#8216;all&#8217; (the default) applies the port settings to all
+<li><strong>data</strong> – Enables data on the port (if evaluates to true)</li>
+<li><strong>power</strong> – Enables power on the port (if evaluates to true)</li>
+<li><strong>channel</strong> – An integer port number specifies the port to act on,
+otherwise ‘all’ (the default) applies the port settings to all
 ports on the hub.</li>
 </ul>
 </td>
@@ -324,6 +326,11 @@ ports on the hub.</li>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.model">
 <code class="descname">model</code><em class="property"> = 17</em><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.next" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -442,7 +449,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

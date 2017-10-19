@@ -1,20 +1,17 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>ssmdevices.software package &#8212; ssmdevices 0.0.1 documentation</title>
-    
+    <title>ssmdevices.software package &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.0.1',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -28,9 +25,9 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="ssmdevices.lib package" href="ssmdevices.lib.html" /> 
   </head>
-  <body role="document">
+  <body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>ssmdevices 0.0.1 documentation</span></a></h1>
+          <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.software package</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -52,8 +49,7 @@
 </div>
 <div class="section" id="module-ssmdevices.software.iperf">
 <span id="ssmdevices-software-iperf-module"></span><h2>ssmdevices.software.iperf module<a class="headerlink" href="#module-ssmdevices.software.iperf" title="Permalink to this headline">¶</a></h2>
-<p>Created on Thu May 11 09:39:43 2017</p>
-<p>&#64;author: dkuester</p>
+<p>&#64;author: Dan Kuester &lt;<a class="reference external" href="mailto:daniel&#46;kuester&#37;&#52;&#48;nist&#46;gov">daniel<span>&#46;</span>kuester<span>&#64;</span>nist<span>&#46;</span>gov</a>&gt;</p>
 <dl class="class">
 <dt id="ssmdevices.software.iperf.IPerfClient">
 <em class="property">class </em><code class="descclassname">ssmdevices.software.iperf.</code><code class="descname">IPerfClient</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient" title="Permalink to this definition">¶</a></dt>
@@ -67,7 +63,7 @@ The default value is the path that installs with 64-bit cygwin.</p>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.binary_path">
-<code class="descname">binary_path</code><em class="property"> = 'C:\\Users\\dkuester\\Documents\\Source\\ssmdevices\\ssmdevices\\lib\\iperf.exe'</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.binary_path" title="Permalink to this definition">¶</a></dt>
+<code class="descname">binary_path</code><em class="property"> = 'C:\\Users\\dkuester\\Documents\\Source\\ssmdevices\\ssmdevices\\lib\\loop.bat'</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.binary_path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -90,14 +86,14 @@ The default value is the path that installs with 64-bit cygwin.</p>
 <dt id="ssmdevices.software.iperf.IPerfClient.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a setting from a remote instrument that has a trait attribute
-<a href="#id1"><span class="problematic" id="id2">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<a href="#id1"><span class="problematic" id="id2">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value&#8217;&#8217;
-will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value’’
+will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
@@ -118,7 +114,7 @@ will be applied to the trait attriute <a href="#id5"><span class="problematic" i
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cmd</strong> &#8211; iterable containing the binary path, then
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cmd</strong> – iterable containing the binary path, then
 each argument to be passed to the binary.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
@@ -135,6 +131,16 @@ each argument to be passed to the binary.</td>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.interval">
 <code class="descname">interval</code><em class="property"> = 0.5</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.interval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.iperf_path">
+<code class="descname">iperf_path</code><em class="property"> = 'C:\\Users\\dkuester\\Documents\\Source\\ssmdevices\\ssmdevices\\lib\\iperf.exe'</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.iperf_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfClient.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.next" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -196,8 +202,6 @@ after everything else is ready.</p>
 </div>
 <div class="section" id="module-ssmdevices.software.windows">
 <span id="ssmdevices-software-windows-module"></span><h2>ssmdevices.software.windows module<a class="headerlink" href="#module-ssmdevices.software.windows" title="Permalink to this headline">¶</a></h2>
-<p>Created on Thu Aug 31 10:19:14 2017</p>
-<p>&#64;author: dkuester</p>
 <dl class="class">
 <dt id="ssmdevices.software.windows.Netsh">
 <em class="property">class </em><code class="descclassname">ssmdevices.software.windows.</code><code class="descname">Netsh</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh" title="Permalink to this definition">¶</a></dt>
@@ -224,14 +228,14 @@ points.</p>
 <dt id="ssmdevices.software.windows.Netsh.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a setting from a remote instrument that has a trait attribute
-<a href="#id7"><span class="problematic" id="id8">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<a href="#id7"><span class="problematic" id="id8">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id9"><span class="problematic" id="id10">``</span></a>value&#8217;&#8217;
-will be applied to the trait attriute <a href="#id11"><span class="problematic" id="id12">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id9"><span class="problematic" id="id10">``</span></a>value’’
+will be applied to the trait attriute <a href="#id11"><span class="problematic" id="id12">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
@@ -256,7 +260,7 @@ execute the binary.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cmd</strong> &#8211; iterable containing the binary path, then
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cmd</strong> – iterable containing the binary path, then
 each argument to be passed to the binary.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
@@ -279,6 +283,11 @@ each argument to be passed to the binary.</td>
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.get_wlan_ssids">
 <code class="descname">get_wlan_ssids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh.get_wlan_ssids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh.get_wlan_ssids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.next" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -354,8 +363,8 @@ after everything else is ready.</p>
 <dl class="method">
 <dt id="ssmdevices.software.windows.WLANStatus.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id13"><span class="problematic" id="id14">``</span></a>value&#8217;&#8217;
-will be applied to the trait attriute <a href="#id15"><span class="problematic" id="id16">``</span></a>attr&#8217;&#8217; in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id13"><span class="problematic" id="id14">``</span></a>value’’
+will be applied to the trait attriute <a href="#id15"><span class="problematic" id="id16">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
@@ -366,6 +375,11 @@ will be applied to the trait attriute <a href="#id15"><span class="problematic" 
 <dl class="method">
 <dt id="ssmdevices.software.windows.WLANStatus.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.WLANStatus.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.next" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -487,7 +501,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>
