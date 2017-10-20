@@ -36,10 +36,9 @@ Getting started
 if __name__ == '__main__':
     from distutils.core import setup
     import setuptools
-    from ssmdevices import __version__ as version
     
     setup(name='ssmdevices',
-          version=version,
+          version='0.2',
           description='instrument automation drivers',
           author='Dan Kuester',
           author_email='daniel.kuester@nist.gov',
