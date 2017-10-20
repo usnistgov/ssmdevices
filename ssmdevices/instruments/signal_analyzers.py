@@ -30,7 +30,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         amplitude_offset_trace5 = Float     (command='DISP:TRAC5:Y:RLEV:OFFS',step=1e-3,label='dB')
         amplitude_offset_trace6 = Float     (command='DISP:TRAC6:Y:RLEV:OFFS',step=1e-3,label='dB')
         
-        channel_type            = EnumBytes (command='INST',     values=['SAN','IQ'])
+        channel_type            = EnumBytes (command='INST',     values=[b'SAN',b'IQ'])
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
 
     
@@ -275,10 +275,10 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     class state(RohdeSchwarzFSW26Base.state):
         iq_simple_enabled     = Bool      (command='CALC:IQ')
         iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL')
-        iq_mode               = EnumBytes (command='CALC:IQ:MODE', values=['TDOMain','FDOMain','IQ'])
+        iq_mode               = EnumBytes (command='CALC:IQ:MODE', values=[b'TDOMain',b'FDOMain',b'IQ'])
         iq_record_length      = Int       (command='TRAC:IQ:RLEN', min=1, max=461373440)
         iq_sample_rate        = Float     (command='TRAC:IQ:SRAT', min=1e-9, max=160e6)
-        iq_format             = EnumBytes (command='CALC:FORM', values=['FREQ','MAGN', 'MTAB','PEAK','RIM','VECT'])
+        iq_format             = EnumBytes (command='CALC:FORM', values=[b'FREQ',b'MAGN', b'MTAB',b'PEAK',b'RIM',b'VECT'])
 
     def connect (self):
         super(RohdeSchwarzFSW26Base, self).connect()
