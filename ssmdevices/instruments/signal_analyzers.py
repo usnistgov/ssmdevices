@@ -283,7 +283,7 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     def connect (self):
         super(RohdeSchwarzFSW26Base, self).connect()
         
-        if self.state.channel_type != 'IQ':
+        if self.state.channel_type != b'IQ':
             raise Exception('{} expects IQ mode, but insrument mode is {}'.format(type(self).__name__, self.state.channel_type))
 
     def fetch_trace(self, horizontal=False):
