@@ -1,13 +1,18 @@
 from __future__ import print_function
 from builtins import str
 from builtins import range
-__all__ = ['RohdeSchwarzFSW26SpectrumAnalyzer', 'RohdeSchwarzFSW26IQAnalyzer']
+__all__ = ['RohdeSchwarzFSW26SpectrumAnalyzer',
+           'RohdeSchwarzFSW26IQAnalyzer',
+           'RohdeSchwarzFSW26LTEAnalyzer',
+           'RohdeSchwarzFSW26_RealTimeMode']
 
-from labbench import Bool, Bytes, EnumBytes, Int, Float
+from labbench import Bool, CaselessStrEnum, Int, Float
 from labbench.visa import VISADevice
 import pandas as pd
 
 class RohdeSchwarzFSW26Base(VISADevice):
+    expect_channel_type = None
+    
     class state(VISADevice.state):
         frequency_center        = Float     (command='FREQ:CENT',  min=2, max=26.5e9, step=1e-9, label='Hz')
         frequency_span          = Float     (command='FREQ:SPAN',  min=2, max=26.5e9, step=1e-9, label='Hz')
@@ -30,9 +35,15 @@ class RohdeSchwarzFSW26Base(VISADevice):
         amplitude_offset_trace5 = Float     (command='DISP:TRAC5:Y:RLEV:OFFS',step=1e-3,label='dB')
         amplitude_offset_trace6 = Float     (command='DISP:TRAC6:Y:RLEV:OFFS',step=1e-3,label='dB')
         
-        channel_type            = EnumBytes (command='INST',     values=[b'SAN',b'IQ'])
+        channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM'])
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
 
+    def connect (self):
+        super(RohdeSchwarzFSW26Base, self).connect()
+                
+        if self.expect_channel_type is not None and self.state.channel_type != self.expect_channel_type:
+            raise Exception('{} expects {} mode, but insrument mode is {}'\
+                            .format(type(self).__name__, self.expect_channel_type, self.state.channel_type))
     
     def save_state (self, FileName, num="1"):
         ''' Save current state of the device to the default directory.
@@ -115,38 +126,6 @@ class RohdeSchwarzFSW26Base(VISADevice):
         marker_val = float(self.query(mark_cmd))
         return marker_val
 
-    def fetch_marker_bpow(self, marker):
-        ''' Get marker band power measurement
-        
-            :param marker: marker number on instrument display
-            
-            :type marker: int
-            
-            :return: power in dBm
-            
-            :rtype: float
-        '''
-        
-        mark_cmd = "CALC:MARK"+ str(marker) + ":FUNC:BPOW:RES?"
-        marker_val = float(self.query(mark_cmd))
-        return marker_val
-
-    def fetch_marker_bpow_span(self, marker):
-        ''' Get marker band power measurement
-        
-            :param marker: marker number on instrument display
-            
-            :type marker: int
-            
-            :return: bandwidth
-            
-            :rtype: float
-        '''
-        
-        mark_cmd = "CALC:MARK"+ str(marker) + ":FUNC:BPOW:SPAN?"
-        marker_span = float(self.query(mark_cmd))
-        return marker_span
-    
     def get_marker_enables(self):
         enable_cmd = 'CALC:MARK{}:STATE?'
         bw_cmd = 'CALC:MARK{}:FUNC:BPOW:STATE?'
@@ -160,24 +139,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         df.index.name = 'Marker'
         
         return df
-    
-    def get_marker_power_table(self):
-        ''' Get the values of all markers.
-        '''
-        enables = self.get_marker_enables()
-        values = pd.DataFrame(columns=['Frequency']+enables.columns.values.tolist(),index=enables.index,
-                              dtype=float, copy=True)
-
-        for m in enables.index:
-            if enables.loc[m,'Marker'] == True:
-                values.loc[m,'Marker'] = self.get_marker_power(m)
-                values.loc[m,'Frequency'] = self.get_marker_position(m)
-                if enables.loc[m,'Band'] == True:
-                    values.loc[m,'Band'] = self.get_marker_band_power(m)
-
-        values.dropna(how='all',inplace=True)
-        return values
-    
+        
     def get_marker_power(self, marker):
         ''' Get marker value (on vertical axis)
         
@@ -220,6 +182,10 @@ class RohdeSchwarzFSW26Base(VISADevice):
         mark_cmd = "CALC:MARK{}:X {}".format(marker,position)
         return self.write(mark_cmd)
     
+
+class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base):
+    expect_channel_type = 'SAN'
+    
     def get_marker_band_power(self, marker):
         ''' Get marker band power measurement
         
@@ -249,12 +215,59 @@ e
 
         mark_cmd = "CALC:MARK{}:FUNC:BPOW:SPAN?".format(marker)
         return float(self.query(mark_cmd))
+    
+    def get_marker_power_table(self):
+        ''' Get the values of all markers.
+        '''
+        enables = self.get_marker_enables()
+        values = pd.DataFrame(columns=['Frequency']+enables.columns.values.tolist(),index=enables.index,
+                              dtype=float, copy=True)
 
-class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base):
-    pass
+        for m in enables.index:
+            if enables.loc[m,'Marker'] == True:
+                values.loc[m,'Marker'] = self.get_marker_power(m)
+                values.loc[m,'Frequency'] = self.get_marker_position(m)
+                if enables.loc[m,'Band'] == True:
+                    values.loc[m,'Band'] = self.get_marker_band_power(m)
+
+        values.dropna(how='all',inplace=True)
+        return values
+    
+    def fetch_marker_bpow(self, marker):
+        ''' Get marker band power measurement
+        
+            :param marker: marker number on instrument display
+            
+            :type marker: int
+            
+            :return: power in dBm
+            
+            :rtype: float
+        '''
+        
+        mark_cmd = "CALC:MARK"+ str(marker) + ":FUNC:BPOW:RES?"
+        marker_val = float(self.query(mark_cmd))
+        return marker_val
+
+    def fetch_marker_bpow_span(self, marker):
+        ''' Get marker band power measurement
+        
+            :param marker: marker number on instrument display
+            
+            :type marker: int
+            
+            :return: bandwidth
+            
+            :rtype: float
+        '''
+        
+        mark_cmd = "CALC:MARK"+ str(marker) + ":FUNC:BPOW:SPAN?"
+        marker_span = float(self.query(mark_cmd))
+        return marker_span    
+
 
 class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
-
+    
     def get_ascii_window_trace(self,window,trace):
         self.write('FORM ASCII')
         data = self.backend.query_ascii_values("TRAC{window}:DATA? TRACE{trace}".format(window=window,trace=trace), container=pd.Series)
@@ -275,16 +288,11 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     class state(RohdeSchwarzFSW26Base.state):
         iq_simple_enabled     = Bool      (command='CALC:IQ')
         iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL')
-        iq_mode               = EnumBytes (command='CALC:IQ:MODE', values=[b'TDOMain',b'FDOMain',b'IQ'])
+        iq_mode               = CaselessStrEnum\
+                                (command='CALC:IQ:MODE', values=[b'TDOMain',b'FDOMain',b'IQ'])
         iq_record_length      = Int       (command='TRAC:IQ:RLEN', min=1, max=461373440)
         iq_sample_rate        = Float     (command='TRAC:IQ:SRAT', min=1e-9, max=160e6)
-        iq_format             = EnumBytes (command='CALC:FORM', values=[b'FREQ',b'MAGN', b'MTAB',b'PEAK',b'RIM',b'VECT'])
-
-    def connect (self):
-        super(RohdeSchwarzFSW26Base, self).connect()
-        
-        if self.state.channel_type != b'IQ':
-            raise Exception('{} expects IQ mode, but insrument mode is {}'.format(type(self).__name__, self.state.channel_type))
+        iq_format             = CaselessStrEnum (command='CALC:FORM', values=[b'FREQ',b'MAGN', b'MTAB',b'PEAK',b'RIM',b'VECT'])
 
     def fetch_trace(self, horizontal=False):
         fmt = self.state.iq_format
@@ -308,6 +316,40 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
 
     def store_trace(self, path):
         self.write("MMEM:STOR:IQ:STAT 1, '{}'".format(path))
+        
+class RohdeSchwarzFSW26_RealTimeMode(RohdeSchwarzFSW26Base):
+    expect_channel_type = 'RTIM'
+    
+    class state(RohdeSchwarzFSW26Base.state):
+        iq_simple_enabled     = Bool      (command='CALC:IQ')
+        iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL')
+        iq_mode               = CaselessStrEnum (command='CALC:IQ:MODE', values=['TDOMain','FDOMain','IQ'])
+        iq_record_length      = Int       (command='TRAC:IQ:RLEN', min=1, max=461373440)
+        iq_sample_rate        = Float     (command='TRAC:IQ:SRAT', min=1e-9, max=160e6)
+        iq_format             = CaselessStrEnum (command='CALC:FORM', values=['FREQ','MAGN', 'MTAB','PEAK','RIM','VECT'])
+
+    def fetch_trace(self, horizontal=False):
+        fmt = self.state.iq_format
+        if fmt == 'VECT':
+            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,False)
+        else:
+            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,horizontal)
+        
+        if fmt == 'RIM':
+            if hasattr(df,'columns'):
+                df = pd.DataFrame(df.iloc[:len(df)//2].values+1j*df.iloc[len(df)//2:].values,
+                                  index=df.index[:len(df)//2],
+                                  columns=df.columns)
+            else:
+                df = pd.Series(df.iloc[:len(df)//2].values+1j*df.iloc[len(df)//2:].values,
+                                  index=df.index[:len(df)//2])
+        if fmt == 'VECT':
+            df = pd.DataFrame(df.iloc[1::2].values,index=df.iloc[::2].values)
+            
+        return df
+
+    def store_trace(self, path):
+        self.write("MMEM:STOR:IQ:STAT 1, '{}'".format(path))        
 
 if __name__ == '__main__':
     import labbench as lb

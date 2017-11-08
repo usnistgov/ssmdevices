@@ -1,13 +1,13 @@
 __all__ = ['RigolOscilloscope']
 
-from labbench import Bool, Bytes, EnumBytes, Int, Float
+import labbench as lb
 from labbench.visa import VISADevice
 import pandas as pd
 
-class RigolOscilloscope(VISADevice):
-    class state(VISADevice.state):
-        time_offset        = Float (command=':TIM:OFFS', label='s')
-        time_scale         = Float (command=':TIM:SCAL', label='s')
+class RigolOscilloscope(lb.VISADevice):
+    class state(lb.VISADevice.state):
+        time_offset        = lb.Float (command=':TIM:OFFS', label='s')
+        time_scale         = lb.Float (command=':TIM:SCAL', label='s')
     
     def connect (self, horizontal=False):
         super(RigolOscilloscope,self).connect()

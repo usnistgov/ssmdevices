@@ -7,19 +7,18 @@ from __future__ import print_function
 Paul.Blanchard <paul.blanchard@nist.gov>
 '''
 
-from labbench import Bool, Bytes, EnumBytes, Int, Float
-from labbench.visa import VISADevice
+import labbench as lb
 import pandas as pd
 __all__ = ['RohdeSchwarzSMW200A']
 
-class RohdeSchwarzSMW200A(VISADevice):
-    class state(VISADevice.state):
+class RohdeSchwarzSMW200A(lb.VISADevice):
+    class state(lb.VISADevice.state):
 #        frequency = FLoat 
-        frequency_baseband        = Float     (command=':freq',  min=2e3, max=26.5e9, step=1e3, label='Hz')
-        power_out                 = Float     (command=':pow',  min=-60, max=20, step=1e-2, label='dBm')
-        rf_enable                 = Bool      (command ='OUTP')
+        frequency_baseband        = lb.Float     (command=':freq',  min=2e3, max=26.5e9, step=1e3, label='Hz')
+        power_out                 = lb.Float     (command=':pow',  min=-60, max=20, step=1e-2, label='dBm')
+        rf_enable                 = lb.Bool      (command ='OUTP')
         
-        
+
     def save_state(self, FileName, num="4"):
         ''' Save current state of the device to the default directory.
             :param FileName: state file location on the instrument
@@ -72,28 +71,28 @@ class RohdeSchwarzSMW200A(VISADevice):
         
         self.inst.write("OUTP {}".format(state))
     
-    # Hmm... these should probably be deprecated? They
-    # duplicate the functionality in state
-    @property
-    def rf_output_power (self):
-        ''' Get or set RF output power level
-        '''
-#        return float(self.inst.query(':pow?',timeout=5))
-        return float(self.query(':pow?',timeout=5))
-        
-    @rf_output_power.setter
-    def rf_output_power (self, level_dBm):
-        self.inst.write(':pow {}'.format(level_dBm))
-    
-    @property
-    def rf_output_freq (self):
-        """ Get or set RF LO frequency
-        """
-        return float(self.query(':freq?',timeout=5))
-
-    @rf_output_freq.setter
-    def rf_output_freq (self, freq_Hz):
-        self.inst.write(':freq {}'.format(freq_Hz))
+#    # Hmm... these should probably be deprecated? They
+#    # duplicate the functionality in state
+#    @property
+#    def rf_output_power (self):
+#        ''' Get or set RF output power level
+#        '''
+##        return float(self.inst.query(':pow?',timeout=5))
+#        return float(self.query(':pow?',timeout=5))
+#        
+#    @rf_output_power.setter
+#    def rf_output_power (self, level_dBm):
+#        self.inst.write(':pow {}'.format(level_dBm))
+#    
+#    @property
+#    def rf_output_freq (self):
+#        """ Get or set RF LO frequency
+#        """
+#        return float(self.query(':freq?',timeout=5))
+#
+#    @rf_output_freq.setter
+#    def rf_output_freq (self, freq_Hz):
+#        self.inst.write(':freq {}'.format(freq_Hz))
         
         
 
