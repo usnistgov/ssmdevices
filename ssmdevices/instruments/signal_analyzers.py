@@ -1,6 +1,8 @@
 from __future__ import print_function
-from builtins import str
-from builtins import range
+from builtins import str,range
+import os
+import numpy as np
+
 __all__ = ['RohdeSchwarzFSW26SpectrumAnalyzer',
            'RohdeSchwarzFSW26IQAnalyzer',
            'RohdeSchwarzFSW26LTEAnalyzer',
@@ -12,7 +14,7 @@ import pandas as pd
 
 class RohdeSchwarzFSW26Base(VISADevice):
     expect_channel_type = None
-    
+
     class state(VISADevice.state):
         frequency_center        = Float     (command='FREQ:CENT',  min=2, max=26.5e9, step=1e-9, label='Hz')
         frequency_span          = Float     (command='FREQ:SPAN',  min=2, max=26.5e9, step=1e-9, label='Hz')
@@ -36,16 +38,16 @@ class RohdeSchwarzFSW26Base(VISADevice):
         amplitude_offset_trace6 = Float     (command='DISP:TRAC6:Y:RLEV:OFFS',step=1e-3,label='dB')
         
         channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM'])
+        format                  = CaselessStrEnum (command='FORM', values=['ASC,0','REAL,32','REAL,64', 'REAL,16'])
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
 
-    def connect (self):
-        super(RohdeSchwarzFSW26Base, self).connect()
-                
+
+    def verify_channel_type (self):
         if self.expect_channel_type is not None and self.state.channel_type != self.expect_channel_type:
             raise Exception('{} expects {} mode, but insrument mode is {}'\
-                            .format(type(self).__name__, self.expect_channel_type, self.state.channel_type))
+                            .format(type(self).__name__, self.expect_channel_type, self.state.channel_type))        
     
-    def save_state (self, FileName, num="1"):
+    def save_state (self, FileName, num=1):
         ''' Save current state of the device to the default directory.
             :param FileName: state file location on the instrument
             :type FileName: string
@@ -56,7 +58,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         '''
         self.write('MMEMory:STORe:STATe {},"{}""'.format(num,FileName))
     
-    def load_state(self, FileName, num="1"):
+    def load_state(self, FileName, num=1):
         ''' Loads a previously saved state file in the instrument
         
             :param FileName: state file location on the instrument
@@ -68,6 +70,26 @@ class RohdeSchwarzFSW26Base(VISADevice):
 #        print "Loading state"
         cmd = "MMEM:LOAD:STAT {},'{}'".format(num,FileName)
         self.write(cmd)
+        self.verify_channel_type()        
+        
+    def mkdir(self, path, recursive=True):
+        ''' Make a new directory (optionally recursively) on the instrument
+            if we haven't tried to make it already.
+        '''
+        try:
+            if path in self.__prev_dirs:
+                return
+        except AttributeError:
+            self.__prev_dirs = set()
+        
+        if recursive:
+            subs=path.replace('/','\\').split('\\')
+            for i in range(1,len(subs)+1):
+                self.mkdir('\\'.join(subs[:i]), recursive=False)              
+        else:
+            with self.overlap_and_block:
+                self.write(r"MMEM:MDIR '{}'".format(path))
+            self.__prev_dirs.add(path)
         
     def trigger_single (self):
         ''' Trigger once.
@@ -267,7 +289,6 @@ e
 
 
 class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
-    
     def get_ascii_window_trace(self,window,trace):
         self.write('FORM ASCII')
         data = self.backend.query_ascii_values("TRAC{window}:DATA? TRACE{trace}".format(window=window,trace=trace), container=pd.Series)
@@ -321,36 +342,47 @@ class RohdeSchwarzFSW26_RealTimeMode(RohdeSchwarzFSW26Base):
     expect_channel_type = 'RTIM'
     
     class state(RohdeSchwarzFSW26Base.state):
-        iq_simple_enabled     = Bool      (command='CALC:IQ')
-        iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL')
-        iq_mode               = CaselessStrEnum (command='CALC:IQ:MODE', values=['TDOMain','FDOMain','IQ'])
-        iq_record_length      = Int       (command='TRAC:IQ:RLEN', min=1, max=461373440)
-        iq_sample_rate        = Float     (command='TRAC:IQ:SRAT', min=1e-9, max=160e6)
-        iq_format             = CaselessStrEnum (command='CALC:FORM', values=['FREQ','MAGN', 'MTAB','PEAK','RIM','VECT'])
+        pass
+    
+#        
+#    def fetch_trace(self, horizontal=False):
+#        fmt = self.state.iq_format
+#        if fmt == 'VECT':
+#            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,False)
+#        else:
+#            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,horizontal)
+#        
+#        if fmt == 'RIM':
+#            if hasattr(df,'columns'):
+#                df = pd.DataFrame(df.iloc[:len(df)//2].values+1j*df.iloc[len(df)//2:].values,
+#                                  index=df.index[:len(df)//2],
+#                                  columns=df.columns)
+#            else:
+#                df = pd.Series(df.iloc[:len(df)//2].values+1j*df.iloc[len(df)//2:].values,
+#                                  index=df.index[:len(df)//2])
+#        if fmt == 'VECT':
+#            df = pd.DataFrame(df.iloc[1::2].values,index=df.iloc[::2].values)
+#            
+#        return df
 
-    def fetch_trace(self, horizontal=False):
-        fmt = self.state.iq_format
-        if fmt == 'VECT':
-            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,False)
-        else:
-            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,horizontal)
+    def connect (self):       
+        super(type(self),self).connect()
+        self.state.format = 'REAL,32'
+
+    def store_spectrogram(self, path, window=2):
+        self.mkdir(os.path.split(path)[0])
+        self.write("MMEM:STOR{window}:SGR '{path}'"\
+                   .format(window=window,path=path))   
         
-        if fmt == 'RIM':
-            if hasattr(df,'columns'):
-                df = pd.DataFrame(df.iloc[:len(df)//2].values+1j*df.iloc[len(df)//2:].values,
-                                  index=df.index[:len(df)//2],
-                                  columns=df.columns)
-            else:
-                df = pd.Series(df.iloc[:len(df)//2].values+1j*df.iloc[len(df)//2:].values,
-                                  index=df.index[:len(df)//2])
-        if fmt == 'VECT':
-            df = pd.DataFrame(df.iloc[1::2].values,index=df.iloc[::2].values)
-            
-        return df
-
-    def store_trace(self, path):
-        self.write("MMEM:STOR:IQ:STAT 1, '{}'".format(path))        
-
+    def fetch_timestamps (self, window=2, trace=1):
+        timestamps = self.backend.query_ascii_values(r'CALC{window}:SPEC:TSTamp:DATA? ALL'.format(window=window),container=np.array)
+        timestamps = timestamps.reshape((timestamps.shape[0]//4,4))[:,:2]
+        return timestamps[:,0] + 1e-9*timestamps[:,1]
+    
+    def fetch_horizontal (self, trace=1):
+        return self.backend.query_binary_values(r"TRAC:X? TRACE{trace}".format(trace=trace),datatype='f', container=np.array)
+    
+    
 if __name__ == '__main__':
     import labbench as lb
     lb.log_to_screen('DEBUG')
