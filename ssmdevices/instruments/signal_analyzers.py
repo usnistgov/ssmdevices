@@ -1,6 +1,6 @@
 from __future__ import print_function
 from builtins import str,range
-import os
+import os,pyvisa,datetime
 import numpy as np
 
 __all__ = ['RohdeSchwarzFSW26SpectrumAnalyzer',
@@ -20,6 +20,10 @@ class RohdeSchwarzFSW26Base(VISADevice):
         frequency_span          = Float     (command='FREQ:SPAN',  min=2, max=26.5e9, step=1e-9, label='Hz')
         frequency_start         = Float     (command='FREQ:START', min=2, max=26.5e9, step=1e-9, label='Hz')
         frequency_stop          = Float     (command='FREQ:STOP',  min=2, max=26.5e9, step=1e-9, label='Hz')
+        
+        resolution_bandwidth    = Float     (command='BAND',       min=45e3, max=5.76e6, label='Hz')
+        sweep_time              = Float     (command='SWE:TIME',   label='Hz')
+        sweep_time_trace2       = Float     (command='SENS2:SWE:TIME',   label='Hz')
     
         initiate_continuous     = Bool      (command='INIT:CONT')
     
@@ -374,15 +378,59 @@ class RohdeSchwarzFSW26_RealTimeMode(RohdeSchwarzFSW26Base):
         self.write("MMEM:STOR{window}:SGR '{path}'"\
                    .format(window=window,path=path))   
         
-    def fetch_timestamps (self, window=2, trace=1):
-        timestamps = self.backend.query_ascii_values(r'CALC{window}:SPEC:TSTamp:DATA? ALL'.format(window=window),container=np.array)
+    def fetch_timestamps (self, firstonly=False, window=2):
+        scope = 'CURR' if firstonly else 'ALL'
+        timestamps = self.backend.query_ascii_values(r'CALC{window}:SGR:TST:DATA? {scope}'\
+                                                      .format(window=window, scope=scope),container=np.array)
         timestamps = timestamps.reshape((timestamps.shape[0]//4,4))[:,:2]
-        return timestamps[:,0] + 1e-9*timestamps[:,1]
+        ret = timestamps[:,0] + 1e-9*timestamps[:,1]
+        if firstonly:
+            return ret[0]
+        else:
+            return ret
     
-    def fetch_horizontal (self, trace=1):
-        return self.backend.query_binary_values(r"TRAC:X? TRACE{trace}".format(trace=trace),datatype='f', container=np.array)
+    def fetch_horizontal (self, window=2, trace=1):
+        return self.backend.query_binary_values(r"TRAC{window}:X? TRACE{trace}"\
+                                                .format(window=window,trace=trace),
+                                                datatype='f', container=np.array)
     
-    
+    def fetch_spectrogram (self, freqs=True, timestamps=True, trace=2):
+        ''' F
+        '''
+        if timestamps is True:
+            sweep_time = self.state.sweep_time_trace2
+            ts0 = self.fetch_timestamps(firstonly=True)
+            dt0=datetime.datetime.fromtimestamp(ts0)
+        else:
+            t = None
+
+        if freqs is True:
+            f_  = self.fetch_horizontal()
+        else:
+            f_ = None
+
+        cmd = 'TRAC{trace}:DATA? SPEC'.format(trace=trace)
+            
+        self.backend.read_termination, old_read_term = None, self.backend.read_termination
+        self.backend.write(cmd)
+        
+        # This is very hacky, because for some reason performance via
+        # the pyvisa functions like .write and .query was poor
+        raw,_ = self.backend.visalib.read(self.backend.session, 2)
+        digits=int(raw.decode('ascii')[1])
+        raw,_ = self.backend.visalib.read(self.backend.session, digits)
+        N=int(raw.decode('ascii'))
+        raw,_ = self.backend.visalib.read(self.backend.session, N)
+        self.backend.read_termination = old_read_term
+        data = np.frombuffer(raw, np.float32)
+        data = data.reshape((data.size//1001,1001))
+        
+        if dt0 is None:
+            t = None
+        else:
+            t = dt0+pd.to_timedelta(sweep_time*1e9*np.arange(data.shape[0]), unit='ns')            
+        return pd.DataFrame(data[::-1], columns=f_, index=t)
+
 if __name__ == '__main__':
     import labbench as lb
     lb.log_to_screen('DEBUG')
