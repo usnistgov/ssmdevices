@@ -3,10 +3,11 @@ from builtins import str,range
 import os,pyvisa,datetime
 import numpy as np
 
-__all__ = ['RohdeSchwarzFSW26SpectrumAnalyzer',
+__all__ = ['RohdeSchwarzFSW26Base',
+           'RohdeSchwarzFSW26SpectrumAnalyzer',
            'RohdeSchwarzFSW26IQAnalyzer',
            'RohdeSchwarzFSW26LTEAnalyzer',
-           'RohdeSchwarzFSW26_RealTimeMode']
+           'RohdeSchwarzFSW26RealTime']
 
 from labbench import Bool, CaselessStrEnum, Int, Float
 from labbench.visa import VISADevice
@@ -44,14 +45,20 @@ class RohdeSchwarzFSW26Base(VISADevice):
         channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM'])
         format                  = CaselessStrEnum (command='FORM', values=['ASC,0','REAL,32','REAL,64', 'REAL,16'])
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
-
+         
+        display_update          = Bool      (command='SYST:DISP:UPD')
+    
 
     def verify_channel_type (self):
         if self.expect_channel_type is not None and self.state.channel_type != self.expect_channel_type:
             raise Exception('{} expects {} mode, but insrument mode is {}'\
                             .format(type(self).__name__, self.expect_channel_type, self.state.channel_type))        
-    
-    def save_state (self, FileName, num=1):
+
+    def connect (self):
+        super().connect()
+        self.state.format = 'REAL,32'
+
+    def save_state (self, path):
         ''' Save current state of the device to the default directory.
             :param FileName: state file location on the instrument
             :type FileName: string
@@ -60,9 +67,9 @@ class RohdeSchwarzFSW26Base(VISADevice):
             :type num: int
         
         '''
-        self.write('MMEMory:STORe:STATe {},"{}""'.format(num,FileName))
+        self.write('MMEMory:STORe:STATe 1,"{}""'.format(path))
     
-    def load_state(self, FileName, num=1):
+    def load_state(self, path):
         ''' Loads a previously saved state file in the instrument
         
             :param FileName: state file location on the instrument
@@ -72,7 +79,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
             :type num: int
         '''
 #        print "Loading state"
-        cmd = "MMEM:LOAD:STAT {},'{}'".format(num,FileName)
+        cmd = "MMEM:LOAD:STAT 1,'{}'".format(path)
         self.write(cmd)
         self.verify_channel_type()        
         
@@ -108,16 +115,15 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
         self.write("ADJ:LEV") #see if this is enough, or if we need something more detailed
    
-    def fetch_horizontal (self, trace=1):
-        response = self.query("TRAC:DATA:X? TRACE{trace}".format(trace=trace))
-        return pd.to_numeric(pd.Series(response.split(',')))
+    def fetch_horizontal (self, trace=None):
+        return self.backend.query_binary_values("TRAC:DATA:X? TRACE{trace}".format(trace=trace or ''))
 
-    def fetch_trace(self, trace=1, horizontal=False):
+    def fetch_trace(self, trace=None, horizontal=False):
         ''' Get and return the current trace data.
         
             If necessary, we can read the count, set count to 1, read, adjust level
             then set the count back, and read again like this:
-            
+
             ::
                 count = inst.query("SENSE:SWEEP:COUNT?")
                 self.write("SENSE:SWEEP:COUNT 1")
@@ -131,12 +137,71 @@ class RohdeSchwarzFSW26Base(VISADevice):
         
         if horizontal:
             index = self.fetch_horizontal(trace)
-            values = self.backend.query_ascii_values("TRAC:DATA? TRACE{trace}".format(trace=trace), container=pd.Series)
+            values = self.backend.query_binary_values("TRAC:DATA? TRACE{trace}".format(trace=trace or ''),\
+                                                      container=pd.Series, datatype='d')
             name = 'Trace {}'.format(trace)
             return pd.DataFrame(values.values, columns=[name], index=index)
         else:
-            return self.backend.query_ascii_values("TRAC:DATA? TRACE{trace}".format(trace=trace), container=pd.Series)
+            return self.backend.query_binary_values("TRAC:DATA? TRACE{trace}".format(trace=trace or ''),\
+                                                    container=pd.Series, datatype='d')
+
+    def fetch_timestamps (self, all=True, trace=None):
+        scope = 'ALL' if all else 'CURR'
+        timestamps = self.backend.query_ascii_values(r'CALC{trace}:SGR:TST:DATA? {scope}'\
+                                                      .format(trace=trace or '', scope=scope),\
+                                                     container=np.array)
+        timestamps = timestamps.reshape((timestamps.shape[0]//4,4))[:,:2]
+        ret = timestamps[:,0] + 1e-9*timestamps[:,1]
+        if not all:
+            return ret[0]
+        else:
+            return ret    
+
+    def fetch_spectrogram (self, freqs='exact', timestamps='exact', trace=None):
+        '''
+        '''
+        if timestamps == 'fast':
+            sweep_time = self.state.sweep_time_trace2
+            ts0 = self.fetch_timestamps(all=False, trace=trace)
+            dt0=datetime.datetime.fromtimestamp(ts0)
+        elif timestamps == 'exact':
+            t = self.fetch_timestamps(all=True, trace=trace)
+        elif timestamps == None:
+            t = None
+        else:
+            raise ValueError("timestamps argument must be 'fast', 'exact', or None")
+
+    
+        if freqs == 'fast':
+            fc = self.state.frequency_center
+            fsamp = self.state.iq_sample_rate      
+            Nfreqs = self.state.sweep_points
+            f_ = fc+np.linspace(-fsamp*(1.-1./Nfreqs)/2,+fsamp*(1.-1./Nfreqs)/2, Nfreqs)
+        if freqs == 'exact':
+            f_  = self.fetch_horizontal(trace)
+            Nfreqs = len(f_)
+        elif freqs == None:
+            f_ = None
+            Nfreqs = self.state.sweep_points
+
+        self.backend.read_termination, old_read_term = None, self.backend.read_termination
+        self.backend.write('TRAC{trace}:DATA? SPEC'.format(trace=trace))
         
+        # This is very hacky, because for some reason performance via
+        # the pyvisa functions like .write and .query was poor
+        raw,_ = self.backend.visalib.read(self.backend.session, 2)
+        digits=int(raw.decode('ascii')[1])
+        raw,_ = self.backend.visalib.read(self.backend.session, digits)
+        N=int(raw.decode('ascii'))
+        raw,_ = self.backend.visalib.read(self.backend.session, N)
+        self.backend.read_termination = old_read_term
+        data = np.frombuffer(raw, np.float32)
+        data = data.reshape((data.size//Nfreqs,Nfreqs))
+        
+        if timestamps == 'fast':
+            t = dt0+pd.to_timedelta(sweep_time*1e9*np.arange(data.shape[0]), unit='ns')            
+        return pd.DataFrame(data[::-1], columns=f_, index=t)
+    
     def fetch_marker(self, marker, axis):
         ''' Get marker value
         
@@ -310,21 +375,23 @@ class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
     
     
 class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
+    expect_channel_type = 'RTIM'
+    
     class state(RohdeSchwarzFSW26Base.state):
         iq_simple_enabled     = Bool      (command='CALC:IQ')
         iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL')
-        iq_mode               = CaselessStrEnum\
-                                (command='CALC:IQ:MODE', values=[b'TDOMain',b'FDOMain',b'IQ'])
+        iq_mode               = CaselessStrEnum (command='CALC:IQ:MODE', values=['TDOMain','FDOMain','IQ'])
         iq_record_length      = Int       (command='TRAC:IQ:RLEN', min=1, max=461373440)
         iq_sample_rate        = Float     (command='TRAC:IQ:SRAT', min=1e-9, max=160e6)
-        iq_format             = CaselessStrEnum (command='CALC:FORM', values=[b'FREQ',b'MAGN', b'MTAB',b'PEAK',b'RIM',b'VECT'])
+        iq_format             = CaselessStrEnum (command='CALC:FORM', values=['FREQ','MAGN', 'MTAB','PEAK','RIM','VECT'])
+        iq_format_window2     = CaselessStrEnum (command='CALC2:FORM', values=['FREQ','MAGN', 'MTAB','PEAK','RIM','VECT'])
 
-    def fetch_trace(self, horizontal=False):
+    def fetch_trace(self, horizontal=False, trace=None):
         fmt = self.state.iq_format
         if fmt == 'VECT':
-            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,False)
+            df = RohdeSchwarzFSW26Base.fetch_trace(self,horizontal=False,trace=trace)
         else:
-            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,horizontal)
+            df = RohdeSchwarzFSW26Base.fetch_trace(self,horizontal=horizontal,trace=trace)
         
         if fmt == 'RIM':
             if hasattr(df,'columns'):
@@ -342,7 +409,7 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     def store_trace(self, path):
         self.write("MMEM:STOR:IQ:STAT 1, '{}'".format(path))
         
-class RohdeSchwarzFSW26_RealTimeMode(RohdeSchwarzFSW26Base):
+class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
     expect_channel_type = 'RTIM'
     
     class state(RohdeSchwarzFSW26Base.state):
@@ -369,67 +436,15 @@ class RohdeSchwarzFSW26_RealTimeMode(RohdeSchwarzFSW26Base):
 #            
 #        return df
 
-    def connect (self):       
-        super(type(self),self).connect()
-        self.state.format = 'REAL,32'
-
     def store_spectrogram(self, path, window=2):
         self.mkdir(os.path.split(path)[0])
         self.write("MMEM:STOR{window}:SGR '{path}'"\
                    .format(window=window,path=path))   
-        
-    def fetch_timestamps (self, firstonly=False, window=2):
-        scope = 'CURR' if firstonly else 'ALL'
-        timestamps = self.backend.query_ascii_values(r'CALC{window}:SGR:TST:DATA? {scope}'\
-                                                      .format(window=window, scope=scope),container=np.array)
-        timestamps = timestamps.reshape((timestamps.shape[0]//4,4))[:,:2]
-        ret = timestamps[:,0] + 1e-9*timestamps[:,1]
-        if firstonly:
-            return ret[0]
-        else:
-            return ret
-    
+            
     def fetch_horizontal (self, window=2, trace=1):
         return self.backend.query_binary_values(r"TRAC{window}:X? TRACE{trace}"\
                                                 .format(window=window,trace=trace),
                                                 datatype='f', container=np.array)
-    
-    def fetch_spectrogram (self, freqs=True, timestamps=True, trace=2):
-        ''' F
-        '''
-        if timestamps is True:
-            sweep_time = self.state.sweep_time_trace2
-            ts0 = self.fetch_timestamps(firstonly=True)
-            dt0=datetime.datetime.fromtimestamp(ts0)
-        else:
-            t = None
-
-        if freqs is True:
-            f_  = self.fetch_horizontal()
-        else:
-            f_ = None
-
-        cmd = 'TRAC{trace}:DATA? SPEC'.format(trace=trace)
-            
-        self.backend.read_termination, old_read_term = None, self.backend.read_termination
-        self.backend.write(cmd)
-        
-        # This is very hacky, because for some reason performance via
-        # the pyvisa functions like .write and .query was poor
-        raw,_ = self.backend.visalib.read(self.backend.session, 2)
-        digits=int(raw.decode('ascii')[1])
-        raw,_ = self.backend.visalib.read(self.backend.session, digits)
-        N=int(raw.decode('ascii'))
-        raw,_ = self.backend.visalib.read(self.backend.session, N)
-        self.backend.read_termination = old_read_term
-        data = np.frombuffer(raw, np.float32)
-        data = data.reshape((data.size//1001,1001))
-        
-        if dt0 is None:
-            t = None
-        else:
-            t = dt0+pd.to_timedelta(sweep_time*1e9*np.arange(data.shape[0]), unit='ns')            
-        return pd.DataFrame(data[::-1], columns=f_, index=t)
 
 if __name__ == '__main__':
     import labbench as lb
