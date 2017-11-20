@@ -1,7 +1,9 @@
 from __future__ import print_function
 from builtins import str,range
-import os,pyvisa,datetime
+import os,pyvisa,datetime,logging
 import numpy as np
+
+logger = logging.getLogger('labbench')
 
 __all__ = ['RohdeSchwarzFSW26Base',
            'RohdeSchwarzFSW26SpectrumAnalyzer',
@@ -26,7 +28,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         sweep_time              = Float     (command='SWE:TIME',   label='Hz')
         sweep_time_trace2       = Float     (command='SENS2:SWE:TIME',   label='Hz')
     
-        initiate_continuous     = Bool      (command='INIT:CONT')
+        initiate_continuous     = Bool      (command='INIT:CONT', trues=['ON'], falses=['OFF'])
     
         reference_level         = Float     (command='DISP:TRAC1:Y:RLEV', step=1e-3,label='dB')
         reference_level_trace2  = Float     (command='DISP:TRAC2:Y:RLEV', step=1e-3,label='dB')
@@ -46,7 +48,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         format                  = CaselessStrEnum (command='FORM', values=['ASC,0','REAL,32','REAL,64', 'REAL,16'])
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
          
-        display_update          = Bool      (command='SYST:DISP:UPD')
+        display_update          = Bool      (command='SYST:DISP:UPD', trues=['ON'], falses=['OFF'])
     
 
     def verify_channel_type (self):
@@ -55,30 +57,26 @@ class RohdeSchwarzFSW26Base(VISADevice):
                             .format(type(self).__name__, self.expect_channel_type, self.state.channel_type))        
 
     def connect (self):
+        ''' Connect, check the channel type, and set the block data format to 32-bit binary.
+        '''
         super().connect()
+        self.verify_channel_type()
         self.state.format = 'REAL,32'
 
     def save_state (self, path):
         ''' Save current state of the device to the default directory.
-            :param FileName: state file location on the instrument
-            :type FileName: string
-            
-            :param num: state number in the saved filename
-            :type num: int
-        
+            :param path: state file location on the instrument
+            :type path: string
+
         '''
         self.write('MMEMory:STORe:STATe 1,"{}""'.format(path))
     
     def load_state(self, path):
         ''' Loads a previously saved state file in the instrument
         
-            :param FileName: state file location on the instrument
-            :type FileName: string
-            
-            :param num: state number in the saved filename
-            :type num: int
+            :param path: state file location on the instrument
+            :type path: string
         '''
-#        print "Loading state"
         cmd = "MMEM:LOAD:STAT 1,'{}'".format(path)
         self.write(cmd)
         self.verify_channel_type()        
@@ -114,38 +112,92 @@ class RohdeSchwarzFSW26Base(VISADevice):
         '''
 
         self.write("ADJ:LEV") #see if this is enough, or if we need something more detailed
-   
-    def fetch_horizontal (self, trace=None):
-        return self.backend.query_binary_values("TRAC:DATA:X? TRACE{trace}".format(trace=trace or ''))
 
-    def fetch_trace(self, trace=None, horizontal=False):
-        ''' Get and return the current trace data.
-        
+    def query_binary_values (self, msg):
+        ''' An alternative to the backend.query_binary_values command to fetch block (array) data. This
+        implementation works around mysterious slowness between pyvisa and this instrument.
+
+        :param msg: The SCPI command to send
+        :return: a numpy array containing the response.
+        '''
+        logger.debug('\nVISA SEND\n{}'.format(repr(msg)))
+        self.backend.read_termination, old_read_term = None, self.backend.read_termination
+        self.backend.write(msg)
+
+        # This is very hacky, because for some reason performance via
+        # the pyvisa functions like .write and .query was poor
+        raw, _ = self.backend.visalib.read(self.backend.session, 2)
+        digits = int(raw.decode('ascii')[1])
+        raw, _ = self.backend.visalib.read(self.backend.session, digits)
+        N = int(raw.decode('ascii'))
+        raw, _ = self.backend.visalib.read(self.backend.session, N)
+        self.backend.read_termination = old_read_term
+        data = np.frombuffer(raw, np.float32)
+        logger.debug('\nVISA RECEIVE {} bytes ({} values)'.format(N,data.size))
+
+        return data
+
+    def fetch_horizontal (self, trace=None):
+        if trace is None:
+            trace = ''
+        return self.query_binary_values("TRAC:DATA:X? TRACE{trace}".format(trace=trace))
+
+    def fetch_trace(self, trace=None, horizontal=False, window=None):
+        ''' Fetch trace data with 'TRAC:DATA TRACE?' and return the result in
+            a pandas series.fetch and return the current trace data. This does not
+            initiate a trigger; this must be done separately if desired.
+            (see :method:`trigger_single`). This method is meant to be used
+            in all signal analyzer modes (spectrum analyzer, IQ analyzer, LTE analyzer,
+            etc.), because variants of TRAC:DATA TRACE? are implemented for each.
+
+            The `trace` and `window` parameters have different meaning in different
+            modes. Specify `window` only in signal analyzer modes that support it,
+            which include LTE.  When `window` is not supported, specifying it (any
+            value besides `None`) will cause a timeout.
+
+            Trace data is returned in single-precision (32-bit) binary blocks.
+
             If necessary, we can read the count, set count to 1, read, adjust level
             then set the count back, and read again like this:
 
             ::
                 count = inst.query("SENSE:SWEEP:COUNT?")
                 self.write("SENSE:SWEEP:COUNT 1")
-                
-            :return: x and y data formatted as np.array([xdata,ydata])
-            
-            :rtype: np.array
+
+        :param trace: The trace number to query (or None, the default, to not specify one)
+        :param horizontal: Set the index of the returned Series by a call to :method:`fetch_horizontal`
+        :param window: The window number to query (or None, the default, to not specify one)
+        :return: a pd.Series object containing the returned data
         '''
+
+        if trace is None:
+            trace = ''
+        if window is None:
+            window = ''
         if hasattr(trace, '__iter__'):
             return pd.concat([self.fetch_trace(t,horizontal=horizontal) for t in trace])
         
         if horizontal:
             index = self.fetch_horizontal(trace)
-            values = self.backend.query_binary_values("TRAC:DATA? TRACE{trace}".format(trace=trace or ''),\
-                                                      container=pd.Series, datatype='d')
+            values = self.query_binary_values("TRAC{window}:DATA? TRACE{trace}"\
+                                              .format(trace=trace, window=window))
             name = 'Trace {}'.format(trace)
-            return pd.DataFrame(values.values, columns=[name], index=index)
+            return pd.DataFrame(values, columns=[name], index=index)
         else:
-            return self.backend.query_binary_values("TRAC:DATA? TRACE{trace}".format(trace=trace or ''),\
-                                                    container=pd.Series, datatype='d')
+            values = self.query_binary_values("TRAC{window}:DATA? TRACE{trace}"\
+                                              .format(trace=trace, window=window))
+            return pd.DataFrame(values)
 
     def fetch_timestamps (self, all=True, trace=None):
+        ''' Fetch data timestamps associated with acquired data. Not all types of acquired data support timestamping,
+            and not all modes support the trace argument. A choice that is incompatible with the current state
+            of the signal analyzer should lead to a pyvisa.TimeoutError.
+
+        :param all: If True, acquire and return all available timestamps; if False, only the most current timestamp.
+        :param trace: The trace number corresponding to the desired timestamp data
+        :return: A number (when `all` is False) or a np.array (when `all` is True)
+        '''
+
         scope = 'ALL' if all else 'CURR'
         timestamps = self.backend.query_ascii_values(r'CALC{trace}:SGR:TST:DATA? {scope}'\
                                                       .format(trace=trace or '', scope=scope),\
@@ -155,11 +207,22 @@ class RohdeSchwarzFSW26Base(VISADevice):
         if not all:
             return ret[0]
         else:
-            return ret    
+            return ret
 
     def fetch_spectrogram (self, freqs='exact', timestamps='exact', trace=None):
         '''
+        Fetch a spectrogram without initiating a new trigger. This has been tested in IQ Analyzer and real time
+        spectrum analyzer modes. Not all instrument operating modes support trace selection; a choice that is
+        incompatible with the current state of the signal analyzer should lead to a pyvisa.TimeoutError.
+
+        :param freqs: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on FFT parameters), or None (leaving the integer indices)
+        :param timestamps: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on sweep time), or None (leaving the integer indices)
+        :param trace: The trace number corresponding to the desired acquired data
+        :return: a pandas DataFrame containing the acquired data
         '''
+
+        if trace is None:
+            trace = ''
         if timestamps == 'fast':
             sweep_time = self.state.sweep_time_trace2
             ts0 = self.fetch_timestamps(all=False, trace=trace)
@@ -184,18 +247,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
             f_ = None
             Nfreqs = self.state.sweep_points
 
-        self.backend.read_termination, old_read_term = None, self.backend.read_termination
-        self.backend.write('TRAC{trace}:DATA? SPEC'.format(trace=trace))
-        
-        # This is very hacky, because for some reason performance via
-        # the pyvisa functions like .write and .query was poor
-        raw,_ = self.backend.visalib.read(self.backend.session, 2)
-        digits=int(raw.decode('ascii')[1])
-        raw,_ = self.backend.visalib.read(self.backend.session, digits)
-        N=int(raw.decode('ascii'))
-        raw,_ = self.backend.visalib.read(self.backend.session, N)
-        self.backend.read_termination = old_read_term
-        data = np.frombuffer(raw, np.float32)
+        data = self.query_binary_values('TRAC{trace}:DATA? SPEC'.format(trace=trace))
         data = data.reshape((data.size//Nfreqs,Nfreqs))
         
         if timestamps == 'fast':
@@ -206,11 +258,8 @@ class RohdeSchwarzFSW26Base(VISADevice):
         ''' Get marker value
         
             :param marker: marker number on instrument display
-            
             :type marker: int
-            
             :param axis: 'X' for x axis or 'Y' for y axis
-            
             :type axis: str
         '''
         mark_cmd = "CALC:MARK"+ str(marker) + ":" + axis + "?"
@@ -306,7 +355,7 @@ e
 
         mark_cmd = "CALC:MARK{}:FUNC:BPOW:SPAN?".format(marker)
         return float(self.query(mark_cmd))
-    
+
     def get_marker_power_table(self):
         ''' Get the values of all markers.
         '''
@@ -358,6 +407,45 @@ e
 
 
 class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
+    class state(RohdeSchwarzFSW26Base.state):
+        format = CaselessStrEnum(command='FORM', values=['REAL', 'ASCII'])
+        uplink_sample_rate = Float(min=0)
+        downlink_sample_rate = Float(min=0)
+
+    @state.uplink_sample_rate.getter
+    def __ (self, *args, **kws):
+        response = self.query('CONF:LTE:UL:BW?')
+        return float(response[2:].replace('_','.'))*1e6
+
+    @state.downlink_sample_rate.getter
+    def __ (self, *args, **kws):
+        response = self.query('CONF:LTE:DL:BW?')
+        return float(response[2:].replace('_','.'))*1e6
+
+    def connect (self):
+        VISADevice.connect(self)
+        self.verify_channel_type()
+        self.state.format = 'REAL'
+
+    def fetch_power_vs_symbol_x_carrier (self, window, trace):
+        data = self.fetch_trace(window=window, trace=trace)
+
+        # Dimensioning is based on LTE standard definitions
+        # of the resource block
+        Ncarrier = int(50*self.state.uplink_sample_rate/10e6)
+        Nsubcarrier = 12 * Ncarrier
+        Nsymbol = data.size // Nsubcarrier
+
+        data[data > 1e30] = np.nan
+
+        data = data.values.reshape((Nsymbol, Nsubcarrier))
+        data = pd.DataFrame(data)
+        data.index.name = 'Symbol'
+        data.columns.name = 'Subcarrier'
+        return data
+
+    # The methods should be deprecatable now, since the base fetch_trace() should work fine now that format is set
+    # in the connect() method and the window parameter is supported by fetch_trace()
     def get_ascii_window_trace(self,window,trace):
         self.write('FORM ASCII')
         data = self.backend.query_ascii_values("TRAC{window}:DATA? TRACE{trace}".format(window=window,trace=trace), container=pd.Series)
@@ -378,8 +466,8 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     expect_channel_type = 'RTIM'
     
     class state(RohdeSchwarzFSW26Base.state):
-        iq_simple_enabled     = Bool      (command='CALC:IQ')
-        iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL')
+        iq_simple_enabled     = Bool      (command='CALC:IQ', trues=['ON'], falses=['OFF'])
+        iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL', trues=['ON'], falses=['OFF'])
         iq_mode               = CaselessStrEnum (command='CALC:IQ:MODE', values=['TDOMain','FDOMain','IQ'])
         iq_record_length      = Int       (command='TRAC:IQ:RLEN', min=1, max=461373440)
         iq_sample_rate        = Float     (command='TRAC:IQ:SRAT', min=1e-9, max=160e6)
@@ -408,7 +496,8 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
 
     def store_trace(self, path):
         self.write("MMEM:STOR:IQ:STAT 1, '{}'".format(path))
-        
+
+
 class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
     expect_channel_type = 'RTIM'
     
