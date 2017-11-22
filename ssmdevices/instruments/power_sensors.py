@@ -53,26 +53,31 @@ class RohdeSchwarzNRPSeries(VISADevice):
         # measurement_rate = lb.CaselessStrEnum(command='SENS:MRAT', values=['NORM', 'DOUB', 'FAST'])
         # sweep_aperture = lb.Float(command='SWE:APER', min=20e-6, max=200e-3, label='s')
 
-        initiate_continuous = lb.Bool(command='INIT:CONT')
+        frequency = lb.Float(command='SENS:FREQ', min=10e6, step=1e-3, label='Hz')
+        initiate_continuous = lb.Bool(command='INIT:CONT', trues=['ON'], falses=['OFF'])
+        function = lb.CaselessStrEnum(command='SENS:FUNC',\
+                                      values=['POW:AVG', 'POW:BURS:AVG', 'POW:TSL:AVG',
+                                              'XTIM:POW', "XTIM:POWer"])
+
         trigger_source = lb.CaselessStrEnum(command='TRIG:SOUR', \
                                       values=['HOLD', 'IMM', 'INT', 'EXT', 'EXT1', 'EXT2', 'BUS', 'INT1'])
-        triger_delay = lb.Float(command='TRIG:DELAY', min=-5, max=10)
+        trigger_delay = lb.Float(command='TRIG:DELAY', min=-5, max=10)
         trigger_count = lb.Int(command='TRIG:COUN', min=1, max=8192, step=1, help="help me")
         trigger_holdoff = lb.Float(command='TRIG:HOLD', min=0, max=10)
+        trigger_level = lb.Float(command='TRIG:LEV', min=1e-7, max=200e-3)
 
-        frequency = lb.Float(command='SENS:FREQ', min=10e6, step=1e-3, label='Hz')
         trace_points = lb.Int(command='SENSe:TRACe:POINTs', min=1, max=8192, write_only=True)
         trace_realtime = lb.Bool(command='TRAC:REAL', trues=['ON'], falses=['OFF'])
         trace_time = lb.Float(command='TRAC:TIME', min=10e-6, max=3)
+        trace_offset_time = lb.Float(command='TRAC:OFFS:TIME', min=-0.5, max=100)
+        trace_average_count = lb.Int(command='TRAC:AVER:COUN', min=1, max=65536)
+        trace_average_mode = lb.CaselessStrEnum(command='TRAC:AVER:TCON', values=['MOV','REP'])
+        trace_average_enable = lb.Bool(command='TRAC:AVER', trues=['ON'], falses=['OFF'])
+
         average_count = lb.Int(command='AVER:COUN', min=1, max=65536)
         average_auto = lb.Bool(command='AVER:COUN:AUTO', trues=['ON'], falses=['OFF'])
         average_enable = lb.Bool(command='AVER', trues=['ON'], falses=['OFF'])
         smoothing_enable = lb.Bool(command='SMO:STAT', trues=['ON'], falses=['OFF'], write_only=True)
-
-
-        function = lb.CaselessStrEnum(command='SENS:FUNC',\
-                                      values=['POW:AVG', 'POW:BURS:AVG', 'POW:TSL:AVG',
-                                              'XTIM:POW', "XTIM:POWer"])
 
         # unit = lb.CaselessStrEnum(command='UNIT:POW', values=['DBM','W','DBUV']) # seems to fail
         # format = lb.CaselessStrEnum(command='FORMat:DATA', values=['REAL', 'ASCII']) # Seems to fail
@@ -102,6 +107,16 @@ class RohdeSchwarzNRPSeries(VISADevice):
             index = np.arange(len(response))*(self.state.trace_time/float(self.state.trace_points))
             return pd.to_numeric(pd.Series(response,index=index))
 
+    def fetch_buffer(self):
+        ''' Return a single number or pandas Series containing the power readings
+        '''
+        response = self.query('FETC:ARR?').split(',')
+        if len(response) == 1:
+            return float(response[0])
+        else:
+            index = None#np.arange(len(response))*(self.state.trace_time/float(self.state.trace_points))
+            return pd.to_numeric(pd.Series(response,index=index))
+
     def disconnect(self):
         ''' Disconnect the VISA instrument. If you use a `with` block
             this is handled automatically and you do not need to
@@ -114,13 +129,16 @@ class RohdeSchwarzNRPSeries(VISADevice):
         except Exception as e:
             logger.error('VISA: could not disconnect. Traceback: \n' + str(e))
 
+
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
     class state(RohdeSchwarzNRPSeries):
         frequency = lb.Float(command='SENS:FREQ', min=10e6, max=8e9, step=1e-3, label='Hz')
 
+
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
     class state(RohdeSchwarzNRPSeries):
         frequency = lb.Float(command='SENS:FREQ', min=10e6, max=18e9, step=1e-3, label='Hz')
+
 
 if __name__ == '__main__':
     from pylab import *
