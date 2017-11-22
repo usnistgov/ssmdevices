@@ -18,7 +18,8 @@ That's it.
 
 ## Device Support
 RF power sensors
-* Keysight U2040 X series
+* Keysight U2000 X series
+* Rohde Schwarz NRP Series
 
 RF signal analyzers
 * Rohde Schwarz FSW series 
