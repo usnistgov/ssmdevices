@@ -321,6 +321,15 @@ class RohdeSchwarzFSW26Base(VISADevice):
         '''
         mark_cmd = "CALC:MARK{}:X {}".format(marker,position)
         return self.write(mark_cmd)
+
+    def trigger_output_pulse (self, port):
+        '''
+
+        :param port: Trigger port number
+        :param duration: "On" time duration of pulse(in s)
+        :return: None
+        '''
+        self.write('OUTPUT:TRIGGER{port}:PULS:IMM'.format(port=port))
     
 
 class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base):
