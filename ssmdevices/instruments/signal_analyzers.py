@@ -11,6 +11,7 @@ __all__ = ['RohdeSchwarzFSW26Base',
            'RohdeSchwarzFSW26LTEAnalyzer',
            'RohdeSchwarzFSW26RealTime']
 
+import labbench as lb
 from labbench import Bool, CaselessStrEnum, Int, Float
 from labbench.visa import VISADevice
 import pandas as pd
@@ -28,7 +29,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         sweep_time              = Float     (command='SWE:TIME',   label='Hz')
         sweep_time_trace2       = Float     (command='SENS2:SWE:TIME',   label='Hz')
     
-        initiate_continuous     = Bool      (command='INIT:CONT', trues=['ON'], falses=['OFF'])
+        initiate_continuous     = Bool      (command='INIT:CONT', trues=['1'], falses=['0'])
     
         reference_level         = Float     (command='DISP:TRAC1:Y:RLEV', step=1e-3,label='dB')
         reference_level_trace2  = Float     (command='DISP:TRAC2:Y:RLEV', step=1e-3,label='dB')
@@ -49,7 +50,9 @@ class RohdeSchwarzFSW26Base(VISADevice):
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
          
         display_update          = Bool      (command='SYST:DISP:UPD', trues=['ON'], falses=['OFF'])
-    
+
+        default_window          = lb.LocalUnicode('', help='data window number to use if unspecified')
+        default_trace           = lb.LocalUnicode('', help='data trace number to use if unspecified')
 
     def verify_channel_type (self):
         if self.expect_channel_type is not None and self.state.channel_type != self.expect_channel_type:
@@ -60,8 +63,15 @@ class RohdeSchwarzFSW26Base(VISADevice):
         ''' Connect, check the channel type, and set the block data format to 32-bit binary.
         '''
         super().connect()
+        self.abort()
+        self.clear_status()
+        self.wait()
         self.verify_channel_type()
         self.state.format = 'REAL,32'
+
+
+    def clear_status (self):
+        self.write('*CLS')
 
     def save_state (self, path):
         ''' Save current state of the device to the default directory.
@@ -79,8 +89,8 @@ class RohdeSchwarzFSW26Base(VISADevice):
         '''
         cmd = "MMEM:LOAD:STAT 1,'{}'".format(path)
         self.write(cmd)
-        self.verify_channel_type()        
-        
+        self.verify_channel_type()
+
     def mkdir(self, path, recursive=True):
         ''' Make a new directory (optionally recursively) on the instrument
             if we haven't tried to make it already.
@@ -100,18 +110,23 @@ class RohdeSchwarzFSW26Base(VISADevice):
                 self.write(r"MMEM:MDIR '{}'".format(path))
             self.__prev_dirs.add(path)
         
-    def trigger_single (self):
+    def trigger_single (self, wait=True, disable_continuous=True):
         ''' Trigger once.
         '''
-        self.state.initiate_continuous = False        
+        if disable_continuous:
+            self.state.initiate_continuous = False
         self.write('INIT')
-        self.wait()
+        if wait:
+            self.wait()
 
     def autolevel (self):
         ''' Run the signal analyzer autolevel tool.
         '''
 
-        self.write("ADJ:LEV") #see if this is enough, or if we need something more detailed
+        self.write("ADJ:LEV")
+
+    def abort (self):
+        self.write('ABORT')
 
     def query_binary_values (self, msg):
         ''' An alternative to the backend.query_binary_values command to fetch block (array) data. This
@@ -134,13 +149,17 @@ class RohdeSchwarzFSW26Base(VISADevice):
         self.backend.read_termination = old_read_term
         data = np.frombuffer(raw, np.float32)
         logger.debug('\nVISA RECEIVE {} bytes ({} values)'.format(N,data.size))
-
+        self.clear_status()
         return data
 
-    def fetch_horizontal (self, trace=None):
+    def fetch_horizontal (self, window=None, trace=None):
+        if window is None:
+            window = self.state.default_window
         if trace is None:
-            trace = ''
-        return self.query_binary_values("TRAC:DATA:X? TRACE{trace}".format(trace=trace))
+            trace = self.state.default_trace
+
+        return self.query_binary_values("TRAC{window}:DATA:X? TRACE{trace}"\
+                                        .format(window=window,trace=trace))
 
     def fetch_trace(self, trace=None, horizontal=False, window=None):
         ''' Fetch trace data with 'TRAC:DATA TRACE?' and return the result in
@@ -164,16 +183,16 @@ class RohdeSchwarzFSW26Base(VISADevice):
                 count = inst.query("SENSE:SWEEP:COUNT?")
                 self.write("SENSE:SWEEP:COUNT 1")
 
-        :param trace: The trace number to query (or None, the default, to not specify one)
+        :param trace: The trace number to query (or None, the default, to use self.state.default_trace)
         :param horizontal: Set the index of the returned Series by a call to :method:`fetch_horizontal`
-        :param window: The window number to query (or None, the default, to not specify one)
+        :param window: The window number to query (or None, the default, to use self.state.default_window)
         :return: a pd.Series object containing the returned data
         '''
 
         if trace is None:
-            trace = ''
+            trace = self.state.default_trace
         if window is None:
-            window = ''
+            window = self.state.default_window
         if hasattr(trace, '__iter__'):
             return pd.concat([self.fetch_trace(t,horizontal=horizontal) for t in trace])
         
@@ -188,28 +207,39 @@ class RohdeSchwarzFSW26Base(VISADevice):
                                               .format(trace=trace, window=window))
             return pd.DataFrame(values)
 
-    def fetch_timestamps (self, all=True, trace=None):
+    def fetch_timestamps (self, window=None, all=True, timeout=50000):
         ''' Fetch data timestamps associated with acquired data. Not all types of acquired data support timestamping,
             and not all modes support the trace argument. A choice that is incompatible with the current state
             of the signal analyzer should lead to a pyvisa.TimeoutError.
 
         :param all: If True, acquire and return all available timestamps; if False, only the most current timestamp.
-        :param trace: The trace number corresponding to the desired timestamp data
+        :param window: The window number corresponding to the desired timestamp data (or self.state.default_window when window=None)
         :return: A number (when `all` is False) or a np.array (when `all` is True)
         '''
 
-        scope = 'ALL' if all else 'CURR'
-        timestamps = self.backend.query_ascii_values(r'CALC{trace}:SGR:TST:DATA? {scope}'\
-                                                      .format(trace=trace or '', scope=scope),\
-                                                     container=np.array)
-        timestamps = timestamps.reshape((timestamps.shape[0]//4,4))[:,:2]
-        ret = timestamps[:,0] + 1e-9*timestamps[:,1]
+        if window is None:
+            window = self.state.default_window
+
+        if all:
+            _to, self.backend.timeout = self.backend.timeout, timeout
+
+        try:
+            scope = 'ALL' if all else 'CURR'
+            timestamps = self.backend.query_ascii_values(r'CALC{window}:SGR:TST:DATA? {scope}'\
+                                                          .format(window=window, scope=scope),\
+                                                         container=np.array)
+            timestamps = timestamps.reshape((timestamps.shape[0]//4,4))[:,:2]
+            ret = timestamps[:,0] + 1e-9*timestamps[:,1]
+        finally:
+            if all:
+                self.backend.timeout = _to
+
         if not all:
             return ret[0]
         else:
             return ret
 
-    def fetch_spectrogram (self, freqs='exact', timestamps='exact', trace=None):
+    def fetch_spectrogram (self, window=None, freqs='exact', timestamps='exact', timeout=50000):
         '''
         Fetch a spectrogram without initiating a new trigger. This has been tested in IQ Analyzer and real time
         spectrum analyzer modes. Not all instrument operating modes support trace selection; a choice that is
@@ -217,42 +247,62 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
         :param freqs: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on FFT parameters), or None (leaving the integer indices)
         :param timestamps: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on sweep time), or None (leaving the integer indices)
-        :param trace: The trace number corresponding to the desired acquired data
+        :param window: The window number corresponding to the desired timestamp data (or self.state.default_window when window=None)
         :return: a pandas DataFrame containing the acquired data
         '''
 
-        if trace is None:
-            trace = ''
-        if timestamps == 'fast':
-            sweep_time = self.state.sweep_time_trace2
-            ts0 = self.fetch_timestamps(all=False, trace=trace)
-            dt0=datetime.datetime.fromtimestamp(ts0)
-        elif timestamps == 'exact':
-            t = self.fetch_timestamps(all=True, trace=trace)
-        elif timestamps == None:
-            t = None
-        else:
-            raise ValueError("timestamps argument must be 'fast', 'exact', or None")
+        with self.suppress_timeout():
+            if window is None:
+                window = self.state.default_window
 
-    
-        if freqs == 'fast':
-            fc = self.state.frequency_center
-            fsamp = self.state.iq_sample_rate      
-            Nfreqs = self.state.sweep_points
-            f_ = fc+np.linspace(-fsamp*(1.-1./Nfreqs)/2,+fsamp*(1.-1./Nfreqs)/2, Nfreqs)
-        if freqs == 'exact':
-            f_  = self.fetch_horizontal(trace)
-            Nfreqs = len(f_)
-        elif freqs == None:
-            f_ = None
-            Nfreqs = self.state.sweep_points
+            data = self.query_binary_values('TRAC{window}:DATA? SPEC'.format(window=window))
 
-        data = self.query_binary_values('TRAC{trace}:DATA? SPEC'.format(trace=trace))
-        data = data.reshape((data.size//Nfreqs,Nfreqs))
-        
-        if timestamps == 'fast':
-            t = dt0+pd.to_timedelta(sweep_time*1e9*np.arange(data.shape[0]), unit='ns')            
-        return pd.DataFrame(data[::-1], columns=f_, index=t)
+            # Fetch time axis
+            if timestamps == 'fast':
+                sweep_time = self.state.sweep_time_trace2
+                ts0 = self.fetch_timestamps(all=False, window=window)
+                dt0=datetime.datetime.fromtimestamp(ts0)
+            elif timestamps == 'exact':
+                t = self.fetch_timestamps(all=True, window=window, timeout=timeout)
+            elif timestamps == None:
+                t = None
+            else:
+                raise ValueError("timestamps argument must be 'fast', 'exact', or None")
+
+            # Fetch frequency axis
+            if freqs == 'fast':
+                fc = self.state.frequency_center
+                fsamp = self.state.iq_sample_rate
+                Nfreqs = self.state.sweep_points
+                f_ = fc+np.linspace(-fsamp*(1.-1./Nfreqs)/2,+fsamp*(1.-1./Nfreqs)/2, Nfreqs)
+            if freqs == 'exact':
+                f_  = self.fetch_horizontal(window)
+                Nfreqs = len(f_)
+            elif freqs == None:
+                f_ = None
+                Nfreqs = self.state.sweep_points
+
+            # Reshape data according to frequency axis, since we'll be most certain
+            # to know that dimension
+            if data.size > 1:
+                data = data.reshape((data.size//Nfreqs,Nfreqs))
+
+            # Generate timestamps if we're going to guesstimate
+            if timestamps == 'fast':
+                t = dt0+pd.to_timedelta(sweep_time*1e9*np.arange(data.shape[0]), unit='ns')
+
+            if data.size > 1:
+                return pd.DataFrame(data[::-1], columns=f_, index=None if t is None else t[::-1])
+            else:
+                return pd.DataFrame([], columns=f_)
+
+        # If there is a timeout, the return above will not happen.
+        # In this case, abort the acquisition and return
+        # None.
+        self.abort()
+        self.wait()
+        return None
+
     
     def fetch_marker(self, marker, axis):
         ''' Get marker value
@@ -538,27 +588,12 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         self.mkdir(os.path.split(path)[0])
         self.write("MMEM:STOR{window}:SGR '{path}'"\
                    .format(window=window,path=path))   
-            
+
+    def clear_spectrogram(self, window=2):
+        self.write("CALC{window}:SGR:CLE"\
+                   .format(window=window))
+
     def fetch_horizontal (self, window=2, trace=1):
         return self.backend.query_binary_values(r"TRAC{window}:X? TRACE{trace}"\
                                                 .format(window=window,trace=trace),
                                                 datatype='f', container=np.array)
-
-if __name__ == '__main__':
-    import labbench as lb
-    lb.log_to_screen('DEBUG')
-
-    with RohdeSchwarzFSW26IQAnalyzer('TCPIP::TILSIT::HISLIP0::INSTR') as fsw:
-#        fsw.state.iq_simple_enabled = True
-#        fsw.wait()
-#        fsw.state.iq_mode = 'IQ'
-        fsw.state.iq_record_length = 80*1000*1000
-        fsw.state.iq_format = 'RIM'        
-        fsw.trigger_single()
-        fsw.wait()
-
-        # Give the timeout a long enough enough to complete
-        fsw.link.timeout = 1000*60 # in ms
-        with fsw.overlap_and_block:
-            fsw.store_trace(r'C:\test.iq.tar')
-        print('Done!')
