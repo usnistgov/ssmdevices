@@ -15,6 +15,7 @@ import labbench as lb
 from labbench import Bool, CaselessStrEnum, Int, Float
 from labbench.visa import VISADevice
 import pandas as pd
+from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT,VI_SUCCESS_MAX_CNT
 
 class RohdeSchwarzFSW26Base(VISADevice):
     expect_channel_type = None
@@ -69,9 +70,22 @@ class RohdeSchwarzFSW26Base(VISADevice):
         self.verify_channel_type()
         self.state.format = 'REAL,32'
 
+    def disconnect(self):
+        try:
+            self.abort()
+        except:
+            pass
+        try:
+            self.clear_status()
+        except:
+            pass
+        super().disconnect()
 
     def clear_status (self):
         self.write('*CLS')
+
+    def status_preset (self):
+        self.write('STAT:PRES')
 
     def save_state (self, path):
         ''' Save current state of the device to the default directory.
@@ -135,21 +149,33 @@ class RohdeSchwarzFSW26Base(VISADevice):
         :param msg: The SCPI command to send
         :return: a numpy array containing the response.
         '''
-        logger.debug('\nVISA SEND\n{}'.format(repr(msg)))
+        logger.debug(logger.debug('{}.query <- {}'.format(repr(self),msg)))
+
+        # The read_termination seems to cause unwanted behavior in self.backend.visalib.read
         self.backend.read_termination, old_read_term = None, self.backend.read_termination
         self.backend.write(msg)
 
-        # This is very hacky, because for some reason performance via
-        # the pyvisa functions like .write and .query was poor
-        raw, _ = self.backend.visalib.read(self.backend.session, 2)
-        digits = int(raw.decode('ascii')[1])
-        raw, _ = self.backend.visalib.read(self.backend.session, digits)
-        N = int(raw.decode('ascii'))
-        raw, _ = self.backend.visalib.read(self.backend.session, N)
+        with self.backend.ignore_warning(VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT):
+            # Reproduce the behavior of pyvisa.util.from_ieee_block without
+            # a priori access to the entire buffer.
+            raw, _ = self.backend.visalib.read(self.backend.session, 2)
+            digits = int(raw.decode('ascii')[1])
+            raw, _ = self.backend.visalib.read(self.backend.session, digits)
+            data_size = int(raw.decode('ascii'))
+
+            # Read the actual data
+            raw, _ = self.backend.visalib.read(self.backend.session, data_size)
+
+            # Read termination characters so that the instrument doesn't show
+            # a "QUERY INTERRUPTED" error when there is unread buffer
+            self.backend.visalib.read(self.backend.session, len(old_read_term))
+
         self.backend.read_termination = old_read_term
+
         data = np.frombuffer(raw, np.float32)
-        logger.debug('\nVISA RECEIVE {} bytes ({} values)'.format(N,data.size))
-        self.clear_status()
+        logger.debug('{}.query -> {} bytes ({} values)'.format(repr(self), data_size,data.size))
+        #self.clear_status()
+        self.status_preset()
         return data
 
     def fetch_horizontal (self, window=None, trace=None):
@@ -299,8 +325,10 @@ class RohdeSchwarzFSW26Base(VISADevice):
         # If there is a timeout, the return above will not happen.
         # In this case, abort the acquisition and return
         # None.
+        logger.warning('received no spectrogram data')
         self.abort()
-        self.wait()
+        #self.clear_status()
+        #self.wait()
         return None
 
     
