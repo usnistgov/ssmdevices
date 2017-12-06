@@ -49,7 +49,7 @@ if __name__ == '__main__':
           include_package_data=True,
           license='NIST',
           install_requires=[
-  		    	        'labbench(>=0.4)',
+  		    	        'labbench(>=0.10)',
                     'pandas(>=0.19.0)',
                     'pyserial(>3.0)',
                     'pyvisa(>=1.8)',

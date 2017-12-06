@@ -46,7 +46,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         amplitude_offset_trace5 = Float     (command='DISP:TRAC5:Y:RLEV:OFFS',step=1e-3,label='dB')
         amplitude_offset_trace6 = Float     (command='DISP:TRAC6:Y:RLEV:OFFS',step=1e-3,label='dB')
         
-        channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM'])
+        channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM'], is_metadata=True)
         format                  = CaselessStrEnum (command='FORM', values=['ASC,0','REAL,32','REAL,64', 'REAL,16'])
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
          

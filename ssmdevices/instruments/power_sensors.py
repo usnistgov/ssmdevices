@@ -82,11 +82,6 @@ class RohdeSchwarzNRPSeries(VISADevice):
         # unit = lb.CaselessStrEnum(command='UNIT:POW', values=['DBM','W','DBUV']) # seems to fail
         # format = lb.CaselessStrEnum(command='FORMat:DATA', values=['REAL', 'ASCII']) # Seems to fail
 
-
-    # @state.frequency.getter
-    # def __ (self):
-    #     return float(self.query('SENS:FREQ?'))*1e9
-
     @state.function.setter
     def __ (self, value):
         self.write('SENSe:FUNCtion "{}"'.format(value))
