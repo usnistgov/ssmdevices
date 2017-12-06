@@ -97,10 +97,10 @@ class WLANStatus(lb.Device):
     ssid = None
 
     class state(lb.Device.state):
-        bssid              = lb.Bytes(readonly=True)
+        bssid              = lb.Bytes(readonly=True,is_metadata=True)
         channel            = lb.Int(min=0,readonly=True)
         signal             = lb.Int(min=0,max=100,readonly=True)
-        ssid               = lb.Bytes(readonly=True)
+        ssid               = lb.Bytes(readonly=True,is_metadata=True)
         transmit_rate_mbps = lb.Int(min=0,readonly=True)
         radio_type         = lb.Bytes(readonly=True)
         state              = lb.Bytes(readonly=True)
