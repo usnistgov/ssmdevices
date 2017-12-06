@@ -67,7 +67,7 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.serial_.SerialLoggingDevice</span></code></p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.backend">
-<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.backend" title="Permalink to this definition">¶</a></dt>
+<code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.backend" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -83,15 +83,43 @@
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.command_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a setting from a remote instrument that has a trait attribute
-<a href="#id1"><span class="problematic" id="id2">``</span></a>attr’’ in type(self).</p>
+<dd><p>Read a setting from a remote instrument, keyed on a command string.
+Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
+<li><strong>trait</strong> – the state descriptor or traitlet</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value’’
-will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr’’ in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument, keyed on a command string.
+Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
+<li><strong>trait</strong> – the state descriptor or traitlet</li>
+<li><strong>value</strong> – the value to set</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -129,10 +157,17 @@ in self.resource</p>
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.from_hwid">
 <code class="descname">from_hwid</code><span class="sig-paren">(</span><em>hwid=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.from_hwid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instantiate a new SerialDevice from a <a href="#id7"><span class="problematic" id="id8">`</span></a>hwid’ resource instead
+<dd><p>Instantiate a new SerialDevice from a <a href="#id1"><span class="problematic" id="id2">`</span></a>hwid’ resource instead
 of a comport resource. A hwid string in windows might look something
 like:</p>
 <p>r’PCIVEN_8086&amp;DEV_9D3D&amp;SUBSYS_06DC1028&amp;REV_213&amp;11583659&amp;1&amp;B3’</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.list_instances">
+<code class="descname">list_instances</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.list_instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all Device instances in the kernel
+:return: list of Device instances</p>
 </dd></dl>
 
 <dl class="method">
@@ -152,11 +187,6 @@ like:</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.max_queue_size">
 <code class="descname">max_queue_size</code><em class="property"> = 100000</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.max_queue_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.next">
-<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.next" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -202,10 +232,60 @@ after everything else is ready.</p>
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
 <p>Use bare-bones core Device state definitions</p>
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_trait_events">
+<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_traits">
+<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.class_trait_names">
+<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.class_traits">
+<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>A boolean (True, False) trait.</p>
+<dd><p>labbench.LocalBool(read_only=True)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.trait_events">
+<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 </dd></dl>
@@ -274,21 +354,36 @@ to dynamically enable and disable USB 3.0 ports.</p>
 a connected device.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.backend">
-<code class="descname">backend</code><em class="property"> = &lt;labbench.core.DisconnectedBackend object&gt;</em><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.backend" title="Permalink to this definition">¶</a></dt>
+<code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.backend" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.command_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a setting from a remote instrument that has a trait attribute
-<a href="#id9"><span class="problematic" id="id10">``</span></a>attr’’ in type(self).</p>
+<dd><p>Read a setting from a remote instrument, keyed on a command string.
+Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
+<li><strong>trait</strong> – the state descriptor or traitlet</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.command_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id11"><span class="problematic" id="id12">``</span></a>value’’
-will be applied to the trait attriute <a href="#id13"><span class="problematic" id="id14">``</span></a>attr’’ in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value’’
+will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
@@ -323,14 +418,16 @@ ports on the hub.</li>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.list_instances">
+<code class="descname">list_instances</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.list_instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all Device instances in the kernel
+:return: list of Device instances</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.model">
 <code class="descname">model</code><em class="property"> = 17</em><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.next">
-<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.next" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -349,10 +446,48 @@ after everything else is ready.</p>
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
+<dl class="method">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_trait_events">
+<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_traits">
+<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_trait_names">
+<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_traits">
+<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>A boolean (True, False) trait.</p>
+<dd><p>labbench.LocalBool(read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -401,6 +536,18 @@ after everything else is ready.</p>
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power3_enabled">
 <code class="descname">power3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power3_enabled" title="Permalink to this definition">¶</a></dt>
 <dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.trait_events">
+<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 </dd></dl>

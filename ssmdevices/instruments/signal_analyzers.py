@@ -60,17 +60,12 @@ class RohdeSchwarzFSW26Base(VISADevice):
             raise Exception('{} expects {} mode, but insrument mode is {}'\
                             .format(type(self).__name__, self.expect_channel_type, self.state.channel_type))        
 
-    def connect (self):
-        ''' Connect, check the channel type, and set the block data format to 32-bit binary.
-        '''
-        super().connect()
-        self.abort()
-        self.clear_status()
-        self.wait()
+    def setup(self):
+        super().setup()
         self.verify_channel_type()
         self.state.format = 'REAL,32'
 
-    def disconnect(self):
+    def cleanup(self):
         try:
             self.abort()
         except:
@@ -79,7 +74,6 @@ class RohdeSchwarzFSW26Base(VISADevice):
             self.clear_status()
         except:
             pass
-        super().disconnect()
 
     def clear_status (self):
         self.write('*CLS')
@@ -134,21 +128,34 @@ class RohdeSchwarzFSW26Base(VISADevice):
             self.wait()
 
     def autolevel (self):
-        ''' Run the signal analyzer autolevel tool.
+        ''' Try to automatically set the reference level on the instrument, which sets the
+            internal attenuation and preamplifier enable settings.
         '''
-
         self.write("ADJ:LEV")
 
     def abort (self):
         self.write('ABORT')
 
-    def query_binary_values (self, msg):
-        ''' An alternative to the backend.query_binary_values command to fetch block (array) data. This
-        implementation works around mysterious slowness between pyvisa and this instrument.
+    def query_ieee_array (self, msg):
+        ''' An alternative to self.backend.query_binary_values for fetching block data. This
+        implementation works around slowness between pyvisa and the instrument that seems to
+        result from transferring in chunks of size self.backend.chunk_size as implemented
+        in pyvisa.
+
+        The performance of a transfer of a spectrogram with 100,000 time samples is impacted as follows:
+
+        # The pyvisa implementation
+        >>>  %timeit -n 1 -r 1 sa.backend.query_binary_values('TRAC2:DATA? SPEC', container=np.array)
+        (takes at least 10 minutes)
+
+        # This implementation
+        >>> %timeit -n 1 -r 1 sa.query_ieee_array('TRAC2:DATA? SPEC')
+        (~23 sec)
 
         :param msg: The SCPI command to send
         :return: a numpy array containing the response.
         '''
+
         logger.debug(logger.debug('{}.query <- {}'.format(repr(self),msg)))
 
         # The read_termination seems to cause unwanted behavior in self.backend.visalib.read
@@ -174,8 +181,6 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
         data = np.frombuffer(raw, np.float32)
         logger.debug('{}.query -> {} bytes ({} values)'.format(repr(self), data_size,data.size))
-        #self.clear_status()
-        self.status_preset()
         return data
 
     def fetch_horizontal (self, window=None, trace=None):
@@ -184,7 +189,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         if trace is None:
             trace = self.state.default_trace
 
-        return self.query_binary_values("TRAC{window}:DATA:X? TRACE{trace}"\
+        return self.query_ieee_array("TRAC{window}:DATA:X? TRACE{trace}"\
                                         .format(window=window,trace=trace))
 
     def fetch_trace(self, trace=None, horizontal=False, window=None):
@@ -224,12 +229,12 @@ class RohdeSchwarzFSW26Base(VISADevice):
         
         if horizontal:
             index = self.fetch_horizontal(trace)
-            values = self.query_binary_values("TRAC{window}:DATA? TRACE{trace}"\
+            values = self.query_ieee_array("TRAC{window}:DATA? TRACE{trace}"\
                                               .format(trace=trace, window=window))
             name = 'Trace {}'.format(trace)
             return pd.DataFrame(values, columns=[name], index=index)
         else:
-            values = self.query_binary_values("TRAC{window}:DATA? TRACE{trace}"\
+            values = self.query_ieee_array("TRAC{window}:DATA? TRACE{trace}"\
                                               .format(trace=trace, window=window))
             return pd.DataFrame(values)
 
@@ -281,7 +286,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
             if window is None:
                 window = self.state.default_window
 
-            data = self.query_binary_values('TRAC{window}:DATA? SPEC'.format(window=window))
+            data = self.query_ieee_array('TRAC{window}:DATA? SPEC'.format(window=window))
 
             # Fetch time axis
             if timestamps == 'fast':
@@ -330,7 +335,6 @@ class RohdeSchwarzFSW26Base(VISADevice):
         #self.clear_status()
         #self.wait()
         return None
-
     
     def fetch_marker(self, marker, axis):
         ''' Get marker value
@@ -625,3 +629,45 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         return self.backend.query_binary_values(r"TRAC{window}:X? TRACE{trace}"\
                                                 .format(window=window,trace=trace),
                                                 datatype='f', container=np.array)
+
+    def set_frequency_mask (self, frequency_offsets, thresholds, kind='upper', window=None):
+        ''' Define the frequency-dependent trigger threshold values for a frequency mask trigger.
+
+        :param array-like frequency_offsets: frequencies at which the mask is defined
+        :param thresholds: trigger threshold at each frequency (same size as `frequency_offsets`)
+        :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
+        :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)
+        :return: None
+        '''
+        if window is None:
+            window = self.state.default_window
+        if kind.lower() not in ('upper','lower'):
+            raise ValueError('frequency mask is {} but must be "upper" or "lower"'\
+                             .format(repr(kind)))
+
+
+        flat = np.array([frequency_offsets, thresholds]).T.flatten()
+
+        plist = ','.join(flat.astype(str))
+
+        self.write("CALC{window}:MASK:{kind} {list}".format(window=window,kind=kind,list=plist))
+
+    def get_frequency_mask (self, kind='upper', window=None):
+        ''' Define the frequency-dependent trigger threshold values for a frequency mask trigger.
+
+        :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
+        :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)
+        :return: A dictionary with keys "frequency_offsets" and "thresholds" and corresponding values (in Hz and dBm, respectively) of equal length
+        '''
+
+        if window is None:
+            window = self.state.default_window
+        if kind.lower() not in ('upper','lower'):
+            raise ValueError('frequency mask is {} but must be "upper" or "lower"'\
+                             .format(repr(kind)))
+
+        plist = self.query("CALC{window}:MASK:{kind}?".format(window=window, kind=kind))
+        plist = np.array(plist.split(',')).astype(np.float64)
+
+        return {'frequency_offsets': plist[::2],
+                'thresholds': plist[1::2]}

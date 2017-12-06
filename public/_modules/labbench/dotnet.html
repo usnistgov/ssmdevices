@@ -55,20 +55,22 @@
 
 <span class="n">_dlls</span> <span class="o">=</span> <span class="p">{}</span>
 
+
 <span class="k">def</span> <span class="nf">import_dotnet</span><span class="p">(</span><span class="n">path_to_dll</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">libname</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Return a module imported from the provided path to a dll</span>
 <span class="sd">        that contains a .NET library called `libname.`</span>
-<span class="sd">        </span>
+
 <span class="sd">        :param path_to_dll: an absolute or relative path on the filesystem, or</span>
 <span class="sd">        (if that fails) a file in the ssmdevices installed distribution.</span>
-<span class="sd">        </span>
+
 <span class="sd">        :search_locations: a list where each element is a string</span>
 <span class="sd">        (indicating file system path search locations) or module</span>
 <span class="sd">        that may contain the dll name</span>
 <span class="sd">        :param libname: name of the .NET library to import. if None (default),</span>
 <span class="sd">        guess the library name is the same as the dll file without its extension</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="kn">import</span> <span class="nn">clr</span><span class="o">,</span><span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">clr</span>
+    <span class="kn">import</span> <span class="nn">os</span>
     <span class="n">clr</span><span class="o">.</span><span class="n">setPreload</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
     <span class="c1"># CPython and .NET libraries: Are they friends?</span>
     <span class="n">clr</span><span class="o">.</span><span class="n">AddReference</span><span class="p">(</span><span class="s1">&#39;System.Reflection&#39;</span><span class="p">)</span>
@@ -77,28 +79,29 @@
 
     <span class="k">if</span> <span class="n">libname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">libname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path_to_dll</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-        
+
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s1">&#39;__loader__&#39;</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; If the python module is packaged as a .egg file,</span>
 <span class="sd">            then use some introspection and the module&#39;s</span>
 <span class="sd">            __loader__ to load the contents of the dll</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">relpath</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
-        <span class="n">path_to_dll</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">relpath</span><span class="p">,</span><span class="n">path_to_dll</span><span class="p">)</span>
+        <span class="n">relpath</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+        <span class="n">path_to_dll</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">relpath</span><span class="p">,</span> <span class="n">path_to_dll</span><span class="p">)</span>
         <span class="n">contents</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">__loader__</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">path_to_dll</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">path_to_dll</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">contents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
     <span class="n">_dlls</span><span class="p">[</span><span class="n">path_to_dll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Assembly</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">System</span><span class="o">.</span><span class="n">Array</span><span class="p">[</span><span class="n">System</span><span class="o">.</span><span class="n">Byte</span><span class="p">](</span><span class="n">contents</span><span class="p">))</span>
     <span class="k">return</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">libname</span><span class="p">)</span>
 
+
 <span class="k">class</span> <span class="nc">DotNetDevice</span><span class="p">(</span><span class="n">Device</span><span class="p">):</span>
     <span class="n">library</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Must be a module</span>
     <span class="n">dll_name</span> <span class="o">=</span> <span class="kc">None</span>
-    
-    <span class="k">def</span> <span class="nf">setup</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; DotNetDevice loads the DLL; importing in the</span>
 <span class="sd">            class definition tries to load a lot of DLLs</span>
 <span class="sd">            on import</span>
@@ -109,9 +112,11 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Need file name of a dll binary&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Need the python module that shares the library path&#39;</span><span class="p">)</span>
-            
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s1">&#39;Need the python module that shares the library path&#39;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">dll</span> <span class="o">=</span> <span class="n">import_dotnet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">)</span>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">ssmdevices.lib</span>

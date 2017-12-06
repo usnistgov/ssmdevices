@@ -55,9 +55,13 @@
 <span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">sp</span>
 <span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
 <span class="kn">import</span> <span class="nn">traitlets</span> <span class="k">as</span> <span class="nn">tl</span>
-<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">threading</span><span class="o">,</span><span class="nn">queue</span><span class="o">,</span><span class="nn">psutil</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">queue</span>
+<span class="kn">import</span> <span class="nn">psutil</span>
 
-<span class="k">def</span> <span class="nf">kill_proc_tree</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">including_parent</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>    
+
+<span class="k">def</span> <span class="nf">kill_proc_tree</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">including_parent</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">parent</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
     <span class="n">children</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
@@ -67,20 +71,21 @@
         <span class="n">parent</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
         <span class="n">parent</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
+
 <span class="k">class</span> <span class="nc">CommandLineWrapper</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Device</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Virtual device representing for interacting with a command line\</span>
 <span class="sd">        executable. It supports threaded data logging through standard</span>
 <span class="sd">        input, standard output, and standard error pipes.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    
+
     <span class="n">binary_path</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
     <span class="sd">&#39;&#39;&#39; path of the command line binary to execute &#39;&#39;&#39;</span>
 
     <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
-        <span class="n">timeout</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">CFloat</span><span class="p">(</span><span class="n">tl</span><span class="o">.</span><span class="n">Undefined</span><span class="p">,</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">CFloat</span><span class="p">(</span><span class="n">tl</span><span class="o">.</span><span class="n">Undefined</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="sd">&#39;&#39;&#39; Timeout (sec) after disconnect is called before killing the process &#39;&#39;&#39;</span>
-    
-    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; The :meth:`connect` method exists to comply with the</span>
 <span class="sd">            :class:`Device` object protocol. Call the</span>
 <span class="sd">            :meth:`execute` method when connected to</span>
@@ -90,12 +95,12 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;already connected&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s1">&#39;executable does not exist at supplied resource (path </span><span class="si">{}</span><span class="s1">)&#39;</span>\
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s1">&#39;executable does not exist at supplied resource (path </span><span class="si">{}</span><span class="s1">)&#39;</span>
                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_path</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="p">{}</span>
-    
-    <span class="k">def</span> <span class="nf">fetch</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Retrieve any queued results from standard output</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -108,38 +113,38 @@
                     <span class="n">result</span> <span class="o">+=</span> <span class="n">line</span>
         <span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
             <span class="k">pass</span>
-        
+
         <span class="k">return</span> <span class="n">result</span>
-    
-    <span class="k">def</span> <span class="nf">execute</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Execute the binary as a background thread.</span>
-<span class="sd">        </span>
+
 <span class="sd">            :param cmd: iterable containing the binary path, then</span>
 <span class="sd">                        each argument to be passed to the binary.</span>
-<span class="sd">                        </span>
+
 <span class="sd">            :returns: None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">def</span> <span class="nf">accumulate</span> <span class="p">(</span><span class="n">fd</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">accumulate</span><span class="p">(</span><span class="n">fd</span><span class="p">):</span>
             <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">[</span><span class="s1">&#39;queue&#39;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">fd</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
                 <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">monitor</span> <span class="p">(</span><span class="n">fd</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="n">fd</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">fd</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
                 <span class="n">err</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;monitor&#39;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;error: &#39;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;already running&#39;</span><span class="p">)</span>
-                       
+
         <span class="n">si</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">STARTUPINFO</span><span class="p">()</span>
         <span class="n">si</span><span class="o">.</span><span class="n">dwFlags</span> <span class="o">|=</span> <span class="n">sp</span><span class="o">.</span><span class="n">STARTF_USESHOWWINDOW</span>
-    
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">proc</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_path</span><span class="p">]</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">cmd</span><span class="p">),</span> <span class="n">stdout</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">startupinfo</span><span class="o">=</span><span class="n">si</span><span class="p">,</span>
+            <span class="n">proc</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_path</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">cmd</span><span class="p">),</span> <span class="n">stdout</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">startupinfo</span><span class="o">=</span><span class="n">si</span><span class="p">,</span>
                             <span class="n">bufsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                             <span class="n">creationflags</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">CREATE_NEW_PROCESS_GROUP</span><span class="p">,</span>
                             <span class="n">stderr</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">PIPE</span>
@@ -152,21 +157,21 @@
         <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">accumulate</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">monitor</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">stderr</span><span class="p">))</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">running</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Return whether the executable is currently running</span>
-<span class="sd">        </span>
+
 <span class="sd">            :returns: True if running, otherwise False</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connected</span> \
-               <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;proc&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
-               <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">[</span><span class="s1">&#39;proc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="o">==</span> <span class="kc">None</span>
-    
-    <span class="k">def</span> <span class="nf">clear</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;proc&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">[</span><span class="s1">&#39;proc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="o">==</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Clear queued standard output </span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
-    
-    <span class="k">def</span> <span class="nf">disconnect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">():</span>
             <span class="n">kill_proc_tree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">[</span><span class="s1">&#39;proc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
 </pre></div>

@@ -44,7 +44,8 @@
 <span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">str</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;VISADevice&#39;</span><span class="p">]</span>
 
-<span class="kn">import</span> <span class="nn">pyvisa</span><span class="o">,</span> <span class="nn">pyvisa.constants</span>
+<span class="kn">import</span> <span class="nn">pyvisa</span>
+<span class="kn">import</span> <span class="nn">pyvisa.constants</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">core</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
 
@@ -59,19 +60,19 @@
 <span class="sd">        pyvisa backend. Compared to direct use of pyvisa, this</span>
 <span class="sd">        style of use permits use of labbench device `state`</span>
 <span class="sd">        goodies for compact, readable code, as well as type checking.</span>
-<span class="sd">        </span>
+
 <span class="sd">        For example, the following fetches the</span>
 <span class="sd">        identity string from the remote instrument::</span>
-<span class="sd">            </span>
+
 <span class="sd">            with VISADevice(&#39;USB0::0x2A8D::0x1E01::SG56360004::INSTR&#39;) as instr:</span>
 <span class="sd">                print inst.state.identity</span>
-<span class="sd">        </span>
+
 <span class="sd">        This is equivalent to the more pyvisa-style use as follows::</span>
-<span class="sd">            </span>
+
 <span class="sd">            inst = VISADevice(&#39;USB0::0x2A8D::0x1E01::SG56360004::INSTR&#39;)</span>
 <span class="sd">            inst.connect()</span>
 <span class="sd">            print inst.query(&#39;*IDN?&#39;)</span>
-<span class="sd">            </span>
+
 <span class="sd">        Use of `inst.state` makes it possible to add callbacks to support</span>
 <span class="sd">        automatic state logging, or to build a UI.</span>
 
@@ -79,167 +80,175 @@
 <span class="sd">        :param str read_termination: End-of-line character for query responses</span>
 <span class="sd">        :param str write_termination: End-of-line character for writes</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    
+
     <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; These states are common to modern VXI11 devices in</span>
 <span class="sd">            general.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">identity</span>    <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Bytes</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*idn&#39;</span><span class="p">)</span>
-        <span class="n">options</span>     <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Bytes</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*opt&#39;</span><span class="p">)</span>
-        <span class="n">status_byte</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Dict</span> <span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*stb&#39;</span><span class="p">)</span>
-        
+        <span class="n">identity</span>    <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*idn&#39;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">options</span>     <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*opt&#39;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">status_byte</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*stb&#39;</span><span class="p">)</span>
+
     <span class="n">read_termination</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="n">write_termination</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-    <span class="n">__opc</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Whether or not </span>
+    <span class="n">__opc</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Whether or not</span>
 
     <span class="c1"># The resource manager is &quot;global&quot; at the class level here</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">_rm</span> <span class="o">=</span> <span class="n">pyvisa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">(</span><span class="s1">&#39;@ni&#39;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;NI VISA is a dependency of labbench; is it installed?</span><span class="se">\n</span><span class="s1">http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe&#39;</span><span class="p">,)</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">+</span> \
+            <span class="p">(</span><span class="s1">&#39;NI VISA is a dependency of labbench; is it installed?</span><span class="se">\n</span><span class="s1">http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe&#39;</span><span class="p">,)</span>
         <span class="k">raise</span> <span class="n">e</span>
-            
-    <span class="k">def</span> <span class="nf">__release_remote_control</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__release_remote_control</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Found this in a mixture of R&amp;S documentation and goofle-fu on pyvisa</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">visalib</span><span class="o">.</span><span class="n">viGpibControlREN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">session</span><span class="p">,</span>
-                                           <span class="n">pyvisa</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">VI_GPIB_REN_ADDRESS_GTL</span><span class="p">)</span>
+                                              <span class="n">pyvisa</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">VI_GPIB_REN_ADDRESS_GTL</span><span class="p">)</span>
 
     <span class="c1"># Overload methods as needed to implement RemoteDevice</span>
     <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Connect to the VISA instrument defined by the VISA resource</span>
 <span class="sd">            set by `self.resource`. The pyvisa backend object is assigned</span>
 <span class="sd">            to `self.backend`.</span>
-<span class="sd">            </span>
+
 <span class="sd">            :returns: None</span>
-<span class="sd">            </span>
+
 <span class="sd">            Instead of calling `connect` directly, consider using </span>
 <span class="sd">            `with` statements to guarantee proper disconnection</span>
 <span class="sd">            if there is an error. For example, the following</span>
 <span class="sd">            sets up a connected instance::</span>
-<span class="sd">                </span>
+
 <span class="sd">                with VISADevice(&#39;USB0::0x2A8D::0x1E01::SG56360004::INSTR&#39;) as inst:</span>
 <span class="sd">                    print inst.state.identity</span>
 <span class="sd">                    print inst.state.status_byte</span>
 <span class="sd">                    print inst.state.options                </span>
-<span class="sd">                    </span>
+
 <span class="sd">            would instantiate a `VISADevice` and guarantee</span>
 <span class="sd">            it is disconnected either at the successful completion</span>
 <span class="sd">            of the `with` block, or if there is any exception.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="s1">&#39;read_termination&#39;</span><span class="p">,</span> <span class="s1">&#39;write_termination&#39;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([[</span><span class="n">k</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">k</span><span class="p">)]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">])</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([[</span><span class="n">k</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">VISADevice</span><span class="o">.</span><span class="n">_rm</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Disconnect the VISA instrument. If you use a `with` block</span>
 <span class="sd">            this is handled automatically and you do not need to </span>
 <span class="sd">            call this method.</span>
-<span class="sd">            </span>
+
 <span class="sd">            :returns: None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__release_remote_control</span><span class="p">()</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;VISA: could not release remote control&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;VISA: could not release remote control&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;VISA: could not disconnect. Traceback: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;VISA: could not disconnect. Traceback: </span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">set_backend</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">backend_name</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Set the pyvisa resource manager for all VISA objects.</span>
-<span class="sd">        </span>
+
 <span class="sd">            :param backend_name str: &#39;@ni&#39; (the default) or &#39;@py&#39;</span>
 <span class="sd">            :returns: None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">VISADevice</span><span class="o">.</span><span class="n">_rm</span> <span class="o">=</span> <span class="n">pyvisa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">(</span><span class="n">backend_name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">write</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">list_resources</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_rm</span><span class="o">.</span><span class="n">list_resources</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Write an SCPI command to the device with pyvisa.</span>
-<span class="sd">        </span>
-<span class="sd">            Handles debug logging, and extra *OPC</span>
+
+<span class="sd">            Handles debug logging, and extra \\*OPC</span>
 <span class="sd">            commands (when in an overlap_and_block context),</span>
 <span class="sd">            then sends a command string to the device.</span>
-<span class="sd">            </span>
+
 <span class="sd">            :param str msg: the SCPI command to send by VISA</span>
 <span class="sd">            :returns: None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__opc</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span> <span class="o">+</span> <span class="s1">&#39;;*OPC&#39;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">VISA SEND</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">msg</span><span class="p">)))</span>
+        <span class="n">msg_out</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">80</span> <span class="k">else</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> bytes)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.write &lt;- </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="n">msg_out</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">query</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Query an SCPI command to the device with pyvisa,</span>
 <span class="sd">            and return a string containing the device response.</span>
-<span class="sd">        </span>
-<span class="sd">            Handles debug logging, and extra *OPC</span>
+
+<span class="sd">            Handles debug logging, and extra \\*OPC</span>
 <span class="sd">            commands (when in an overlap_and_block context),</span>
 <span class="sd">            then sends a command string to the device.</span>
-<span class="sd">            </span>
+
 <span class="sd">            :param str msg: the SCPI command to send by VISA</span>
 <span class="sd">            :returns: the response to the query from the device</span>
-<span class="sd">        &#39;&#39;&#39;</span>        
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">VISA SEND</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">msg</span><span class="p">)))</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">msg_out</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">80</span> <span class="k">else</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> bytes)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.query &lt;- </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="n">msg_out</span><span class="p">))</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">VISA RECEIVE</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">ret</span><span class="p">)))</span>
+        <span class="n">msg_out</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">80</span> <span class="k">else</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> bytes)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.query -&gt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">msg_out</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">command_get</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">trait</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">command_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">trait</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Send an SCPI command to get a state value from the</span>
 <span class="sd">            device. This function</span>
 <span class="sd">            adds a &#39;?&#39; to match SCPI convention. This is</span>
 <span class="sd">            automatically called for `state` attributes that</span>
 <span class="sd">            define a message.</span>
-<span class="sd">        </span>
+
 <span class="sd">            :param str command: The SCPI command to send</span>
 <span class="sd">            :param trait: The trait state corresponding with the command (ignored)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">command</span><span class="o">+</span><span class="s1">&#39;?&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">command</span> <span class="o">+</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">command_set</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">command_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Send an SCPI command to set a state value on the</span>
 <span class="sd">            device. This function adds a &#39;?&#39; to match SCPI convention. This is</span>
 <span class="sd">            automatically called for `state` attributes that</span>
 <span class="sd">            define a message.</span>
-<span class="sd">        </span>
+
 <span class="sd">            :param str command: The SCPI command to send</span>
 <span class="sd">            :param trait: The trait state corresponding with the command (ignored)</span>
 <span class="sd">            :param str value: The value to assign to the parameter</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        
+
         <span class="c1"># Alternatively, check to see if there is a simple</span>
         <span class="c1"># SCPI command tag</span>
 <span class="c1">#        trait = self.state.traits()[attr]</span>
 <span class="c1">#        command = self.state.trait_metadata(attr, &#39;command&#39;)</span>
 <span class="c1">#        trait = self.state.traits()[attr]</span>
 <span class="c1">#        value_out = trait.devalidate(trait, value)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">command</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">command</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">wait</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Convenience function to send standard SCPI &#39;*WAI&#39;</span>
+    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Convenience function to send standard SCPI &#39;\\*WAI&#39;</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;*wai&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">preset</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Convenience function to send standard SCPI &#39;*RST&#39;</span>
+    <span class="k">def</span> <span class="nf">preset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Convenience function to send standard SCPI &#39;\\*RST&#39;</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;*rst&#39;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="nd">@contextmanager</span>
     <span class="k">def</span> <span class="nf">overlap_and_block</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Append &#39;;*OPC&#39; to each command sent during the block, then</span>
-<span class="sd">            send an &#39;*OPC?&#39; query to block until the measurement is done</span>
-<span class="sd">            </span>
+        <span class="sd">&#39;&#39;&#39; Append &#39;;\\*OPC&#39; to each command sent during the block, then</span>
+<span class="sd">            send an &#39;\\*OPC?&#39; query to block until the measurement is done</span>
+
 <span class="sd">            This is meant to be used in `with` blocks as follows::</span>
-<span class="sd">                </span>
+
 <span class="sd">                with inst.overlap_and_block:</span>
 <span class="sd">                    inst.write(&#39;long running command 1&#39;)</span>
 <span class="sd">                    inst.write(&#39;long running command 2&#39;)</span>
-<span class="sd">                    </span>
-<span class="sd">            At the end of the `with` block, a &#39;*OPC?&#39; query is sent</span>
+
+<span class="sd">            At the end of the `with` block, a &#39;\\*OPC?&#39; query is sent</span>
 <span class="sd">            that blocks until the instrument signals it has finished</span>
 <span class="sd">            with the commands.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -247,17 +256,17 @@
         <span class="k">yield</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__opc</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;*opc?&#39;</span><span class="p">)</span>
-        
+
     <span class="nd">@state</span><span class="o">.</span><span class="n">status_byte</span><span class="o">.</span><span class="n">getter</span>
-    <span class="k">def</span> <span class="nf">_</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">code</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;*stb?&#39;</span><span class="p">))</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;error queue not empty&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span><span class="o">&amp;</span><span class="mb">0b00000100</span><span class="p">),</span>
-                <span class="s1">&#39;questionable state&#39;</span><span class="p">:</span>    <span class="nb">bool</span><span class="p">(</span><span class="n">code</span><span class="o">&amp;</span><span class="mb">0b00001000</span><span class="p">),</span>
-                <span class="s1">&#39;message available&#39;</span><span class="p">:</span>     <span class="nb">bool</span><span class="p">(</span><span class="n">code</span><span class="o">&amp;</span><span class="mb">0b00010000</span><span class="p">),</span>
-                <span class="s1">&#39;event status flag&#39;</span><span class="p">:</span>     <span class="nb">bool</span><span class="p">(</span><span class="n">code</span><span class="o">&amp;</span><span class="mb">0b00100000</span><span class="p">),</span>
-                <span class="s1">&#39;service request&#39;</span><span class="p">:</span>       <span class="nb">bool</span><span class="p">(</span><span class="n">code</span><span class="o">&amp;</span><span class="mb">0b01000000</span><span class="p">),</span>
-                <span class="s1">&#39;master status summary&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span><span class="o">&amp;</span><span class="mb">0b01000000</span><span class="p">),</span>
-                <span class="s1">&#39;operating&#39;</span><span class="p">:</span>             <span class="nb">bool</span><span class="p">(</span><span class="n">code</span><span class="o">&amp;</span><span class="mb">0b10000000</span><span class="p">),</span>                                             
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;error queue not empty&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00000100</span><span class="p">),</span>
+                <span class="s1">&#39;questionable state&#39;</span><span class="p">:</span>    <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00001000</span><span class="p">),</span>
+                <span class="s1">&#39;message available&#39;</span><span class="p">:</span>     <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00010000</span><span class="p">),</span>
+                <span class="s1">&#39;event status flag&#39;</span><span class="p">:</span>     <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00100000</span><span class="p">),</span>
+                <span class="s1">&#39;service request&#39;</span><span class="p">:</span>       <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b01000000</span><span class="p">),</span>
+                <span class="s1">&#39;master status summary&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b01000000</span><span class="p">),</span>
+                <span class="s1">&#39;operating&#39;</span><span class="p">:</span>             <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b10000000</span><span class="p">),</span>
                 <span class="p">}</span>
 
 

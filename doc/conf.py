@@ -32,12 +32,12 @@ from ssmdevices import __version__ as version
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinxcontrib.restbuilder',
+#    'sphinxcontrib.restbuilder',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.graphviz',
-    'sphinx_pyreverse'
+#    'sphinx_pyreverse'
     ]
 
 # Add any paths that contain templates here, relative to this directory.

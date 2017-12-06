@@ -56,7 +56,5 @@ if __name__ == '__main__':
                     'ipywidgets',
                     'notebook',
                     'sphinx',
-                    'sphinx_pyreverse',
-                    'sphinxcontrib-restbuilder'                    
                     ],
          )
