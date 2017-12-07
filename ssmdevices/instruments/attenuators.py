@@ -4,7 +4,13 @@ Created on Tue Mar 07 14:38:10 2017
 
 @author: dkuester
 """
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 
+from future import standard_library
+standard_library.install_aliases()
 __all__ = ['MiniCircuitsRCDAT']
 
 from labbench.dotnet import DotNetDevice

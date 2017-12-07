@@ -3,9 +3,13 @@
 @author: Dan Kuester <daniel.kuester@nist.gov>
 """
 from __future__ import print_function
-
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
 from future import standard_library
 standard_library.install_aliases()
+
+from builtins import super
 from builtins import str
 __all__ = ['IPerfClient']
 
@@ -16,22 +20,29 @@ import os
 import ssmdevices.lib 
 from io import StringIO
 
+
 class IPerfClient(lb.CommandLineWrapper):
     ''' Run an IPerfClient. Set the resource to the location of iperf.
         The default value is the path that installs with 64-bit cygwin.
     '''
     resource = '127.0.0.1'
+
     port = None
     bind = None
     tcp_window_size = None
     buffer_size = 1024
     interval = 0.5
-    
+
     binary_path = os.path.join(ssmdevices.lib.__path__[0], 'loop.bat')
     iperf_path = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
 
     class state(lb.CommandLineWrapper.state):
-        timeout         = tl.CFloat(6,     min=0)
+        timeout = lb.LocalFloat(6, min=0, is_metadata=True)
+        port = lb.LocalUnicode(is_metadata=True)
+        bind = lb.LocalUnicode(is_metadata=True)
+        tcp_window_size = lb.LocalUnicode(is_metadata=True)
+        buffer_size = lb.Int(1024, min=1, is_metadata=True)
+        interval = 0.5
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
@@ -53,27 +64,26 @@ class IPerfClient(lb.CommandLineWrapper):
         data.drop(['iperf_interval','iperf_transferred_bytes','iperf_test_id'],inplace=True,axis=1)
         data['iperf_timestamp'] = pd.to_datetime(data['iperf_timestamp'], format='%Y%m%d%H%M%S')
         data['iperf_timestamp'] = data['iperf_timestamp']+\
-                                  pd.TimedeltaIndex((data.index*self.interval)%1,'s')
+                                  pd.TimedeltaIndex((data.index*self.state.interval)%1,'s')
         
         return data
 
     def connect (self):
-        
         # Call the iperf binary
         cmd = self.iperf_path,\
               '-n','-1','-y','C',\
               '-c', str(self.resource)
-              
-        if self.port is not None:
-            cmd = cmd + ('-p',str(self.port))
-        if self.bind is not None:
-            cmd = cmd + ('-B',str(self.bind))
-        if self.tcp_window_size is not None:
-            cmd = cmd + ('-w',str(self.tcp_window_size))
-        if self.buffer_size is not None:
-            cmd = cmd + ('-l',str(self.buffer_size))
-        if self.interval is not None:
-            cmd = cmd + ('-i',str(self.interval))            
+
+        if self.state.port is not lb.Undefined:
+            cmd = cmd + ('-p',str(self.state.port))
+        if self.state.bind is not lb.Undefined:
+            cmd = cmd + ('-B',str(self.state.bind))
+        if self.state.tcp_window_size is not lb.Undefined:
+            cmd = cmd + ('-w',str(self.state.tcp_window_size))
+        if self.state.buffer_size is not lb.Undefined:
+            cmd = cmd + ('-l',str(self.state.buffer_size))
+        if self.state.interval is not lb.Undefined:
+            cmd = cmd + ('-i',str(self.state.interval))
 
 #        self.state.timeout = self.state.interval*2
         

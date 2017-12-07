@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import print_function
-
 ''' Driver classes for signal generators.
 :author: Ryan Jacobs <ryan.jacobs@nist.gov>, Aziz Kord <aziz.kord@nist.gov>, Daniel Kuester <daniel.kuester@nist.gov>
 Paul.Blanchard <paul.blanchard@nist.gov>
 '''
 
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+
+from builtins import int
+from future import standard_library
+standard_library.install_aliases()
+
 import labbench as lb
-import pandas as pd
+
 __all__ = ['RohdeSchwarzSMW200A']
 
 class RohdeSchwarzSMW200A(lb.VISADevice):

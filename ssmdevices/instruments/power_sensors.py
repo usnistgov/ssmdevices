@@ -4,7 +4,14 @@ Created on Fri Feb 10 13:35:02 2017
 
 @author: dkuester
 """
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import absolute_import
 
+from builtins import str
+from future import standard_library
+standard_library.install_aliases()
 __all__ = ['KeysightU2000XSeries','RohdeSchwarzNRP8s','RohdeSchwarzNRP18s','RohdeSchwarzNRPSeries']
 
 import labbench as lb
@@ -78,6 +85,7 @@ class RohdeSchwarzNRPSeries(VISADevice):
         average_auto = lb.Bool(command='AVER:COUN:AUTO', trues=['ON'], falses=['OFF'])
         average_enable = lb.Bool(command='AVER', trues=['ON'], falses=['OFF'])
         smoothing_enable = lb.Bool(command='SMO:STAT', trues=['ON'], falses=['OFF'], write_only=True)
+        options = lb.LocalDict({}, read_only=True)
 
         # unit = lb.CaselessStrEnum(command='UNIT:POW', values=['DBM','W','DBUV']) # seems to fail
         # format = lb.CaselessStrEnum(command='FORMat:DATA', values=['REAL', 'ASCII']) # Seems to fail
