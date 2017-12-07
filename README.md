@@ -1,10 +1,10 @@
-*ssmdevices* is a set of python device drivers developed for data acquisition in shared-spectrum metrology.
-The drivers are implemented with [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench), and wrap data into [pandas](http://pandas.pydata.org/) data frames when possible to support rapid exploration of data.
+*ssmdevices* is a set of python device drivers developed for data acquisition with wireless communication systems and test equipment.
+The drivers are implemented with [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench). Acquired data are packaged into [pandas](http://pandas.pydata.org/) data frames for fast data exploration.
 It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name complications and to restrict
 access based on export control law.
 
 ## Installation
-1. Install a 64-bit python 2.7 or 3.6 distribution (you can use your favorite, though this process has been tested mainly with Anaconda)
+1. Install a 64-bit python 3.6 distribution (you can use your favorite, though this process has been tested mainly with Anaconda; support for python 2.7 is not being actively maintained)
 2. If you installed python a while ago, make sure your distribution includes pandas 0.19.0 or newer.
 3. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/labbench`
 4. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
