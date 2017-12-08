@@ -35,7 +35,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         
         resolution_bandwidth    = Float     (command='BAND',       min=45e3, max=5.76e6, label='Hz')
         sweep_time              = Float     (command='SWE:TIME',   label='Hz')
-        sweep_time_trace2       = Float     (command='SENS2:SWE:TIME',   label='Hz')
+        sweep_time_window2      = Float     (command='SENS2:SWE:TIME',   label='Hz')
     
         initiate_continuous     = Bool      (command='INIT:CONT', trues=['1'], falses=['0'])
     
@@ -296,16 +296,12 @@ class RohdeSchwarzFSW26Base(VISADevice):
             data = self.query_ieee_array('TRAC{window}:DATA? SPEC'.format(window=window))
 
             # Fetch time axis
-            if timestamps == 'fast':
-                sweep_time = self.state.sweep_time_trace2
-                ts0 = self.fetch_timestamps(all=False, window=window)
-                dt0=datetime.datetime.fromtimestamp(ts0)
+            if timestamps not in ('fast','exact',None):
+                raise ValueError("timestamps argument must be 'fast', 'exact', or None")
             elif timestamps == 'exact':
                 t = self.fetch_timestamps(all=True, window=window, timeout=timeout)
             elif timestamps == None:
                 t = None
-            else:
-                raise ValueError("timestamps argument must be 'fast', 'exact', or None")
 
             # Fetch frequency axis
             if freqs == 'fast':
@@ -327,7 +323,12 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
             # Generate timestamps if we're going to guesstimate
             if timestamps == 'fast':
-                t = dt0+pd.to_timedelta(sweep_time*1e9*np.arange(data.shape[0]), unit='ns')
+                if window == 1:
+                    sweep_time = self.state.sweep_time
+                else:
+                    sweep_time = getattr(self.state, 'sweep_time_window{}'.format(window))
+                ts0 = self.fetch_timestamps(all=False, window=window)
+                t = (ts0-sweep_time*data.shape[0])+sweep_time*np.arange(data.shape[0])[::-1]
 
             if data.size > 1:
                 return pd.DataFrame(data[::-1], columns=f_, index=None if t is None else t[::-1])
@@ -598,11 +599,18 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
 
 class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
     expect_channel_type = 'RTIM'
-    
+
     class state(RohdeSchwarzFSW26Base.state):
-        pass
-    
-#        
+        iq_fft_length       = Int (command='IQ:FFT:LENG', read_only=True)
+        iq_bandwidth        = Float(command='TRAC:IQ:BWID', read_only=True)
+        iq_sample_rate      = Float(command='TRACe:IQ:SRAT', read_only=True)
+        iq_trigger_position = Float(command='TRAC:IQ:TPIS', read_only=True)
+
+        sweep_dwell_auto    = Bool(command='SWE:DTIM:AUTO', trues=['1'], falses=['0'])
+        sweep_dwell_time    = Float(command='SWE:DTIM')
+        sweep_window_type   = CaselessStrEnum (command='SWE:FFT:WIND:TYP',
+                                               values=['BLAC','FLAT','GAUS','HAMM','HANN','KAIS','RECT'])
+    #
 #    def fetch_trace(self, horizontal=False):
 #        fmt = self.state.iq_format
 #        if fmt == 'VECT':

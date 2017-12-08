@@ -67,7 +67,8 @@ class RohdeSchwarzNRPSeries(VISADevice):
                                               'XTIM:POW', "XTIM:POWer"])
 
         trigger_source = lb.CaselessStrEnum(command='TRIG:SOUR', \
-                                      values=['HOLD', 'IMM', 'INT', 'EXT', 'EXT1', 'EXT2', 'BUS', 'INT1'])
+                                      values=['HOLD', 'IMM', 'INT', 'EXT', 'EXT1', 'EXT2', 'BUS', 'INT1'],
+                                      help='HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm')
         trigger_delay = lb.Float(command='TRIG:DELAY', min=-5, max=10)
         trigger_count = lb.Int(command='TRIG:COUN', min=1, max=8192, step=1, help="help me")
         trigger_holdoff = lb.Float(command='TRIG:HOLD', min=0, max=10)
@@ -93,6 +94,12 @@ class RohdeSchwarzNRPSeries(VISADevice):
     @state.function.setter
     def __ (self, value):
         self.write('SENSe:FUNCtion "{}"'.format(value))
+
+    @state.trigger_source.getter
+    def __ (self):
+        remap = {'2': 'EXT2'}
+        source = self.query('TRIG:SOUR?')
+        return remap.get(source, default=source)
 
     def preset(self):
         self.write('*PRE')
