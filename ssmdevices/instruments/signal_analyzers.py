@@ -24,8 +24,10 @@ from labbench.visa import VISADevice
 import pandas as pd
 from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT,VI_SUCCESS_MAX_CNT
 
+default_channel_name = 'remote'
+
 class RohdeSchwarzFSW26Base(VISADevice):
-    expect_channel_type = None
+    expected_channel_type = None
 
     class state(VISADevice.state):
         frequency_center        = Float     (command='FREQ:CENT',  min=2, max=26.5e9, step=1e-9, label='Hz')
@@ -52,8 +54,17 @@ class RohdeSchwarzFSW26Base(VISADevice):
         amplitude_offset_trace4 = Float     (command='DISP:TRAC4:Y:RLEV:OFFS',step=1e-3,label='dB')
         amplitude_offset_trace5 = Float     (command='DISP:TRAC5:Y:RLEV:OFFS',step=1e-3,label='dB')
         amplitude_offset_trace6 = Float     (command='DISP:TRAC6:Y:RLEV:OFFS',step=1e-3,label='dB')
+
+        output_trigger2_direction = CaselessStrEnum(command='OUTP:TRIG2:DIR', values=['INP', 'OUTP'])
+        output_trigger3_direction = CaselessStrEnum(command='OUTP:TRIG3:DIR', values=['INP', 'OUTP'])
+        output_trigger2_type    = CaselessStrEnum (command='OUTP:TRIG2:OTYP', values=['DEV', 'TARM', 'UDEF'])
+        output_trigger3_type    = CaselessStrEnum(command='OUTP:TRIG3:OTYP', values=['DEV', 'TARM', 'UDEF'])
+
+        input_preamplifier_enabled = Bool      (command='INP:GAIN:STATE', trues=['1'], falses=['0'])
+        input_attenuation_auto   = Bool      (command='INP:ATT:AUTO', trues=['1'], falses=['0'])
+        input_attenuation        = Float     (command='INP:ATT', step=1, min=0, max=79)
         
-        channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM'], is_metadata=True)
+        channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM', default_channel_name], is_metadata=True)
         format                  = CaselessStrEnum (command='FORM', values=['ASC,0','REAL,32','REAL,64', 'REAL,16'])
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
          
@@ -63,9 +74,10 @@ class RohdeSchwarzFSW26Base(VISADevice):
         default_trace           = lb.LocalUnicode('', help='data trace number to use if unspecified')
 
     def verify_channel_type (self):
-        if self.expect_channel_type is not None and self.state.channel_type != self.expect_channel_type:
+        if self.expected_channel_type is not None \
+           and self.state.channel_type not in (self.expected_channel_type, default_channel_name):
             raise Exception('{} expects {} mode, but insrument mode is {}'\
-                            .format(type(self).__name__, self.expect_channel_type, self.state.channel_type))        
+                            .format(type(self).__name__, self.expected_channel_type, self.state.channel_type))
 
     def setup(self):
         super().setup()
@@ -94,7 +106,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
             :type path: string
 
         '''
-        self.write('MMEMory:STORe:STATe 1,"{}""'.format(path))
+        self.write("MMEMory:STORe:STATe 1,'{}'".format(path))
     
     def load_state(self, path):
         ''' Loads a previously saved state file in the instrument
@@ -102,9 +114,10 @@ class RohdeSchwarzFSW26Base(VISADevice):
             :param path: state file location on the instrument
             :type path: string
         '''
+        if not path.endswith('.dfl'):
+            path = path + '.dfl'
         cmd = "MMEM:LOAD:STAT 1,'{}'".format(path)
         self.write(cmd)
-        self.verify_channel_type()
 
     def mkdir(self, path, recursive=True):
         ''' Make a new directory (optionally recursively) on the instrument
@@ -121,9 +134,18 @@ class RohdeSchwarzFSW26Base(VISADevice):
             for i in range(1,len(subs)+1):
                 self.mkdir('\\'.join(subs[:i]), recursive=False)              
         else:
-            with self.overlap_and_block:
+            with self.overlap_and_block():
                 self.write(r"MMEM:MDIR '{}'".format(path))
             self.__prev_dirs.add(path)
+
+    def file_info (self, path):
+        with self.suppress_timeout(), self.overlap_and_block(timeout=0.1):
+            ret = None
+            ret = self.query("MMEM:CAT? '{}'".format(path))
+        return ret
+
+    def remove_window (self, name):
+        self.write("LAY:REM '{}'".format(name))
         
     def trigger_single (self, wait=True, disable_continuous=True):
         ''' Trigger once.
@@ -142,6 +164,22 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
     def abort (self):
         self.write('ABORT')
+
+    def set_channel_type (self, type_ = None):
+        ''' Setup a channel with name default_channel_name, that has measurement type self.channel_type
+
+        :return:
+        '''
+        channel_list = self.query('INST:LIST?').replace("'", '').split(',')[1::2]
+        if default_channel_name in channel_list:
+            self.write("INST:CRE:REPL '{name}',{type},'{name}'"\
+                       .format(name=default_channel_name, type=self.expected_channel_type))
+        else:
+            self.write("INST:CRE {type},'{name}'"\
+                       .format(name=default_channel_name, type=self.expected_channel_type))
+
+    def channel_preset (self):
+        self.write('SYST:PRES:CHAN')
 
     def query_ieee_array (self, msg):
         ''' An alternative to self.backend.query_binary_values for fetching block data. This
@@ -423,7 +461,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
     
 
 class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base):
-    expect_channel_type = 'SAN'
+    expected_channel_type = 'SAN'
     
     def get_marker_band_power(self, marker):
         ''' Get marker band power measurement
@@ -562,7 +600,7 @@ class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
     
     
 class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
-    expect_channel_type = 'RTIM'
+    expected_channel_type = 'RTIM'
     
     class state(RohdeSchwarzFSW26Base.state):
         iq_simple_enabled     = Bool      (command='CALC:IQ', trues=['ON'], falses=['OFF'])
@@ -598,9 +636,13 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
 
 
 class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
-    expect_channel_type = 'RTIM'
+    expected_channel_type = 'RTIM'
 
     class state(RohdeSchwarzFSW26Base.state):
+        trigger_source      = CaselessStrEnum (command='TRIG:SOUR', values=['IMM', 'EXT', 'EXT2', 'EXT3', 'MASK', 'TDTR'])
+        trigger_post_time   = Float(command='TRIG:POST', min=0)
+        trigger_pre_time    = Float(command='TRIG:PRET', min=0)
+
         iq_fft_length       = Int (command='IQ:FFT:LENG', read_only=True)
         iq_bandwidth        = Float(command='TRAC:IQ:BWID', read_only=True)
         iq_sample_rate      = Float(command='TRACe:IQ:SRAT', read_only=True)
@@ -645,11 +687,27 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
                                                 .format(window=window,trace=trace),
                                                 datatype='f', container=np.array)
 
+    def set_detector_type (self, type_, window=None, trace=None):
+        if window is None:
+            window = self.state.default_window
+        if trace is None:
+            trace = self.state.default_trace
+        self.write('WIND{window}:DET{trace} {type}'\
+                   .format(window=window, trace=trace, type=type_))
+
+    def get_detector_type (self, window=None, trace=None):
+        if window is None:
+            window = self.state.default_window
+        if trace is None:
+            trace = self.state.default_trace
+        return self.query('WIND{window}:DET{trace}?'\
+                          .format(window=window, trace=trace))
+
     def set_frequency_mask (self, frequency_offsets, thresholds, kind='upper', window=None):
         ''' Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
         :param array-like frequency_offsets: frequencies at which the mask is defined
-        :param thresholds: trigger threshold at each frequency (same size as `frequency_offsets`)
+        :param thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`)
         :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
         :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)
         :return: None
@@ -660,7 +718,10 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
             raise ValueError('frequency mask is {} but must be "upper" or "lower"'\
                              .format(repr(kind)))
 
-
+        self.write("CALC{window}:MASK:CDIR '.'"\
+                   .format(window=window))
+        self.write("CALC{window}:MASK:NAME '{name}'"\
+                   .format(window=window, name=default_channel_name))
         flat = np.array([frequency_offsets, thresholds]).T.flatten()
 
         plist = ','.join(flat.astype(str))
