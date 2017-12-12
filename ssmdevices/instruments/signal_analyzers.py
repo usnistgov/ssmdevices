@@ -7,7 +7,7 @@ from builtins import int
 from future import standard_library
 standard_library.install_aliases()
 from builtins import str,range
-import os,pyvisa,datetime,logging
+import os,time,logging
 import numpy as np
 
 logger = logging.getLogger('labbench')
@@ -28,6 +28,7 @@ default_channel_name = 'remote'
 
 class RohdeSchwarzFSW26Base(VISADevice):
     expected_channel_type = None
+    cache_dir = r'c:\temp\remote-cache'
 
     class state(VISADevice.state):
         frequency_center        = Float     (command='FREQ:CENT',  min=2, max=26.5e9, step=1e-9, label='Hz')
@@ -84,6 +85,43 @@ class RohdeSchwarzFSW26Base(VISADevice):
         self.verify_channel_type()
         self.state.format = 'REAL,32'
 
+    def acquire_spectrogram(self, acquisition_time_sec):
+        t0 = time.time()
+
+        specs = []
+
+        time_remaining = acquisition_time_sec
+        active_time = 0
+        #        while time_remaining>0:
+        while active_time == 0:
+            # Setup
+            self.clear_spectrogram()
+            self.wait()
+            # Give the power sensor time to arm
+            time.sleep(0.1)
+
+            t0_active = time.time()
+            # Try to trigger; block until timeout.
+            with self.overlap_and_block(timeout=int(1e3 * time_remaining)):
+                self.trigger_single(wait=False)
+            active_time += time.time() - t0_active
+            #             self.abort()
+
+            self.backend.timeout = 50000
+            single = self.fetch_spectrogram(timeout=50000, timestamps='fast')
+            self.backend.timeout = 1000
+
+            if single is not None:
+                specs.append(single)
+
+            time_remaining = acquisition_time_sec - (time.time() - t0)
+
+        specs = pd.concat(specs, axis=0) if specs else pd.DataFrame()
+        return {'sa_spectrogram': specs,
+                'sa_spectrogram_acquisition_time': time.time() - t0,
+                'sa_spectrogram_active_time': active_time}
+
+
     def cleanup(self):
         try:
             self.abort()
@@ -100,24 +138,53 @@ class RohdeSchwarzFSW26Base(VISADevice):
     def status_preset (self):
         self.write('STAT:PRES')
 
-    def save_state (self, path):
+    def save_state (self, name, basedir=None):
         ''' Save current state of the device to the default directory.
             :param path: state file location on the instrument
             :type path: string
 
         '''
+        if basedir is None:
+            path = name
+        else:
+            self.mkdir(basedir)
+            path = basedir + '\\' + name
+
         self.write("MMEMory:STORe:STATe 1,'{}'".format(path))
+        self.wait()
     
-    def load_state(self, path):
+    def load_state(self, name, basedir=None):
         ''' Loads a previously saved state file in the instrument
         
             :param path: state file location on the instrument
             :type path: string
         '''
+        if basedir is not None:
+            path = basedir + '\\' + name
         if not path.endswith('.dfl'):
             path = path + '.dfl'
-        cmd = "MMEM:LOAD:STAT 1,'{}'".format(path)
-        self.write(cmd)
+
+        if self.file_info(path) is None:
+            raise lb.RemoteException('there is no file to load on the instrument at path "{}"'\
+                                     .format(path))
+
+        self.write("MMEM:LOAD:STAT 1,'{}'".format(path))
+        self.wait()
+
+    def load_cache(self):
+        cache_name = lb.hash_caller(2)
+
+        try:
+            self.load_state(cache_name, self.cache_dir)
+        except lb.RemoteException:
+            return False
+        else:
+            logger.debug('Successfully loaded cached save file')
+            return True
+
+    def save_cache(self):
+        cache_name = lb.hash_caller(2)
+        self.save_state(cache_name, self.cache_dir)
 
     def mkdir(self, path, recursive=True):
         ''' Make a new directory (optionally recursively) on the instrument
@@ -137,6 +204,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
             with self.overlap_and_block():
                 self.write(r"MMEM:MDIR '{}'".format(path))
             self.__prev_dirs.add(path)
+        return path
 
     def file_info (self, path):
         with self.suppress_timeout(), self.overlap_and_block(timeout=0.1):
@@ -747,3 +815,137 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
 
         return {'frequency_offsets': plist[::2],
                 'thresholds': plist[1::2]}
+
+    def setup_spectrogram(self, center_frequency,
+                                analysis_bandwidth,
+                                reference_level,
+                                time_resolution,
+                                acquisition_time,
+                                input_attenuation=None,
+                                trigger_threshold=None,
+                                detector='SAMP',
+                                analysis_window=None,
+                                **kws):
+        ''' Quick setup for a spectrogram measurement in RTSA mode.
+
+        :param center_frequency: in Hz
+        :param frequency_span: in Hz
+        :param reference_level: in dBm
+        :param time_resolution: in s
+        :param acquisition_time: in s
+        :param input_attenuation: in dB (or None to autoset based on the reference level)
+        :param trigger_threshold: in dB (or None to free run)
+        :param detector: 'SAMP' or 'AVER'
+        :param analysis_window: one of ['BLAC','FLAT','GAUS','HAMM','HANN','KAIS','RECT']
+        :return:
+        '''
+
+        if kws:
+            logger.warning('ignoring spectrogram setup keyword arguments {}'.format(kws))
+
+        if self.load_cache():
+            return
+
+        # Work around an apparent SCPI bug by setting
+        # frequency parameters in spectrum analyzer mode
+        with self.overlap_and_block(timeout=2500):
+            self.set_channel_type('SAN')
+        self.channel_preset()
+        self.wait()
+        self.state.frequency_center = center_frequency
+        self.wait()
+        with self.overlap_and_block(timeout=2500):
+            self.set_channel_type('RTIM')
+        self.wait()
+        self.state.initiate_continuous = False
+        self.state.frequency_span = analysis_bandwidth
+
+        # Setup traces
+        self.remove_window(1)
+        self.state.default_window = 2
+        self.state.default_trace = 1
+
+        # Level
+        self.state.reference_level = reference_level
+        if input_attenuation is not None:
+            self.state.input_attenuation = input_attenuation
+            if reference_level <= -30\
+                    and input_attenuation <= 5:
+                self.state.input_preamplifier_enabled = True
+
+        # Trace acquisition parameters
+        self.set_detector_type(detector)
+
+        # Triggering
+        if trigger_threshold is not None:
+            self.set_frequency_mask([-analysis_bandwidth*(1./2), +analysis_bandwidth*(1/2+1/1000)],
+                                    2 * [trigger_threshold])
+            self.state.trigger_source = 'MASK'
+            self.state.trigger_post_time = acquisition_time
+            self.state.trigger_pre_time = 0.
+        else:
+            self.state.sweep_dwell_time = acquisition_time
+
+        # TODO: Parameterize somehow
+        self.state.output_trigger2_direction = 'OUTP'
+        self.state.output_trigger2_type = 'DEV'
+        self.state.output_trigger3_direction = 'OUTP'
+        self.state.output_trigger3_type = 'DEV'
+
+        # Sweep parameters
+        self.state.sweep_time_window2 = time_resolution
+        if self.state.sweep_time_window2 != time_resolution:
+            logger.warning('requested time resolution {}, but instrument adjusted to {}'\
+                           .format(time_resolution, self.state.sweep_time_window2))
+
+        if analysis_window is not None:
+            self.state.sweep_window_type = 'BLAC'
+
+        super().setup()
+
+        self.save_cache()
+
+    def acquire_spectrogram(self, loop_time=None, delay_time=0.1, timestamps='fast'):
+        ''' Trigger and fetch data, optionally in a loop that continues for a specified
+        duration.
+
+        :param loop_time: time (in s) to spend looping repeated trigger-fetch cycles, or None to execute once
+        :param delay_time: delay time before starting (in s)
+        :param timestamps: 'fast' (with potential for rounding errors to ~ 10 ns) or 'exact' (slow and not recommended)
+        :return: dictionary structured as {'spectrogram': pd.DataFrame, 'spectrogram_acquisition_time': float, 'spectrogram_active_time': float}
+        '''
+        specs = []
+
+        t0 = time.time()
+        time_remaining = loop_time
+        active_time = 0
+
+        while loop_time is None or time_remaining > 0:
+            # Setup
+            self.clear_spectrogram()
+            self.wait()
+            # Give the power sensor time to arm
+            time.sleep(delay_time)
+
+            t0_active = time.time()
+            # Try to trigger; block until timeout.
+            with self.overlap_and_block(timeout=int(1e3 * time_remaining)):
+                self.trigger_single(wait=False)
+            active_time += time.time() - t0_active
+
+            self.backend.timeout = 50000
+            single = self.fetch_spectrogram(timeout=50000, timestamps=timestamps)
+            self.backend.timeout = 1000
+
+            if single is not None:
+                specs.append(single)
+
+            if loop_time is None:
+                break
+            else:
+                time_remaining = loop_time - (time.time() - t0)
+
+        specs = pd.concat(specs, axis=0) if specs else pd.DataFrame()
+        return {'spectrogram': specs,
+                'spectrogram_acquisition_time': time.time() - t0,
+                'spectrogram_active_time': active_time}
