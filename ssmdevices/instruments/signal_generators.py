@@ -21,7 +21,7 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
     class state(lb.VISADevice.state):
 #        frequency = FLoat 
         frequency_baseband        = lb.Float     (command=':freq',  min=2e3, max=26.5e9, step=1e3, label='Hz')
-        power_out                 = lb.Float     (command=':pow',  min=-60, max=20, step=1e-2, label='dBm')
+        power_out                 = lb.Float     (command=':pow',  min=-145, max=20, step=1e-2, label='dBm')
         rf_enable                 = lb.Bool      (command ='OUTP')
         
 

@@ -8,7 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import absolute_import
-
 from builtins import str
 from future import standard_library
 standard_library.install_aliases()
@@ -18,7 +17,9 @@ import labbench as lb
 from labbench.visa import VISADevice
 import pandas as pd
 import numpy as np
+import logging
 
+logger= logging.getLogger('labbench')
 
 class KeysightU2000XSeries(VISADevice):
     ''' This is my cool driver for Keysight U2040 X-Series power sensors
@@ -139,6 +140,29 @@ class RohdeSchwarzNRPSeries(VISADevice):
         except Exception as e:
             logger.error('VISA: could not disconnect. Traceback: \n' + str(e))
 
+    def setup_trace(self, frequency, trace_points, sample_period, trigger_level,
+                    trigger_delay, trigger_source):
+        '''
+
+        :param frequency: in Hz
+        :param trace_points: number of points in the trace (perhaps as high as 5000)
+        :param sample_period: in s
+        :param trigger_level: in dBm
+        :param trigger_delay: in s
+        :param trigger_source: 'HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm'
+        :return: None
+        '''
+        self.write('*RST')
+        self.state.frequency = frequency
+        self.state.function = 'XTIM:POW'
+        self.state.trace_points = trace_points
+        self.state.trace_time = trace_points * sample_period
+        self.state.trigger_level = 10**(trigger_level / 10.)
+        self.state.trigger_delay = trigger_delay#self.Ts / 2
+        self.state.trace_realtime = True
+        self.state.trigger_source = trigger_source#'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
+        self.state.initiate_continuous = False
+        self.wait()
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
     class state(RohdeSchwarzNRPSeries):

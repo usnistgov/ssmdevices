@@ -444,8 +444,9 @@ class RohdeSchwarzFSW26Base(VISADevice):
         # If there is a timeout, the return above will not happen.
         # In this case, abort the acquisition and return
         # None.
-        logger.warning('received no spectrogram data')
+        # logger.warning('received no spectrogram data')
         self.abort()
+        self.wait()
         #self.clear_status()
         #self.wait()
         return None
@@ -717,10 +718,14 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         iq_trigger_position = Float(command='TRAC:IQ:TPIS', read_only=True)
 
         sweep_dwell_auto    = Bool(command='SWE:DTIM:AUTO', trues=['1'], falses=['0'])
-        sweep_dwell_time    = Float(command='SWE:DTIM')
+        sweep_dwell_time    = Float(command='SWE:DTIM', min=30e-3)
         sweep_window_type   = CaselessStrEnum (command='SWE:FFT:WIND:TYP',
                                                values=['BLAC','FLAT','GAUS','HAMM','HANN','KAIS','RECT'])
-    #
+
+        spectrogram_depth   = Int(min=781, max=100000) # implemented with setter/getter below
+
+        trigger_mask_threshold = Float(max=0, help='defined in dB relative to the reference level')
+
 #    def fetch_trace(self, horizontal=False):
 #        fmt = self.state.iq_format
 #        if fmt == 'VECT':
@@ -743,12 +748,10 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
 
     def store_spectrogram(self, path, window=2):
         self.mkdir(os.path.split(path)[0])
-        self.write("MMEM:STOR{window}:SGR '{path}'"\
-                   .format(window=window,path=path))   
+        self.write("MMEM:STOR{window}:SGR '{path}'".format(window=window,path=path))
 
     def clear_spectrogram(self, window=2):
-        self.write("CALC{window}:SGR:CLE"\
-                   .format(window=window))
+        self.write("CALC{window}:SGR:CLE".format(window=window))
 
     def fetch_horizontal (self, window=2, trace=1):
         return self.backend.query_binary_values(r"TRAC{window}:X? TRACE{trace}"\
@@ -771,11 +774,37 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         return self.query('WIND{window}:DET{trace}?'\
                           .format(window=window, trace=trace))
 
-    def set_frequency_mask (self, frequency_offsets, thresholds, kind='upper', window=None):
+    @state.spectrogram_depth.setter
+    def __ (self, depth, window=None):
+        if window is None:
+            window = self.state.default_window
+
+        self.write('CALC{window}:SPEC:HDEP {value}'\
+                   .format(window=window, value=depth))
+
+    @state.spectrogram_depth.getter
+    def __ (self, window=None):
+        if window is None:
+            window = self.state.default_window
+
+        return self.query('CALC{window}:SPEC:HDEP?'\
+                         .format(window=window))
+
+
+    @state.trigger_mask_threshold.setter
+    def __ (self, thresholds):
+        self.set_frequency_mask(thresholds, None)
+
+    @state.trigger_mask_threshold.getter
+    def __ (self):
+        return self.get_frequency_mask(first_threshold_only=True)
+
+
+    def set_frequency_mask (self, thresholds, frequency_offsets=None, kind='upper', window=None):
         ''' Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
-        :param array-like frequency_offsets: frequencies at which the mask is defined
-        :param thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`)
+        :param thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`), or a scalar to use a constant value across the band
+        :param array-like frequency_offsets: frequencies at which the mask is defined, or None (to specify across the whole band)
         :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
         :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)
         :return: None
@@ -785,6 +814,14 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         if kind.lower() not in ('upper','lower'):
             raise ValueError('frequency mask is {} but must be "upper" or "lower"'\
                              .format(repr(kind)))
+        if frequency_offsets is None:
+            bw = self.state.iq_bandwidth
+            frequency_offsets = -bw/2, bw/2
+
+            if not hasattr(thresholds, '__iter__'):
+                thresholds = len(frequency_offsets)*[thresholds]
+            elif len(thresholds) != 2:
+                raise ValueError('with frequency_offsets=None, thresholds must be a scalar or have length 2')
 
         self.write("CALC{window}:MASK:CDIR '.'"\
                    .format(window=window))
@@ -796,12 +833,13 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
 
         self.write("CALC{window}:MASK:{kind} {list}".format(window=window,kind=kind,list=plist))
 
-    def get_frequency_mask (self, kind='upper', window=None):
+    def get_frequency_mask (self, kind='upper', window=None, first_threshold_only=False):
         ''' Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
         :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
         :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)
-        :return: A dictionary with keys "frequency_offsets" and "thresholds" and corresponding values (in Hz and dBm, respectively) of equal length
+        :param bool first_threshold_only: if True, return only the threshold; otherwise, return a complete parameter dict
+        :return: the threshold or a dictionary with keys "frequency_offsets" and "thresholds" and corresponding values (in Hz and dBm, respectively) of equal length
         '''
 
         if window is None:
@@ -813,19 +851,15 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         plist = self.query("CALC{window}:MASK:{kind}?".format(window=window, kind=kind))
         plist = np.array(plist.split(',')).astype(np.float64)
 
-        return {'frequency_offsets': plist[::2],
-                'thresholds': plist[1::2]}
+        if first_threshold_only:
+            return plist[1]
+        else:
+            return {'frequency_offsets': plist[::2],
+                    'thresholds': plist[1::2]}
 
-    def setup_spectrogram(self, center_frequency,
-                                analysis_bandwidth,
-                                reference_level,
-                                time_resolution,
-                                acquisition_time,
-                                input_attenuation=None,
-                                trigger_threshold=None,
-                                detector='SAMP',
-                                analysis_window=None,
-                                **kws):
+    def setup_spectrogram(self, center_frequency, analysis_bandwidth, reference_level,
+                                time_resolution, acquisition_time, input_attenuation=None,
+                                trigger_threshold=None, detector='SAMP', analysis_window=None,**kws):
         ''' Quick setup for a spectrogram measurement in RTSA mode.
 
         :param center_frequency: in Hz
@@ -842,6 +876,9 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
 
         if kws:
             logger.warning('ignoring spectrogram setup keyword arguments {}'.format(kws))
+
+        self.state.default_window = 2
+        self.state.default_trace = 1
 
         if self.load_cache():
             return
@@ -862,8 +899,6 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
 
         # Setup traces
         self.remove_window(1)
-        self.state.default_window = 2
-        self.state.default_trace = 1
 
         # Level
         self.state.reference_level = reference_level
@@ -876,14 +911,25 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         # Trace acquisition parameters
         self.set_detector_type(detector)
 
+        # Sweep parameters
+        self.state.sweep_time_window2 = time_resolution
+        if self.state.sweep_time_window2 != time_resolution:
+            logger.warning('requested time resolution {}, but instrument adjusted to {}'\
+                           .format(time_resolution, self.state.sweep_time_window2))
+        self.state.spectrogram_depth = 100000
+
         # Triggering
         if trigger_threshold is not None:
-            self.set_frequency_mask([-analysis_bandwidth*(1./2), +analysis_bandwidth*(1/2+1/1000)],
-                                    2 * [trigger_threshold])
             self.state.trigger_source = 'MASK'
+            th = 2*[trigger_threshold]+[0]+2*[trigger_threshold]
+            rbw = 2*self.state.resolution_bandwidth
+            fr = [-analysis_bandwidth/2,-rbw,0,rbw,analysis_bandwidth/2]
+            self.set_frequency_mask(thresholds=th, frequency_offsets=fr)
             self.state.trigger_post_time = acquisition_time
             self.state.trigger_pre_time = 0.
+            self.state.trigger_post_time = acquisition_time
         else:
+            self.state.sweep_dwell_auto = False
             self.state.sweep_dwell_time = acquisition_time
 
         # TODO: Parameterize somehow
@@ -891,21 +937,15 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         self.state.output_trigger2_type = 'DEV'
         self.state.output_trigger3_direction = 'OUTP'
         self.state.output_trigger3_type = 'DEV'
-
-        # Sweep parameters
-        self.state.sweep_time_window2 = time_resolution
-        if self.state.sweep_time_window2 != time_resolution:
-            logger.warning('requested time resolution {}, but instrument adjusted to {}'\
-                           .format(time_resolution, self.state.sweep_time_window2))
-
         if analysis_window is not None:
             self.state.sweep_window_type = 'BLAC'
 
+        with self.overlap_and_block(timeout=2500):
+            self.save_cache()
+        time.sleep(0.05)
         super().setup()
 
-        self.save_cache()
-
-    def acquire_spectrogram(self, loop_time=None, delay_time=0.1, timestamps='fast'):
+    def acquire_spectrogram(self, loop_time, delay_time=0.1, timestamps='fast'):
         ''' Trigger and fetch data, optionally in a loop that continues for a specified
         duration.
 
@@ -916,11 +956,16 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         '''
         specs = []
 
+
+        if self.state.trigger_source.lower() == 'mask':
+            max_trigger_time = self.state.trigger_post_time
+        else:
+            max_trigger_time = self.state.sweep_dwell_time
         t0 = time.time()
         time_remaining = loop_time
         active_time = 0
 
-        while loop_time is None or time_remaining > 0:
+        while time_remaining > 0:
             # Setup
             self.clear_spectrogram()
             self.wait()
@@ -929,23 +974,29 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
 
             t0_active = time.time()
             # Try to trigger; block until timeout.
-            with self.overlap_and_block(timeout=int(1e3 * time_remaining)):
-                self.trigger_single(wait=False)
-            active_time += time.time() - t0_active
+            with self.suppress_timeout():
+                # print(max(30*max_trigger_time,time_remaining or 0.1))
+                with self.overlap_and_block(timeout=int(1e3 * 30*max_trigger_time)):
+                    self.trigger_single(wait=False)
+                time.sleep(0.05)
+                active_time += time.time() - t0_active
 
-            self.backend.timeout = 50000
-            single = self.fetch_spectrogram(timeout=50000, timestamps=timestamps)
-            self.backend.timeout = 1000
+                self.backend.timeout = 6*1e3*max_trigger_time
+                single = self.fetch_spectrogram(timeout=self.backend.timeout, timestamps=timestamps)
+                self.backend.timeout = 1000
+                if single is not None:
+                    specs.append(single)
+                self.wait()
+            self.abort()
 
-            if single is not None:
-                specs.append(single)
+            time_remaining = loop_time - (time.time() - t0)
 
-            if loop_time is None:
-                break
-            else:
-                time_remaining = loop_time - (time.time() - t0)
+        if len(specs)>0:
+            specs = pd.concat(specs, axis=0) if specs else pd.DataFrame().iloc[:,:-1]
+        else:
+            specs = pd.DataFrame()
+            logger.warning('no data acquired')
 
-        specs = pd.concat(specs, axis=0) if specs else pd.DataFrame()
-        return {'spectrogram': specs,
+        return {'spectrogram_data': specs,
                 'spectrogram_acquisition_time': time.time() - t0,
                 'spectrogram_active_time': active_time}
