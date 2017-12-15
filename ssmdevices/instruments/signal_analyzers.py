@@ -77,7 +77,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
     def verify_channel_type (self):
         if self.expected_channel_type is not None \
            and self.state.channel_type not in (self.expected_channel_type, default_channel_name):
-            raise Exception('{} expects {} mode, but insrument mode is {}'\
+            logger.warning('{} expects {} mode, but insrument mode is {}'\
                             .format(type(self).__name__, self.expected_channel_type, self.state.channel_type))
 
     def setup(self):
