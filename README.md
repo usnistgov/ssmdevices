@@ -28,8 +28,11 @@ RF signal generators
 * Rohde Schwarz SMW series
 * Spirent GSS8000 GNSS Simulator
 
+RF switches
+* Minicircuits SPnT USB switches
+
 RF attenuators
-* MiniCircuits RCDAT series
+* Minicircuits RCDAT series
 
 Virtual software "instruments"
 * iperf version 2
