@@ -82,7 +82,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
     def setup(self):
         super().setup()
-        self.verify_channel_type()
+        # self.verify_channel_type()
         self.state.format = 'REAL,32'
 
     def acquire_spectrogram(self, acquisition_time_sec):
@@ -630,7 +630,7 @@ class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
 
     def connect (self):
         VISADevice.connect(self)
-        self.verify_channel_type()
+        # self.verify_channel_type()
         self.state.format = 'REAL'
 
     def fetch_power_vs_symbol_x_carrier (self, window, trace):
@@ -885,13 +885,13 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
 
         # Work around an apparent SCPI bug by setting
         # frequency parameters in spectrum analyzer mode
-        with self.overlap_and_block(timeout=2500):
+        with self.overlap_and_block(timeout=10000):
             self.set_channel_type('SAN')
         self.channel_preset()
         self.wait()
         self.state.frequency_center = center_frequency
         self.wait()
-        with self.overlap_and_block(timeout=2500):
+        with self.overlap_and_block(timeout=10000):
             self.set_channel_type('RTIM')
         self.wait()
         self.state.initiate_continuous = False
@@ -945,7 +945,10 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         time.sleep(0.05)
         super().setup()
 
-    def acquire_spectrogram(self, loop_time, delay_time=0.1, timestamps='fast'):
+        with self.overlap_and_block():
+            self.state.spectrogram_depth
+
+    def acquire_spectrogram(self, loop_time=None, delay_time=0.1, timestamps='fast'):
         ''' Trigger and fetch data, optionally in a loop that continues for a specified
         duration.
 
@@ -956,7 +959,6 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         '''
         specs = []
 
-
         if self.state.trigger_source.lower() == 'mask':
             max_trigger_time = self.state.trigger_post_time
         else:
@@ -965,7 +967,7 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         time_remaining = loop_time
         active_time = 0
 
-        while time_remaining > 0:
+        while loop_time is None or time_remaining > 0:
             # Setup
             self.clear_spectrogram()
             self.wait()
@@ -989,7 +991,10 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
                 self.wait()
             self.abort()
 
-            time_remaining = loop_time - (time.time() - t0)
+            if loop_time is None:
+                break
+            else:
+                time_remaining = loop_time - (time.time() - t0)
 
         if len(specs)>0:
             specs = pd.concat(specs, axis=0) if specs else pd.DataFrame().iloc[:,:-1]
