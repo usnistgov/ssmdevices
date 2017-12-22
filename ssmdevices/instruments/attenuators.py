@@ -34,6 +34,7 @@ class MiniCircuitsRCDAT(DotNetDevice):
     def connect (self):
         ''' Open the device resource.
         '''
+        super().connect()
         self.backend = self.dll.USB_RUDAT()
         if self.backend.Connect(self.resource)[0] != 1:
             raise Exception('Cannot connect to attenuator resource {}'.format(self.resource))
