@@ -15,11 +15,8 @@ __all__ = ['IPerfClient']
 
 import pandas as pd
 import labbench as lb
-import traitlets as tl
-import os
-import ssmdevices.lib 
+import os,ssmdevices.lib
 from io import StringIO
-
 
 class IPerfClient(lb.CommandLineWrapper):
     ''' Run an IPerfClient. Set the resource to the location of iperf.
@@ -27,22 +24,22 @@ class IPerfClient(lb.CommandLineWrapper):
     '''
     resource = '127.0.0.1'
 
-    port = None
-    bind = None
-    tcp_window_size = None
-    buffer_size = 1024
-    interval = 0.5
+    #port = None
+    #bind = None
+    #tcp_window_size = None
+    #buffer_size = 1024
+    #interval = 0.5
 
     binary_path = os.path.join(ssmdevices.lib.__path__[0], 'loop.bat')
     iperf_path = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
 
     class state(lb.CommandLineWrapper.state):
         timeout = lb.LocalFloat(6, min=0, is_metadata=True)
-        port = lb.LocalUnicode(is_metadata=True)
+        port = lb.LocalInt(5001, is_metadata=True)
         bind = lb.LocalUnicode(is_metadata=True)
-        tcp_window_size = lb.LocalUnicode(is_metadata=True)
-        buffer_size = lb.Int(1024, min=1, is_metadata=True)
-        interval = 0.5
+        tcp_window_size = lb.LocalInt(8192, min=1, is_metadata=True)
+        buffer_size = lb.LocalInt(1024, min=1, is_metadata=True)
+        interval = lb.LocalFloat(0.5, min=0.01, is_metadata=True)
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
@@ -73,17 +70,14 @@ class IPerfClient(lb.CommandLineWrapper):
         cmd = self.iperf_path,\
               '-n','-1','-y','C',\
               '-c', str(self.resource)
-
-        if self.state.port is not lb.Undefined:
-            cmd = cmd + ('-p',str(self.state.port))
-        if self.state.bind is not lb.Undefined:
+        
+        cmd = cmd + ('-p',str(self.state.port))
+        if self.state.bind:
             cmd = cmd + ('-B',str(self.state.bind))
-        if self.state.tcp_window_size is not lb.Undefined:
-            cmd = cmd + ('-w',str(self.state.tcp_window_size))
-        if self.state.buffer_size is not lb.Undefined:
-            cmd = cmd + ('-l',str(self.state.buffer_size))
-        if self.state.interval is not lb.Undefined:
-            cmd = cmd + ('-i',str(self.state.interval))
+        cmd = cmd + ('-w',str(self.state.tcp_window_size))
+        cmd = cmd + ('-l',str(self.state.buffer_size))
+        cmd = cmd + ('-i',str(self.state.interval))
+
 
 #        self.state.timeout = self.state.interval*2
         
