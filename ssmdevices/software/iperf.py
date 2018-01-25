@@ -24,22 +24,27 @@ class IPerfClient(lb.CommandLineWrapper):
     '''
     resource = '127.0.0.1'
 
-    #port = None
-    #bind = None
-    #tcp_window_size = None
-    #buffer_size = 1024
-    #interval = 0.5
-
     binary_path = os.path.join(ssmdevices.lib.__path__[0], 'loop.bat')
     iperf_path = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
 
     class state(lb.CommandLineWrapper.state):
-        timeout = lb.LocalFloat(6, min=0, is_metadata=True)
-        port = lb.LocalInt(5001, is_metadata=True)
-        bind = lb.LocalUnicode(is_metadata=True)
-        tcp_window_size = lb.LocalInt(8192, min=1, is_metadata=True)
-        buffer_size = lb.LocalInt(1024, min=1, is_metadata=True)
-        interval = lb.LocalFloat(0.5, min=0.01, is_metadata=True)
+        timeout = lb.LocalFloat(6, min=0, is_metadata=True,
+                                'wait time for traffic results before throwing a timeout exception (s)')
+        port = lb.LocalInt(5001, is_metadata=True,
+                           help='connection port')
+        bind = lb.LocalUnicode(is_metadata=True,
+                               help='bind connection to specified IP')
+        tcp_window_size = lb.LocalInt(8192, min=1, is_metadata=True,
+                                      help='(bytes)')
+        buffer_size = lb.LocalInt(1024, min=1, is_metadata=True,
+                                  help='Size of data buffer that generates traffic (bytes)')
+        interval = lb.LocalFloat(0.5, min=0.01, is_metadata=True,
+                                 help='Interval between throughput reports (s)')
+        bidirectional = lb.LocalBool(False, is_metadata=True,
+                                     help='Send and receive simultaneously')
+        udp = lb.LocalBool(False, is_metadata=True,
+                                     help='UDP instead of TCP networking')
+        
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
@@ -74,6 +79,10 @@ class IPerfClient(lb.CommandLineWrapper):
         cmd = cmd + ('-p',str(self.state.port))
         if self.state.bind:
             cmd = cmd + ('-B',str(self.state.bind))
+        if self.state.bidirectional:
+            cmd = cmd + ('-d',)
+        if self.state.udp:
+            cmd = cmd + ('-u',)            
         cmd = cmd + ('-w',str(self.state.tcp_window_size))
         cmd = cmd + ('-l',str(self.state.buffer_size))
         cmd = cmd + ('-i',str(self.state.interval))
