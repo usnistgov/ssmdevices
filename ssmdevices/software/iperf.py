@@ -28,21 +28,21 @@ class IPerfClient(lb.CommandLineWrapper):
     iperf_path = os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe')
 
     class state(lb.CommandLineWrapper.state):
-        timeout = lb.LocalFloat(6, min=0, is_metadata=True,
-                                'wait time for traffic results before throwing a timeout exception (s)')
-        port = lb.LocalInt(5001, is_metadata=True,
+        timeout = lb.LocalFloat(6, min=0, is_metadata=True,read_only='connected',
+                                help='wait time for traffic results before throwing a timeout exception (s)')
+        port = lb.LocalInt(5001, is_metadata=True, read_only='connected',
                            help='connection port')
-        bind = lb.LocalUnicode(is_metadata=True,
+        bind = lb.LocalUnicode(is_metadata=True, read_only='connected',
                                help='bind connection to specified IP')
-        tcp_window_size = lb.LocalInt(8192, min=1, is_metadata=True,
+        tcp_window_size = lb.LocalInt(8192, min=1, is_metadata=True, read_only='connected',
                                       help='(bytes)')
-        buffer_size = lb.LocalInt(1024, min=1, is_metadata=True,
+        buffer_size = lb.LocalInt(1024, min=1, is_metadata=True, read_only='connected',
                                   help='Size of data buffer that generates traffic (bytes)')
-        interval = lb.LocalFloat(0.5, min=0.01, is_metadata=True,
+        interval = lb.LocalFloat(0.5, min=0.01, is_metadata=True, read_only='connected',
                                  help='Interval between throughput reports (s)')
-        bidirectional = lb.LocalBool(False, is_metadata=True,
+        bidirectional = lb.LocalBool(False, is_metadata=True, read_only='connected',
                                      help='Send and receive simultaneously')
-        udp = lb.LocalBool(False, is_metadata=True,
+        udp = lb.LocalBool(False, is_metadata=True, read_only='connected',
                                      help='UDP instead of TCP networking')
         
 
