@@ -16,7 +16,7 @@ __all__ = ['CobhamTM500']
 import labbench as lb
 from numbers import Number
 
-import logging
+import logging, time
 logger = logging.getLogger('labbench')
 
 class CobhamTM500(lb.TelnetDevice):   
@@ -86,14 +86,6 @@ class CobhamTM500(lb.TelnetDevice):
                 1,\
                 b"STRT",\
                 2,\
-                #b"SDLI LTE_RADIO_CONTEXT 0x00000001 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000",\
-                #b"SDLI LTE_NAS_STATUS 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0x0000000f",\
-                #b"SDLI LTE_RRC_STATUS 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0x0000000f",\
-                #b"SDLI LTE_L3_RRC_STATS 0x00000001 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000",\
-                #b"SDLI LTE_L3_RRC_GROUP_STATS 0x00000001 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000",\
-                #b"SDLI LTE_L3_NAS_STATS 0x00000001 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000",\
-                #b"SDLI LTE_L3_NAS_GROUP_STATS 0x00000001 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000",\
-                #b"SDLI LTE_LA_RACH_STATS 0x00000001 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000",\
                 b"#$$SET_DOCKING_WINDOWS 0 -1 -1 -1 -1 -1 -1 -1 1 1 -1 -1",\
                 b"#$$DATA_LOG_OPTIONS 0 0 0",\
                 b"#$$LC_CLEAR_ALL",\
@@ -384,8 +376,8 @@ class CobhamTM500(lb.TelnetDevice):
                 b"#$$LC_CAT 1037 1 0 0 #GRP:RealDataApplicationLog",\
                 b"#$$LC_CAT 1038 1 0 0 #GRP:RealDataApplicationLog",\
                 b"#$$LC_END"
-            
-        for msg in setup_seq:
+
+        for msg in seq:
             if isinstance(msg, Number):
                 time.sleep(msg)
             else:
