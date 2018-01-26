@@ -1,4 +1,4 @@
-*ssmdevices* is a set of python device drivers developed for data acquisition with wireless communication systems and test equipment.
+*ssmdevices* are the curated "good" python device drivers for data acquisition with wireless communication systems, instruments, diagnostic software, and lab electronics.
 The drivers are implemented with [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench). Acquired data are packaged into [pandas](http://pandas.pydata.org/) data frames for fast data exploration.
 It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name complications and to restrict
 access based on export control law.
