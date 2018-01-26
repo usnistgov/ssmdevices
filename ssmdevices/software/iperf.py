@@ -44,7 +44,9 @@ class IPerfClient(lb.CommandLineWrapper):
                                      help='Send and receive simultaneously')
         udp = lb.LocalBool(False, is_metadata=True, read_only='connected',
                                      help='UDP instead of TCP networking')
-        
+        bit_rate = lb.LocalInt(0, min=0, is_metadata=True, read_only='connected',
+                                  help='Maximum bit rate (bps)')
+
 
     def fetch (self):
         result = super(IPerfClient,self).fetch()
@@ -82,7 +84,10 @@ class IPerfClient(lb.CommandLineWrapper):
         if self.state.bidirectional:
             cmd = cmd + ('-d',)
         if self.state.udp:
-            cmd = cmd + ('-u',)            
+            cmd = cmd + ('-u',)
+        if self.state.bit_rate > 0:
+            cmd = cmd + ('-b', '{}k'.format(self.state.bit_rate//1024))
+            
         cmd = cmd + ('-w',str(self.state.tcp_window_size))
         cmd = cmd + ('-l',str(self.state.buffer_size))
         cmd = cmd + ('-i',str(self.state.interval))
