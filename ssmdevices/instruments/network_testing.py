@@ -42,12 +42,14 @@ class CobhamTM500(lb.TelnetDevice):
             
             :returns: decoded string containing the response
         '''
+        
+        # Send the message
         logger.debug('{} <- {}'.format(repr(self),msg))        
         if isinstance(msg, str):
             msg = msg.encode('ascii')        
         self.backend.write(msg)
         
-        # Choose the format of the expected response
+        # Identify the format of the expected response
         if alt_ack is not None:
             if isinstance(alt_ack, str):
                 alt_ack = alt_ack.encode('ascii')
@@ -60,7 +62,7 @@ class CobhamTM500(lb.TelnetDevice):
         # Block until the expected response is received
         self.backend.read_until(b'C: {}'.format(rsp))
         
-        # Receive returned data
+        # Receive any data response
         ret = ''
         for i in range(data_lines):
             ret += self.backend.read_until(b'\r').decode('ascii')
