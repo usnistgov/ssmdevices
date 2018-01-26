@@ -14,6 +14,7 @@ standard_library.install_aliases()
 __all__ = ['CobhamTM500']
 
 import labbench as lb
+from numbers import Number
 
 import logging
 logger = logging.getLogger('labbench')
@@ -24,7 +25,7 @@ class CobhamTM500(lb.TelnetDevice):
     '''
 
     class state(lb.TelnetDevice.state):
-#        timeout = lb.LocalFloat(2, min=0, is_metadata=True)
+        timeout = lb.LocalFloat(5, min=0, is_metadata=True)
         port = lb.LocalInt(5003, min=1, is_metadata=True)
         
 #    resource='COM17'
@@ -70,9 +71,7 @@ class CobhamTM500(lb.TelnetDevice):
         return ret
 
     def setup (self):
-        seq = b"#$$PORT 10.133.0.203 5001 5002 5003",\
-                b"#$$CONNECT",\
-                b"ABOT 0 0 0",\
+        seq = b"ABOT 0 0 0",\
                 b"RSET",\
                 b"SCFG SWL",\
                 b"STRT",\
@@ -82,8 +81,11 @@ class CobhamTM500(lb.TelnetDevice):
                 b"EREF 0 0 0",\
                 b"GETR",\
                 b"SCFG MTS_MODE",\
+                1,\
                 b"GVER",\
+                1,\
                 b"STRT",\
+                2,\
                 #b"SDLI LTE_RADIO_CONTEXT 0x00000001 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000",\
                 #b"SDLI LTE_NAS_STATUS 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0x0000000f",\
                 #b"SDLI LTE_RRC_STATUS 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0xffffffff 0x0000000f",\
@@ -384,7 +386,10 @@ class CobhamTM500(lb.TelnetDevice):
                 b"#$$LC_END"
             
         for msg in setup_seq:
-            self.send(msg)
+            if isinstance(msg, Number):
+                time.sleep(msg)
+            else:
+                self.send(msg)
 
     def start (self):
         seq = b"#$$START_LOGGING",\
@@ -418,9 +423,10 @@ class CobhamTM500(lb.TelnetDevice):
 
     def connect (self):
         super(CobhamTM500,self).connect()
-        self.backend.write('#$$CONNECT')
+        self.send("#$$PORT 10.133.0.203 5001 5002 5003")
+        self.send('#$$CONNECT')
     
     def disconnect (self):
-        self.backend.write('#$$STOP_LOGGING')
-        self.backend.write('#$$DISCONNECT')        
+        self.send('#$$STOP_LOGGING')
+        self.send('#$$DISCONNECT')        
         super(CobhamTM500,self).disconnect()
