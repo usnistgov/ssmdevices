@@ -23,21 +23,22 @@ class CobhamTM500(lb.TelnetDevice):
         telnet connection.
     '''
 
-    class state(lb.TelnetDevice.state):
-        timeout = lb.LocalFloat(2, min=0, is_metadata=True)
-        port = lb.LocalInt(23, min=1, is_metadata=True)
+#    class state(lb.TelnetDevice.state):
+#        timeout = lb.LocalFloat(2, min=0, is_metadata=True)
+#        port = lb.LocalInt(23, min=1, is_metadata=True)
         
 #    resource='COM17'
 #    'serial port resource name (COMnn in windows or /dev/xxxx in unix/Linux)'
     
 #    def command_get (self, command, trait):        
 #        return self.backend.write(command)
-    
-    def send (self, msg, alt_response=None):
+
+    def send (self, msg, data_lines=1, alt_ack=None):
         ''' Send a message, then block while waiting for the response.
         
             :param msg: str or bytes containing the message to send
-            :param alt_response: expected response indicating completion of the command, or None to guess
+            :param int data_lines: number of lines in the response string            
+            :param alt_ack: expected response indicating acknowledgment of the command, or None to guess
             :returns: bytes containing the response
         '''
         logger.debug('{} <- {}'.format(repr(self),msg))        
@@ -46,10 +47,10 @@ class CobhamTM500(lb.TelnetDevice):
         self.backend.write(msg)
         
         # Choose the format of the expected response
-        if alt_response is not None:
-            if isinstance(alt_response, str):
-                alt_response = alt_response.encode()
-            rsp = alt_response
+        if alt_ack is not None:
+            if isinstance(alt_ack, str):
+                alt_ack = alt_ack.encode()
+            rsp = alt_ack
         if msg.startswith(b'#$$'):
             rsp = msg[3:]
         else:
@@ -58,7 +59,10 @@ class CobhamTM500(lb.TelnetDevice):
         # Block until the expected response is received
         self.backend.read_until(b'C: {}'.format(rsp))
         
-        ret = self.backend.read_until(b'\r').decode()
+        # Receive returned data
+        ret = ''
+        for i in range(data_lines):
+            ret += self.backend.read_until(b'\r').decode()
         logger.debug('{} -> {}'.format(repr(self), ret))
         return ret
             
