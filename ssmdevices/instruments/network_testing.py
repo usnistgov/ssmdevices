@@ -39,17 +39,18 @@ class CobhamTM500(lb.TelnetDevice):
             :param msg: str or bytes containing the message to send
             :param int data_lines: number of lines in the response string            
             :param alt_ack: expected response indicating acknowledgment of the command, or None to guess
-            :returns: bytes containing the response
+            
+            :returns: decoded string containing the response
         '''
         logger.debug('{} <- {}'.format(repr(self),msg))        
         if isinstance(msg, str):
-            msg = msg.encode()        
+            msg = msg.encode('ascii')        
         self.backend.write(msg)
         
         # Choose the format of the expected response
         if alt_ack is not None:
             if isinstance(alt_ack, str):
-                alt_ack = alt_ack.encode()
+                alt_ack = alt_ack.encode('ascii')
             rsp = alt_ack
         if msg.startswith(b'#$$'):
             rsp = msg[3:]
@@ -62,7 +63,7 @@ class CobhamTM500(lb.TelnetDevice):
         # Receive returned data
         ret = ''
         for i in range(data_lines):
-            ret += self.backend.read_until(b'\r').decode()
+            ret += self.backend.read_until(b'\r').decode('ascii')
         logger.debug('{} -> {}'.format(repr(self), ret))
         return ret
             
