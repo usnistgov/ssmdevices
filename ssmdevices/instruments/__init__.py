@@ -13,7 +13,7 @@ from future import standard_library
 standard_library.install_aliases()
 from .attenuators import *
 from .gps_simulator import *
-from .network_testing import *
+from .networking import *
 from .oscilloscopes import *
 from .power_sensors import *
 from .signal_analyzers import *
