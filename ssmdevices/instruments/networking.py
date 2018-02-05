@@ -14,20 +14,30 @@ standard_library.install_aliases()
 __all__ = ['CobhamTM500']
 
 import labbench as lb
-from numbers import Number
-
 import logging, time
 logger = logging.getLogger('labbench')
 
 class CobhamTM500(lb.TelnetDevice):   
     ''' Control a Cobham TM500 network tester with a
         telnet connection.
+
+        The approach here is to iterate through lines of bytes, and
+        add delays as needed for special cases as defined in the
+        `delays` attribute.
+
+        At some point, these lines should just be loaded directly
+        from a file that could be treated as a config file.
     '''
 
     class state(lb.TelnetDevice.state):
         timeout = lb.LocalFloat(5, min=0, is_metadata=True)
         port = lb.LocalInt(5003, min=1, is_metadata=True)
-        
+
+    # Define time delays needed after specified commands
+    delays = {b'SCFG MTS_MODE': 2,
+              b'GVER': 1,
+              b'STRT': 2}
+
 #    resource='COM17'
 #    'serial port resource name (COMnn in windows or /dev/xxxx in unix/Linux)'
     
@@ -68,6 +78,13 @@ class CobhamTM500(lb.TelnetDevice):
         for i in range(data_lines):
             ret += self.backend.read_until(b'\r').decode('ascii')
         logger.debug('{} -> {}'.format(repr(self), ret))
+
+        # Wait, if this message starts with a command that needs a delay
+        for delay_msg, delay in self.delays.items():
+            if msg.startswith(delay_msg):
+                time.sleep(delay)
+                break
+
         return ret
 
     def setup (self):
@@ -81,11 +98,8 @@ class CobhamTM500(lb.TelnetDevice):
                 b"EREF 0 0 0",\
                 b"GETR",\
                 b"SCFG MTS_MODE",\
-                1,\
                 b"GVER",\
-                1,\
                 b"STRT",\
-                2,\
                 b"#$$SET_DOCKING_WINDOWS 0 -1 -1 -1 -1 -1 -1 -1 1 1 -1 -1",\
                 b"#$$DATA_LOG_OPTIONS 0 0 0",\
                 b"#$$LC_CLEAR_ALL",\
@@ -377,11 +391,11 @@ class CobhamTM500(lb.TelnetDevice):
                 b"#$$LC_CAT 1038 1 0 0 #GRP:RealDataApplicationLog",\
                 b"#$$LC_END"
 
+        self.send_sequence(seq)
+
+    def send_sequence (self, seq):
         for msg in seq:
-            if isinstance(msg, Number):
-                time.sleep(msg)
-            else:
-                self.send(msg)
+            self.send(msg)
 
     def start (self):
         seq = b"#$$START_LOGGING",\
@@ -407,8 +421,7 @@ class CobhamTM500(lb.TelnetDevice):
                 b"forw mte NasAptConfigPlmnSelection 001001",\
                 b"forw mte Activate -1"
 
-        for msg in seq:
-            self.send(msg)
+        self.send_sequence(seq)
 
     def stop (self):
         self.send(b"#$$STOP_LOGGING")
