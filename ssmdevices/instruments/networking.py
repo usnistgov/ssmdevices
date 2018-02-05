@@ -34,9 +34,23 @@ class CobhamTM500(lb.TelnetDevice):
         port = lb.LocalInt(5003, min=1, is_metadata=True)
 
     # Define time delays needed after specified commands (in sec)
-    delays = {b'SCFG MTS_MODE': 2,
-              b'GVER': 1,
-              b'STRT': 2}
+    delays = {b'SCFG MTS_MODE':   2,
+              b'GVER':            1,
+              b'STRT':            2,
+              b'#$$LMA_STATE':    1,
+              b"#$$LC_CLEAR_ALL": 1,
+              b'#$$LC_GRP 0 0 0 1 0 0 0 MACTX': 1,
+              b'#$$LC_GRP 0 0 0 1 0 0 0 BCHRX': 1,
+              b'#$$LC_GRP 0 0 0 500 0 0 0 L1DLCARRIERSTATS': 1,
+              b'#$$LC_GRP 0 0 0 500 0 0 0 THROUGHPUT3D': 1,
+              b'#$$LC_GRP 0 0 0 500 0 0 0 MACTXSTATS': 1,
+              b'#$$LC_GRP 0 0 0 500 0 0 0 RRCSTATS': 1,
+              b'#$$LC_GRP 0 0 0 500 0 0 0 NASSTATS': 1,
+              b'#$$LC_GRP 0 1 0 1000 0 0 0 RealDataApplicationLog': 1,
+              b'#$$LC_END': 1,
+              b'#$$START_LOGGING': 1,
+              b'forw mte Activate': 1
+              }
 
 #    resource='COM17'
 #    'serial port resource name (COMnn in windows or /dev/xxxx in unix/Linux)'
@@ -44,7 +58,7 @@ class CobhamTM500(lb.TelnetDevice):
 #    def command_get (self, command, trait):        
 #        return self.backend.write(command)
 
-    def send (self, msg, data_lines=1, alt_ack=None):
+    def send(self, msg, data_lines=1, alt_ack=None):
         ''' Send a message, then block while waiting for the response.
         
             :param msg: str or bytes containing the message to send
@@ -78,17 +92,20 @@ class CobhamTM500(lb.TelnetDevice):
         # Block until the expected response is received
         self.backend.read_until(b'C: {}'.format(rsp))
         
-        # Receive any data response
+        # Receive any status response
         ret = ''
         for i in range(data_lines):
             ret += self.backend.read_until(b'\r').decode('ascii')
         logger.debug('{} -> {}'.format(repr(self), ret))
 
-        # Wait, if this message starts with a command that needs a delay
+        # Add a delay, if this message starts with a command that needs a delay
         for delay_msg, delay in self.delays.items():
             if msg.startswith(delay_msg):
                 time.sleep(delay)
                 break
+
+        # Receive any other data received during the delay
+        ret += self.backend.read_very_eager()
 
         return ret
 
@@ -400,27 +417,27 @@ class CobhamTM500(lb.TelnetDevice):
 
     def start (self):
         seq = b"#$$START_LOGGING",\
-                b"forw l1 SetPortMapping 1",\
-                b"forw mte SetMueRadioContextCell 0 0 18700 10",\
-                b"forw mte PhyCalibrateUlPowerOffset [0]",\
-                b"forw mte PhyConfigUlInterference -37 [0] [0]",\
-                b"forw mte DeConfigRdaStartTestCase 1 10.133.0.204 [] [1_UE_UDP] [] [1]",\
-                b"forw mte MtsConfigEnb 1{0 0 0 1{0 18700 200 [0 120 0 0(0)] [9]}} [1]",\
-                b"forw mte MtsConfigUeGroup 0 0 1{0}",\
-                b"forw mte MtsConfigPath 0 1{24 53}",\
-                b"forw mte MtsConfigMobility 0 0 0 1 0 0 0 -80",\
-                b"forw mte MtsConfigTrafficProfile 0 1{internet 2{0(ctera_DL -1) 0 [],0(ctera_UL -1) 0 []} [] [] []} []",\
-                b"forw mte MtsConfigTraffic 0 0 0 [0 0 0 -1(1)] [] [0]",\
-                b"forw mte MtsConfigScenario 1{11520 1{0 0} 1{0 0} []}",\
-                b"forw mte SetUEGroupContext 0",\
-                b"forw mte UsimConfig 1([001010123456063+1 2] [] [1] [] []) [] [] [000102030405060708090A0B0C0D0E0F] [] [] []",\
-                b"forw mte PhyConfigSysCap 1 4 4",\
-                b"forw mte RrcAptConfigCellSelection 18700 [0 [0]]",\
-                b"forw mte RrcAptConfigUeCap [[] [] [] [] [] [] []] [0]",\
-                b"forw mte NasAptConfigCapability [3] [224] [224] [] [] [] [3]",\
-                b"forw mte NasAptConfigIdentity [1234567898UE%5] [12345678987UE%5]",\
-                b"forw mte NasAptConfigPlmnSelection 001001",\
-                b"forw mte Activate -1"
+              b"forw l1 SetPortMapping 1",\
+              b"forw mte SetMueRadioContextCell 0 0 18700 10",\
+              b"forw mte PhyCalibrateUlPowerOffset [0]",\
+              b"forw mte PhyConfigUlInterference -37 [0] [0]",\
+              b"forw mte DeConfigRdaStartTestCase 1 10.133.0.204 [] [1_UE_UDP] [] [1]",\
+              b"forw mte MtsConfigEnb 1{0 0 0 1{0 18700 200 [0 120 0 0(0)] [9]}} [1]",\
+              b"forw mte MtsConfigUeGroup 0 0 1{0}",\
+              b"forw mte MtsConfigPath 0 1{24 53}",\
+              b"forw mte MtsConfigMobility 0 0 0 1 0 0 0 -80",\
+              b"forw mte MtsConfigTrafficProfile 0 1{internet 2{0(ctera_DL -1) 0 [],0(ctera_UL -1) 0 []} [] [] []} []",\
+              b"forw mte MtsConfigTraffic 0 0 0 [0 0 0 -1(1)] [] [0]",\
+              b"forw mte MtsConfigScenario 1{11520 1{0 0} 1{0 0} []}",\
+              b"forw mte SetUEGroupContext 0",\
+              b"forw mte UsimConfig 1([001010123456063+1 2] [] [1] [] []) [] [] [000102030405060708090A0B0C0D0E0F] [] [] []",\
+              b"forw mte PhyConfigSysCap 1 4 4",\
+              b"forw mte RrcAptConfigCellSelection 18700 [0 [0]]",\
+              b"forw mte RrcAptConfigUeCap [[] [] [] [] [] [] []] [0]",\
+              b"forw mte NasAptConfigCapability [3] [224] [224] [] [] [] [3]",\
+              b"forw mte NasAptConfigIdentity [1234567898UE%5] [12345678987UE%5]",\
+              b"forw mte NasAptConfigPlmnSelection 001001",\
+              b"forw mte Activate -1"
 
         self.send(seq)
 
@@ -433,6 +450,13 @@ class CobhamTM500(lb.TelnetDevice):
         self.send('#$$CONNECT')
     
     def disconnect (self):
-        self.send('#$$STOP_LOGGING')
-        self.send('#$$DISCONNECT')        
+        try:
+            self.stop()
+        except:
+            pass
+
+        try:
+            self.send('#$$DISCONNECT')
+        except:
+            pass
         super(CobhamTM500,self).disconnect()
