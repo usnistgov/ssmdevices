@@ -1,0 +1,22 @@
+#$$START_LOGGING
+forw l1 SetPortMapping 1
+forw mte SetMueRadioContextCell 0 0 18700 10
+forw mte PhyCalibrateUlPowerOffset [0]
+forw mte PhyConfigUlInterference -37 [0] [0]
+forw mte DeConfigRdaStartTestCase 1 10.133.0.204 [] [1_UE_UDP] [] [1]
+forw mte MtsConfigEnb 1{0 0 0 1{0 18700 200 [0 120 0 0(0)] [9]}} [1]
+forw mte MtsConfigUeGroup 0 0 1{0}
+forw mte MtsConfigPath 0 1{24 53}
+forw mte MtsConfigMobility 0 0 0 1 0 0 0 -80
+forw mte MtsConfigTrafficProfile 0 1{internet 2{0(ctera_DL -1) 0 [],0(ctera_UL -1) 0 []} [] [] []} []
+forw mte MtsConfigTraffic 0 0 0 [0 0 0 -1(1)] [] [0]
+forw mte MtsConfigScenario 1{120 1{0 0} 1{0 0} []}
+forw mte SetUEGroupContext 0
+forw mte UsimConfig 1([001010123456063+1 2] [] [1] [] []) [] [] [000102030405060708090A0B0C0D0E0F] [] [] []
+forw mte PhyConfigSysCap 1 4 4
+forw mte RrcAptConfigCellSelection 18700 [0 [0]]
+forw mte RrcAptConfigUeCap [[] [] [] [] [] [] []] [0]
+forw mte NasAptConfigCapability [3] [224] [224] [] [] [] [3]
+forw mte NasAptConfigIdentity [1234567898UE%5] [12345678987UE%5]
+forw mte NasAptConfigPlmnSelection 001001
+forw mte Activate -1
