@@ -16,7 +16,8 @@ import labbench as lb
 import logging, time, os, ssmdevices
 logger = logging.getLogger('labbench')
 
-class CobhamTM500(lb.TelnetDevice):   
+
+class CobhamTM500(lb.TelnetDevice):
     ''' Control a Cobham TM500 network tester with a
         telnet connection.
 
