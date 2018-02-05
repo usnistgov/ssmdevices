@@ -53,7 +53,11 @@ class CobhamTM500(lb.TelnetDevice):
               b'forw mte Activate': 1
               }
 
-    def send(self, msg, data_lines=1, alt_ack=None):
+    # Special cases of acknowledgment responses
+    alt_responses = {b'forw mte MtsClearMts': 'I: CMPI MTE 0',
+                     b'forw mte DeConfigRdaStartTestCase': 'I: CMPI DTE RDA TEST GROUP STARTED IND'}
+
+    def send(self, msg, data_lines=1):
         ''' Send a message, then block while waiting for the response.
         
             :param msg: str or bytes containing the message to send
@@ -73,11 +77,12 @@ class CobhamTM500(lb.TelnetDevice):
             msg = msg.encode('ascii')        
         self.backend.write(msg+b'\r')
         
-        # Identify the format of the expected response
-        if alt_ack is not None:
-            if isinstance(alt_ack, str):
-                alt_ack = alt_ack.encode('ascii')
-            rsp = alt_ack
+        # Identify the format of the expected response. Use the exception
+        # if there is one, otherwise default to the response that starts 'C: '
+        for check_msg, alt_ack in self.alt_responses.items():
+            if msg.lower().startswith(check_msg.lower()):
+                rsp = alt_ack
+                break
         else:
             rsp = msg.split(b' ')[0]
             if rsp.startswith(b'#$$'):
@@ -95,7 +100,7 @@ class CobhamTM500(lb.TelnetDevice):
 
         # Add a delay, if this message starts with a command that needs a delay
         for delay_msg, delay in self.delays.items():
-            if msg.startswith(delay_msg):
+            if msg.lower().startswith(delay_msg.lower()):
                 time.sleep(delay)
                 logger.debug('sleep {} sec'.format(delay))
 
@@ -115,21 +120,16 @@ class CobhamTM500(lb.TelnetDevice):
             seq = f.readlines()
         return self.send(seq)
 
-    def setup (self):
+    def setup(self):
         return self.send_from_config('setup.txt')
 
-    def start (self):
+    def start(self):
         return self.send_from_config('start.txt')
 
-    def stop (self):
+    def stop(self):
         return self.send_from_config('stop.txt')
 
-    def connect (self):
-        super(CobhamTM500, self).connect()
-        self.send("#$$PORT 10.133.0.203 5001 5002 5003")
-        self.send('#$$CONNECT')
-    
-    def disconnect (self):
+    def disconnect(self):
         try:
             self.stop()
         except:
