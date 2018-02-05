@@ -33,7 +33,7 @@ class CobhamTM500(lb.TelnetDevice):
         timeout = lb.LocalFloat(5, min=0, is_metadata=True)
         port = lb.LocalInt(5003, min=1, is_metadata=True)
 
-    # Define time delays needed after specified commands
+    # Define time delays needed after specified commands (in sec)
     delays = {b'SCFG MTS_MODE': 2,
               b'GVER': 1,
               b'STRT': 2}
@@ -53,7 +53,12 @@ class CobhamTM500(lb.TelnetDevice):
             
             :returns: decoded string containing the response
         '''
-        
+
+        # First, if this is a sequence of messages, work through them one by one
+        if hasattr(msg, '__iter__') and not isinstance(msg, (str,bytes)):
+            for m in msg:
+                self.send(m)
+
         # Send the message
         logger.debug('{} <- {}'.format(repr(self),msg))        
         if isinstance(msg, str):
@@ -391,11 +396,7 @@ class CobhamTM500(lb.TelnetDevice):
                 b"#$$LC_CAT 1038 1 0 0 #GRP:RealDataApplicationLog",\
                 b"#$$LC_END"
 
-        self.send_sequence(seq)
-
-    def send_sequence (self, seq):
-        for msg in seq:
-            self.send(msg)
+        self.send(seq)
 
     def start (self):
         seq = b"#$$START_LOGGING",\
@@ -421,7 +422,7 @@ class CobhamTM500(lb.TelnetDevice):
                 b"forw mte NasAptConfigPlmnSelection 001001",\
                 b"forw mte Activate -1"
 
-        self.send_sequence(seq)
+        self.send(seq)
 
     def stop (self):
         self.send(b"#$$STOP_LOGGING")
