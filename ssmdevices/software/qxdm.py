@@ -50,7 +50,7 @@ class QXDM(lb.Win32ComDevice):
         save_base_name       = lb.LocalUnicode("", is_metadata=True,
                                            help=''' base file name for QXDM auto-save feature. QXDM will
                                                     append a non-optional date/time string to each isf file.''')
-        save_size_limit_MB   = lb.LocalInt(0, min=0, is_metadata=True,
+        save_size_limit_MB   = lb.LocalInt(1000, min=0, is_metadata=True,
                                            help='.isf file will be auto-saved and a new one started if size exceeds this limit')
         save_time_limit      = lb.LocalInt(0, min=0, is_metadata=True,
                                            help='.isf file will be auto-saved and a new one started if duration exceeds this limit')
