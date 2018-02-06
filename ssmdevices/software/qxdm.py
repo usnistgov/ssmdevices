@@ -15,11 +15,8 @@ standard_library.install_aliases()
 __all__ = ['QXDM']
 
 import labbench as lb
-import time,logging,os
+import time,os
 from shutil import copyfile
-
-logger = logging.getLogger('labbench')
-
 
 class QXDM(lb.Win32ComDevice):
     """
@@ -75,20 +72,20 @@ class QXDM(lb.Win32ComDevice):
         if not os.path.isfile(self.state.config_directory_in):
             raise Exception("self.state.config_directory_in {} does not exist.".format(self.state.config_directory_in))
         # If necessary, edit qxdm .dmc config file
-        if self.state.outConfigFilePath == '':
+        if self.state.config_directory_out == '':
             self.configFilePath = self.state.config_directory_in
-            logger.info('Using config file at {}'.format(self.configFilePath))
+            lb.logger.info('Using config file at {}'.format(self.configFilePath))
             if self.state.save_base_name != '' or self.state.save_directory != '' or (self.state.save_size_limit_MB != 0) or (
                 self.state.save_time_limit != 0):
                 raise Exception('outConfigFilePath must be provided if using any non-default optional input values')
         else:  # i.e. outConfigFilePath != ''
-            copyfile(self.state.config_directory_in, self.state.outConfigFilePath)
-            self.configFilePath = self.state.outConfigFilePath
+            copyfile(self.state.config_directory_in, self.state.config_directory_out)
+            self.configFilePath = self.state.config_directory_out
             # make sure auto-saving and quick saving options are enabled, with no user prompt/query
             self.configFileEdit(self.configFilePath, '<QuickISFSave>', '</QuickISFSave>', '1')
             self.configFileEdit(self.configFilePath, '<QueryISFSave>', '</QueryISFSave>', '0')
 
-            logger.info('Writing options to new config file at {}...'.format(self.configFilePath))
+            lb.logger.info('Writing options to new config file at {}...'.format(self.configFilePath))
             if self.state.save_base_name != '':
                 self.state.save_base_name = os.path.splitext(self.state.save_base_name)[0]  # remove any file extension
                 self.configFileEdit(self.configFilePath, '<BaseISFName>', '</BaseISFName>', self.state.save_base_name)
@@ -108,7 +105,7 @@ class QXDM(lb.Win32ComDevice):
                 self.configFileEdit(self.configFilePath, '<MaxISFDuration>', '</MaxISFDuration>', str(0))
                 self.configFileEdit(self.configFilePath, '<MaxISFDurationFraction>', '</MaxISFDurationFraction>',
                                     str(self.state.save_time_limit))
-            logger.info('...done with config file write.')
+            lb.logger.info('...done with config file write.')
 
             # Ensure that auto-save is enabled so that the log will be saved in the proper location
         # when QXDM exits
@@ -119,13 +116,13 @@ class QXDM(lb.Win32ComDevice):
     def start(self):
         # Load in desired configuration file
         self.qxdmObj.LoadConfig(self.configFilePath)
-        logger.info('Loaded QXDM config file: {}'.format(self.configFilePath))
+        lb.logger.info('Loaded QXDM config file: {}'.format(self.configFilePath))
         time.sleep(1)
         # Loading a new config should force QXDM to write a "temporary" .isf file containing
         # whatever hasn't already been saved.  To be safe, this needs to be renamed with the
         # .isf base name, even though there shouldn't be much data in it
         if self.renameLatestISF(5, '00-Initial') is False:
-            logger.warn('No new auto-save .isf detected upon loading config file. Hopefully everything is working okay...')
+            lb.logger.warn('No new auto-save .isf detected upon loading config file. Hopefully everything is working okay...')
         # Make sure UE is connected; try to connect if it's not
         nIter = 0
         nIterMax = 5
@@ -137,27 +134,27 @@ class QXDM(lb.Win32ComDevice):
             ueConnectedFlag = self.qxdmObj.IsPhoneConnected
             time.sleep(1)
             nIter += 1
-        logger.info('After {} attempt(s), self.qxdmObj.IsPhoneConnected = {}'\
+        lb.logger.info('After {} attempt(s), self.qxdmObj.IsPhoneConnected = {}'\
                     .format(nIter, self.qxdmObj.IsPhoneConnected))
         if self.qxdmObj.IsPhoneConnected is False:
             raise Exception("UE not connected to QXDM.")
 
-        logger.info('QXDM acquisition started.')
+        lb.logger.info('QXDM acquisition started.')
         if self.state.save_size_limit_MB != 0 and self.state.save_size_limit_MB != 0:
-            logger.info('New .isf will be saved whenever file size exceeds {} MB.'.format(self.state.save_size_limit_MB))
+            lb.logger.info('New .isf will be saved whenever file size exceeds {} MB.'.format(self.state.save_size_limit_MB))
         if self.state.save_time_limit != 0 and self.state.save_time_limit != 0:
-            logger.info('New .isf will be saved every {} minutes.'.format(self.state.save_time_limit))
+            lb.logger.info('New .isf will be saved every {} minutes.'.format(self.state.save_time_limit))
 
     def stop(self):
-        logger.info('Terminating QXDM acquisition...')
+        lb.logger.info('Terminating QXDM acquisition...')
         self.qxdmObj.QuitApplication()
         time.sleep(1)
         # Quitting the application should force QXDM to write a "temporary" .isf file containing
         # whatever hasn't already been saved.  This needs to be renamed with the .isf base name.
         renameISFFlag = self.renameLatestISF(60, '99-Final')
-        logger.info('...finished terminating QXDM application')
+        lb.logger.info('...finished terminating QXDM application')
         if renameISFFlag is False:
-            logger.warn(''' Did not detect QXDM auto-save file upon QXDM exit.
+            lb.logger.warn(''' Did not detect QXDM auto-save file upon QXDM exit.
                             Data since previous .isf save (if any) may not be in directory {}''' \
                         .format(self.state.save_directory))
 
@@ -200,22 +197,22 @@ class QXDM(lb.Win32ComDevice):
                     except:
                         doneFlag = False
                         if printRenameAttemptFlag:
-                            logger.warn('Exception occurred during first attempt to rename file {}'.format(latestFilePath))
-                            logger.warn('Will wait and reattempt up to {} times.'.format(maxTries - nTries))
+                            lb.logger.warn('Exception occurred during first attempt to rename file {}'.format(latestFilePath))
+                            lb.logger.warn('Will wait and reattempt up to {} times.'.format(maxTries - nTries))
                             printRenameAttemptFlag = False
                             time.sleep(1)
                 else:  # i.e., self.state.save_base_name in latestFilePath
                     if printWrongLatestFileFlag == True:
-                        logger.warn('Latest file {} already contains basename {}.'\
+                        lb.logger.warn('Latest file {} already contains basename {}.'\
                                     .format(latestFilePath, self.state.save_base_name))
-                        logger.warn('Will wait and recheck up to {} times for final QXDM auto-save file.'\
+                        lb.logger.warn('Will wait and recheck up to {} times for final QXDM auto-save file.'\
                                     .format(maxTries - nTries))
                         printWrongLatestFileFlag = False
                         time.sleep(1)
             else:  # i.e. len(tmpFilePathList) == 0, no .isf files in folder
                 if nTries == 1:
-                    self.info('No new .isf files detected yet.')
-                    self.info('Will wait and recheck up to {} times.'.format(maxTries))
+                    lb.logger.info('No new .isf files detected yet.')
+                    lb.logger.info('Will wait and recheck up to {} times.'.format(maxTries))
         return doneFlag
 
     def configFileEdit(self, configFilePath, itemStartStr, itemEndStr, newItemStr,
@@ -248,9 +245,13 @@ class QXDM(lb.Win32ComDevice):
 
 
 if __name__ == '__main__':
+    import labbench as lb
+    
+    lb.show_messages('debug')
+    
     resource = 10
-    base_path = r'C:\Python Code'
-    name = 'ZZVXF_'
+    base_path = r'C:\Python Code\potato'
+    name = 'ZZVXF4_'
     config = {  # unique label for the experiment. QXDM will append a simple time/date string to
                 # this for quick-save files
                 'save_base_name': name,
@@ -265,7 +266,7 @@ if __name__ == '__main__':
                 'config_directory_out': os.path.join(base_path, name + 'Config.dmc'),
 
                 # .isf file will be saved/restarted when size exceeds this (set to 0 for unlimited file size)
-                'save_size_limit_MB': 10000,
+                'save_size_limit_MB': 1000,
 
                 # .isf file will be saved/restarted when duration exceeds this (set to 0 for unlimited duration)
                 'save_time_limit': 0
@@ -277,8 +278,9 @@ if __name__ == '__main__':
         # Start acquisition
         qxdm.start()
 
+        print('sleeping')
         # Let QXDM run for however long
-        time.sleep(220 * 60)
+        time.sleep(30)
 
         # Close QXDM and make sure that the last of the unsaved .isf data is saved and named properly.
         qxdm.stop()
