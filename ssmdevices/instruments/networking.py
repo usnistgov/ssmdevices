@@ -13,9 +13,7 @@ standard_library.install_aliases()
 __all__ = ['CobhamTM500']
 
 import labbench as lb
-import logging, time, os, ssmdevices
-logger = logging.getLogger('labbench')
-
+import logging, time, os, ssmdevices.etc
 
 class CobhamTM500(lb.TelnetDevice):
     ''' Control a Cobham TM500 network tester with a
@@ -32,7 +30,8 @@ class CobhamTM500(lb.TelnetDevice):
     class state(lb.TelnetDevice.state):
         timeout = lb.LocalFloat(5, min=0, is_metadata=True)
         port    = lb.LocalInt(5003, min=1, is_metadata=True)
-        config  = lb.LocalUnicode(lb.default_config(CobhamTM500, ssmdevices), is_metadata=True)
+        config_path  = lb.LocalUnicode('', is_metadata=True,
+                                       help='path to the directory containing sequences of commands')
 
     # Define time delays needed after a few command special cases (in sec)
     delays = {b'SCFG MTS_MODE':   2,
@@ -72,7 +71,7 @@ class CobhamTM500(lb.TelnetDevice):
             return [self.send(m) for m in msg]
 
         # Send the message
-        logger.debug('{} <- {}'.format(repr(self),msg))        
+        lb.logger.debug('{} <- {}'.format(repr(self),msg))
         if isinstance(msg, str):
             msg = msg.encode('ascii')        
         self.backend.write(msg+b'\r')
@@ -96,18 +95,18 @@ class CobhamTM500(lb.TelnetDevice):
         ret = ''
         for i in range(data_lines):
             ret += self.backend.read_until(b'\r').decode('ascii')
-        logger.debug('{} -> {}'.format(repr(self), ret))
+        lb.logger.debug('{} -> {}'.format(repr(self), ret))
 
         # Add a delay, if this message starts with a command that needs a delay
         for delay_msg, delay in self.delays.items():
             if msg.lower().startswith(delay_msg.lower()):
                 time.sleep(delay)
-                logger.debug('sleep {} sec'.format(delay))
+                lb.logger.debug('sleep {} sec'.format(delay))
 
                 # Receive any other data received during the delay
                 extra = self.backend.read_very_eager()
                 if extra:
-                    logger.debug('{} -> {}'.format(repr(self), extra))
+                    lb.logger.debug('{} -> {}'.format(repr(self), extra))
                     ret += b'\n'+extra
                 break
 
@@ -115,7 +114,7 @@ class CobhamTM500(lb.TelnetDevice):
 
     def send_from_config(self, name):
         path = os.path.join(self.state.config_dir, name)
-        logger.debug('loading message sequence from {}'.format(repr(path)))
+        lb.logger.debug('loading message sequence from {}'.format(repr(path)))
         with open(path, 'r') as f:
             seq = f.readlines()
         return self.send(seq)
@@ -128,6 +127,11 @@ class CobhamTM500(lb.TelnetDevice):
 
     def stop(self):
         return self.send_from_config('stop.txt')
+
+    def connect(self):
+        if self.state.config_path == '':
+            self.state.config_path = ssmdevices.etc.default_config(self.__class__)
+        super(CobhamTM500, self).connect()
 
     def disconnect(self):
         try:
