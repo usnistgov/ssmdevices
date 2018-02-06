@@ -156,7 +156,7 @@ class QXDM(lb.Win32ComDevice):
         # whatever hasn't already been saved.  This needs to be renamed with the .isf base name.
         renameISFFlag = self.renameLatestISF(60, '99-Final')
         logger.info('...finished terminating QXDM application')
-        if renameISFFlag == False:
+        if renameISFFlag is False:
             logger.warn(''' Did not detect QXDM auto-save file upon QXDM exit.
                             Data since previous .isf save (if any) may not be in directory {}''' \
                         .format(self.state.save_directory))
