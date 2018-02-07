@@ -51,6 +51,8 @@ class QXDM(lb.Win32ComDevice):
                                            help='.isf file will be auto-saved and a new one started if size exceeds this limit')
         save_time_limit      = lb.LocalInt(0, min=0, is_metadata=True,
                                            help='.isf file will be auto-saved and a new one started if duration exceeds this limit')
+        latest_save_path     = lb.LocalUnicode('',
+                                               help='the path of most recently saved .isf file')
 
     def setup(self):
         ''' This is run automatically immediately after .connect(), or before the with block
@@ -190,9 +192,10 @@ class QXDM(lb.Win32ComDevice):
                 # If it's the QXDM temporary log file, the file name won't contain self.state.save_base_name
                 if self.state.save_base_name not in latestFilePath:
                     try:
-                        newName = os.path.join(self.state.save_directory,
+                        newPath = os.path.join(self.state.save_directory,
                                                self.state.save_base_name + endStr + '.isf')
-                        os.rename(latestFilePath, newName)
+                        os.rename(latestFilePath, newPath)
+                        self.state.latest_save_path = newPath
                         doneFlag = True
                     except:
                         doneFlag = False
