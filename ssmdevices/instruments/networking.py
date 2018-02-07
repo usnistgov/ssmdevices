@@ -13,7 +13,7 @@ standard_library.install_aliases()
 __all__ = ['CobhamTM500']
 
 import labbench as lb
-import logging, time, os, ssmdevices.etc
+import time, os, ssmdevices.etc
 
 class CobhamTM500(lb.TelnetDevice):
     ''' Control a Cobham TM500 network tester with a
@@ -28,7 +28,9 @@ class CobhamTM500(lb.TelnetDevice):
     '''
 
     class state(lb.TelnetDevice.state):
-        timeout = lb.LocalFloat(5, min=0, is_metadata=True)
+        timeout = lb.LocalFloat(1, min=0, is_metadata=True,
+                                help='leave the timeout small to allow keyboard interrupts')
+        ack_retries = lb.LocalInt(20, min=1, is_metadata=True)
         port    = lb.LocalInt(5003, min=1, is_metadata=True)
         config_path  = lb.LocalUnicode('', is_metadata=True,
                                        help='path to the directory containing sequences of commands')
@@ -53,8 +55,8 @@ class CobhamTM500(lb.TelnetDevice):
               }
 
     # Special cases of acknowledgment responses
-    alt_responses = {b'forw mte MtsClearMts': 'I: CMPI MTE 0',
-                     b'forw mte DeConfigRdaStartTestCase': 'I: CMPI DTE RDA TEST GROUP STARTED IND'}
+    alt_responses = {b'forw mte MtsClearMts': b'I: CMPI MTE 0',
+                     b'forw mte DeConfigRdaStartTestCase': b'I: CMPI DTE RDA TEST GROUP STARTED IND'}
 
     def send(self, msg, data_lines=1):
         ''' Send a message, then block while waiting for the response.
@@ -71,10 +73,13 @@ class CobhamTM500(lb.TelnetDevice):
             return [self.send(m) for m in msg]
 
         # Send the message
-        lb.logger.debug('{} <- {}'.format(repr(self),msg))
         if isinstance(msg, str):
-            msg = msg.encode('ascii')        
-        self.backend.write(msg+b'\r')
+            msg = msg.encode('ascii')
+        msg = msg.strip().rstrip()
+        if len(msg) == 0:
+            return ''
+        lb.logger.debug('{} - send {}'.format(repr(self),repr(msg)))
+        self.backend.write(msg + b'\r')
         
         # Identify the format of the expected response. Use the exception
         # if there is one, otherwise default to the response that starts 'C: '
@@ -86,40 +91,56 @@ class CobhamTM500(lb.TelnetDevice):
             rsp = msg.split(b' ')[0]
             if rsp.startswith(b'#$$'):
                 rsp = rsp[3:]
-            rsp + b'C: ' + rsp
-        
-        # Block until the expected response is received
-        self.backend.read_until(rsp)
-        
-        # Receive any status response
-        ret = ''
-        for i in range(data_lines):
-            ret += self.backend.read_until(b'\r').decode('ascii')
-        lb.logger.debug('{} -> {}'.format(repr(self), ret))
+            rsp = b'C: ' + rsp + b' '
 
         # Add a delay, if this message starts with a command that needs a delay
         for delay_msg, delay in self.delays.items():
             if msg.lower().startswith(delay_msg.lower()):
-                time.sleep(delay)
                 lb.logger.debug('sleep {} sec'.format(delay))
-
-                # Receive any other data received during the delay
-                extra = self.backend.read_very_eager()
-                if extra:
-                    lb.logger.debug('{} -> {}'.format(repr(self), extra))
-                    ret += b'\n'+extra
+                time.sleep(delay)
                 break
 
-        return ret
+        # Block until the expected response is received
+        
+        lb.logger.debug('{} - waiting for {}'.format(repr(self),repr(rsp)))
+        for i in range(self.state.ack_retries):
+            ret = self.backend.read_until(rsp.upper(), self.state.timeout)
+            if len(ret.strip()) > 0:
+                break
+        else:
+            raise TimeoutError('response timeout')
+        
+        # Receive any status response
+        ret = b''
+        for i in range(data_lines):
+            ret += self.backend.read_until(b'\r')
+            if i == 0 and int(ret.strip().split(b' ',1)[0],16) != 0:
+                raise ValueError('Error in message {}: {}'\
+                                 .format(repr(msg), repr(ret)))
+
+        # Receive any other data received during the delay
+        extra = self.backend.read_very_eager().strip().rstrip()
+        if extra:
+            lb.logger.debug('{} -> {}'.format(repr(self), extra))
+            ret += b'\n'+extra
+
+        lb.logger.debug('{} - received {}'.format(repr(self), ret.decode('ascii')))
+
+        return ret.decode('ascii')
 
     def send_from_config(self, name):
-        path = os.path.join(self.state.config_dir, name)
+        path = os.path.join(self.state.config_path, name)
         lb.logger.debug('loading message sequence from {}'.format(repr(path)))
         with open(path, 'r') as f:
             seq = f.readlines()
         return self.send(seq)
 
     def setup(self):
+        try:
+            self.send('#$$DISCONNECT')
+        except ValueError:
+            pass
+
         return self.send_from_config('setup.txt')
 
     def start(self):
@@ -130,7 +151,7 @@ class CobhamTM500(lb.TelnetDevice):
 
     def connect(self):
         if self.state.config_path == '':
-            self.state.config_path = ssmdevices.etc.default_config(self.__class__)
+            self.state.config_path = ssmdevices.etc.default_path(self.__class__)
         super(CobhamTM500, self).connect()
 
     def disconnect(self):
