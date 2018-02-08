@@ -50,7 +50,9 @@ GPS Receivers
 |---|---|
 | Dan Kuester (maintainer)  |  <daniel.kuester@nist.gov> |
 | Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
+| Andre Rosete        | <andre.rosete@nist.gov> |
 | Ryan Jacobs | <ryan.jacobs@nist.gov> |
+| Alex Curtin | <alexandra.curtin@nist.gov> |
 | John Ladbury | <john.ladbury@nist.gov> |
 | Paul Blanchard | <paul.blanchard@nist.gov> |
 | Yao Ma | <yao.ma@nist.gov> |
