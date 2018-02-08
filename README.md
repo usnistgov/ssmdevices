@@ -48,7 +48,7 @@ Virtual software "instruments"
 * Qualcomm QXDM
  
 Misc. Test Electronics
-* Acroname USBHub 2x4
+* Acroname USBHub 2x4 (python 2.7 only)
 
 GPS Receivers
 * SwiftNav Piksi
