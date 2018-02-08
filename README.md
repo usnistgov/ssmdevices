@@ -18,22 +18,25 @@ That's it.
 * [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench#how-to)
 
 ## Device Support
-RF power sensors
+Power sensors
 * Keysight U2000 X series
 * Rohde Schwarz NRP Series
 
-RF signal analyzers
+Signal analyzers
 * Rohde Schwarz FSW series 
 
-RF signal generators
+Signal generators
 * Rohde Schwarz SMW series
 * Spirent GSS8000 GNSS Simulator
 
-RF switches
+Switches
 * Minicircuits SPnT USB switches
 
-RF attenuators
+Attenuators
 * Minicircuits RCDAT series
+
+Motors
+* ETS Lindgren Azi2005
 
 Networking test instruments
 * Cobham TM500 load tester
