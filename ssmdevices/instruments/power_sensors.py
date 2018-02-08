@@ -52,9 +52,6 @@ class RohdeSchwarzNRPSeries(VISADevice):
         'RSNRP::0x00e2::103892::INSTR'.
     '''
 
-    read_termination = ''
-    write_termination = '\n'
-
     class state(VISADevice.state):
         # output_trigger = lb.Bool(command='OUTP:TRIG')
         #
@@ -88,6 +85,8 @@ class RohdeSchwarzNRPSeries(VISADevice):
         average_enable = lb.Bool(command='AVER', trues=['ON'], falses=['OFF'])
         smoothing_enable = lb.Bool(command='SMO:STAT', trues=['ON'], falses=['OFF'], write_only=True)
         options = lb.LocalDict({}, read_only=True)
+
+        read_termination  = core.LocalUnicode('', read_only='connected')
 
         # unit = lb.CaselessStrEnum(command='UNIT:POW', values=['DBM','W','DBUV']) # seems to fail
         # format = lb.CaselessStrEnum(command='FORMat:DATA', values=['REAL', 'ASCII']) # Seems to fail

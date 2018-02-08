@@ -2,7 +2,7 @@
 
 """ Network test instrument control classes
 
-:author: Aziz Kord <azizollah.kord@nist.gov>, Daniel Kuester <daniel.kuester@nist.gov>
+:author: Aziz Kord <azizollah.kord@nist.gov>, Dan Kuester <daniel.kuester@nist.gov>
 """
 from __future__ import unicode_literals
 from __future__ import absolute_import
@@ -101,7 +101,6 @@ class CobhamTM500(lb.TelnetDevice):
                 break
 
         # Block until the expected response is received
-        
         lb.logger.debug('{} - waiting for {}'.format(repr(self),repr(rsp)))
         for i in range(self.state.ack_retries):
             ret = self.backend.read_until(rsp.upper(), self.state.timeout)
@@ -148,6 +147,9 @@ class CobhamTM500(lb.TelnetDevice):
 
     def stop(self):
         return self.send_from_config('stop.txt')
+
+    def reboot(self):
+        self.send('RBOT')
 
     def connect(self):
         if self.state.config_path == '':

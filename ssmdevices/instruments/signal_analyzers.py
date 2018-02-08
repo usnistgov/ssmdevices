@@ -165,7 +165,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
             path = path + '.dfl'
 
         if self.file_info(path) is None:
-            raise lb.RemoteException('there is no file to load on the instrument at path "{}"'\
+            raise lb.DeviceException('there is no file to load on the instrument at path "{}"'\
                                      .format(path))
 
         self.write("MMEM:LOAD:STAT 1,'{}'".format(path))
@@ -176,7 +176,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
         try:
             self.load_state(cache_name, self.cache_dir)
-        except lb.RemoteException:
+        except lb.DeviceException:
             return False
         else:
             logger.debug('Successfully loaded cached save file')
@@ -272,7 +272,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         logger.debug(logger.debug('{}.query <- {}'.format(repr(self),msg)))
 
         # The read_termination seems to cause unwanted behavior in self.backend.visalib.read
-        self.backend.read_termination, old_read_term = None, self.backend.read_termination
+        self.backend.state.read_termination, old_read_term = None, self.backend.state.read_termination
         self.backend.write(msg)
 
         with self.backend.ignore_warning(VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT):
@@ -290,7 +290,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
             # a "QUERY INTERRUPTED" error when there is unread buffer
             self.backend.visalib.read(self.backend.session, len(old_read_term))
 
-        self.backend.read_termination = old_read_term
+        self.backend.state.read_termination = old_read_term
 
         data = np.frombuffer(raw, np.float32)
         logger.debug('{}.query -> {} bytes ({} values)'.format(repr(self), data_size,data.size))
@@ -354,7 +354,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
     def fetch_timestamps (self, window=None, all=True, timeout=50000):
         ''' Fetch data timestamps associated with acquired data. Not all types of acquired data support timestamping,
             and not all modes support the trace argument. A choice that is incompatible with the current state
-            of the signal analyzer should lead to a pyvisa.TimeoutError.
+            of the signal analyzer should lead to a TimeoutError.
 
         :param all: If True, acquire and return all available timestamps; if False, only the most current timestamp.
         :param window: The window number corresponding to the desired timestamp data (or self.state.default_window when window=None)
@@ -387,7 +387,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         '''
         Fetch a spectrogram without initiating a new trigger. This has been tested in IQ Analyzer and real time
         spectrum analyzer modes. Not all instrument operating modes support trace selection; a choice that is
-        incompatible with the current state of the signal analyzer should lead to a pyvisa.TimeoutError.
+        incompatible with the current state of the signal analyzer should lead to a TimeoutError.
 
         :param freqs: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on FFT parameters), or None (leaving the integer indices)
         :param timestamps: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on sweep time), or None (leaving the integer indices)
