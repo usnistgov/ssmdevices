@@ -35,10 +35,14 @@ RF switches
 RF attenuators
 * Minicircuits RCDAT series
 
+Networking test instruments
+* Cobham TM500 load tester
+
 Virtual software "instruments"
 * iperf version 2
 * UDP sockets control interface for exchanging data with LabView
 * Windows WLAN connection status and control
+* Qualcomm QXDM
  
 Misc. Test Electronics
 * Acroname USBHub 2x4
@@ -52,8 +56,8 @@ GPS Receivers
 | Dan Kuester (maintainer)  |  <daniel.kuester@nist.gov> |
 | Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
 | Andre Rosete        | <andre.rosete@nist.gov> |
+| Paul Blanchard | <paul.blanchard@nist.gov> |
 | Ryan Jacobs | <ryan.jacobs@nist.gov> |
 | Alex Curtin | <alexandra.curtin@nist.gov> |
 | John Ladbury | <john.ladbury@nist.gov> |
-| Paul Blanchard | <paul.blanchard@nist.gov> |
 | Yao Ma | <yao.ma@nist.gov> |
