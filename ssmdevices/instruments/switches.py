@@ -50,8 +50,11 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
 
     @state.port.getter
     def _ (self):
-        return self.backend.Get_SP4T_State()
+        ret = self.backend.Get_SP4T_State()
+        self.logger.debug('got switch state {}'.format(repr(ret)))
+        return ret
 
     @state.port.setter
     def _ (self, value):
+        self.logger.debug('set switch state {}'.format(repr(value)))
         self.backend.Set_SP4T_COM_To(value)

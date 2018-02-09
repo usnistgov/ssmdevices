@@ -51,8 +51,11 @@ class MiniCircuitsRCDAT(DotNetDevice):
         
     @state.attenuation.getter
     def _ (self):
-        return self.backend.Read_Att(0)[1]
+        ret = self.backend.Read_Att(0)[1]
+        self.logger.write('got attenuation {} dB'.format(ret))
+        return ret
 
     @state.attenuation.setter
     def _ (self, value):
+        self.logger.write('set attenuation {} dB'.format(value))
         self.backend.SetAttenuation(value)

@@ -18,9 +18,6 @@ import time,re
 import labbench as lb
 import traitlets as tl
 
-import logging
-logger = logging.getLogger('labbench')
-
 status_messages=[b'no scenario',
                  b'loading',
                  b'ready',
@@ -96,14 +93,14 @@ class SpirentGSS8000(lb.SerialDevice):
                      exception if a data value is returned)
         '''
         self.backend.read(self.backend.inWaiting())        
-        logger.debug('\nGPS SIMULATOR SEND\n{}'.format(repr(command)))        
+        self.logger.debug('write {}'.format(repr(command)))
         self.backend.write('{}\n'.format(command))
         
         # Get the response
         response = b''
         while b'</msg>' not in response.lower():
             response += self.backend.readline()
-        logger.debug(b'\nGPS SIMULATOR RECEIVE\n{}'.format(repr(response)))
+        self.logger.debug(b'  <- {}'.format(repr(response)))
         self.backend.read(self.backend.inWaiting()) # Clear out any remaining data
         
         # Pull the data/error message payload

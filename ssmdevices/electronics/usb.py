@@ -14,9 +14,6 @@ from builtins import str
 from builtins import range
 import labbench as lb
 
-import logging
-logger = logging.getLogger('labbench')
-
 class AcronameUSBHub2x4(lb.Device):
     ''' This class wraps brainstem drivers to simplify control over USB hubs
         via the brainstem package.
@@ -49,8 +46,7 @@ class AcronameUSBHub2x4(lb.Device):
         try:
             import brainstem
         except Exception as e:
-            logger.error('Could not import the brainstem package, a prerequisite for {} control'\
-                         .format(type(self).__name__))
+            self.logger.error('could not import the dependency "brainstem"')
             raise e
             
     def connect (self):

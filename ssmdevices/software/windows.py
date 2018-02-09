@@ -14,8 +14,6 @@ import traitlets as tl
 import re,threading,time,logging
 import subprocess as sp
 
-logger = logging.getLogger('labbench')
-
 class Netsh(lb.CommandLineWrapper):
     ''' Parse calls to netsh to get information about available WLAN access
         points.
@@ -98,6 +96,7 @@ class Netsh(lb.CommandLineWrapper):
                         stderr=sp.PIPE)
         proc.wait()
 
+
 class WLANStatus(lb.Device):
     resource = 'Wi-Fi'
     ssid = None
@@ -122,7 +121,7 @@ class WLANStatus(lb.Device):
                 states[args['name']] = args['new']
             self.state.observe(onchange)
             
-            logger.debug('starting WLAN reconnect watchdog')
+            self.logger.debug('starting WLAN reconnect watchdog')
             iface,target_ssid = self.resource,self.ssid
             time.sleep(0.1)
             
@@ -135,9 +134,9 @@ class WLANStatus(lb.Device):
                         target_ssid = states.get('ssid', None)
                 elif self.state.force_reconnect:
                     if target_ssid is None:
-                        logger.warn("{}, but don't know SSID for reconnection".format(iface))
+                        self.logger.warn("{}, but don't know SSID for reconnection".format(iface))
                     else:
-                        logger.warn("{}, reconnecting to {}".format(iface,target_ssid))
+                        self.logger.warn("{}, reconnecting to {}".format(iface,target_ssid))
                         self.backend.set_interface_connected(self.resource,
                                                              target_ssid)
                         
@@ -152,7 +151,7 @@ class WLANStatus(lb.Device):
         d = self.backend.get_wlan_interfaces()
         if self.resource['interface'] not in d:
             #raise Exception('windows reports no WLAN interface named "{}"'.format(self.resource['interface']))
-            logger.warn('windows reports no WLAN interface named "{}"'.format(self.resource['interface']))
+            self.logger.warn('windows reports no WLAN interface named "{}"'.format(self.resource['interface']))
             return None
         d = d[self.resource['interface']]
         

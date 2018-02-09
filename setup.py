@@ -38,18 +38,18 @@ if __name__ == '__main__':
     import setuptools
     
     setup(name='ssmdevices',
-          version='0.2',
+          version='0.3',
           description='instrument automation drivers',
           author='Dan Kuester',
           author_email='daniel.kuester@nist.gov',
-          url='https://git.ncnr.nist.gov/dkuester/labbench',
+          url='https://gitlab.nist.gov/gitlab/ssm/ssmdevices',
           packages=setuptools.find_packages(),
 #          package_dir={'ssmdevices': 'ssmdevices'},
 #          package_data={'ssmdevices': ['lib/*']},
           include_package_data=True,
           license='NIST',
           install_requires=[
-  		    	        'labbench(>=0.11)',
+  		    	    'labbench(>=0.12)',
                     'pandas(>=0.19.0)',
                     'pyserial(>3.0)',
                     'pyvisa(>=1.8)',

@@ -16,10 +16,6 @@ __all__ = ['KeysightU2000XSeries','RohdeSchwarzNRP8s','RohdeSchwarzNRP18s','Rohd
 import labbench as lb
 from labbench.visa import VISADevice
 import pandas as pd
-import numpy as np
-import logging
-
-logger= logging.getLogger('labbench')
 
 class KeysightU2000XSeries(VISADevice):
     ''' This is my cool driver for Keysight U2040 X-Series power sensors
@@ -86,7 +82,7 @@ class RohdeSchwarzNRPSeries(VISADevice):
         smoothing_enable = lb.Bool(command='SMO:STAT', trues=['ON'], falses=['OFF'], write_only=True)
         options = lb.LocalDict({}, read_only=True)
 
-        read_termination  = core.LocalUnicode('', read_only='connected')
+        read_termination = lb.LocalUnicode('', read_only='connected')
 
         # unit = lb.CaselessStrEnum(command='UNIT:POW', values=['DBM','W','DBUV']) # seems to fail
         # format = lb.CaselessStrEnum(command='FORMat:DATA', values=['REAL', 'ASCII']) # Seems to fail
@@ -127,18 +123,6 @@ class RohdeSchwarzNRPSeries(VISADevice):
             index = None#np.arange(len(response))*(self.state.trace_time/float(self.state.trace_points))
             return pd.to_numeric(pd.Series(response,index=index))
 
-    def disconnect(self):
-        ''' Disconnect the VISA instrument. If you use a `with` block
-            this is handled automatically and you do not need to
-            call this method.
-
-            :returns: None
-        '''
-        try:
-            self.backend.close()
-        except Exception as e:
-            logger.error('VISA: could not disconnect. Traceback: \n' + str(e))
-
     def setup_trace(self, frequency, trace_points, sample_period, trigger_level,
                     trigger_delay, trigger_source):
         '''
@@ -162,6 +146,7 @@ class RohdeSchwarzNRPSeries(VISADevice):
         self.state.trigger_source = trigger_source#'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
         self.state.initiate_continuous = False
         self.wait()
+
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
     class state(RohdeSchwarzNRPSeries):

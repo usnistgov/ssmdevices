@@ -31,6 +31,8 @@ class CobhamTM500(lb.TelnetDevice):
         timeout = lb.LocalFloat(1, min=0, is_metadata=True,
                                 help='leave the timeout small to allow keyboard interrupts')
         ack_retries = lb.LocalInt(20, min=1, is_metadata=True)
+        busy_retries = lb.LocalInt(20, min=0, is_metadata=True)
+
         port    = lb.LocalInt(5003, min=1, is_metadata=True)
         config_path  = lb.LocalUnicode('', is_metadata=True,
                                        help='path to the directory containing sequences of commands')
@@ -59,12 +61,11 @@ class CobhamTM500(lb.TelnetDevice):
                      b'forw mte DeConfigRdaStartTestCase': b'I: CMPI DTE RDA TEST GROUP STARTED IND'}
 
     def send(self, msg, data_lines=1):
-        ''' Send a message, then block while waiting for the response.
+        ''' Send a message, then block until a confirmation message is received.
         
             :param msg: str or bytes containing the message to send
             :param int data_lines: number of lines in the response string            
-            :param alt_ack: expected response indicating acknowledgment of the command, or None to guess
-            
+
             :returns: decoded string containing the response
         '''
 
@@ -78,7 +79,7 @@ class CobhamTM500(lb.TelnetDevice):
         msg = msg.strip().rstrip()
         if len(msg) == 0:
             return ''
-        lb.logger.debug('{} - send {}'.format(repr(self),repr(msg)))
+        self.logger.debug('write {}'.format(repr(msg)))
         self.backend.write(msg + b'\r')
         
         # Identify the format of the expected response. Use the exception
@@ -88,7 +89,7 @@ class CobhamTM500(lb.TelnetDevice):
                 rsp = alt_ack
                 break
         else:
-            rsp = msg.split(b' ')[0]
+            rsp = msg.split(b' ', 1)[0]
             if rsp.startswith(b'#$$'):
                 rsp = rsp[3:]
             rsp = b'C: ' + rsp + b' '
@@ -96,19 +97,12 @@ class CobhamTM500(lb.TelnetDevice):
         # Add a delay, if this message starts with a command that needs a delay
         for delay_msg, delay in self.delays.items():
             if msg.lower().startswith(delay_msg.lower()):
-                lb.logger.debug('sleep {} sec'.format(delay))
+                self.logger.debug('wait {} sec'.format(delay))
                 time.sleep(delay)
                 break
 
-        # Block until the expected response is received
-        lb.logger.debug('{} - waiting for {}'.format(repr(self),repr(rsp)))
-        for i in range(self.state.ack_retries):
-            ret = self.backend.read_until(rsp.upper(), self.state.timeout)
-            if len(ret.strip()) > 0:
-                break
-        else:
-            raise TimeoutError('response timeout')
-        
+        ret = self._read_until(rsp)
+
         # Receive any status response
         ret = b''
         for i in range(data_lines):
@@ -118,18 +112,27 @@ class CobhamTM500(lb.TelnetDevice):
                                  .format(repr(msg), repr(ret)))
 
         # Receive any other data received during the delay
-        extra = self.backend.read_very_eager().strip().rstrip()
-        if extra:
-            lb.logger.debug('{} -> {}'.format(repr(self), extra))
-            ret += b'\n'+extra
+        ret = self.backend.read_very_eager().strip().rstrip()
+        if ret:
+            self.logger.debug('    -> {}'.format(repr(self), extra))
 
-        lb.logger.debug('{} - received {}'.format(repr(self), ret.decode('ascii')))
+        self.logger.debug('    -> {}'.format(ret.decode('ascii')))
 
         return ret.decode('ascii')
 
+    def _read_until (self, rsp):
+        self.logger.debug('awaiting response {}'.format(repr(rsp)))
+        # Block until the expected response is received
+        for i in range(self.state.ack_retries):
+            ret = self.backend.read_until(rsp.upper(), self.state.timeout)
+            if len(ret.strip()) > 0:
+                return ret
+        raise TimeoutError('response timeout')
+
+
     def send_from_config(self, name):
         path = os.path.join(self.state.config_path, name)
-        lb.logger.debug('loading message sequence from {}'.format(repr(path)))
+        self.logger.debug('loading message sequence from {}'.format(repr(path)))
         with open(path, 'r') as f:
             seq = f.readlines()
         return self.send(seq)
