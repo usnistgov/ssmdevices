@@ -1,4 +1,5 @@
-*ssmdevices* are the curated "good" python device drivers for data acquisition with wireless communication systems, instruments, diagnostic software, and lab electronics.
+*ssmdevices* are the curated "good" python device drivers for data acquisition in shared spectrum metrology labs. The supported lab tools target
+wireless communication systems, instruments, diagnostic software, and other miscellaneous lab electronics.
 The drivers are implemented with [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench). Acquired data are packaged into [pandas](http://pandas.pydata.org/) data frames for fast data exploration.
 It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name complications and to restrict
 access based on export control law.
@@ -17,30 +18,37 @@ That's it.
 * [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench#how-to)
 
 ## Device Support
-RF power sensors
+Power sensors
 * Keysight U2000 X series
 * Rohde Schwarz NRP Series
 
-RF signal analyzers
+Signal analyzers
 * Rohde Schwarz FSW series 
 
-RF signal generators
+Signal generators
 * Rohde Schwarz SMW series
 * Spirent GSS8000 GNSS Simulator
 
-RF switches
+Switches
 * Minicircuits SPnT USB switches
 
-RF attenuators
+Attenuators
 * Minicircuits RCDAT series
+
+Motors
+* ETS Lindgren Azi2005
+
+Networking test instruments
+* Cobham TM500 load tester
 
 Virtual software "instruments"
 * iperf version 2
 * UDP sockets control interface for exchanging data with LabView
 * Windows WLAN connection status and control
+* Qualcomm QXDM
  
 Misc. Test Electronics
-* Acroname USBHub 2x4
+* Acroname USBHub 2x4 (python 2.7 only)
 
 GPS Receivers
 * SwiftNav Piksi
@@ -50,7 +58,9 @@ GPS Receivers
 |---|---|
 | Dan Kuester (maintainer)  |  <daniel.kuester@nist.gov> |
 | Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
-| Ryan Jacobs | <ryan.jacobs@nist.gov> |
-| John Ladbury | <john.ladbury@nist.gov> |
+| Andre Rosete        | <andre.rosete@nist.gov> |
 | Paul Blanchard | <paul.blanchard@nist.gov> |
+| Ryan Jacobs | <ryan.jacobs@nist.gov> |
+| Alex Curtin | <alexandra.curtin@nist.gov> |
+| John Ladbury | <john.ladbury@nist.gov> |
 | Yao Ma | <yao.ma@nist.gov> |
