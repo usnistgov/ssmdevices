@@ -62,5 +62,6 @@ GPS Receivers
 | Paul Blanchard | <paul.blanchard@nist.gov> |
 | Ryan Jacobs | <ryan.jacobs@nist.gov> |
 | Alex Curtin | <alexandra.curtin@nist.gov> |
+| Audrey Puls | <audrey.puls@nist.gov> |
 | John Ladbury | <john.ladbury@nist.gov> |
 | Yao Ma | <yao.ma@nist.gov> |
