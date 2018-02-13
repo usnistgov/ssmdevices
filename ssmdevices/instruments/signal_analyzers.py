@@ -406,8 +406,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
             old_timeout = timeout
                                             
 
-        #with self.suppress_timeout():
-        if True:
+        with self.suppress_timeout():
             if window is None:
                 window = self.state.default_window
 
