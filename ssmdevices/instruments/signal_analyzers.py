@@ -270,25 +270,26 @@ class RohdeSchwarzFSW26Base(VISADevice):
         self.logger.debug('query {}'.format(msg))
 
         # The read_termination seems to cause unwanted behavior in self.backend.visalib.read
-        self.backend.state.read_termination, old_read_term = None, self.backend.state.read_termination
+        self.backend.read_termination, old_read_term = None, self.backend.read_termination
         self.backend.write(msg)
 
-        with self.backend.ignore_warning(VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT):
-            # Reproduce the behavior of pyvisa.util.from_ieee_block without
-            # a priori access to the entire buffer.
-            raw, _ = self.backend.visalib.read(self.backend.session, 2)
-            digits = int(raw.decode('ascii')[1])
-            raw, _ = self.backend.visalib.read(self.backend.session, digits)
-            data_size = int(raw.decode('ascii'))
-
-            # Read the actual data
-            raw, _ = self.backend.visalib.read(self.backend.session, data_size)
-
-            # Read termination characters so that the instrument doesn't show
-            # a "QUERY INTERRUPTED" error when there is unread buffer
-            self.backend.visalib.read(self.backend.session, len(old_read_term))
-
-        self.backend.state.read_termination = old_read_term
+        try:
+            with self.backend.ignore_warning(VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT):
+                # Reproduce the behavior of pyvisa.util.from_ieee_block without
+                # a priori access to the entire buffer.
+                raw, _ = self.backend.visalib.read(self.backend.session, 2)
+                digits = int(raw.decode('ascii')[1])
+                raw, _ = self.backend.visalib.read(self.backend.session, digits)
+                data_size = int(raw.decode('ascii'))
+    
+                # Read the actual data
+                raw, _ = self.backend.visalib.read(self.backend.session, data_size)
+    
+                # Read termination characters so that the instrument doesn't show
+                # a "QUERY INTERRUPTED" error when there is unread buffer
+                self.backend.visalib.read(self.backend.session, len(old_read_term))
+        finally:
+            self.backend.read_termination = old_read_term
 
         data = np.frombuffer(raw, np.float32)
         self.logger.debug('      -> {} bytes ({} values)'.format(data_size, data.size))
@@ -381,7 +382,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         else:
             return ret
 
-    def fetch_spectrogram (self, window=None, freqs='exact', timestamps='exact', timeout=50000):
+    def fetch_spectrogram (self, window=None, freqs='exact', timestamps='exact', timeout=None):
         '''
         Fetch a spectrogram without initiating a new trigger. This has been tested in IQ Analyzer and real time
         spectrum analyzer modes. Not all instrument operating modes support trace selection; a choice that is
@@ -393,7 +394,20 @@ class RohdeSchwarzFSW26Base(VISADevice):
         :return: a pandas DataFrame containing the acquired data
         '''
 
-        with self.suppress_timeout():
+        if timeout is None:
+            if self.state.trigger_source.lower() == 'mask':
+                max_trigger_time = self.state.trigger_post_time
+            else:
+                max_trigger_time = self.state.sweep_dwell_time
+    
+            old_timeout, self.backend.timeout = self.backend.timeout,\
+                                                6*1e3*max_trigger_time
+        else:
+            old_timeout = timeout
+                                            
+
+        #with self.suppress_timeout():
+        if True:
             if window is None:
                 window = self.state.default_window
 
@@ -434,10 +448,15 @@ class RohdeSchwarzFSW26Base(VISADevice):
                 ts0 = self.fetch_timestamps(all=False, window=window)
                 t = (ts0-sweep_time*data.shape[0])+sweep_time*np.arange(data.shape[0])[::-1]
 
+            print('returning')
+            self.backend.timeout = old_timeout
+
             if data.size > 1:
                 return pd.DataFrame(data[::-1], columns=f_, index=None if t is None else t[::-1])
             else:
                 return pd.DataFrame([], columns=f_)
+            
+        self.backend.timeout = old_timeout            
 
         # If there is a timeout, the return above will not happen.
         # In this case, abort the acquisition and return
@@ -445,6 +464,8 @@ class RohdeSchwarzFSW26Base(VISADevice):
         # self.logger.warning('received no spectrogram data')
         self.abort()
         self.wait()
+
+        
         #self.clear_status()
         #self.wait()
         return None
@@ -946,7 +967,7 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         with self.overlap_and_block():
             self.state.spectrogram_depth
 
-    def acquire_spectrogram(self, loop_time=None, delay_time=0.1, timestamps='fast'):
+    def acquire_spectrogram_sequence(self, loop_time=None, delay_time=0.1, timestamps='fast'):
         ''' Trigger and fetch data, optionally in a loop that continues for a specified
         duration.
 
@@ -982,7 +1003,8 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
                 active_time += time.time() - t0_active
 
                 self.backend.timeout = 6*1e3*max_trigger_time
-                single = self.fetch_spectrogram(timeout=self.backend.timeout, timestamps=timestamps)
+                single = self.fetch_spectrogram(timeout=self.backend.timeout,
+                                                timestamps=timestamps)
                 self.backend.timeout = 1000
                 if single is not None:
                     specs.append(single)
@@ -1003,3 +1025,27 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         return {'spectrogram_data': specs,
                 'spectrogram_acquisition_time': time.time() - t0,
                 'spectrogram_active_time': active_time}
+
+    def arm_spectrogram(self):
+        self.clear_spectrogram()
+        self.wait()
+
+    def acquire_spectrogram(self):
+        ''' Trigger and acquire data, optionally in a loop that continues for a specified
+            duration.
+
+            :return: dictionary structured as {'spectrogram_active_time': float}
+        '''
+        t0 = time.time()
+
+        if self.state.trigger_source.lower() == 'mask':
+            max_trigger_time = self.state.trigger_post_time
+        else:
+            max_trigger_time = self.state.sweep_dwell_time
+
+        # Try to trigger; block until timeout.
+        # print(max(30*max_trigger_time,time_remaining or 0.1))
+        with self.overlap_and_block(timeout=int(1e3 * 30*max_trigger_time)):
+            self.trigger_single(wait=False)
+
+        return {'spectrogram_active_time': time.time() - t0}
