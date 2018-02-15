@@ -22,38 +22,19 @@ That's it.
 |-------------|---------|
 |Power sensors|Keysight U2000 X series|
 |             |Rohde Schwarz NRP Series|
-
-
-Signal analyzers
-* Rohde Schwarz FSW series 
-
-Signal generators
-* Rohde Schwarz SMW series
-* Spirent GSS8000 GNSS Simulator
-
-Switches
-* Minicircuits SPnT USB switches
-
-Attenuators
-* Minicircuits RCDAT series
-
-Motors
-* ETS Lindgren Azi2005
-
-Networking test instruments
-* Cobham TM500 load tester
-
-Virtual software "instruments"
-* iperf version 2
-* UDP sockets control interface for exchanging data with LabView
-* Windows WLAN connection status and control
-* Qualcomm QXDM
- 
-Misc. Test Electronics
-* Acroname USBHub 2x4 (python 2.7 only)
-
-GPS Receivers
-* SwiftNav Piksi
+|Signal analyzers|Rohde Schwarz FSW series|
+|Signal generators|Rohde Schwarz SMW series|
+|                 |Spirent GSS8000 GNSS Simulator|
+|Switches|Minicircuits SPnT USB|
+|Attenuators|Minicircuits RCDAT series|
+|Motors|ETS-Lindren Azi2005|
+|Networking testers|Cobham TM500 load tester|
+|Software virtual instruments|iperf version 2|
+|                            |UDP sockets control interface for exchanging data with LabView|
+|                            |Windows WLAN connection status and control|
+|                            |Cellular handset debug via Qualcomm QXDM|
+|Miscellaneous Lab Gear      |Acroname USBHub 2x4 (python 2.7 only)|
+|GPS Receivers               |SwiftNav Piksi|
 
 
 
