@@ -18,9 +18,11 @@ That's it.
 * [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench#how-to)
 
 ## Device Support
-Power sensors
-* Keysight U2000 X series
-* Rohde Schwarz NRP Series
+| Device Type | Product |
+|-------------|---------|
+|Power sensors|Keysight U2000 X series|
+|             |Rohde Schwarz NRP Series|
+
 
 Signal analyzers
 * Rohde Schwarz FSW series 
@@ -52,6 +54,8 @@ Misc. Test Electronics
 
 GPS Receivers
 * SwiftNav Piksi
+
+
 
 ### Contributors
 | Name  |  Contact Info |
