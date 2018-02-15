@@ -69,8 +69,8 @@ class RohdeSchwarzFSW26Base(VISADevice):
          
         display_update          = Bool      (command='SYST:DISP:UPD', trues=['ON'], falses=['OFF'])
 
-        default_window          = lb.LocalUnicode('', help='data window number to use if unspecified')
-        default_trace           = lb.LocalUnicode('', help='data trace number to use if unspecified')
+        default_window          = lb.LocalUnicode('', is_metadata=True, help='data window number to use if unspecified')
+        default_trace           = lb.LocalUnicode('', is_metadata=True, help='data trace number to use if unspecified')
 
     def verify_channel_type (self):
         if self.expected_channel_type is not None \
