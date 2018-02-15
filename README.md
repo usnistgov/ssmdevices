@@ -22,6 +22,7 @@ That's it.
 |-------------|---------|
 |Power sensors|Keysight U2000 X series|
 |             |Rohde Schwarz NRP Series|
+|-------------|---------|
 |Signal analyzers|Rohde Schwarz FSW series|
 |Signal generators|Rohde Schwarz SMW series|
 |                 |Spirent GSS8000 GNSS Simulator|
