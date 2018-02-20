@@ -29,16 +29,18 @@ class ETSLindgrenAzi2005(lb.VISADevice):
         I may end up writing this using self.query
         '''
         
-        query_speed = lb.Int(command=':S?', min=0, max=3, label='speed')
-        query_cwlimit = lb.Float(command=':UL?', min=000.0, max=999.9, step=0.1, label='cwlimit')
-        query_cclimit = lb.Int(command='LL?',  min=000.0, max=999.9, step=0.1, label='cclimit')
+        speed = lb.Int(command='S', min=0, max=3, help='speed')
+        cwlimit = lb.Float(command='UL', min=000.0, max=999.9, step=0.1, help='cwlimit')
+        cclimit = lb.Int(command='LL',  min=000.0, max=999.9, step=0.1, help='cclimit')
+        define_position = lb.Float(command='CP', min=0, max=360, step=0.1, help='rotation (degrees)')
+        position = lb.Float(command='SK', min=0, max=360, help='rotation (degrees)', write_only=True)
         
         read_termination  = lb.LocalUnicode('\n', read_only='connected')
         #this is an acknowledge byte
         write_termination = lb.LocalUnicode('\r', read_only='connected')
         #this is a carriage return    
         
-        timeout = lb.LocalFloat(10, min=0, is_metadata=True)
+        timeout = lb.LocalFloat(20, min=0, is_metadata=True)
         baud_rate = lb.LocalInt(9600, min=1, is_metadata=True,)
         parity = lb.LocalBytes(b'N', is_metadata=True,)
         stopbits = lb.LocalFloat(1, min=1, max=2, step=0.5, is_metadata=True,)
@@ -46,53 +48,18 @@ class ETSLindgrenAzi2005(lb.VISADevice):
         rtscts = lb.LocalBool(False, is_metadata=True,)
         dsrdtr = lb.LocalBool(False, is_metadata=True,)
         
-    
-#    # Overload methods as needed to implement RemoteDevice
-#    def connect(self):
-#        ''' Connect to the VISA instrument defined by the VISA resource
-#            set by `self.resource`. The pyvisa backend object is assigned
-#            to `self.backend`.
-#
-#            :returns: None
-#
-#            Instead of calling `connect` directly, consider using 
-#            `with` statements to guarantee proper disconnection
-#            if there is an error. For example, the following
-#            sets up a connected instance::
-#
-#                with VISADevice('USB0::0x2A8D::0x1E01::SG56360004::INSTR') as inst:
-#                    print inst.state.identity
-#                    print inst.state.status_byte
-#                    print inst.state.options                
-#
-#            would instantiate a `VISADevice` and guarantee
-#            it is disconnected either at the successful completion
-#            of the `with` block, or if there is any exception.
-#        '''
-#        keys = 'read_termination', 'write_termination'
-#        params = dict([[k, getattr(self, k)] for k in keys])
-#        self.backend = lb.VISADevice._rm.open_resource(self.resource, **params)
+    def command_set(self, command, trait, value):
+        ''' Send an SCPI command to set a state value on the
+            device. This is
+            automatically called for `state` attributes that
+            define a message.
 
-#    def disconnect(self):
-#        ''' Disconnect the VISA instrument. If you use a `with` block
-#            this is handled automatically and you do not need to 
-#            call this method.
-#
-#            :returns: None
-#        '''
-        
+            :param str command: The SCPI command to send
+            :param trait: The trait state corresponding with the command (ignored)
+            :param str value: The value to assign to the parameter
+        '''
+        self.write(command + str(value))    
 
-#    @classmethod
-#    def set_backend(cls, backend_name):
-#        ''' Set the pyvisa resource manager for all VISA objects.
-#
-#            :param backend_name str: '@ni' (the default) or '@py'
-#            :returns: None
-#        '''
-#        VISADevice._rm = pyvisa.ResourceManager(backend_name)
-
-    
-    
     def config(self, mode):
         if mode is 'CR' or 'NCR':
             self.write(self, mode)
@@ -100,14 +67,14 @@ class ETSLindgrenAzi2005(lb.VISADevice):
             print('check your spelling!')
         
     def whereami(self):
-        return self.command_get('CP?', 'pos')
+        return self.query('CP?')
         
     def wheredoigo(self):
-        return self.command_get('DIR?','dir')
+        return self.query('DIR?')
         
     def set_speed(self, value):
         self.write('S'+value)
-        return self.state.query_speed
+       # return self.state.query_speed
     
     def set_limits(self, side, value):
         '''Probably should put some error checking in here to make sure value is a float
@@ -121,34 +88,42 @@ class ETSLindgrenAzi2005(lb.VISADevice):
                 
     def set_position(self, value):
         self.write('CP'+value)
-        
-#still not clear on how seek will behave vs set position - does set position set a home?
+        '''Important note: 
+            This command labels the position with a value. It does not move the turntable!'''
     
-    def seek_position(self, value):
+    def seek(self, value):
         self.write('SK'+value)
     
     def stop(self):
-        self.command_set('ST')
-        didistop = self.whereami
-        time.sleep(2)
-        if didistop is 'N':
+        self.write('ST')
+        time.sleep(3)
+        #print(self.wheredoigo())
+        didistop = self.wheredoigo()
+        if didistop[0] == 'N':
             print('yay we stopped!')
         else:
-            print('oops still moving!')
+           print('oops still moving!')
      
 if __name__ == '__main__':
     from pylab import *
     import seaborn as sns
+    
+    import time
 
     sns.set(style='ticks')
 
     # Enable labbench debug messages
     # log_to_screen()
+    lb.show_messages('debug')
 
     with ETSLindgrenAzi2005('COM4') as motor:
         
+#        print(motor.query('?'))
+        motor.set_position('30')
+        print(repr(motor.whereami()))
         # Configure
-        print(motor.whereami())
-
-   
-    
+#        print(motor.state.define_position)
+#        motor.state.position = 30
+#        motor.write('*WAI')
+#        print(motor.state.define_position)
+        #print(motor.state.position)
