@@ -97,12 +97,13 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     def stop(self):
         self.write('ST')
         time.sleep(3)
-        #print(self.wheredoigo())
-        didistop = self.wheredoigo()
-        if didistop[0] == 'N':
-            print('yay we stopped!')
-        else:
-           print('oops still moving!')
+        print(self.wheredoigo())
+        '''If wheredoigo returns N, we are stopped'''
+        #didistop = self.wheredoigo()
+        #if didistop[0] == 'N':
+        #    print('yay we stopped!')
+        #else:
+        #   print('oops still moving!')
      
 if __name__ == '__main__':
     from pylab import *
