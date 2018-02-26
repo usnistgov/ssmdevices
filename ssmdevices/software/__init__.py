@@ -13,6 +13,7 @@ from future import standard_library
 standard_library.install_aliases()
 from .iperf import *
 from .windows import *
+from .qxdm import *
 
 # Clear out submodules from namespace
 #from inspect import ismodule as _ismodule
