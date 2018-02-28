@@ -19,6 +19,85 @@ import labbench as lb
 import time, os
 from xml.etree import ElementTree as ET
 
+class QPST(lb.Win32ComDevice):
+    class state(lb.Win32ComDevice.state):
+        com_object           = lb.LocalUnicode('QPSTAtmnServer.Application', is_metadata=True)
+    
+    def setup(self):
+        self.backend._FlagAsMethod('AddPort')
+        self.backend._FlagAsMethod('RemovePort')
+        self.backend._FlagAsMethod('GetPort')
+        self.backend.HideWindow()
+        
+    def disconnect(self):
+        self.backend.Quit()
+        
+    def add_port(self, port):
+        ''' Make sure that QPST is configured to enable the desired port
+        '''
+        state_to_qpst_api = {'phone_model_number': 'ModelNumber',
+                             'phone_mode':         'PhoneMode',
+                             'phone_imei':         'IMEI',
+                             'phone_esn':          'ESN',
+                             'phone_build_id':     'BuildId'}
+    
+        codes = {'phone_mode':   {0: 'No phone detected',
+                                  2: 'Download',
+                                  3: 'Diagnostic',
+                                  4: 'Offline and diagnostic',
+                                  5: 'Streaming download'}}
+    
+
+        self.backend.AddPort('COM{}'.format(port), 'Python generated port')
+        
+        t0 = time.time()
+    
+        while time.time()-t0 < 5:
+            try:
+                port_list = self.backend.GetPortList
+                for i in range(port_list.PhoneCount):
+                    if port_list.PortName(i).upper() == 'COM{}'.format(port):
+                        if port_list.PhoneStatus(i) != 5:
+                            raise ValueError('QXDM: no phone detected on COM{}'.format(port))
+                        for key, api_name in state_to_qpst_api.items():
+                            value = getattr(port_list,api_name)(i)
+                            
+                            # Remap integers to strings
+                            value = codes.get(key,{}).get(value,value)
+                            setattr(self.state, key, value)
+                        break
+
+                else:
+                    raise Exception('QXDM: could not add port at COM{}'.format(port))
+            except ValueError:
+                time.sleep(0.1)
+                continue
+            break
+        else:
+            raise TimeoutError('QXDM: could not connect to port on COM{}'.format(port))
+    
+    def remove_port(self, port):
+        ''' Remove the port from QPST for consistency
+        '''
+        self.backend.RemovePort('COM{}'.format(port))
+        
+        t0 = time.time()
+        while time.time()-t0 < 5:
+            try:
+                port_list = self.backend.GetPortList
+                for i in range(port_list.PhoneCount):
+                    if port_list.PortName(i).upper() == 'COM{}'.format(port):
+                        break
+                else:
+                    break
+            except ValueError:
+                time.sleep(0.1)
+                continue
+            break
+        else:
+            raise TimeoutError('QXDM: could not disconnect from port on COM{}'.format(port))
+        
+
 class QXDM(lb.Win32ComDevice):
     """
     Class to provide some basic control over the QXDM software.
@@ -37,22 +116,29 @@ class QXDM(lb.Win32ComDevice):
         cache_path           = lb.LocalUnicode("temp", is_metadata=True,
                                                help='folder path to contain auto-saved isf file(s)')
         connection_timeout   = lb.LocalFloat(2, min=0.5, help='connection timeout in seconds')
-        version              = lb.Unicode(read_only=True, is_metadata=False, cache=True,
-                                          help='QXDM version')
+        version              = lb.Unicode(read_only=True, is_metadata=True, cache=True,
+                                          help='QXDM application version')
         phone_model_number   = lb.LocalInt(-1, help='model number code')
         phone_mode           = lb.LocalUnicode(help='current state of the phone')
         phone_imei           = lb.LocalInt(-1,help='Phone IMEI')
         phone_esn            = lb.LocalInt(-1,help='Phone ESN')
         phone_build_id       = lb.LocalUnicode(help='Build ID of software on the phone')
 
+    def connect(self):
+        self._qpst = QPST()
+        lb.concurrently(super(QXDM, self).connect, self._qpst.connect)
+
     def setup(self):
         ''' Like all other Device subclasses, this setup method is run
             automatically right after .connect().
         '''
+        self.__start_time = None
         self._window = self.backend.GetAutomationWindow()
-        self._qpst_setup()
         self.state.cache_path = os.path.abspath(self.state.cache_path)
         os.makedirs(self.state.cache_path, exist_ok=True)
+        
+        while not self._qpst.state.connected:
+            time.sleep(0.05)
 
         # Disable to prevent undesired data streaming on startup
         try:
@@ -61,18 +147,18 @@ class QXDM(lb.Win32ComDevice):
             raise Exception('could not disable UE; does QXDM work if you start it manually?')
 
     def disconnect (self):
-        
-        # These are not threadsafe. Disconnect sequentially
         try:
-            self._qpst.Quit()
+            f1 = self._qpst.disconnect
         except AttributeError:
-            self.logger.debug('qpst already quit')
+            self.logger.debug('QPST already quit')
         try:
-            self._window.QuitApplication()
-        except:
-            self.logger.debug('application already quit')
+            f2 = self._window.QuitApplication
+        except AttributeError:
+            self.logger.debug('QXDM already quit')
+        
+        lb.concurrently(f1,f2)
 
-    def configure(self, config_path):
+    def configure(self, config_path, min_acquisition_time=None):
         ''' Load the QXDM .dmc configuration file at the specified path,
             with adjustments that disable special file output modes like
             autosave, quicksave, and automatic segmenting based on time and
@@ -80,6 +166,7 @@ class QXDM(lb.Win32ComDevice):
         '''
         if not os.path.isfile(config_path):
             raise Exception("config_path {} does not exist.".format(repr(config_path)))
+        self._min_acquisition_time = min_acquisition_time
 
         basename = os.path.splitext(os.path.basename(config_path))[0]+'-live.dmc'
         path_out = os.path.join(self.state.cache_path, basename)
@@ -118,6 +205,12 @@ class QXDM(lb.Win32ComDevice):
             
             :returns: The absolute path to the data file
         '''
+        if self.__start_time is None:
+            raise Exception('call start() to acquire data before calling save()')
+        if self._min_acquisition_time is not None:
+            t_elapsed = time.time()-self.__start_time
+            if t_elapsed < self._min_acquisition_time:
+                time.sleep(self._min_acquisition_time-t_elapsed)
         # Munge path
         if path is None:
             path = os.path.join(self.state.cache_path, self.data_filename)
@@ -133,6 +226,7 @@ class QXDM(lb.Win32ComDevice):
         self.logger.debug('stopped and saved to {} in {}s'\
                           .format(repr(path),time.time()-t0))
 
+        self.__start_time = None
         return path
 
     def start(self, wait=True):
@@ -172,82 +266,7 @@ class QXDM(lb.Win32ComDevice):
     def _get_item_count(self):
         return self._window.GetItemCount()
 
-    # QPST wrapper methods
-    def _qpst_setup(self):
-        import win32com.client
-        self._qpst = win32com.client.Dispatch('QPSTAtmnServer.Application')
-        self._qpst._FlagAsMethod('AddPort')
-        self._qpst._FlagAsMethod('RemovePort')
-        self._qpst._FlagAsMethod('GetPort')
-        self._qpst.HideWindow()
-
-    def _qpst_add_port(self, port):
-        ''' Make sure that QPST is configured to enable the desired port
-        '''
-        state_to_qpst_api = {'phone_model_number': 'ModelNumber',
-                             'phone_mode':         'PhoneMode',
-                             'phone_imei':         'IMEI',
-                             'phone_esn':          'ESN',
-                             'phone_build_id':     'BuildId'}
-    
-        codes = {'phone_mode':   {0: 'No phone detected',
-                                  2: 'Download',
-                                  3: 'Diagnostic',
-                                  4: 'Offline and diagnostic',
-                                  5: 'Streaming download'}}
-    
-
-        self._qpst.AddPort('COM{}'.format(port), 'Python generated port')
-        
-        t0 = time.time()
-    
-        while time.time()-t0 < 5:
-            try:
-                port_list = self._qpst.GetPortList
-                for i in range(port_list.PhoneCount):
-                    if port_list.PortName(i).upper() == 'COM{}'.format(port):
-                        if port_list.PhoneStatus(i) != 5:
-                            raise ValueError('QXDM: no phone detected on COM{}'.format(port))
-                        for key, api_name in state_to_qpst_api.items():
-                            value = getattr(port_list,api_name)(i)
-                            
-                            # Remap integers to strings
-                            value = codes.get(key,{}).get(value,value)
-                            setattr(self.state, key, value)
-                        break
-
-                else:
-                    raise Exception('QXDM: could not add port at COM{}'.format(port))
-            except ValueError:
-                time.sleep(0.1)
-                continue
-            break
-        else:
-            raise TimeoutError('QXDM: could not connect to port on COM{}'.format(port))
-    
-    def _qpst_remove_port(self, port):
-        ''' Remove the port from QPST for consistency
-        '''
-        self._qpst.RemovePort('COM{}'.format(port))
-        
-        t0 = time.time()
-        while time.time()-t0 < 5:
-            try:
-                port_list = self._qpst.GetPortList
-                for i in range(port_list.PhoneCount):
-                    if port_list.PortName(i).upper() == 'COM{}'.format(port):
-                        break
-                else:
-                    break
-            except ValueError:
-                time.sleep(0.1)
-                continue
-            break
-        else:
-            raise TimeoutError('QXDM: could not disconnect from port on COM{}'.format(port))
-
     # Methods that support the higher-level functions above        
-
     def _set_com_port (self, com_port):
         ''' Set the com_port to the integer n for COMn, or 0 or None to disable
             acquisition. This includes logic to enable and disable the port
@@ -260,7 +279,7 @@ class QXDM(lb.Win32ComDevice):
         if com_port is None:
             com_port = 0
         if com_port > 0:
-            self._qpst_add_port(self.resource)
+            self._qpst.add_port(self.resource)
 
         try:
             code = None
@@ -291,7 +310,7 @@ class QXDM(lb.Win32ComDevice):
                 
         finally:
             if com_port == 0:
-                self._qpst_remove_port(self.resource)
+                self._qpst.remove_port(self.resource)
 
     def _clear(self):
         ''' Clear the buffer of data. 

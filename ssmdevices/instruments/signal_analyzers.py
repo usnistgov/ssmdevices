@@ -447,7 +447,6 @@ class RohdeSchwarzFSW26Base(VISADevice):
                 ts0 = self.fetch_timestamps(all=False, window=window)
                 t = (ts0-sweep_time*data.shape[0])+sweep_time*np.arange(data.shape[0])[::-1]
 
-            print('returning')
             self.backend.timeout = old_timeout
 
             if data.size > 1:
