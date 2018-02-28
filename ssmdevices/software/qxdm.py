@@ -49,7 +49,6 @@ class QXDM(lb.Win32ComDevice):
         ''' Like all other Device subclasses, this setup method is run
             automatically right after .connect().
         '''
-#        with self.threadsafe():
         self._window = self.backend.GetAutomationWindow()
         self._qpst_setup()
         self.state.cache_path = os.path.abspath(self.state.cache_path)
@@ -62,7 +61,6 @@ class QXDM(lb.Win32ComDevice):
             raise Exception('could not disable UE; does QXDM work if you start it manually?')
 
     def disconnect (self):
-#        self._window = self.threadsafe_backend().GetAutomationWindow()
         
         # These are not threadsafe. Disconnect sequentially
         try:
@@ -70,7 +68,7 @@ class QXDM(lb.Win32ComDevice):
         except AttributeError:
             self.logger.debug('qpst already quit')
         try:
-            self.backend.GetAutomationWindow().QuitApplication()
+            self._window.QuitApplication()
         except:
             self.logger.debug('application already quit')
 
@@ -80,9 +78,6 @@ class QXDM(lb.Win32ComDevice):
             autosave, quicksave, and automatic segmenting based on time and
             file size.
         '''
-#        with self.threadsafe():
-#        self._window = self.backend.GetAutomationWindow()
-    
         if not os.path.isfile(config_path):
             raise Exception("config_path {} does not exist.".format(repr(config_path)))
 
@@ -123,9 +118,6 @@ class QXDM(lb.Win32ComDevice):
             
             :returns: The absolute path to the data file
         '''
-#        with self.threadsafe():
-#            self._window = self.backend.GetAutomationWindow()
-
         # Munge path
         if path is None:
             path = os.path.join(self.state.cache_path, self.data_filename)
@@ -146,8 +138,6 @@ class QXDM(lb.Win32ComDevice):
     def start(self, wait=True):
         ''' Start acquisition, optionally waiting to return until 
             new data enters the QXDM item store.
-            
-            This method is threadsafe.
         '''
         t0 = time.time()
         self._clear()
@@ -164,15 +154,14 @@ class QXDM(lb.Win32ComDevice):
 
     def _load_config (self, path):
         self._window.LoadConfig(path)
-        
+
     @state.version.getter
     def __(self):
-        with self.threadsafe():
-            _window = self.backend.GetAutomationWindow()
-            if not self.state.connected:
-                raise lb.DeviceNotReady('need to connect to get application version')
-            version = _window.AppVersion
-            return version
+        _window = self.backend.GetAutomationWindow()
+        if not self.state.connected:
+            raise lb.DeviceNotReady('need to connect to get application version')
+        version = _window.AppVersion
+        return version
 
     def _get_server_state(self):
         state = self._window.GetServerState()
@@ -307,8 +296,6 @@ class QXDM(lb.Win32ComDevice):
     def _clear(self):
         ''' Clear the buffer of data. 
         '''
-#        from pythoncom import CoInitialize,CoMarshalInterThreadInterfaceInStream, IID_IDispatch
-        
         t0 = time.time()
         for item in 'Item view',:
             if not self._window.ClearViewItems(item):
@@ -378,14 +365,15 @@ class QXDM(lb.Win32ComDevice):
 #                if e.lower().endswith('.isf')]
 #
 
-    
 if __name__ == '__main__':
     import labbench as lb
 
     lb.show_messages('debug')
 
     # Connect to application
-    with QXDM(8, cache_path=r'C:\Python Code\potato') as qxdm:
+    with QXDM(8, cache_path=r'C:\Python Code\potato', concurrency_support=False) as qxdm:
+#        mod = inspect.getmodule(qxdm.backend._FlagAsMethod).__name__
+        print(repr(qxdm.backend),dir(qxdm.backend))
         qxdm.configure(r'C:\Python Code\potato\180201_QXDMConfig.dmc')
         for i in range(1):
             qxdm.start()
