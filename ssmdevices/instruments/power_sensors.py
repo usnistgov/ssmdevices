@@ -14,7 +14,7 @@ standard_library.install_aliases()
 __all__ = ['KeysightU2000XSeries','RohdeSchwarzNRP8s','RohdeSchwarzNRP18s','RohdeSchwarzNRPSeries']
 
 import labbench as lb
-from labbench.visa import VISADevice
+from labbench import VISADevice
 import pandas as pd
 
 class KeysightU2000XSeries(VISADevice):

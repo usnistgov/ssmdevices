@@ -8,7 +8,7 @@ standard_library.install_aliases()
 __all__ = ['RigolOscilloscope']
 
 import labbench as lb
-from labbench.visa import VISADevice
+from labbench import VISADevice
 import pandas as pd
 
 class RigolOscilloscope(lb.VISADevice):

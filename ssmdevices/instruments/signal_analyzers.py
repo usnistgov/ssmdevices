@@ -17,8 +17,7 @@ __all__ = ['RohdeSchwarzFSW26Base',
            'RohdeSchwarzFSW26RealTime']
 
 import labbench as lb
-from labbench import Bool, CaselessStrEnum, Int, Float
-from labbench.visa import VISADevice
+from labbench import Bool, CaselessStrEnum, Int, Float, VISADevice
 import pandas as pd
 from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT,VI_SUCCESS_MAX_CNT
 

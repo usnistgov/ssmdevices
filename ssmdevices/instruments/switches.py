@@ -8,7 +8,7 @@ from future import standard_library
 standard_library.install_aliases()
 __all__ = ['MiniCircuitsUSBSwitch']
 
-from labbench.dotnet import DotNetDevice
+from labbench import DotNetDevice
 import ssmdevices.lib
 import labbench as core
 
