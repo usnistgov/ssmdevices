@@ -65,7 +65,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM', default_channel_name], is_metadata=True)
         format                  = CaselessStrEnum (command='FORM', values=['ASC,0','REAL,32','REAL,64', 'REAL,16'])
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
-         
+
         display_update          = Bool      (command='SYST:DISP:UPD', trues=['ON'], falses=['OFF'])
 
         default_window          = lb.LocalUnicode('', is_metadata=True, help='data window number to use if unspecified')
