@@ -36,16 +36,8 @@ class IPerf(lb.CommandLineWrapper):
         udp           = lb.LocalBool(False, command='-u', help='UDP instead of TCP networking')
         bit_rate      = lb.LocalUnicode(command='-b', help='Maximum bit rate (append unit for size, e.g. 10K)')
         time          = lb.LocalInt(min=0, max=16535, command='-t', help='time in seconds to transmit before quitting (default 10s)')
-        arguments     = lb.LocalList([os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe'),
-                                      '-n','-1','-y','C'])
-        binary_path   = lb.LocalUnicode(os.path.join(ssmdevices.lib.__path__[0], 'loop.bat'))
-
-        restart_on_state_change\
-                      = lb.LocalBool(True, is_metadata=True, read_only='connected',
-                                    help='Whether to terminate restart the command line executable if a state changes while running')
-        respawn = lb.LocalBool(True, read_only=True,
-                                 help='whether to restart a background run if it finishes')
-
+        arguments     = lb.LocalList(['-n','-1','-y','C'])
+        binary_path   = lb.LocalUnicode(os.path.join(ssmdevices.lib.__path__[0], 'iperf.exe'))
 
     def fetch (self):
         ''' Retreive csv-formatted text from standard output and parse into
@@ -70,11 +62,8 @@ class IPerf(lb.CommandLineWrapper):
                            names=columns)
         
         # throw out the last row (potantially a summary of the previous rows)
-#        if len(data.index)>1:
-#            data.drop(data.index[-1],inplace=True)
         if len(data)==0:
             data = data.append([None])
-#        print data
         data.drop(['iperf_interval','iperf_transferred_bytes','iperf_test_id'],inplace=True,axis=1)
         data['iperf_timestamp'] = pd.to_datetime(data['iperf_timestamp'], format='%Y%m%d%H%M%S')
         data['iperf_timestamp'] = data['iperf_timestamp']+\
@@ -82,53 +71,45 @@ class IPerf(lb.CommandLineWrapper):
 
         return data
     
-
-    def execute (self, *extra_args, **flags):
+    def background (self, *extra_args, **flags):
         if self.state.udp and self.state.buffer_size is not None:
-            self.logger.warning('iperf might not behave nicely setting udp=True and setting buffer_size')#              
+            self.logger.warning('iperf might not behave nicely setting udp=True with buffer_size')
 
-        if self.resource:
-            self.logger.info('client start')
-            super(IPerf, self).execute('-c', str(self.resource), *extra_args, **flags)
-        else:
-            self.logger.info('server start')
-            super(IPerf, self).execute('-s', *extra_args, **flags)
+        with self.respawn:
+            if self.resource:
+                self.logger.info('client start')
+                super(IPerf, self).background('-c', str(self.resource), *extra_args, **flags)
+            else:
+                self.logger.info('server start')
+                super(IPerf, self).background('-s', *extra_args, **flags)
 
     def start(self):
-        self.execute()
+        self.background()
 
 
 class IPerfOnAndroid(IPerf):
     class state(IPerf.state):
         binary_path   = lb.LocalUnicode(os.path.join(ssmdevices.lib.__path__[0], 'adb.exe'))
-        remote_binary_path = lb.LocalUnicode('/data/local/tmp/iperf', is_metadata=True)
-        arguments     = lb.LocalList([])
-
-    def execute (self, *extra, **flags):
-        if self.resource:
-            super(IPerf, self).execute('shell', self.state.remote_binary_path,
-                                       '-c', str(self.resource),
-#                                       '-y','C',
-                                       *extra, **flags)
-        else:
-            super(IPerf, self).execute('shell', self.state.remote_binary_path,
-                                       *extra, **flags)
+        arguments     = lb.LocalList(['shell', '/data/local/tmp/iperf',
+                                     # '-y', 'C'
+                                     ])
 
     def setup (self):
-        devices = self.block_single('devices').strip().rstrip().splitlines()[1:]
-        if len(devices) == 0:
-            raise Exception('adb lists no devices. is the UE connected?')
-
-        self.block_single("push",
-                    os.path.join(ssmdevices.lib.__path__[0], 'android', 'iperf'),
-                    self.state.remote_binary_path)
-
-        self.block_single("shell", 'chmod', '777', self.state.remote_binary_path)
-        
-        # Check that it's executable
-        got = self.block_single('shell', self.state.remote_binary_path, '--help')
-        if got.startswith(b'/system/bin/sh'):
-            raise Exception(got)
+        with self.no_state_arguments:
+            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
+            if len(devices) == 0:
+                raise Exception('adb lists no devices. is the UE connected?')
+    
+            self.foreground("push",
+                        os.path.join(ssmdevices.lib.__path__[0], 'android', 'iperf'),
+                        self.state.remote_binary_path)
+    
+            self.foreground("shell", 'chmod', '777', self.state.remote_binary_path)
+    
+            # Check that it's executable
+            got = self.foreground('shell', self.state.remote_binary_path, '--help')
+            if got.startswith(b'/system/bin/sh'):
+                raise Exception(got)
 
     def start (self):
         super(IPerfOnAndroid,self).start()
@@ -137,39 +118,43 @@ class IPerfOnAndroid(IPerf):
             self.logger.warning('no network connectivity in UE')
 
     def kill (self, wait_time=3):
+        ''' Kill the local process and the iperf process on the UE.
+        '''
+
         # Kill the local adb process as normal
         super(IPerfOnAndroid,self).kill()
+
+        # Now's where the fun really starts
+        with self.no_state_arguments:
+            # Find and kill processes on the UE
+            out = self.foreground('shell', 'ps')
+            for line in out.splitlines():
+                if self.state.remote_binary_path.encode() in line.lower():
+                    pid = line.split()[1]
+                    self.logger.debug('killing zombie iperf. stdout: {}'\
+                                      .format(self.foreground('shell', 'kill', '-9', pid)))
         
-        # Now find and kill processes on the UE
-        out = self.block_single('shell', 'ps')
-        for line in out.splitlines():
-            if self.state.remote_binary_path.encode() in line.lower():
-                pid = line.split()[1]
-                self.logger.debug('killing zombie iperf. stdout: {}'\
-                                  .format(self.block_single('shell', 'kill', '-9', pid)))
-        
-        # Wait for any iperf zombie processes to die
-        t0 = time.time()
-        while time.time()-t0 < wait_time and wait_time != 0:
-            out = self.block_single('shell', 'ps').lower()
-            if b'iperf' not in out:
-                break
-            time.sleep(.25)
-        else:
-            raise TimeoutError('timeout waiting for iperf process termination on UE')
+            # Wait for any iperf zombie processes to die
+            t0 = time.time()
+            while time.time()-t0 < wait_time and wait_time != 0:
+                out = self.foreground('shell', 'ps').lower()
+                if b'iperf' not in out:
+                    break
+                time.sleep(.25)
+            else:
+                raise TimeoutError('timeout waiting for iperf process termination on UE')
             
     def read_stdout(self, n=0):
-        ''' adb seems to forward stderr as stdout. Filter out some resulting
-            undesired status messages.
+        ''' adb seems to forward stderr as stdout. Filter out some undesired
+            resulting status messages.
         '''
         txt = super(IPerfOnAndroid, self).read_stdout(n)
-        lines = txt.splitlines()
         out = []
-        for l in lines:
+        for l in txt.splitlines():
             if ':' not in l:
                 out.append(l)
             else:
-                self.logger.warning('iperf message: {}'.format(repr(l)))
+                self.logger.warning('stdout: {}'.format(repr(l)))
         return '\n'.join(out)
     
     def fetch(self):
@@ -186,9 +171,7 @@ class IPerfClient(IPerf):
         super(IPerfClient, self).__init__(*args, **kws)
 
 
-if __name__ == '__main__':
-    import time
-    
+if __name__ == '__main__':   
     lb.show_messages('debug')
     ips = IPerf(interval=0.5, udp=True)
 
@@ -204,5 +187,5 @@ if __name__ == '__main__':
             time.sleep(20)
             ipc.kill()
             ips.kill()
-            ips_result = ips.fetch()
+            ips_result = ips.read_stdout()
             ipc_result = ipc.read_stdout()
