@@ -16,7 +16,7 @@ standard_library.install_aliases()
 __all__ = ['QXDM']
 
 import labbench as lb
-import time, os
+import time, os, psutil
 from xml.etree import ElementTree as ET
 
 class QPST(lb.Win32ComDevice):
@@ -125,8 +125,18 @@ class QXDM(lb.Win32ComDevice):
         phone_build_id       = lb.LocalUnicode(help='Build ID of software on the phone')
 
     def connect(self):
+        for pid in psutil.pids():
+            proc = psutil.Process(pid)
+            if proc.name().lower().startswith('qpst'):
+                self.logger.info('killing zombie process {}'.format(proc.name()))
+                proc.kill()
+            elif proc.name().lower().startswith('qxdm'):
+                self.logger.info('killing zombie process {}'.format(proc.name()))
+                proc.kill()
+#
         self._qpst = QPST()
-        lb.concurrently(super(QXDM, self).connect, self._qpst.connect)
+        self._qpst.connect()
+        super(QXDM, self).connect()
 
     def setup(self):
         ''' Like all other Device subclasses, this setup method is run
@@ -136,9 +146,10 @@ class QXDM(lb.Win32ComDevice):
         self._window = self.backend.GetAutomationWindow()
         self.state.cache_path = os.path.abspath(self.state.cache_path)
         os.makedirs(self.state.cache_path, exist_ok=True)
+
         
         while not self._qpst.state.connected:
-            time.sleep(0.05)
+            time.sleep(0.1)
 
         # Disable to prevent undesired data streaming on startup
         try:

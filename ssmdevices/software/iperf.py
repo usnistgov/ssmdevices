@@ -26,7 +26,6 @@ class IPerf(lb.CommandLineWrapper):
     resource = None
 
     class state(lb.CommandLineWrapper.state):
-#        client        = lb.LocalUnicode(False, help='True to run as server; False to run as client. If True, resource is ignored.')
         timeout       = lb.LocalFloat(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
         port          = lb.LocalInt(command='-p', min=1, help='connection port')
         bind          = lb.LocalUnicode(command='-B', help='bind connection to specified IP')
@@ -44,6 +43,8 @@ class IPerf(lb.CommandLineWrapper):
         restart_on_state_change\
                       = lb.LocalBool(True, is_metadata=True, read_only='connected',
                                     help='Whether to terminate restart the command line executable if a state changes while running')
+        respawn = lb.LocalBool(True, read_only=True,
+                                 help='whether to restart a background run if it finishes')
 
 
     def fetch (self):
@@ -107,7 +108,8 @@ class IPerfOnAndroid(IPerf):
         if self.resource:
             super(IPerf, self).execute('shell', self.state.remote_binary_path,
                                        '-c', str(self.resource),
-                                       '-y','C', *extra, **flags)
+#                                       '-y','C',
+                                       *extra, **flags)
         else:
             super(IPerf, self).execute('shell', self.state.remote_binary_path,
                                        *extra, **flags)
@@ -116,9 +118,11 @@ class IPerfOnAndroid(IPerf):
         devices = self.block_single('devices').strip().rstrip().splitlines()[1:]
         if len(devices) == 0:
             raise Exception('adb lists no devices. is the UE connected?')
+
         self.block_single("push",
                     os.path.join(ssmdevices.lib.__path__[0], 'android', 'iperf'),
                     self.state.remote_binary_path)
+
         self.block_single("shell", 'chmod', '777', self.state.remote_binary_path)
         
         # Check that it's executable
