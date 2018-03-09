@@ -126,13 +126,14 @@ class QXDM(lb.Win32ComDevice):
 
     def connect(self):
         for pid in psutil.pids():
-            proc = psutil.Process(pid)
-            if proc.name().lower().startswith('qpst'):
-                self.logger.info('killing zombie process {}'.format(proc.name()))
-                proc.kill()
-            elif proc.name().lower().startswith('qxdm'):
-                self.logger.info('killing zombie process {}'.format(proc.name()))
-                proc.kill()
+            try:
+                proc = psutil.Process(pid)
+                for target in 'qpst','qxdm','atmnserver':
+                    if proc.name().lower().startswith(target.lower()):
+                        self.logger.info('killing zombie process {}'.format(proc.name()))
+                        proc.kill()
+            except psutil.NoSuchProcess:
+                pass
 #
         self._qpst = QPST()
         self._qpst.connect()
@@ -395,17 +396,17 @@ class QXDM(lb.Win32ComDevice):
 #                if e.lower().endswith('.isf')]
 #
 
-if __name__ == '__main__':
-    import labbench as lb
-
-    lb.show_messages('debug')
-
-    # Connect to application
-    with QXDM(8, cache_path=r'C:\Python Code\potato', concurrency_support=False) as qxdm:
-#        mod = inspect.getmodule(qxdm.backend._FlagAsMethod).__name__
-        print(repr(qxdm.backend),dir(qxdm.backend))
-        qxdm.configure(r'C:\Python Code\potato\180201_QXDMConfig.dmc')
-        for i in range(1):
-            qxdm.start()
-            time.sleep(10)
-            qxdm.save(r'C:\python code\potato\junk-{}.isf'.format(i))
+#if __name__ == '__main__':
+#    import labbench as lb
+#
+#    lb.show_messages('debug')
+#
+#    # Connect to application
+#    with QXDM(8, cache_path=r'C:\Python Code\potato', concurrency_support=False) as qxdm:
+##        mod = inspect.getmodule(qxdm.backend._FlagAsMethod).__name__
+#        print(repr(qxdm.backend),dir(qxdm.backend))
+#        qxdm.configure(r'C:\Python Code\potato\180201_QXDMConfig.dmc')
+#        for i in range(1):
+#            qxdm.start()
+#            time.sleep(10)
+#            qxdm.save(r'C:\python code\potato\junk-{}.isf'.format(i))

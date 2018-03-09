@@ -45,151 +45,64 @@ class AeroflexTM500(lb.TelnetDevice):
         port = lb.LocalInt(5003, min=1, is_metadata=True)
         config_root  = lb.LocalUnicode('', is_metadata=True,
                                        help='path to the command scripts directory')
-        config_file  = lb.LocalUnicode('', is_metadata=True,
-                                       help='filename of the directory in the command scripts directory')
+        data_root  = lb.LocalUnicode(write_only=True, help='remote save root directory',
+                                     is_metadata=True)
 
-
-    def send(self, msg, data_lines=1, confirm=True, timeout=None):
-        ''' Send a message, then block until a confirmation message is received.
-        
-            :param msg: str or bytes containing the message to send
-            :param int data_lines: number of lines in the response string            
-
-            :returns: decoded string containing the response
-        '''
-        
-        # First, if this is a sequence of messages, work through them one by one
-        if hasattr(msg, '__iter__') and not isinstance(msg, (str, bytes)):
-            return [self.send(m) for m in msg]
-
-        # Send the message
-        if isinstance(msg, str):
-            msg = msg.encode('ascii')
-        msg = msg.strip().rstrip()
-        if len(msg) == 0:
-            return ''
-        elif msg.strip().lower().startswith(b'wait for')\
-             and b'timeout' in msg.lower():
-            timeout = int(msg.lower().rsplit(b'timeout',1)[1].strip())
-
-        self.logger.debug('write {}'.format(repr(msg)))
-        self.backend.write(msg + b'\r')
-
-        if not confirm:
-            return
-        
-        # Figure out the expected response
-        rsp = msg.split(b' ', 1)[0]
-        if rsp.startswith(b'#$$'):
-            rsp = rsp[3:]
-        rsp = b'C: ' + rsp + b' '
-
-        # Block until the response
-        ret = self._read_until(rsp, timeout)
-        # Receive through the end of line for the rest of the status response
-        ret = b''
-        for i in range(data_lines):
-            ret += self.backend.read_until(b'\r')
-            code = int(ret.strip().split(b'0x',1)[1].split(maxsplit=1)[0],16)
-            if i == 0 and code != 0:
-                raise TM500Error('Error in message {}: {}'\
-                                 .format(repr(msg), repr(ret)), code)
-        # Receive any other data received during the delay
-        ret = self.backend.read_very_eager().strip().rstrip()
-        if ret:
-            self.logger.debug('    -> {}'.format(ret.decode()))
-        return ret.decode('ascii')
-
-    def _read_until (self, rsp, timeout=None):
-        if timeout is None:
-            ack_timeout = self.state.ack_timeout
-        else:
-            ack_timeout = timeout
-        self.logger.debug('awaiting response {}'.format(repr(rsp)))
-        
-        # Block until the expected response is received
-        t0 = time.time()
-        rsp = rsp.upper()
-        while time.time()-t0 < ack_timeout:
-            # Brief blocking makes it easier to trigger a KeyboardInterrupt
-            ret = self.backend.read_until(rsp, self.state.timeout)
-            if rsp in ret:
-                break
-        else:
-            raise TimeoutError('response timeout')
-        return ret
-
-    def setup(self):
-        try:
-            self.send('#$$DISCONNECT', timeout=0.25)
-            time.sleep(0.1)
-        except (ValueError,TimeoutError):
-            pass
-
-        self.send('#$$PORT {ip} {ports}'\
-                  .format(ip=self.state.remote_ip, ports=self.state.remote_ports),
-                  timeout=1)
-        self.send('#$$CONNECT')
-        self.__last_path = None
-        
-    def run(self, path=None, force=False):
+    def configure(self, name, force=False):
         ''' Ensure that config script at :param path: has been run.
-            If `path` is None, 
-            use `os.path.join(self.state.config_root, self.state.config_file)`.
-            
+            The configuration script loaded is determined as
+            `os.path.join(self.state.config_root, self.state.config_file)+'.conf'`.
+
             If the last script that was run is the same as the selected config
-            script, then the script is run only if force=True. 
-            
-            TODO: Check state on the TM500 to ensure that it is in fact running?
-            
+            script, then the script is loaded and sent to the TM500 only
+            if force=True. It always runs on the first call after AeroflexTM500
+            is instantiated.
+
             :returns: None
         '''
-        if path is None:
-            path = os.path.join(self.state.config_root, self.state.config_file)
-        if path == self.__last_path and not force:
+        if name == self.__last_config and not force:
             self.logger.debug('not running script {} because it is already running'\
-                              .format(path))
+                              .format(name))
             return
         else:
-            self.logger.debug('scripting from {}'\
-                              .format(path))
+            self.__last_config = name
+            config_path = os.path.join(self.state.config_root, name)+'.conf'
+            self.logger.debug('loading configuration from {}'\
+                              .format(name))
         t0 = time.time()
 
-        with open(path, 'r') as f:
+        with open(config_path, 'r') as f:
             seq = f.readlines()
-        ret = self.send(seq)
-        self.__last_path = path
-        self.logger.debug('run started in {:.2f}s'.format(time.time()-t0))
+        ret = self._send(seq)
+        self._send('#$$DATA_LOG_FOLDER 1 "{}"'.format(self.state.data_root))
+        self.logger.debug('run configured in {:.2f}s'.format(time.time()-t0))        
         return ret
 
-    def stop(self):
-        self.send('forw mte MtsClearMts')
-        self.send('WAIT FOR "I: CMPI MTE 0 MTSCLEARMTS COMPLETE IND" TIMEOUT 60')
-        self.send('forw mte DeConfigRdaStopTestCase')
-        self.send('WAIT FOR "I: CMPI DTE RDA TEST GROUP STOPPED IND" TIMEOUT 300')
-        self.send('#$$STOP_LOGGING')
-        self.send('forw mte GetRrcStats [] [] [] [1] [1]')
-        self.send('forw mte GetNasStats [] [] [] [] [1] [1]')
-        self.send('SDLI LTE_RADIO_CONTEXT 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
-        self.send('SDLI LTE_NAS_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
-        self.send('SDLI LTE_RRC_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
+    def start_logging(self):
+        ''' Start logging and return the path to the directory where the data
+            is saved.
+        '''
+        return self._send('#$$START_LOGGING').split("'")[1]
 
-#    def reboot(self):
-#        self.send('RBOT')
+    def stop_logging(self):
+        self._send('#$$STOP_LOGGING')
 
-    def disconnect(self):
-        try:
-            self.stop()
-        except TM500Error as e:
-            if e.errcode != 0x06:
-                raise
+    def convert_to_text(self):
+        ''' Convert the most recently acquired data to text.
+        '''
+        self._send('#$$CONVERT_TO_TEXT')
 
-        try:
-            self.send('#$$DISCONNECT', confirm=False)
-        except:
-            pass
-        
-        super(AeroflexTM500, self).disconnect()
+    def stop_running(self):
+        self._send('forw mte MtsClearMts')
+        self._send('WAIT FOR "I: CMPI MTE 0 MTSCLEARMTS COMPLETE IND" TIMEOUT 60')
+        self._send('forw mte DeConfigRdaStopTestCase')
+        self._send('WAIT FOR "I: CMPI DTE RDA TEST GROUP STOPPED IND" TIMEOUT 300')
+        self._send('#$$STOP_LOGGING')
+        self._send('forw mte GetRrcStats [] [] [] [1] [1]')
+        self._send('forw mte GetNasStats [] [] [] [] [1] [1]')
+        self._send('SDLI LTE_RADIO_CONTEXT 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
+        self._send('SDLI LTE_NAS_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
+        self._send('SDLI LTE_RRC_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
 
     @staticmethod
     def screensave_to_script(path):
@@ -249,6 +162,114 @@ class AeroflexTM500(lb.TelnetDevice):
         with open(os.path.splitext(path)[0]+'-script.txt', 'wb') as f:
             f.write(b'\r\n'.join(commands))
 
+    def disconnect(self):
+        try:
+            self.stop_running()
+        except TM500Error as e:
+            if e.errcode not in (0x02, 0x06):
+                raise
+
+        try:
+            self._send('#$$DISCONNECT', confirm=False)
+        except:
+            pass
+        
+        super(AeroflexTM500, self).disconnect()
+
+    def setup(self):
+        # Invalidate any incomplete previous commands in the remote telnet buffer
+        try:
+            self._send('***', timeout=1)
+        except (ValueError,TimeoutError):
+            pass
+
+        # Ensure we are disconnected
+        try:
+            self._send('#$$DISCONNECT', timeout=1)
+        except (ValueError,TimeoutError):
+            pass
+
+        # Now connect
+        self._send('#$$PORT {ip} {ports}'\
+                  .format(ip=self.state.remote_ip, ports=self.state.remote_ports),
+                  timeout=1)
+        self._send('#$$CONNECT')
+        self.__last_config = None
+
+    def _send(self, msg, data_lines=1, confirm=True, timeout=None):
+        ''' Send a message, then block until a confirmation message is received.
+        
+            :param msg: str or bytes containing the message to send
+            :param int data_lines: number of lines in the response string            
+
+            :returns: decoded string containing the response
+        '''
+        
+        # First, if this is a sequence of messages, work through them one by one
+        if hasattr(msg, '__iter__') and not isinstance(msg, (str, bytes)):
+            return [self._send(m) for m in msg]
+
+        # Send the message
+        if isinstance(msg, str):
+            msg = msg.encode('ascii')
+        msg = msg.strip().rstrip()
+        if len(msg) == 0:
+            return ''
+        elif msg.strip().lower().startswith(b'wait for')\
+             and b'timeout' in msg.lower():
+            timeout = int(msg.lower().rsplit(b'timeout',1)[1].strip())
+
+        self.logger.debug('write {}'.format(repr(msg)))
+        self.backend.write(msg + b'\r')
+
+        if not confirm:
+            return
+        
+        # Figure out the expected response
+        rsp = msg.split(b' ', 1)[0]
+        if rsp.startswith(b'#$$'):
+            rsp = rsp[3:]
+        rsp = b'C: ' + rsp + b' '
+
+        # Block until the response
+        ret = self._read_until(rsp, timeout)
+        # Receive through the end of line for the rest of the status response
+        ret = rsp
+        for i in range(data_lines):
+            ret = ret + self.backend.read_until(b'\r')
+            code = int(ret.strip().split(b'0x',1)[1].split(maxsplit=1)[0],16)
+            if i == 0 and code != 0:
+                raise TM500Error('Error in message {}: {}'\
+                                 .format(repr(msg), repr(ret)), code)
+        # Receive any other data received during the delay
+        extra = self.backend.read_very_eager().strip().rstrip()
+        if extra:
+            if extra.count(b'\r') <=1:
+                self.logger.debug('extra -> {}'.format(extra.decode()))
+            else:
+                self.logger.debug('extra -> ({} lines)'.format(extra.count(b'\r')))
+        return ret.decode('ascii')
+
+    def _read_until (self, rsp, timeout=None):
+        if timeout is None:
+            ack_timeout = self.state.ack_timeout
+        else:
+            ack_timeout = timeout
+#        self.logger.debug('awaiting response {}'.format(repr(rsp)))
+        
+        # Block until the expected response is received
+        t0 = time.time()
+        rsp = rsp.upper()
+        ret = b''
+        while time.time()-t0 < ack_timeout:
+            # Brief blocking makes it easier to trigger a KeyboardInterrupt
+            ret += self.backend.read_until(rsp, self.state.timeout)
+            if rsp in ret:
+                break
+        else:
+            raise TimeoutError('response timeout')
+#        self.logger.debug('    -> {}'.format(ret))
+        return ret
 
 if __name__ == '__main__':
     AeroflexTM500.screensave_to_script(r'g:\dgk\PSCRup32UEsScreenSave.txt')
