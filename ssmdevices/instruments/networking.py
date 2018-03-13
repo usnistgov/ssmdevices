@@ -45,7 +45,7 @@ class AeroflexTM500(lb.TelnetDevice):
         port = lb.LocalInt(5003, min=1, is_metadata=True)
         config_root  = lb.LocalUnicode('', is_metadata=True,
                                        help='path to the command scripts directory')
-        data_root  = lb.LocalUnicode(write_only=True, help='remote save root directory',
+        data_root  = lb.LocalUnicode(help='remote save root directory',
                                      is_metadata=True)
 
     def configure(self, name, force=False):
@@ -60,12 +60,12 @@ class AeroflexTM500(lb.TelnetDevice):
 
             :returns: None
         '''
-        if name == self.__last_config and not force:
+        if name == self.__last.setdefault('config',None) and not force:
             self.logger.debug('not running script {} because it is already running'\
                               .format(name))
             return
         else:
-            self.__last_config = name
+            self.__last['config'] = name
             config_path = os.path.join(self.state.config_root, name)+'.conf'
             self.logger.debug('loading configuration from {}'\
                               .format(name))
@@ -74,7 +74,8 @@ class AeroflexTM500(lb.TelnetDevice):
         with open(config_path, 'r') as f:
             seq = f.readlines()
         ret = self._send(seq)
-        self._send('#$$DATA_LOG_FOLDER 1 "{}"'.format(self.state.data_root))
+        if self.state.data_root is not None:
+            self._send('#$$DATA_LOG_FOLDER 1 "{}"'.format(self.state.data_root))
         self.logger.debug('run configured in {:.2f}s'.format(time.time()-t0))        
         return ret
 
@@ -82,15 +83,41 @@ class AeroflexTM500(lb.TelnetDevice):
         ''' Start logging and return the path to the directory where the data
             is saved.
         '''
-        return self._send('#$$START_LOGGING').split("'")[1]
+        self.__last['data'] = self._send('#$$START_LOGGING').split("'")[1]
+        return self.__last['data']
 
-    def stop_logging(self):
-        self._send('#$$STOP_LOGGING')
-
-    def convert_to_text(self):
-        ''' Convert the most recently acquired data to text.
+    def stop_logging(self, convert=True):
+        ''' Stop logging.
+            :param bool convert: Whether to convert the output binary files to text
+            
+            :returns: If convert=True, a dictionary of {'name': path} items pointing to the converted text output
         '''
-        self._send('#$$CONVERT_TO_TEXT')
+        if self.__last.setdefault('data', None) is None:
+            self.logger.warning('got request to stop logging, but logging was not started')
+            return {} if convert else None
+        
+        self._send('#$$STOP_LOGGING')
+                   
+        if convert:
+            root = self.__last['data']
+            # Converts the latest dataset to text
+            t0 = time.time()
+            pre_entries = [f for f in os.listdir(root)]
+            self._send('#$$CONVERT_TO_TEXT')
+            entries = set([f for f in os.listdir(root)])\
+                      .difference(pre_entries)
+            names = ['_'.join(e.split('_')[3:-1]).replace('-','_')\
+                     for e in entries]
+            paths = [os.path.join(root, e) for e in entries]
+            ret = dict(zip(names,paths))
+            
+            self.logger.info('converted TM500 log from binary in {:0.2f}s'
+                           .format(time.time()-t0))
+        else:
+            ret = None
+
+        self.__last['data'] = None
+        return ret
 
     def stop_running(self):
         self._send('forw mte MtsClearMts')
@@ -156,10 +183,12 @@ class AeroflexTM500(lb.TelnetDevice):
             elif len(matches) > 1:
                 print('\n\nWARNING: More than one match for ', blocks[i+1].rstrip().strip(),
                       ': ', repr(matches))
+            elif b'START_LOGGING' in matches[0].rstrip().upper():
+                pass
             else:
-                commands.append(matches[0].rstrip())#[matches[0], rsp])
+                commands.append(matches[0].rstrip())
                 
-        with open(os.path.splitext(path)[0]+'-script.txt', 'wb') as f:
+        with open(os.path.splitext(path)[0]+'.conf', 'wb') as f:
             f.write(b'\r\n'.join(commands))
 
     def disconnect(self):
@@ -178,10 +207,10 @@ class AeroflexTM500(lb.TelnetDevice):
 
     def setup(self):
         # Invalidate any incomplete previous commands in the remote telnet buffer
-        try:
-            self._send('***', timeout=1)
-        except (ValueError,TimeoutError):
-            pass
+#        try:
+#            self._send('***', timeout=1)
+#        except (ValueError,TimeoutError):
+#            pass
 
         # Ensure we are disconnected
         try:
@@ -194,7 +223,9 @@ class AeroflexTM500(lb.TelnetDevice):
                   .format(ip=self.state.remote_ip, ports=self.state.remote_ports),
                   timeout=1)
         self._send('#$$CONNECT')
-        self.__last_config = None
+        self.__last = {}
+#        self.__last_config = None
+#        self.__last_data = None
 
     def _send(self, msg, data_lines=1, confirm=True, timeout=None):
         ''' Send a message, then block until a confirmation message is received.
@@ -262,7 +293,8 @@ class AeroflexTM500(lb.TelnetDevice):
         rsp = rsp.upper()
         ret = b''
         while time.time()-t0 < ack_timeout:
-            # Brief blocking makes it easier to trigger a KeyboardInterrupt
+            # Looping on short blocking makes it easier to
+            # cancel execution with a KeyboardInterrupt
             ret += self.backend.read_until(rsp, self.state.timeout)
             if rsp in ret:
                 break
@@ -272,9 +304,13 @@ class AeroflexTM500(lb.TelnetDevice):
         return ret
 
 if __name__ == '__main__':
-    AeroflexTM500.screensave_to_script(r'g:\dgk\PSCRup32UEsScreenSave.txt')
-    path = r'g:\dgk\PSCRup32UEsScreenSave-script.txt'
+    AeroflexTM500.screensave_to_script(r'E:\TM500ScriptForPaulDebug.txt')
+    
+    path = r'e:\TM500ScriptForPaulDebug'
     lb.show_messages('debug')
-    with AeroflexTM500('10.133.0.202') as tm500:
-        tm500.run(path)
-        time.sleep(5)
+    tm500 = AeroflexTM500('10.133.0.202')
+    with tm500:
+#    tm500.connect()
+        t0 = time.time()
+        tm500.configure(path)
+        print(time.time()-t0)

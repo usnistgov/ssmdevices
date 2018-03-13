@@ -84,6 +84,7 @@ class IPerf(lb.CommandLineWrapper):
     def start(self):
         self.background()
 
+import subprocess as sp
 
 class IPerfOnAndroid(IPerf):
     remote_binary_path = '/data/local/tmp/iperf'
@@ -103,19 +104,23 @@ class IPerfOnAndroid(IPerf):
 #            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
 #            if len(devices) == 0:
 #                raise Exception('adb lists no devices. is the UE connected?')
-#            self.foreground('wait-for-device')
-#
-#            time.sleep(.1)
-#            self.foreground("push", ssmdevices.lib.path('android','iperf'),
-#                            self.state.remote_binary_path)
-#            self.foreground('wait-for-device')
-#            self.foreground("shell", 'chmod', '777', self.state.remote_binary_path)
-#            self.foreground('wait-for-device')
+            sp.run([self.state.binary_path, 'wait-for-device'], check=True,
+                   timeout=2)
+
+            time.sleep(.1)
+            sp.run([self.state.binary_path, "push", ssmdevices.lib.path('android','iperf'),
+                   self.state.remote_binary_path], check=True, timeout=2)
+            sp.run([self.state.binary_path, 'wait-for-device'], check=True, timeout=2)
+            sp.run([self.state.binary_path, "shell", 'chmod', '777',
+                    self.state.remote_binary_path], timeout=2)
+            sp.run([self.state.binary_path, 'wait-for-device'], check=True, timeout=2)
     
-            # Check that it's executable
-            got = self.foreground('shell', self.state.remote_binary_path, '--help')
-            if got.startswith(b'/system/bin/sh'):
-                raise Exception(got)
+#            # Check that it's executable
+            cp = sp.run([self.state.binary_path, 'shell',
+                         self.state.remote_binary_path, '--help'],
+                         timeout=2, stdout=sp.PIPE)
+            if cp.stdout.startswith(b'/system/bin/sh'):
+                raise Exception('could not execute!!! ', cp.stdout)
 
     def start (self):
         super(IPerfOnAndroid,self).start()

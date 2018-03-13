@@ -16,7 +16,7 @@ standard_library.install_aliases()
 __all__ = ['QXDM']
 
 import labbench as lb
-import time, os, psutil
+import time, os, psutil, datetime
 from xml.etree import ElementTree as ET
 
 class QPST(lb.Win32ComDevice):
@@ -108,8 +108,6 @@ class QXDM(lb.Win32ComDevice):
             config_path str;
 
     """
-
-    data_filename = 'qxdm.isf'
 
     class state(lb.Win32ComDevice.state):
         com_object           = lb.LocalUnicode("QXDM.QXDMAutoApplication", is_metadata=True)
@@ -207,7 +205,7 @@ class QXDM(lb.Win32ComDevice):
         self._load_config(path_out)
         self.logger.debug('loaded modified configuration at {}'\
                           .format(repr(path_out)))
-        
+
     def save(self, path=None):
         ''' Stop the run and save the data in a file at the specified path.
             If path is None, autogenerate with self.state.cache_path and
@@ -225,7 +223,12 @@ class QXDM(lb.Win32ComDevice):
                 time.sleep(self._min_acquisition_time-t_elapsed)
         # Munge path
         if path is None:
-            path = os.path.join(self.state.cache_path, self.data_filename)
+            now = datetime.datetime.now()
+            fmt = lb.Host.time_format.replace(' ','_').replace(':','')
+            timestamp = '{}.{}'.format(now.strftime(fmt),
+                                       now.microsecond)
+            path = os.path.join(self.state.cache_path, 'qxdm-{}.isf'\
+                                .format(timestamp))
         path = os.path.abspath(path)
         
         # Stop acquisition
