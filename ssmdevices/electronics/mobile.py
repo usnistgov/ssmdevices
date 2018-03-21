@@ -103,7 +103,8 @@ class AndroidDebugBridge(lb.CommandLineWrapper):
 if __name__ == '__main__':
     with AndroidDebugBridge() as adb:
         devices = adb.devices() #Returns a list of tuples containing device Ids
-#        print(adb.check_airplane_mode(devices[0][0]))
-#        adb.set_airplane_mode(devices[0][0], 0)
-#        print(adb.check_airplane_mode(devices[0][0]))
+#        adb.reboot(devices[0][0]) # Reboots the device
+        print(adb.check_airplane_mode(devices[0][0]))
+        adb.set_airplane_mode(devices[0][0], 0)
+        print(adb.check_airplane_mode(devices[0][0]))
         adb.push_file(devices[0][0], ssmdevices.lib.path('android', 'iperf'), '/data/local/tmp/iperf')
