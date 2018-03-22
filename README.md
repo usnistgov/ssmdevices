@@ -45,6 +45,7 @@ That's it.
 | Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
 | Andre Rosete        | <andre.rosete@nist.gov> |
 | Paul Blanchard | <paul.blanchard@nist.gov> |
+| Michael Voecks | <michael.voecks@nist.gov> |
 | Ryan Jacobs | <ryan.jacobs@nist.gov> |
 | Alex Curtin | <alexandra.curtin@nist.gov> |
 | Audrey Puls | <audrey.puls@nist.gov> |
