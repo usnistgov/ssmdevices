@@ -102,10 +102,10 @@ class AeroflexTM500(lb.TelnetDevice):
             root = self.__last['data']
             # Converts the latest dataset to text
             t0 = time.time()
-            pre_entries = [f for f in os.listdir(root)]
+#            pre_entries = [f for f in os.listdir(root)]
             self._send('#$$CONVERT_TO_TEXT')
-            entries = set([f for f in os.listdir(root)])\
-                      .difference(pre_entries)
+            entries = [f for f in os.listdir(root)\
+                       if f.lower().endswith(('csv','txt'))]
             names = ['_'.join(e.split('_')[3:-1]).replace('-','_')\
                      for e in entries]
             paths = [os.path.join(root, e) for e in entries]
