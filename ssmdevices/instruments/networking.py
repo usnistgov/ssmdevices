@@ -141,6 +141,9 @@ class AeroflexTM500(lb.TelnetDevice):
         
         with open(path, 'rb') as f:
             txt = f.read()
+            
+        # Assume tab-delimited lines include a timestamp. Remove the timestamp.
+        txt = b'\r\n'.join([line.split(b'\t',1)[-1] for line in txt.splitlines()])
         
         # start where things get interesting
         i = txt.lower().find(b'abot 0 0 0')
@@ -304,13 +307,13 @@ class AeroflexTM500(lb.TelnetDevice):
         return ret
 
 if __name__ == '__main__':
-    AeroflexTM500.screensave_to_script(r'E:\TM500ScriptForPaulDebug.txt')
+    AeroflexTM500.screensave_to_script(r'C:\Users\dkuester\Desktop\TM500_2Sec_8UEs_withTime.txt')
     
-    path = r'e:\TM500ScriptForPaulDebug'
-    lb.show_messages('debug')
-    tm500 = AeroflexTM500('10.133.0.202')
-    with tm500:
-#    tm500.connect()
-        t0 = time.time()
-        tm500.configure(path)
-        print(time.time()-t0)
+#    path = r'e:\TM500ScriptForPaulDebug'
+#    lb.show_messages('debug')
+#    tm500 = AeroflexTM500('10.133.0.202')
+#    with tm500:
+##    tm500.connect()
+#        t0 = time.time()
+#        tm500.configure(path)
+#        print(time.time()-t0)
