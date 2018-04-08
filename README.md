@@ -5,7 +5,7 @@ It is separate from the `labbench` library to simplify future release of the `la
 access based on export control law.
 
 ## Installation
-1. Install a 64-bit python 3.6 distribution (you can use your favorite, though this process has been tested mainly with Anaconda; support for python 2.7 is not being actively maintained)
+1. Install a 64-bit python 3.6 distribution. This process has been tested only with anaconda; support for python 2.7 is not being actively maintained.
 2. If you installed python a while ago, make sure your distribution includes pandas 0.19.0 or newer.
 3. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/labbench`
 4. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
