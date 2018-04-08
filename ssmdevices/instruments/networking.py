@@ -42,7 +42,7 @@ class AeroflexTM500(lb.TelnetDevice):
                                     help='ip address of TM500 backend')
         remote_ports = lb.LocalUnicode('5001 5002 5003', is_metadata=True,
                                        help='port of TM500 backend')
-        min_acquisition_time = lb.LocalInt(25, min=0, help='minimum time to spend acquiring logs (s)')
+        min_acquisition_time = lb.LocalInt(30, min=0, help='minimum time to spend acquiring logs (s)')
 
         port = lb.LocalInt(5003, min=1, is_metadata=True)
         config_root  = lb.LocalUnicode('', is_metadata=True,
@@ -206,7 +206,7 @@ class AeroflexTM500(lb.TelnetDevice):
             f.write(b'\r\n'.join(commands))
 
     def disconnect(self):
-        if self.__latest['scenario_name'] is not None:
+        if self.__latest.get('scenario_name') is not None:
             try:
                 self.stop(convert=False)
             except TM500Error as e:
@@ -227,7 +227,13 @@ class AeroflexTM500(lb.TelnetDevice):
         except (ValueError,TimeoutError):
             pass
         self.__latest = {}
-        self._reconnect()
+        
+        try:
+            self._send('#$$DISCONNECT', timeout=1)
+        except:
+            pass
+
+        self._reconnect(force=True)
         
         # Set up licensing
         self._send('ABOT 0 0 0')
@@ -245,10 +251,10 @@ class AeroflexTM500(lb.TelnetDevice):
                 raise
         return True
 
-    def _reconnect(self):
+    def _reconnect(self, force=False):
         ''' Ensure the TMA software is connected to the TM500
         '''
-        if self._tma_is_connected():
+        if not force and self._tma_is_connected():
             return
         else:
             # Now connect
