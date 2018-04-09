@@ -20,6 +20,22 @@ ssmdevices\.instruments\.gps\_simulator module
     :undoc-members:
     :show-inheritance:
 
+ssmdevices\.instruments\.motors module
+--------------------------------------
+
+.. automodule:: ssmdevices.instruments.motors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.instruments\.networking module
+------------------------------------------
+
+.. automodule:: ssmdevices.instruments.networking
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ssmdevices\.instruments\.oscilloscopes module
 ---------------------------------------------
 
@@ -48,6 +64,14 @@ ssmdevices\.instruments\.signal\_generators module
 --------------------------------------------------
 
 .. automodule:: ssmdevices.instruments.signal_generators
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.instruments\.switches module
+----------------------------------------
+
+.. automodule:: ssmdevices.instruments.switches
     :members:
     :undoc-members:
     :show-inheritance:

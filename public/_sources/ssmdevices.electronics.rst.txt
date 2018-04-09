@@ -12,6 +12,14 @@ ssmdevices\.electronics\.gps module
     :undoc-members:
     :show-inheritance:
 
+ssmdevices\.electronics\.mobile module
+--------------------------------------
+
+.. automodule:: ssmdevices.electronics.mobile
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ssmdevices\.electronics\.usb module
 -----------------------------------
 

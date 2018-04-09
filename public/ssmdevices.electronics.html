@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ssmdevices.instruments package" href="ssmdevices.instruments.html" />
+    <link rel="next" title="ssmdevices.etc package" href="ssmdevices.etc.html" />
     <link rel="prev" title="ssmdevices package" href="ssmdevices.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="ssmdevices.html">Contents</a>
         &#160;&#160;::&#160;&#160;
-        <a href="ssmdevices.instruments.html">ssmdevices.instruments package</a>&#160;&#160;»
+        <a href="ssmdevices.etc.html">ssmdevices.etc package</a>&#160;&#160;»
         </p>
 
       </div>
@@ -63,17 +63,19 @@
 </table>
 <dl class="class">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi">
-<em class="property">class </em><code class="descclassname">ssmdevices.electronics.gps.</code><code class="descname">SwiftNavPiksi</code><span class="sig-paren">(</span><em>resource=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/gps.html#SwiftNavPiksi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.serial_.SerialLoggingDevice</span></code></p>
+<em class="property">class </em><code class="descclassname">ssmdevices.electronics.gps.</code><code class="descname">SwiftNavPiksi</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**local_states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/gps.html#SwiftNavPiksi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.SerialLoggingDevice</span></code></p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.backend">
 <code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.backend" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.baud_rate">
-<code class="descname">baud_rate</code><em class="property"> = 1000000</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.baud_rate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.cleanup">
+<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called before a device is disconnected
+:return: None</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.clear">
@@ -134,19 +136,9 @@ Implement this for message-based protocols, like VISA SCPI or some serial device
 in self.resource</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.data_format">
-<code class="descname">data_format</code><em class="property"> = ''</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.data_format" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.dsrdtr">
-<code class="descname">dsrdtr</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.dsrdtr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -164,13 +156,6 @@ like:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.list_instances">
-<code class="descname">list_instances</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.list_instances" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of all Device instances in the kernel
-:return: list of Device instances</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.list_ports">
 <code class="descname">list_ports</code><span class="sig-paren">(</span><em>hwid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.list_ports" title="Permalink to this definition">¶</a></dt>
 <dd><p>List USB serial devices on the computer</p>
@@ -184,29 +169,27 @@ like:</p>
 </table>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.max_queue_size">
-<code class="descname">max_queue_size</code><em class="property"> = 100000</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.max_queue_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.parity">
-<code class="descname">parity</code><em class="property"> = 'N'</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.parity" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.poll_rate">
-<code class="descname">poll_rate</code><em class="property"> = 0.1</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.poll_rate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.metadata">
+<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
+<dd>includes only state for traits for which trait.is_metadata evaluates as False,
+as well as self.resource (if it is not None).</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.resource">
 <code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.resource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.rtscts">
-<code class="descname">rtscts</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.rtscts" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -217,8 +200,8 @@ like:</p>
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.setup">
 <code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called each time a device is instantiated
-after everything else is ready.</p>
+<dd><p>Called after connect() if no exceptions are raised.
+:return: None</p>
 </dd></dl>
 
 <dl class="method">
@@ -229,9 +212,14 @@ after everything else is ready.</p>
 
 <dl class="class">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state">
-<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
-<p>Use bare-bones core Device state definitions</p>
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/gps.html#SwiftNavPiksi.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.baud_rate">
+<code class="descname">baud_rate</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.baud_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=True,command=None)</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_trait_events">
 <code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
@@ -271,9 +259,75 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
+whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True)</p>
+<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
+whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.data_format">
+<code class="descname">data_format</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.data_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalBytes(read_only=False,is_metadata=True,command=None)
+Data format metadata</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.dsrdtr">
+<code class="descname">dsrdtr</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.dsrdtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalBool(read_only=False,is_metadata=True,command=None)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.max_queue_size">
+<code class="descname">max_queue_size</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.max_queue_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=True,command=None)
+Number of bytes to allocate in the data retreival buffer</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.parity">
+<code class="descname">parity</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.parity" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalBytes(read_only=False,is_metadata=True,command=None)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.poll_rate">
+<code class="descname">poll_rate</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.poll_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=True,command=None)
+Data retreival rate from the device (in seconds)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.rtscts">
+<code class="descname">rtscts</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.rtscts" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalBool(read_only=False,is_metadata=True,command=None)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.stop_timeout">
+<code class="descname">stop_timeout</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.stop_timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=True,command=None)
+Delay after a call to <cite>stop</cite> before terminating the runloop thread</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.stopbits">
+<code class="descname">stopbits</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.stopbits" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalFloat(min=1,max=2,step=0.5,read_only=False,is_metadata=True,command=None)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.timeout">
+<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=True,command=None)</p>
 </dd></dl>
 
 <dl class="method">
@@ -288,6 +342,18 @@ the event handlers of this class will be returned instead.</dd>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.write_termination">
+<code class="descname">write_termination</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.write_termination" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalBytes(read_only=False,is_metadata=True,command=None)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.xonxoff">
+<code class="descname">xonxoff</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.xonxoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalBool(read_only=False,is_metadata=True,command=None)</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="method">
@@ -295,29 +361,388 @@ the event handlers of this class will be returned instead.</dd>
 <code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.stop" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-ssmdevices.electronics.mobile">
+<span id="ssmdevices-electronics-mobile-module"></span><h2>ssmdevices.electronics.mobile module<a class="headerlink" href="#module-ssmdevices.electronics.mobile" title="Permalink to this headline">¶</a></h2>
+<p>Made by Michael Voecks</p>
+<dl class="class">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge">
+<em class="property">class </em><code class="descclassname">ssmdevices.electronics.mobile.</code><code class="descname">AndroidDebugBridge</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**local_states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.CommandLineWrapper</span></code></p>
 <dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.stop_timeout">
-<code class="descname">stop_timeout</code><em class="property"> = 0.5</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.stop_timeout" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.backend">
+<code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.background">
+<code class="descname">background</code><span class="sig-paren">(</span><em>*extra_arguments</em>, <em>**flags</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.background" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the executable in the background (returning immediately while
+the executable continues running).</p>
+<p>Once the background process is running,
+* Retreive standard output from the executable with self.read_stdout
+* Write to standard input self.write_stdin
+* Kill the process with self.kill
+* Check whether the process is running with self.running</p>
+<p>Normally, the command line arguments are determined by
+* appending extra_arguments to the global arguments in self.state.arguments, and
+* appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
+<blockquote>
+<div>global flags defined with command flags in local state traits in
+<cite>self.state</cite></div></blockquote>
+<p>Use the self.no_state_arguments context manager to skip these
+global arguments like this:</p>
+<p><a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a>python
+with self.no_state_arguments:</p>
+<blockquote>
+<div>self.background(…)</div></blockquote>
+<p><a href="#id7"><span class="problematic" id="id8">``</span></a><a href="#id9"><span class="problematic" id="id10">`</span></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.check_airplane_mode">
+<code class="descname">check_airplane_mode</code><span class="sig-paren">(</span><em>deviceId</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge.check_airplane_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.check_airplane_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the status of airplane mode of device deviceId,
+returns 0 if deviceId’s airplane_mode is OFF
+returns 1 if deviceId’s airplane_mode is ON
+raises exception if it cannot find the device</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.cleanup">
+<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called before a device is disconnected
+:return: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear queued standard output, discarding any contents</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.command_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a setting from a remote instrument, keyed on a command string.
+Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
+<li><strong>trait</strong> – the state descriptor or traitlet</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.command_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an instrument setting to the instrument, keyed on a command string.
+Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
+<li><strong>trait</strong> – the state descriptor or traitlet</li>
+<li><strong>value</strong> – the value to set</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.connect" title="ssmdevices.electronics.mobile.AndroidDebugBridge.connect"><code class="xref py py-meth docutils literal"><span class="pre">connect()</span></code></a> method exists to comply with the
+<code class="xref py py-class docutils literal"><span class="pre">Device</span></code> object protocol. Call the
+<code class="xref py py-meth docutils literal"><span class="pre">execute()</span></code> method when connected to
+execute the binary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.devices">
+<code class="descname">devices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge.devices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.devices" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function checks ADB to see if any devices are connected, if
+none are, it raises an exception, if there is at least one device
+connected:
+This function returns a list of tuples, each tuple contains the
+device id and device type. i.e. [[‘f0593056’, ‘device’]] represents
+one connected device with id f0593056.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.disconnect" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.stopbits">
-<code class="descname">stopbits</code><em class="property"> = 1</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.stopbits" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.exception_on_stderr">
+<code class="descname">exception_on_stderr</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.exception_on_stderr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this context manager to raise exceptions if a process outputs
+to standard error during background execution.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.foreground">
+<code class="descname">foreground</code><span class="sig-paren">(</span><em>*extra_arguments</em>, <em>**flags</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.foreground" title="Permalink to this definition">¶</a></dt>
+<dd><p>Blocking execution of the binary at the file location
+<cite>self.state.binary_path</cite>.</p>
+<p>Normally, the command line arguments are determined by
+* appending extra_arguments to the global arguments in self.state.arguments, and
+* appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
+<blockquote>
+<div>global flags defined with command flags in local state traits in
+<cite>self.state</cite></div></blockquote>
+<p>Use the self.no_state_arguments context manager to skip these
+global arguments like this:</p>
+<p><a href="#id11"><span class="problematic" id="id12">``</span></a><a href="#id13"><span class="problematic" id="id14">`</span></a>python
+with self.no_state_arguments:</p>
+<blockquote>
+<div>self.foreground(…)</div></blockquote>
+<p><a href="#id15"><span class="problematic" id="id16">``</span></a><a href="#id17"><span class="problematic" id="id18">`</span></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the return code of the process after its completion</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.is_device_connected">
+<code class="descname">is_device_connected</code><span class="sig-paren">(</span><em>serialNum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge.is_device_connected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.is_device_connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the devices function to check if a device (sepecified by the
+serialNum argument) is connected to the ADB server, return true/false</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.kill">
+<code class="descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.kill" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.metadata">
+<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
+<dd>includes only state for traits for which trait.is_metadata evaluates as False,
+as well as self.resource (if it is not None).</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.no_state_arguments">
+<code class="descname">no_state_arguments</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.no_state_arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this context manager to disable automatic use of state traits
+in generating argument strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.push_file">
+<code class="descname">push_file</code><span class="sig-paren">(</span><em>deviceId</em>, <em>local_filepath</em>, <em>device_filepath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge.push_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.push_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a file at the location specified by local_filepath and copys
+it into the directory specified by device_filepath on the device that
+is specified by deviceId.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.read_stdout">
+<code class="descname">read_stdout</code><span class="sig-paren">(</span><em>wait_for=0</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.read_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return string output queued from stdout for a process running
+in the background. This clears the queue.</p>
+<p>Returns an empty string if the command line program has not been
+executed or is empty. Running the command line multiple times overwrites the queue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">stdout</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.reboot">
+<code class="descname">reboot</code><span class="sig-paren">(</span><em>deviceId</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge.reboot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.reboot" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function takes in a UE’s Id, (from self.devices), and reboots
+the specified device.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.resource">
+<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.resource" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.timeout">
-<code class="descname">timeout</code><em class="property"> = 2</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.timeout" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.respawn">
+<code class="descname">respawn</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.respawn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this context manager to respawning background execution.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.running">
+<code class="descname">running</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.running" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return whether the executable is currently running</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if running, otherwise False</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.set_airplane_mode">
+<code class="descname">set_airplane_mode</code><span class="sig-paren">(</span><em>deviceId</em>, <em>status</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge.set_airplane_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.set_airplane_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the airplane_mode feature on the device specified by deviceId
+to the value of the ‘status’ argumentself.
+status should be set to either 0 or 1, 0 indicating that the airplane_mode
+should be turned off, 1 indicating it should be turned on</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after connect() if no exceptions are raised.
+:return: None</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.arguments">
+<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalList(read_only=False,is_metadata=False,command=None)
+list of command line arguments to pass into the executable</p>
+</dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.write_termination">
-<code class="descname">write_termination</code><em class="property"> = '\n'</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.write_termination" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.arguments_min">
+<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.arguments_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalInt(min=0,max=None,read_only=True,is_metadata=False,command=None)
+minimum number of extra command line arguments to pass to the executable</p>
+</dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.xonxoff">
-<code class="descname">xonxoff</code><em class="property"> = False</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.xonxoff" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.binary_path">
+<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.binary_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=None)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_trait_events">
+<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_traits">
+<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_trait_names">
+<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_traits">
+<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
+whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
+whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.timeout">
+<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=False,command=None)
+wait time for traffic results before throwing a timeout exception (s)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.trait_events">
+<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.write_stdin">
+<code class="descname">write_stdin</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.write_stdin" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -358,6 +783,13 @@ a connected device.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.cleanup">
+<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called before a device is disconnected
+:return: None</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a setting from a remote instrument, keyed on a command string.
@@ -382,8 +814,8 @@ Implement this for message-based protocols, like VISA SCPI or some serial device
 <dl class="method">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.command_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id3"><span class="problematic" id="id4">``</span></a>value’’
-will be applied to the trait attriute <a href="#id5"><span class="problematic" id="id6">``</span></a>attr’’ in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id19"><span class="problematic" id="id20">``</span></a>value’’
+will be applied to the trait attriute <a href="#id21"><span class="problematic" id="id22">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
@@ -419,10 +851,21 @@ ports on the hub.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.list_instances">
-<code class="descname">list_instances</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.list_instances" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of all Device instances in the kernel
-:return: list of Device instances</p>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.metadata">
+<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
+<dd>includes only state for traits for which trait.is_metadata evaluates as False,
+as well as self.resource (if it is not None).</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -438,8 +881,8 @@ ports on the hub.</li>
 <dl class="method">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.setup">
 <code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called each time a device is instantiated
-after everything else is ready.</p>
+<dd><p>Called after connect() if no exceptions are raised.
+:return: None</p>
 </dd></dl>
 
 <dl class="class">
@@ -485,57 +928,65 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
+whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True)</p>
+<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
+whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data0_enabled">
 <code class="descname">data0_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data0_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data1_enabled">
 <code class="descname">data1_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data1_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data2_enabled">
 <code class="descname">data2_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data2_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data3_enabled">
 <code class="descname">data3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data3_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power0_enabled">
 <code class="descname">power0_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power0_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power1_enabled">
 <code class="descname">power1_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power1_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power2_enabled">
 <code class="descname">power2_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power2_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power3_enabled">
 <code class="descname">power3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power3_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
 </dd></dl>
 
 <dl class="method">
@@ -571,7 +1022,7 @@ the event handlers of this class will be returned instead.</dd>
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="ssmdevices.html">Contents</a>
         &#160;&#160;::&#160;&#160;
-        <a href="ssmdevices.instruments.html">ssmdevices.instruments package</a>&#160;&#160;»
+        <a href="ssmdevices.etc.html">ssmdevices.etc package</a>&#160;&#160;»
         </p>
 
       </div>

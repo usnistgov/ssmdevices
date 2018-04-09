@@ -5,12 +5,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>ssmdevices.lib package &#8212; ssmdevices 0.2 documentation</title>
-    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <title>ssmdevices.lib &#8212; ssmdevices 0.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
+        URL_ROOT:    '../../',
         VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -18,55 +18,40 @@
         SOURCELINK_SUFFIX: '.txt'
       };
     </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ssmdevices.software package" href="ssmdevices.software.html" />
-    <link rel="prev" title="ssmdevices.instruments package" href="ssmdevices.instruments.html" /> 
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body>
-      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
           <span>ssmdevices 0.2 documentation</span></a></h1>
-        <h2 class="heading"><span>ssmdevices.lib package</span></h2>
+        <h2 class="heading"><span>ssmdevices.lib</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
       
         <p>
-        «&#160;&#160;<a href="ssmdevices.instruments.html">ssmdevices.instruments package</a>
-        &#160;&#160;::&#160;&#160;
-        <a class="uplink" href="ssmdevices.html">Contents</a>
-        &#160;&#160;::&#160;&#160;
-        <a href="ssmdevices.software.html">ssmdevices.software package</a>&#160;&#160;»
+        <a class="uplink" href="../../ssmdevices.html">Contents</a>
         </p>
 
       </div>
       <div class="content">
         
         
-  <div class="section" id="ssmdevices-lib-package">
-<h1>ssmdevices.lib package<a class="headerlink" href="#ssmdevices-lib-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-ssmdevices.lib">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ssmdevices.lib" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="ssmdevices.lib.path">
-<code class="descclassname">ssmdevices.lib.</code><code class="descname">path</code><span class="sig-paren">(</span><em>*subdirs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/lib.html#path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.lib.path" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+  <h1>Source code for ssmdevices.lib</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
-</div>
-</div>
-
+<div class="viewcode-block" id="path"><a class="viewcode-back" href="../../ssmdevices.lib.html#ssmdevices.lib.path">[docs]</a><span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="o">*</span><span class="n">subdirs</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">*</span><span class="n">subdirs</span><span class="p">)</span></div>
+</pre></div>
 
       </div>
       <div class="bottomnav" role="navigation" aria-label="bottom navigation">
       
         <p>
-        «&#160;&#160;<a href="ssmdevices.instruments.html">ssmdevices.instruments package</a>
-        &#160;&#160;::&#160;&#160;
-        <a class="uplink" href="ssmdevices.html">Contents</a>
-        &#160;&#160;::&#160;&#160;
-        <a href="ssmdevices.software.html">ssmdevices.software package</a>&#160;&#160;»
+        <a class="uplink" href="../../ssmdevices.html">Contents</a>
         </p>
 
       </div>

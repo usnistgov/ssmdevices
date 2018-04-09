@@ -1,0 +1,279 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ssmdevices.software.iperf &#8212; ssmdevices 0.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>ssmdevices 0.2 documentation</span></a></h1>
+        <h2 class="heading"><span>ssmdevices.software.iperf</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for ssmdevices.software.iperf</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@author: Dan Kuester &lt;daniel.kuester@nist.gov&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">future</span> <span class="k">import</span> <span class="n">standard_library</span>
+<span class="n">standard_library</span><span class="o">.</span><span class="n">install_aliases</span><span class="p">()</span>
+
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">super</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">str</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;IPerfClient&#39;</span><span class="p">,</span><span class="s1">&#39;IPerf&#39;</span><span class="p">,</span><span class="s1">&#39;IPerfOnAndroid&#39;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">ssmdevices.lib</span><span class="o">,</span><span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
+
+<div class="viewcode-block" id="IPerf"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerf">[docs]</a><span class="k">class</span> <span class="nc">IPerf</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">CommandLineWrapper</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Run an instance of iperf, collecting output data in a background thread.</span>
+<span class="sd">        When running as an iperf client (server=False), </span>
+<span class="sd">        The default value is the path that installs with 64-bit cygwin.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">resource</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="IPerf.state"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerf.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">CommandLineWrapper</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">binary_path</span>   <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="n">ssmdevices</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;iperf.exe&#39;</span><span class="p">))</span>
+        <span class="n">timeout</span>       <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalFloat</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;wait time for traffic results before throwing a timeout exception (s)&#39;</span><span class="p">)</span>
+        <span class="n">port</span>          <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;connection port&#39;</span><span class="p">)</span>
+        <span class="n">bind</span>          <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;-B&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;bind connection to specified IP&#39;</span><span class="p">)</span>
+        <span class="n">tcp_window_size</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;-w&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;(bytes)&#39;</span><span class="p">)</span>
+        <span class="n">buffer_size</span>   <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Size of data buffer that generates traffic (bytes)&#39;</span><span class="p">)</span>
+        <span class="n">interval</span>      <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalFloat</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Interval between throughput reports (s)&#39;</span><span class="p">)</span>
+        <span class="n">bidirectional</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalBool</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Send and receive simultaneously&#39;</span><span class="p">)</span>
+        <span class="n">udp</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalBool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;-u&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;UDP instead of TCP networking&#39;</span><span class="p">)</span>
+        <span class="n">bit_rate</span>      <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Maximum bit rate (append unit for size, e.g. 10K)&#39;</span><span class="p">)</span>
+        <span class="n">time</span>          <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">16535</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;-t&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;time in seconds to transmit before quitting (default 10s)&#39;</span><span class="p">)</span>
+        <span class="n">arguments</span>     <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalList</span><span class="p">([</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span><span class="s1">&#39;-1&#39;</span><span class="p">,</span><span class="s1">&#39;-y&#39;</span><span class="p">,</span><span class="s1">&#39;C&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="IPerf.fetch"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerf.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Retreive csv-formatted text from standard output and parse into</span>
+<span class="sd">            a pandas DataFrame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_stdout</span><span class="p">()</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span><span class="s1">&#39;source_address&#39;</span><span class="p">,</span>\
+                  <span class="s1">&#39;source_port&#39;</span><span class="p">,</span><span class="s1">&#39;destination_address&#39;</span><span class="p">,</span><span class="s1">&#39;destination_port&#39;</span><span class="p">,</span>\
+                  <span class="s1">&#39;test_id&#39;</span><span class="p">,</span><span class="s1">&#39;interval&#39;</span><span class="p">,</span><span class="s1">&#39;transferred_bytes&#39;</span><span class="p">,</span><span class="s1">&#39;bits_per_second&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">udp</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;jitter_milliseconds&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;datagrams_lost&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;datagrams_sent&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;datagrams_loss_percentage&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;datagrams_out_of_order&#39;</span><span class="p">)</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;iperf_&#39;</span><span class="o">+</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">]</span>
+        <span class="nb">open</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\python code\junk.csv&#39;</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                           <span class="n">names</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        
+        <span class="c1"># throw out the last row (potantially a summary of the previous rows)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="kc">None</span><span class="p">])</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;iperf_interval&#39;</span><span class="p">,</span><span class="s1">&#39;iperf_transferred_bytes&#39;</span><span class="p">,</span><span class="s1">&#39;iperf_test_id&#39;</span><span class="p">],</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;iperf_timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;iperf_timestamp&#39;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;iperf_timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;iperf_timestamp&#39;</span><span class="p">]</span><span class="o">+</span>\
+                                  <span class="n">pd</span><span class="o">.</span><span class="n">TimedeltaIndex</span><span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span><span class="o">%</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="IPerf.background"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerf.background">[docs]</a>    <span class="k">def</span> <span class="nf">background</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">,</span> <span class="o">**</span><span class="n">flags</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">udp</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">buffer_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;iperf might not behave nicely setting udp=True with buffer_size&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">respawn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exception_on_stderr</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">IPerf</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">),</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">,</span> <span class="o">**</span><span class="n">flags</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">IPerf</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">,</span> <span class="o">**</span><span class="n">flags</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IPerf.start"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerf.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="p">()</span></div></div>
+
+<span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">sp</span>
+
+<div class="viewcode-block" id="IPerfOnAndroid"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerfOnAndroid">[docs]</a><span class="k">class</span> <span class="nc">IPerfOnAndroid</span><span class="p">(</span><span class="n">IPerf</span><span class="p">):</span>
+    <span class="n">remote_binary_path</span> <span class="o">=</span> <span class="s1">&#39;/data/local/tmp/iperf&#39;</span>
+
+<div class="viewcode-block" id="IPerfOnAndroid.state"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerfOnAndroid.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">IPerf</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">binary_path</span>        <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="n">ssmdevices</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;adb.exe&#39;</span><span class="p">),</span>
+                                             <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">remote_binary_path</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s1">&#39;/data/local/tmp/iperf&#39;</span><span class="p">,</span>
+                                             <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">arguments</span>          <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalList</span><span class="p">([</span><span class="s1">&#39;shell&#39;</span><span class="p">,</span> <span class="n">remote_binary_path</span><span class="o">.</span><span class="n">default_value</span><span class="p">,</span>
+                                     <span class="c1"># &#39;-y&#39;, &#39;C&#39;</span>
+                                          <span class="p">])</span></div>
+
+<div class="viewcode-block" id="IPerfOnAndroid.setup"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerfOnAndroid.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_state_arguments</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;TODO: need to fix setup for android iperf, but ok for now&#39;</span><span class="p">)</span>
+<span class="c1">#            devices = self.foreground(&#39;devices&#39;).strip().rstrip().splitlines()[1:]</span>
+<span class="c1">#            if len(devices) == 0:</span>
+<span class="c1">#                raise Exception(&#39;adb lists no devices. is the UE connected?&#39;)</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">binary_path</span><span class="p">,</span> <span class="s1">&#39;wait-for-device&#39;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                   <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">binary_path</span><span class="p">,</span> <span class="s2">&quot;push&quot;</span><span class="p">,</span> <span class="n">ssmdevices</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;android&#39;</span><span class="p">,</span><span class="s1">&#39;iperf&#39;</span><span class="p">),</span>
+                   <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">remote_binary_path</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">binary_path</span><span class="p">,</span> <span class="s1">&#39;wait-for-device&#39;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">binary_path</span><span class="p">,</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="s1">&#39;chmod&#39;</span><span class="p">,</span> <span class="s1">&#39;777&#39;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">remote_binary_path</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">sp</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">binary_path</span><span class="p">,</span> <span class="s1">&#39;wait-for-device&#39;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+<span class="c1">#            # Check that it&#39;s executable</span>
+            <span class="n">cp</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">binary_path</span><span class="p">,</span> <span class="s1">&#39;shell&#39;</span><span class="p">,</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">remote_binary_path</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">],</span>
+                         <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cp</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;/system/bin/sh&#39;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;could not execute!!! &#39;</span><span class="p">,</span> <span class="n">cp</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IPerfOnAndroid.start"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerfOnAndroid.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IPerfOnAndroid</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_stdout</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>        
+        <span class="k">if</span> <span class="s1">&#39;network&#39;</span> <span class="ow">in</span> <span class="n">test</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;no network connectivity in UE&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IPerfOnAndroid.kill"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerfOnAndroid.kill">[docs]</a>    <span class="k">def</span> <span class="nf">kill</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wait_time</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Kill the local process and the iperf process on the UE.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1"># Kill the local adb process as normal</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IPerfOnAndroid</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+
+        <span class="c1"># Now&#39;s where the fun really starts</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_state_arguments</span><span class="p">:</span>
+            <span class="c1"># Find and kill processes on the UE</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">foreground</span><span class="p">(</span><span class="s1">&#39;shell&#39;</span><span class="p">,</span> <span class="s1">&#39;ps&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">remote_binary_path</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="n">pid</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;killing zombie iperf. stdout: </span><span class="si">{}</span><span class="s1">&#39;</span>\
+                                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">foreground</span><span class="p">(</span><span class="s1">&#39;shell&#39;</span><span class="p">,</span> <span class="s1">&#39;kill&#39;</span><span class="p">,</span> <span class="s1">&#39;-9&#39;</span><span class="p">,</span> <span class="n">pid</span><span class="p">)))</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Wait for any iperf zombie processes to die</span>
+            <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="n">wait_time</span> <span class="ow">and</span> <span class="n">wait_time</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">foreground</span><span class="p">(</span><span class="s1">&#39;shell&#39;</span><span class="p">,</span> <span class="s1">&#39;ps&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">if</span> <span class="sa">b</span><span class="s1">&#39;iperf&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">25</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;timeout waiting for iperf process termination on UE&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IPerfOnAndroid.read_stdout"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerfOnAndroid.read_stdout">[docs]</a>    <span class="k">def</span> <span class="nf">read_stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; adb seems to forward stderr as stdout. Filter out some undesired</span>
+<span class="sd">            resulting status messages.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">IPerfOnAndroid</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">read_stdout</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">txt</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;:&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;stdout: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">l</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="IPerfOnAndroid.fetch"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerfOnAndroid.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_stdout</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="IPerfClient"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.iperf.IPerfClient">[docs]</a><span class="k">class</span> <span class="nc">IPerfClient</span><span class="p">(</span><span class="n">IPerf</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; This class is deprected. Use IPerf instead</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;this class is deprecated! use </span><span class="si">{}</span><span class="s1"> instead&#39;</span>\
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">IPerf</span><span class="p">)))</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IPerfClient</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>   
+    <span class="n">lb</span><span class="o">.</span><span class="n">show_messages</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+    <span class="n">ips</span> <span class="o">=</span> <span class="n">IPerf</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">udp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">ipc</span> <span class="o">=</span> <span class="n">IPerfOnAndroid</span><span class="p">(</span><span class="s1">&#39;10.133.0.201&#39;</span><span class="p">,</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+                         <span class="n">udp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bit_rate</span><span class="o">=</span><span class="s1">&#39;1M&#39;</span><span class="p">)</span>
+<span class="c1">#    ipc.iperf_path = r&#39;..\lib\iperf.exe&#39;</span>
+    
+    <span class="k">with</span> <span class="n">ipc</span><span class="p">,</span><span class="n">ips</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">ips</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">ipc</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+            <span class="n">ipc</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+            <span class="n">ips</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+            <span class="n">ips_result</span> <span class="o">=</span> <span class="n">ips</span><span class="o">.</span><span class="n">read_stdout</span><span class="p">()</span>
+            <span class="n">ipc_result</span> <span class="o">=</span> <span class="n">ipc</span><span class="o">.</span><span class="n">read_stdout</span><span class="p">()</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright  does not apply.
+
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>

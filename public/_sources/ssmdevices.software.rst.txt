@@ -12,6 +12,14 @@ ssmdevices\.software\.iperf module
     :undoc-members:
     :show-inheritance:
 
+ssmdevices\.software\.qxdm module
+---------------------------------
+
+.. automodule:: ssmdevices.software.qxdm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ssmdevices\.software\.windows module
 ------------------------------------
 
