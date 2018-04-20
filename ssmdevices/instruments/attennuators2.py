@@ -2,14 +2,14 @@
 """
 Created on Fri Apr 20 16:06:39 2018
 
-@author: Dan, modified by ynm5
+@author: ynm5
 """
 
  # -*- coding: utf-8 -*-
 """
 Created on Tue Mar 07 14:38:10 2017
 
- 
+@author: dkuester
 """
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -18,7 +18,7 @@ from __future__ import absolute_import
 
 from future import standard_library
 standard_library.install_aliases()
-__all__ = ['MiniCircuitsRCDAT2']
+__all__ = ['MiniCircuitsRCDAT']
 
 from labbench import DotNetDevice
 import ssmdevices.lib
