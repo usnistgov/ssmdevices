@@ -23,7 +23,7 @@ __all__ = ['MiniCircuitsRCDAT2']
 from labbench import DotNetDevice
 import ssmdevices.lib
 import labbench as core
-
+        MiniCircuitsRCDAT2
 class MiniCircuitsRCDAT2(DotNetDevice):
     ''' A digitally controlled, 0 to 110 dB variable attenuator.
     
