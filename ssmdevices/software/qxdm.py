@@ -206,7 +206,7 @@ class QXDM(lb.Win32ComDevice):
         self.logger.debug('loaded modified configuration at {}'\
                           .format(repr(path_out)))
 
-    def save(self, path=None):
+    def save(self, path=None, saveNm = None):
         ''' Stop the run and save the data in a file at the specified path.
             If path is None, autogenerate with self.state.cache_path and
             self.data_filename.
@@ -227,9 +227,14 @@ class QXDM(lb.Win32ComDevice):
             fmt = lb.Host.time_format.replace(' ','_').replace(':','')
             timestamp = '{}.{}'.format(now.strftime(fmt),
                                        now.microsecond)
-            path = os.path.join(self.state.cache_path, 'qxdm-{}.isf'\
+            if not saveNm == None:
+                path = os.path.join(self.state.cache_path, '{}-{}.isf'\
+                                .format(saveNm, timestamp))
+            else:
+                path = os.path.join(self.state.cache_path, 'qxdm-{}.isf'\
                                 .format(timestamp))
-        path = os.path.abspath(path)
+        else:
+            path = os.path.abspath(path)
         
         # Stop acquisition
         t0 = time.time()

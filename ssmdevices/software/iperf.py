@@ -100,12 +100,12 @@ class IPerfOnAndroid(IPerf):
 
     def setup (self):
         with self.no_state_arguments:
-            self.logger.warning('TODO: need to fix setup for android iperf, but ok for now')
+#            self.logger.warning('TODO: need to fix setup for android iperf, but ok for now')
 #            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
 #            if len(devices) == 0:
 #                raise Exception('adb lists no devices. is the UE connected?')
             sp.run([self.state.binary_path, 'wait-for-device'], check=True,
-                   timeout=2)
+                   timeout=30)
 
             time.sleep(.1)
             sp.run([self.state.binary_path, "push", ssmdevices.lib.path('android','iperf'),

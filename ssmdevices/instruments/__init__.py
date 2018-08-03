@@ -9,4 +9,3 @@ from .signal_analyzers import *
 from .signal_generators import *
 from .switches import *
 from .motors import *
-from .attenuators2 import *
