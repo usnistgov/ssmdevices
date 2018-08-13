@@ -345,7 +345,7 @@ class AeroflexTM500(lb.TelnetDevice):
         
         # Remove items not listed in self.state.convert_files
         if len(self.state.convert_files)>0:
-            for name in ret.keys():
+            for name in list(ret.keys()):
                 for inc in self.state.convert_files:
                     if inc.upper() in name.upper():
                         break
