@@ -14,8 +14,8 @@ import labbench as lb
 __all__ = ['SwiftNavPiksi']
 
 class SwiftNavPiksi(lb.SerialLoggingDevice):
-    class state(lb.SerialLoggingDevice.state):
-        baud_rate = lb.LocalInt(1000000, min=1, is_metadata=True)
+    class settings(lb.SerialLoggingDevice.settings):
+        baud_rate = lb.Int(1000000, min=1, )
 
 if __name__ == '__main__':
     import labbench as lb

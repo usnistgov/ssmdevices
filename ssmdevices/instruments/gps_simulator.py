@@ -38,7 +38,7 @@ class SpirentGSS8000(lb.SerialDevice):
         status           = lb.CaselessBytesEnum(read_only=True, values=status_messages)
         'UTC time of the current running scenario.'
 
-        current_scenario = lb.Bytes    (command=b'SC_NAME,includepath', read_only=True, is_metadata=True)
+        current_scenario = lb.Bytes    (command=b'SC_NAME,includepath', read_only=True, )
         gps_week         = lb.Int      (command='-,ZCNT_TOW', read_only=True)
         running          = lb.Bool     (read_only=True)
         utc_time         = lb.Bytes    (read_only=True)        

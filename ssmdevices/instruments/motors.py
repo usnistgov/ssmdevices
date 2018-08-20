@@ -35,18 +35,17 @@ class ETSLindgrenAzi2005(lb.VISADevice):
         define_position = lb.Float(command='CP', min=0, max=360, step=0.1, help='rotation (degrees)')
         position = lb.Float(command='SK', min=0, max=360, help='rotation (degrees)', write_only=True)
         
-        read_termination  = lb.LocalUnicode('\n', read_only='connected')
-        #this is an acknowledge byte
-        write_termination = lb.LocalUnicode('\r', read_only='connected')
-        #this is a carriage return    
-        
-        timeout = lb.LocalFloat(20, min=0, is_metadata=True)
-        baud_rate = lb.LocalInt(9600, min=1, is_metadata=True,)
-        parity = lb.LocalBytes(b'N', is_metadata=True,)
-        stopbits = lb.LocalFloat(1, min=1, max=2, step=0.5, is_metadata=True,)
-        xonxoff = lb.LocalBool(False, is_metadata=True,)
-        rtscts = lb.LocalBool(False, is_metadata=True,)
-        dsrdtr = lb.LocalBool(False, is_metadata=True,)
+
+    class settings(lb.VISADevice.settings):
+        timeout = lb.Float(20, min=0, )
+        baud_rate = lb.Int(9600, min=1, )
+        parity = lb.Bytes(b'N', )
+        stopbits = lb.Float(1, min=1, max=2, step=0.5, )
+        xonxoff = lb.Bool(False, )
+        rtscts = lb.Bool(False, )
+        dsrdtr = lb.Bool(False, )
+        read_termination  = lb.Unicode('\n', read_only='connected') #this is an acknowledge byte
+        write_termination = lb.Unicode('\r', read_only='connected') #this is a carriage return
         
     def command_set(self, command, trait, value):
         ''' Send an SCPI command to set a state value on the

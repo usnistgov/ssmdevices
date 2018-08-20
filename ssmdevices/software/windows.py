@@ -102,10 +102,10 @@ class WLANStatus(lb.Device):
     ssid = None
 
     class state(lb.Device.state):
-        bssid              = lb.Bytes(readonly=True,is_metadata=True)
+        bssid              = lb.Bytes(readonly=True,)
         channel            = lb.Int(min=0,readonly=True)
         signal             = lb.Int(min=0,max=100,readonly=True)
-        ssid               = lb.Bytes(readonly=True,is_metadata=True)
+        ssid               = lb.Bytes(readonly=True,)
         transmit_rate_mbps = lb.Int(min=0,readonly=True)
         radio_type         = lb.Bytes(readonly=True)
         state              = lb.Bytes(readonly=True)
@@ -122,7 +122,7 @@ class WLANStatus(lb.Device):
             self.state.observe(onchange)
             
             self.logger.debug('starting WLAN reconnect watchdog')
-            iface,target_ssid = self.resource,self.ssid
+            iface,target_ssid = self.settings.resource,self.ssid
             time.sleep(0.1)
             
             while True:
@@ -137,7 +137,7 @@ class WLANStatus(lb.Device):
                         self.logger.warn("{}, but don't know SSID for reconnection".format(iface))
                     else:
                         self.logger.warn("{}, reconnecting to {}".format(iface,target_ssid))
-                        self.backend.set_interface_connected(self.resource,
+                        self.backend.set_interface_connected(self.settings.resource,
                                                              target_ssid)
                         
                 time.sleep(.1)
@@ -149,18 +149,18 @@ class WLANStatus(lb.Device):
     
     def command_get (self, command, trait):
         d = self.backend.get_wlan_interfaces()
-        if self.resource['interface'] not in d:
-            #raise Exception('windows reports no WLAN interface named "{}"'.format(self.resource['interface']))
-            self.logger.warn('windows reports no WLAN interface named "{}"'.format(self.resource['interface']))
+        if self.settings.resource['interface'] not in d:
+            #raise Exception('windows reports no WLAN interface named "{}"'.format(self.settings.resource['interface']))
+            self.logger.warn('windows reports no WLAN interface named "{}"'.format(self.settings.resource['interface']))
             return None
-        d = d[self.resource['interface']]
+        d = d[self.settings.resource['interface']]
         
         # Set the other traits with the other dictionary values
         for other in list(self.state.traits().values()):
             if other.name in d and other.name != trait.name:
                 # sneak in under the hood and set the other traits directly 
                 # with traitlets
-                other._trait_cls().set(other, self.state, d[other.name])
+                other._parent.set(other, self.state, d[other.name])
             
         return d[trait.name]
 

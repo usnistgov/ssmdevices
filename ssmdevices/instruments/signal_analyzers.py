@@ -62,14 +62,15 @@ class RohdeSchwarzFSW26Base(VISADevice):
         input_attenuation_auto   = Bool      (command='INP:ATT:AUTO', trues=['1'], falses=['0'])
         input_attenuation        = Float     (command='INP:ATT', step=1, min=0, max=79)
         
-        channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM', default_channel_name], is_metadata=True)
+        channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM', default_channel_name], )
         format                  = CaselessStrEnum (command='FORM', values=['ASC,0','REAL,32','REAL,64', 'REAL,16'])
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
 
         display_update          = Bool      (command='SYST:DISP:UPD', trues=['ON'], falses=['OFF'])
 
-        default_window          = lb.LocalUnicode('', is_metadata=True, help='data window number to use if unspecified')
-        default_trace           = lb.LocalUnicode('', is_metadata=True, help='data trace number to use if unspecified')
+    class settings(VISADevice.settings):
+        default_window          = lb.Unicode('',  help='data window number to use if unspecified')
+        default_trace           = lb.Unicode('',  help='data trace number to use if unspecified')
 
     def verify_channel_type (self):
         if self.expected_channel_type is not None \
@@ -296,9 +297,9 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
     def fetch_horizontal (self, window=None, trace=None):
         if window is None:
-            window = self.state.default_window
+            window = self.settings.default_window
         if trace is None:
-            trace = self.state.default_trace
+            trace = self.settings.default_trace
 
         return self.query_ieee_array("TRAC{window}:DATA:X? TRACE{trace}"\
                                         .format(window=window,trace=trace))
@@ -325,16 +326,16 @@ class RohdeSchwarzFSW26Base(VISADevice):
                 count = inst.query("SENSE:SWEEP:COUNT?")
                 self.write("SENSE:SWEEP:COUNT 1")
 
-        :param trace: The trace number to query (or None, the default, to use self.state.default_trace)
+        :param trace: The trace number to query (or None, the default, to use self.settings.default_trace)
         :param horizontal: Set the index of the returned Series by a call to :method:`fetch_horizontal`
-        :param window: The window number to query (or None, the default, to use self.state.default_window)
+        :param window: The window number to query (or None, the default, to use self.settings.default_window)
         :return: a pd.Series object containing the returned data
         '''
 
         if trace is None:
-            trace = self.state.default_trace
+            trace = self.settings.default_trace
         if window is None:
-            window = self.state.default_window
+            window = self.settings.default_window
         if hasattr(trace, '__iter__'):
             return pd.concat([self.fetch_trace(t,horizontal=horizontal) for t in trace])
         
@@ -355,12 +356,12 @@ class RohdeSchwarzFSW26Base(VISADevice):
             of the signal analyzer should lead to a TimeoutError.
 
         :param all: If True, acquire and return all available timestamps; if False, only the most current timestamp.
-        :param window: The window number corresponding to the desired timestamp data (or self.state.default_window when window=None)
+        :param window: The window number corresponding to the desired timestamp data (or self.settings.default_window when window=None)
         :return: A number (when `all` is False) or a np.array (when `all` is True)
         '''
 
         if window is None:
-            window = self.state.default_window
+            window = self.settings.default_window
 
         if all:
             _to, self.backend.timeout = self.backend.timeout, timeout
@@ -389,7 +390,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
         :param freqs: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on FFT parameters), or None (leaving the integer indices)
         :param timestamps: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on sweep time), or None (leaving the integer indices)
-        :param window: The window number corresponding to the desired timestamp data (or self.state.default_window when window=None)
+        :param window: The window number corresponding to the desired timestamp data (or self.settings.default_window when window=None)
         :return: a pandas DataFrame containing the acquired data
         '''
 
@@ -407,7 +408,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
         with self.suppress_timeout():
             if window is None:
-                window = self.state.default_window
+                window = self.settings.default_window
 
             data = self.query_ieee_array('TRAC{window}:DATA? SPEC'.format(window=window))
 
@@ -776,24 +777,24 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
 
     def set_detector_type (self, type_, window=None, trace=None):
         if window is None:
-            window = self.state.default_window
+            window = self.settings.default_window
         if trace is None:
-            trace = self.state.default_trace
+            trace = self.settings.default_trace
         self.write('WIND{window}:DET{trace} {type}'\
                    .format(window=window, trace=trace, type=type_))
 
     def get_detector_type (self, window=None, trace=None):
         if window is None:
-            window = self.state.default_window
+            window = self.settings.default_window
         if trace is None:
-            trace = self.state.default_trace
+            trace = self.settings.default_trace
         return self.query('WIND{window}:DET{trace}?'\
                           .format(window=window, trace=trace))
 
     @state.spectrogram_depth.setter
     def __ (self, depth, window=None):
         if window is None:
-            window = self.state.default_window
+            window = self.settings.default_window
 
         self.write('CALC{window}:SPEC:HDEP {value}'\
                    .format(window=window, value=depth))
@@ -801,7 +802,7 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
     @state.spectrogram_depth.getter
     def __ (self, window=None):
         if window is None:
-            window = self.state.default_window
+            window = self.settings.default_window
 
         return self.query('CALC{window}:SPEC:HDEP?'\
                          .format(window=window))
@@ -822,11 +823,11 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         :param thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`), or a scalar to use a constant value across the band
         :param array-like frequency_offsets: frequencies at which the mask is defined, or None (to specify across the whole band)
         :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
-        :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)
+        :param window: The window number corresponding to the desired trigger setting (or self.settings.default_window when window=None)
         :return: None
         '''
         if window is None:
-            window = self.state.default_window
+            window = self.settings.default_window
         if kind.lower() not in ('upper','lower'):
             raise ValueError('frequency mask is {} but must be "upper" or "lower"'\
                              .format(repr(kind)))
@@ -853,13 +854,13 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         ''' Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
         :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
-        :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)
+        :param window: The window number corresponding to the desired trigger setting (or self.settings.default_window when window=None)
         :param bool first_threshold_only: if True, return only the threshold; otherwise, return a complete parameter dict
         :return: the threshold or a dictionary with keys "frequency_offsets" and "thresholds" and corresponding values (in Hz and dBm, respectively) of equal length
         '''
 
         if window is None:
-            window = self.state.default_window
+            window = self.settings.default_window
         if kind.lower() not in ('upper','lower'):
             raise ValueError('frequency mask is {} but must be "upper" or "lower"'\
                              .format(repr(kind)))
@@ -893,8 +894,8 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         if kws:
             self.logger.warning('ignoring spectrogram setup keyword arguments {}'.format(kws))
 
-        self.state.default_window = 2
-        self.state.default_trace = 1
+        self.settings.default_window = 2
+        self.settings.default_trace = 1
 
         if self.load_cache():
             return

@@ -55,11 +55,11 @@ class AcronameUSBHub2x4(lb.Device):
         specs = self._bs.discover.findAllModules(brainstem.link.Spec.USB)
 
         specs = [s for s in specs if s.model == self.model]        
-        if self.resource is not None:
-            specs = [s for s in specs if s.serial_number == self.resource]
+        if self.settings.resource is not None:
+            specs = [s for s in specs if s.serial_number == self.settings.resource]
     
         if len(specs)>1:
-            if self.resource is None:
+            if self.settings.resource is None:
                 raise Exception("More than one connected USB device matches model " + str(self.model) + " - provide serial number?")
             else:
                 raise Exception("More than one connected USB device match model " + str(self.model) + " and serial " + str(self.serial))

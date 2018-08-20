@@ -80,12 +80,13 @@ class RohdeSchwarzNRPSeries(VISADevice):
         average_auto = lb.Bool(command='AVER:COUN:AUTO', trues=['ON'], falses=['OFF'])
         average_enable = lb.Bool(command='AVER', trues=['ON'], falses=['OFF'])
         smoothing_enable = lb.Bool(command='SMO:STAT', trues=['ON'], falses=['OFF'], write_only=True)
-        options = lb.LocalDict({}, read_only=True)
-
-        read_termination = lb.LocalUnicode('', read_only='connected')
 
         # unit = lb.CaselessStrEnum(command='UNIT:POW', values=['DBM','W','DBUV']) # seems to fail
         # format = lb.CaselessStrEnum(command='FORMat:DATA', values=['REAL', 'ASCII']) # Seems to fail
+
+    class settings(VISADevice.settings):
+        read_termination = lb.Unicode('', read_only='connected')
+
 
     @state.function.setter
     def __ (self, value):

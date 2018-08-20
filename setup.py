@@ -38,7 +38,7 @@ if __name__ == '__main__':
     import setuptools
     
     setup(name='ssmdevices',
-          version='0.3',
+          version='0.4',
           description='instrument automation drivers',
           author='Dan Kuester',
           author_email='daniel.kuester@nist.gov',
@@ -49,7 +49,7 @@ if __name__ == '__main__':
           include_package_data=True,
           license='NIST',
           install_requires=[
-  		    	    'labbench(>=0.12)',
+  		    	    'labbench(>=0.18)',
                     'pandas(>=0.19.0)',
                     'pyserial(>3.0)',
                     'pyvisa(>=1.8)',

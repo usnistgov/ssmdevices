@@ -37,8 +37,8 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
             raise Exception('Minicircuits attenuator support currently requires pythonnet and windows')
         # The USB_Digital_Switch namespace is given in the minicircuits docs
         self.backend = self.dll.USB_Digital_Switch()
-        if self.backend.Connect(self.resource)[0] != 1:
-            raise Exception('Cannot connect to USB switch resource {}'.format(self.resource))
+        if self.backend.Connect(self.settings.resource)[0] != 1:
+            raise Exception('Cannot connect to USB switch resource {}'.format(self.settings.resource))
 
     def disconnect(self):
         ''' Release the attenuator hardware resource via the driver DLL.

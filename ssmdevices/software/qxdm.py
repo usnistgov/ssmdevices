@@ -20,8 +20,8 @@ import time, os, psutil, datetime
 from xml.etree import ElementTree as ET
 
 class QPST(lb.Win32ComDevice):
-    class state(lb.Win32ComDevice.state):
-        com_object           = lb.LocalUnicode('QPSTAtmnServer.Application', is_metadata=True)
+    class settings(lb.Win32ComDevice.settings):
+        com_object           = lb.Unicode('QPSTAtmnServer.Application', )
     
     def setup(self):
         self.backend._FlagAsMethod('AddPort')
@@ -59,12 +59,13 @@ class QPST(lb.Win32ComDevice):
                     if port_list.PortName(i).upper() == 'COM{}'.format(port):
                         if port_list.PhoneStatus(i) != 5:
                             raise ValueError('QXDM: no phone detected on COM{}'.format(port))
+                        ret = {}
                         for key, api_name in state_to_qpst_api.items():
                             value = getattr(port_list,api_name)(i)
                             
                             # Remap integers to strings
                             value = codes.get(key,{}).get(value,value)
-                            setattr(self.state, key, value)
+                            ret[key] = value
                         break
 
                 else:
@@ -75,6 +76,8 @@ class QPST(lb.Win32ComDevice):
             break
         else:
             raise TimeoutError('QXDM: could not connect to port on COM{}'.format(port))
+
+        return ret
     
     def remove_port(self, port):
         ''' Remove the port from QPST for consistency
@@ -109,18 +112,19 @@ class QXDM(lb.Win32ComDevice):
 
     """
 
+    class settings(lb.Win32ComDevice.settings):
+        com_object           = lb.Unicode("QXDM.QXDMAutoApplication", )
+        cache_path           = lb.Unicode("temp",help='folder path to contain auto-saved isf file(s)')
+        connection_timeout   = lb.Float(2, min=0.5, help='connection timeout in seconds')
+
     class state(lb.Win32ComDevice.state):
-        com_object           = lb.LocalUnicode("QXDM.QXDMAutoApplication", is_metadata=True)
-        cache_path           = lb.LocalUnicode("temp", is_metadata=True,
-                                               help='folder path to contain auto-saved isf file(s)')
-        connection_timeout   = lb.LocalFloat(2, min=0.5, help='connection timeout in seconds')
-        version              = lb.Unicode(read_only=True, is_metadata=True, cache=True,
+        version              = lb.Unicode(read_only=True,  cache=True,
                                           help='QXDM application version')
-        phone_model_number   = lb.LocalInt(-1, help='model number code')
-        phone_mode           = lb.LocalUnicode(help='current state of the phone')
-        phone_imei           = lb.LocalInt(-1,help='Phone IMEI')
-        phone_esn            = lb.LocalInt(-1,help='Phone ESN')
-        phone_build_id       = lb.LocalUnicode(help='Build ID of software on the phone')
+        phone_model_number   = lb.Int(-1, help='model number code')
+        phone_mode           = lb.Unicode(help='current state of the phone')
+        phone_imei           = lb.Int(-1,help='Phone IMEI')
+        phone_esn            = lb.Int(-1,help='Phone ESN')
+        phone_build_id       = lb.Unicode(help='Build ID of software on the phone')
 
     def connect(self):
         for pid in psutil.pids():
@@ -132,7 +136,8 @@ class QXDM(lb.Win32ComDevice):
                         proc.kill()
             except psutil.NoSuchProcess:
                 pass
-#
+
+        self.__connection_info = {}
         self._qpst = QPST()
         self._qpst.connect()
         super(QXDM, self).connect()
@@ -143,10 +148,9 @@ class QXDM(lb.Win32ComDevice):
         '''
         self.__start_time = None
         self._window = self.backend.GetAutomationWindow()
-        self.state.cache_path = os.path.abspath(self.state.cache_path)
-        os.makedirs(self.state.cache_path, exist_ok=True)
+        self.settings.cache_path = os.path.abspath(self.settings.cache_path)
+        os.makedirs(self.settings.cache_path, exist_ok=True)
 
-        
         while not self._qpst.state.connected:
             time.sleep(0.1)
 
@@ -155,6 +159,12 @@ class QXDM(lb.Win32ComDevice):
             self._set_com_port(None)
         except TimeoutError:
             raise Exception('could not disable UE; does QXDM work if you start it manually?')
+
+    def command_get(self, command, trait):
+        try:
+            return self.__connection_info[command]
+        except KeyError:
+            raise lb.CommandNotImplementedError('command {} not implemented'.format(command))
 
     def disconnect (self):
         try:
@@ -179,7 +189,7 @@ class QXDM(lb.Win32ComDevice):
         self._min_acquisition_time = min_acquisition_time
 
         basename = os.path.splitext(os.path.basename(config_path))[0]+'-live.dmc'
-        path_out = os.path.join(self.state.cache_path, basename)
+        path_out = os.path.join(self.settings.cache_path, basename)
 
         tree = ET.parse(config_path)
         root = tree.getroot()
@@ -190,16 +200,16 @@ class QXDM(lb.Win32ComDevice):
         settings.find('QuickISFSave').text = '0'
         settings.find('QueryISFSave').text = '0'
         # These seem to be irrelevant now
-#        settings.find('BaseISFName').text = self.state.save_base_name
-#        settings.find('ISFFolder').text = self.state.cache_path
-        settings.find('MaxISFSize').text = '0'#str(self.state.save_size_limit_MB)
+#        settings.find('BaseISFName').text = self.settings.save_base_name
+#        settings.find('ISFFolder').text = self.settings.cache_path
+        settings.find('MaxISFSize').text = '0'#str(self.settings.save_size_limit_MB)
         settings.find('MaxISFDuration').text = '0'
         settings.find('MaxISFDurationFraction').text = '0'#str(self.state.save_time_limit)
         settings.find('Advanced').text = '0'
         
         # Don't care about this any more?
 #        isv_config = root.find('Persistence').find('LoggingView').find('ISVConfig')
-#        isv_config.find('LogFilePath').text = self.state.cache_path
+#        isv_config.find('LogFilePath').text = self.settings.cache_path
         
         tree.write(path_out)
         self._load_config(path_out)
@@ -208,7 +218,7 @@ class QXDM(lb.Win32ComDevice):
 
     def save(self, path=None, saveNm = None):
         ''' Stop the run and save the data in a file at the specified path.
-            If path is None, autogenerate with self.state.cache_path and
+            If path is None, autogenerate with self.settings.cache_path and
             self.data_filename.
             
             This method is threadsafe.
@@ -228,10 +238,10 @@ class QXDM(lb.Win32ComDevice):
             timestamp = '{}.{}'.format(now.strftime(fmt),
                                        now.microsecond)
             if not saveNm == None:
-                path = os.path.join(self.state.cache_path, '{}-{}.isf'\
+                path = os.path.join(self.settings.cache_path, '{}-{}.isf'\
                                 .format(saveNm, timestamp))
             else:
-                path = os.path.join(self.state.cache_path, 'qxdm-{}.isf'\
+                path = os.path.join(self.settings.cache_path, 'qxdm-{}.isf'\
                                 .format(timestamp))
         else:
             path = os.path.abspath(path)
@@ -255,7 +265,7 @@ class QXDM(lb.Win32ComDevice):
         '''
         t0 = time.time()
         self._clear()
-        self._set_com_port(self.resource)
+        self._set_com_port(self.settings.resource)
         if wait:
             self._wait_for_start()
         self.logger.debug('started run in {}s'.format(time.time()-t0))
@@ -272,7 +282,7 @@ class QXDM(lb.Win32ComDevice):
     @state.version.getter
     def __(self):
         _window = self.backend.GetAutomationWindow()
-        if not self.state.connected:
+        if not self.settings.connected:
             raise lb.DeviceNotReady('need to connect to get application version')
         version = _window.AppVersion
         return version
@@ -299,12 +309,12 @@ class QXDM(lb.Win32ComDevice):
         if com_port is None:
             com_port = 0
         if com_port > 0:
-            self._qpst.add_port(self.resource)
+            self.__connection_info = self._qpst.add_port(self.settings.resource)
 
         try:
             code = None
             t0 = time.time()
-            while time.time()-t0 < self.state.connection_timeout:
+            while time.time()-t0 < self.settings.connection_timeout:
                 ret = int(self._window.setCOMPort(com_port))
                 if ret == -1:
                     raise Exception('Connection error')
@@ -323,14 +333,14 @@ class QXDM(lb.Win32ComDevice):
                     raise TimeoutError('QXDM timeout disconnecting to UE (return code {})'.format(actual))
             if com_port > 0:
                 self.logger.debug('connected to COM{} in {}s'\
-                                  .format(self.resource, time.time()-t0))
+                                  .format(self.settings.resource, time.time()-t0))
             else:
                 self.logger.debug('disconnected from COM{} in {}s'\
-                                  .format(self.resource, time.time()-t0))
+                                  .format(self.settings.resource, time.time()-t0))
                 
         finally:
             if com_port == 0:
-                self._qpst.remove_port(self.resource)
+                self._qpst.remove_port(self.settings.resource)
 
     def _clear(self):
         ''' Clear the buffer of data. 
@@ -388,19 +398,19 @@ class QXDM(lb.Win32ComDevice):
     # Deprecated
 #    def fetch(self):
 #        time_elapsed = time.time() - self.__start_time
-#        if time_elapsed < self.state.min_acquisition_time:
-#            time.sleep(self.state.min_acquisition_time - time_elapsed)
+#        if time_elapsed < self.settings.min_acquisition_time:
+#            time.sleep(self.settings.min_acquisition_time - time_elapsed)
 #
 #        self.stop()
 ##        time.sleep(1)
 #
 #        # Quitting the application should force QXDM to write a "temporary" .isf file containing
 #        # whatever hasn't already been saved.  This needs to be renamed with the .isf base name.
-#        path = self.renameLatestISF('99-Final', self.state.max_cleanup_tries)
+#        path = self.renameLatestISF('99-Final', self.settings.max_cleanup_tries)
 ##        self.clear_stale_isf(path)
 #        return path
 #    def _list_isf(self):
-#        return [e for e in os.listdir(self.state.cache_path)\
+#        return [e for e in os.listdir(self.settings.cache_path)\
 #                if e.lower().endswith('.isf')]
 #
 

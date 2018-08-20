@@ -23,10 +23,10 @@ __all__ = ['MiniCircuitsRCDAT2']
 from labbench import DotNetDevice
 import ssmdevices.lib
 import labbench as core
-        MiniCircuitsRCDAT2
+
 class MiniCircuitsRCDAT2(DotNetDevice):
     ''' A digitally controlled, 0 to 110 dB variable attenuator.
-    
+
         This implementation calls the .NET drivers provided by the
         manufacturer instead of the recommended C DLL drivers in order to
         support 64-bit python.
@@ -45,8 +45,8 @@ class MiniCircuitsRCDAT2(DotNetDevice):
         if self.dll is None:
             raise Exception('Minicircuits attenuator support currently requires pythonnet and windows')
         self.backend = self.dll.USB_RUDAT()
-        if self.backend.Connect(self.resource)[0] != 1:
-            raise Exception('Cannot connect to attenuator resource {}'.format(self.resource))
+        if self.backend.Connect(self.settings.resource)[0] != 1:
+            raise Exception('Cannot connect to attenuator resource {}'.format(self.settings.resource))
 
     def disconnect(self):
         ''' Release the attenuator hardware resource via the driver DLL.

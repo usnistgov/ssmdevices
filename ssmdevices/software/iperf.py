@@ -25,19 +25,19 @@ class IPerf(lb.CommandLineWrapper):
     '''
     resource = None
 
-    class state(lb.CommandLineWrapper.state):
-        binary_path   = lb.LocalUnicode(ssmdevices.lib.path('iperf.exe'))
-        timeout       = lb.LocalFloat(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
-        port          = lb.LocalInt(command='-p', min=1, help='connection port')
-        bind          = lb.LocalUnicode(command='-B', help='bind connection to specified IP')
-        tcp_window_size = lb.LocalInt(command='-w', min=1, help='(bytes)')
-        buffer_size   = lb.LocalInt(command='-l', min=1, help='Size of data buffer that generates traffic (bytes)')
-        interval      = lb.LocalFloat(0.25, command='-i', min=0.01, help='Interval between throughput reports (s)')
-        bidirectional = lb.LocalBool(command='-d', help='Send and receive simultaneously')
-        udp           = lb.LocalBool(False, command='-u', help='UDP instead of TCP networking')
-        bit_rate      = lb.LocalUnicode(command='-b', help='Maximum bit rate (append unit for size, e.g. 10K)')
-        time          = lb.LocalInt(min=0, max=16535, command='-t', help='time in seconds to transmit before quitting (default 10s)')
-        arguments     = lb.LocalList(['-n','-1','-y','C'])
+    class settings(lb.CommandLineWrapper.settings):
+        binary_path   = lb.Unicode(ssmdevices.lib.path('iperf.exe'))
+        timeout       = lb.Float(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
+        port          = lb.Int(command='-p', min=1, help='connection port')
+        bind          = lb.Unicode(command='-B', help='bind connection to specified IP')
+        tcp_window_size = lb.Int(command='-w', min=1, help='(bytes)')
+        buffer_size   = lb.Int(command='-l', min=1, help='Size of data buffer that generates traffic (bytes)')
+        interval      = lb.Float(0.25, command='-i', min=0.01, help='Interval between throughput reports (s)')
+        bidirectional = lb.Bool(command='-d', help='Send and receive simultaneously')
+        udp           = lb.Bool(False, command='-u', help='UDP instead of TCP networking')
+        bit_rate      = lb.Unicode(command='-b', help='Maximum bit rate (append unit for size, e.g. 10K)')
+        time          = lb.Int(min=0, max=16535, command='-t', help='time in seconds to transmit before quitting (default 10s)')
+        arguments     = lb.List(['-n','-1','-y','C'])
 
     def fetch (self):
         ''' Retreive csv-formatted text from standard output and parse into
@@ -49,7 +49,7 @@ class IPerf(lb.CommandLineWrapper):
                   'source_port','destination_address','destination_port',\
                   'test_id','interval','transferred_bytes','bits_per_second'
 
-        if self.state.udp:
+        if self.settings.udp:
             columns = columns + ('jitter_milliseconds',
                                  'datagrams_lost',
                                  'datagrams_sent',
@@ -67,17 +67,17 @@ class IPerf(lb.CommandLineWrapper):
         data.drop(['iperf_interval','iperf_transferred_bytes','iperf_test_id'],inplace=True,axis=1)
         data['iperf_timestamp'] = pd.to_datetime(data['iperf_timestamp'], format='%Y%m%d%H%M%S')
         data['iperf_timestamp'] = data['iperf_timestamp']+\
-                                  pd.TimedeltaIndex((data.index*self.state.interval)%1,'s')
+                                  pd.TimedeltaIndex((data.index*self.settings.interval)%1,'s')
 
         return data
 
     def background (self, *extra_args, **flags):
-        if self.state.udp and self.state.buffer_size is not None:
+        if self.settings.udp and self.settings.buffer_size is not None:
             self.logger.warning('iperf might not behave nicely setting udp=True with buffer_size')
 
         with self.respawn, self.exception_on_stderr:
-            if self.resource:
-                super(IPerf, self).background('-c', str(self.resource), *extra_args, **flags)
+            if self.settings.resource:
+                super(IPerf, self).background('-c', str(self.settings.resource), *extra_args, **flags)
             else:
                 super(IPerf, self).background('-s', *extra_args, **flags)
 
@@ -89,12 +89,12 @@ import subprocess as sp
 class IPerfOnAndroid(IPerf):
     remote_binary_path = '/data/local/tmp/iperf'
 
-    class state(IPerf.state):
-        binary_path        = lb.LocalUnicode(ssmdevices.lib.path('adb.exe'),
-                                             is_metadata=True)
-        remote_binary_path = lb.LocalUnicode('/data/local/tmp/iperf',
-                                             is_metadata=True)
-        arguments          = lb.LocalList(['shell', remote_binary_path.default_value,
+    class settings(IPerf.settings):
+        binary_path        = lb.Unicode(ssmdevices.lib.path('adb.exe'),
+                                             )
+        remote_binary_path = lb.Unicode('/data/local/tmp/iperf',
+                                             )
+        arguments          = lb.List(['shell', remote_binary_path.default_value,
                                      # '-y', 'C'
                                           ])
 
@@ -104,20 +104,20 @@ class IPerfOnAndroid(IPerf):
 #            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
 #            if len(devices) == 0:
 #                raise Exception('adb lists no devices. is the UE connected?')
-            sp.run([self.state.binary_path, 'wait-for-device'], check=True,
+            sp.run([self.settings.binary_path, 'wait-for-device'], check=True,
                    timeout=30)
 
             time.sleep(.1)
-            sp.run([self.state.binary_path, "push", ssmdevices.lib.path('android','iperf'),
-                   self.state.remote_binary_path], check=True, timeout=2)
-            sp.run([self.state.binary_path, 'wait-for-device'], check=True, timeout=2)
-            sp.run([self.state.binary_path, "shell", 'chmod', '777',
-                    self.state.remote_binary_path], timeout=2)
-            sp.run([self.state.binary_path, 'wait-for-device'], check=True, timeout=2)
+            sp.run([self.settings.binary_path, "push", ssmdevices.lib.path('android','iperf'),
+                   self.settings.remote_binary_path], check=True, timeout=2)
+            sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
+            sp.run([self.settings.binary_path, "shell", 'chmod', '777',
+                    self.settings.remote_binary_path], timeout=2)
+            sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
     
 #            # Check that it's executable
-            cp = sp.run([self.state.binary_path, 'shell',
-                         self.state.remote_binary_path, '--help'],
+            cp = sp.run([self.settings.binary_path, 'shell',
+                         self.settings.remote_binary_path, '--help'],
                          timeout=2, stdout=sp.PIPE)
             if cp.stdout.startswith(b'/system/bin/sh'):
                 raise Exception('could not execute!!! ', cp.stdout)
@@ -140,7 +140,7 @@ class IPerfOnAndroid(IPerf):
             # Find and kill processes on the UE
             out = self.foreground('shell', 'ps')
             for line in out.splitlines():
-                if self.state.remote_binary_path.encode() in line.lower():
+                if self.settings.remote_binary_path.encode() in line.lower():
                     pid = line.split()[1]
                     self.logger.debug('killing zombie iperf. stdout: {}'\
                                       .format(self.foreground('shell', 'kill', '-9', pid)))

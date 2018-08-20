@@ -36,8 +36,8 @@ class MiniCircuitsRCDAT2(DotNetDevice):
         if self.dll is None:
             raise Exception('Minicircuits attenuator support currently requires pythonnet and windows')
         self.backend = self.dll.USB_RUDAT()
-        if self.backend.Connect(self.resource)[0] != 1:
-            raise Exception('Cannot connect to attenuator resource {}'.format(self.resource))
+        if self.backend.Connect(self.settings.resource)[0] != 1:
+            raise Exception('Cannot connect to attenuator resource {}'.format(self.settings.resource))
 
     def disconnect(self):
         ''' Release the attenuator hardware resource via the driver DLL.
