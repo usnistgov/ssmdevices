@@ -179,7 +179,7 @@ class IPerfOnAndroid(IPerf):
         '''
         import subprocess as sp
         import re
-
+        
         self.logger.debug('waiting for cellular data connection')
         t0 = time.time()
         out = ''

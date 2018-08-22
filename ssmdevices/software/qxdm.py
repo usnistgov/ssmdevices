@@ -120,10 +120,10 @@ class QXDM(lb.Win32ComDevice):
     class state(lb.Win32ComDevice.state):
         version              = lb.Unicode(read_only=True,  cache=True,
                                           help='QXDM application version')
-        phone_model_number   = lb.Int(-1, help='model number code')
+        phone_model_number   = lb.Int(help='model number code')
         phone_mode           = lb.Unicode(help='current state of the phone')
-        phone_imei           = lb.Int(-1,help='Phone IMEI')
-        phone_esn            = lb.Int(-1,help='Phone ESN')
+        phone_imei           = lb.Int(help='Phone IMEI')
+        phone_esn            = lb.Int(help='Phone ESN')
         phone_build_id       = lb.Unicode(help='Build ID of software on the phone')
 
     def connect(self):
