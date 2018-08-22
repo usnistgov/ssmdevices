@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dan Kuester <daniel.kuester@nist.gov>
+@author: Dan Kuester <daniel.kuester@nist.gov>, Michael Voecks <michael.voecks@nist.gov>
 """
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -170,6 +170,49 @@ class IPerfOnAndroid(IPerf):
     
     def fetch(self):
         return self.read_stdout()
+
+    def wait_for_cell_data(self, timeout=60):
+        ''' Block until cellular data is available
+
+        :param timeout: how long to wait for a connection before raising a Timeout error
+        :return: None
+        '''
+        import subprocess as sp
+        import re
+
+        self.logger.debug('waiting for cellular data connection')
+        t0 = time.time()
+        out = ''
+        while time.time() - t0 < timeout or timeout is None:
+            out = sp.run([self.settings.binary_path, 'shell', 'dumpsys', 'telephony.registry'],
+                         stdout=sp.PIPE, check=True, timeout=timeout, universal_newlines=True).stdout
+
+            con = re.findall('mDataConnectionState=([\-0-9]+)', out)
+
+            if len(con) > 0:
+                if con[0] == '2':
+                    break
+        else:
+            raise TimeoutError('timeout waiting for cellular data')
+        self.logger.debug('cellular data available after {} s'.format(time.time() - t0))
+
+    def reboot(self, block=True):
+        ''' Reboot the device.
+
+        :param block: if this evaluates to True, block until the device is ready to accept commands
+        :return:
+        '''
+        self.logger.info('rebooting')
+        sp.run([self.settings.binary_path, 'reboot'], check=True, timeout=2)
+        self.wait()
+
+    def wait(self, timeout=30):
+        ''' Block until the device is ready to accept commands
+
+        :return: None
+        '''
+        sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=timeout)
+        self.logger.debug('device is ready')
 
 
 class IPerfClient(IPerf):
