@@ -28,15 +28,15 @@ class IPerf(lb.CommandLineWrapper):
     class settings(lb.CommandLineWrapper.settings):
         binary_path   = lb.Unicode(ssmdevices.lib.path('iperf.exe'))
         timeout       = lb.Float(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
-        port          = lb.Int(command='-p', min=1, help='connection port')
-        bind          = lb.Unicode(command='-B', help='bind connection to specified IP')
-        tcp_window_size = lb.Int(command='-w', min=1, help='(bytes)')
-        buffer_size   = lb.Int(command='-l', min=1, help='Size of data buffer that generates traffic (bytes)')
+        port          = lb.Int(5001, command='-p', min=1, help='connection port')
+        bind          = lb.Unicode('', command='-B', help='bind connection to specified IP')
+        tcp_window_size = lb.Int(8192, command='-w', min=1, help='(bytes)')
+        buffer_size   = lb.Int(8192, command='-l', min=1, help='Size of data buffer that generates traffic (bytes)')
         interval      = lb.Float(0.25, command='-i', min=0.01, help='Interval between throughput reports (s)')
-        bidirectional = lb.Bool(command='-d', help='Send and receive simultaneously')
+        bidirectional = lb.Bool(False, command='-d', help='Send and receive simultaneously')
         udp           = lb.Bool(False, command='-u', help='UDP instead of TCP networking')
-        bit_rate      = lb.Unicode(command='-b', help='Maximum bit rate (append unit for size, e.g. 10K)')
-        time          = lb.Int(min=0, max=16535, command='-t', help='time in seconds to transmit before quitting (default 10s)')
+        bit_rate      = lb.Unicode('100G', command='-b', help='Maximum bit rate (append unit for size, e.g. 10K)')
+        time          = lb.Int(10, min=0, max=16535, command='-t', help='time in seconds to transmit before quitting (default 10s)')
         arguments     = lb.List(['-n','-1','-y','C'])
 
     def fetch (self):
@@ -90,8 +90,7 @@ class IPerfOnAndroid(IPerf):
     remote_binary_path = '/data/local/tmp/iperf'
 
     class settings(IPerf.settings):
-        binary_path        = lb.Unicode(ssmdevices.lib.path('adb.exe'),
-                                             )
+        binary_path        = lb.Unicode(ssmdevices.lib.path('adb.exe'))
         remote_binary_path = lb.Unicode('/data/local/tmp/iperf',
                                              )
         arguments          = lb.List(['shell', remote_binary_path.default_value,

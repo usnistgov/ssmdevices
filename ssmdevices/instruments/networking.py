@@ -40,9 +40,9 @@ class AeroflexTM500(lb.TelnetDevice):
         remote_ports = lb.Unicode('5001 5002 5003', help='port of TM500 backend')
         min_acquisition_time = lb.Int(30, min=0, help='minimum time to spend acquiring logs (s)')
         port = lb.Int(5003, min=1)
-        config_root  = lb.Unicode('', help='path to the command scripts directory')
-        data_root  = lb.Unicode(help='remote save root directory')
-        convert_files = lb.List(help='text to match in the filename of data output files to convert')
+        config_root  = lb.Unicode('.', help='path to the command scripts directory')
+        data_root  = lb.Unicode('.', help='remote save root directory')
+        convert_files = lb.List([], help='text to match in the filename of data output files to convert')
 
 
     def arm(self, scenario_name):
