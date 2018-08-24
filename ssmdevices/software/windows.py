@@ -149,8 +149,11 @@ class WLANStatus(lb.Device):
         threading.Thread(target=reconnect).start()
 
     def disconnect (self):
-        self.backend.disconnect()
-    
+        try:
+            self.backend.disconnect()
+        except lb.ConnectionError:
+            pass
+
     def command_get (self, command, trait):
         d = self.backend.get_wlan_interfaces()
         resource = self.settings.resource
