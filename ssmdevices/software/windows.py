@@ -11,14 +11,18 @@ __all__ = ['Netsh','WLANStatus']
 
 import labbench as lb
 import traitlets as tl
-import re,threading,time,logging
+import re,threading,time
 import subprocess as sp
 
 class Netsh(lb.CommandLineWrapper):
     ''' Parse calls to netsh to get information about available WLAN access
         points.
     '''
-    binary_path = r'C:\Windows\System32\netsh.exe'
+    
+    settings = lb.CommandLineWrapper\
+                 .settings\
+                 .define(binary_path=r'C:\Windows\System32\netsh.exe',
+                         arguments=['wlan'])
     
     def wait (self):
         try:
@@ -42,13 +46,12 @@ class Netsh(lb.CommandLineWrapper):
             return d
 
         # Execute the binary
-        args = ['wlan','show','networks','mode=bssid']
-        self.wait()
-        super(Netsh,self).execute(args)
+#        self.wait()
+        super(Netsh,self).foreground('show', 'networks', 'mode=bssid')
         
         # Block until the call finishes, then fetch the output text
-        self.wait()
-        txt = self.fetch()
+#        self.wait()
+        txt = self.read_stdout()
         
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r'^\s*(.*?)\s*:\s*(.*?)\s*$',txt,flags=re.MULTILINE)
@@ -72,13 +75,12 @@ class Netsh(lb.CommandLineWrapper):
             return d
         
         # Execute the binary
-        args = ['wlan','show','interfaces']
-        self.wait()
-        super(Netsh,self).execute(args)
+#        self.wait()
+        super(Netsh,self).foreground('show', 'interfaces')
         
         # Block until the call finishes, then fetch the output text
-        self.wait()
-        txt = self.fetch()
+#        self.wait()
+        txt = self.read_stdout()
         
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r'^\s*(\S+.*?)\s+:\s+(\S+.*?)\s*$',txt,flags=re.MULTILINE)
@@ -98,18 +100,19 @@ class Netsh(lb.CommandLineWrapper):
 
 
 class WLANStatus(lb.Device):
-    resource = 'Wi-Fi'
-    ssid = None
+    class settings(lb.Device.settings):
+        resource           = lb.Unicode(allow_none=True)
+        ssid               = lb.Unicode(allow_none=True)
+        force_reconnect    = tl.Bool(True)        
 
     class state(lb.Device.state):
-        bssid              = lb.Bytes(readonly=True,)
-        channel            = lb.Int(min=0,readonly=True)
-        signal             = lb.Int(min=0,max=100,readonly=True)
-        ssid               = lb.Bytes(readonly=True,)
-        transmit_rate_mbps = lb.Int(min=0,readonly=True)
-        radio_type         = lb.Bytes(readonly=True)
-        state              = lb.Bytes(readonly=True)
-        force_reconnect    = tl.Bool(True)
+        bssid              = lb.Bytes(read_only=True,)
+        channel            = lb.Int(min=0,read_only=True)
+        signal             = lb.Int(min=0,max=100,read_only=True)
+        ssid               = lb.Bytes(read_only=True,)
+        transmit_rate_mbps = lb.Int(min=0,read_only=True)
+        radio_type         = lb.Bytes(read_only=True)
+        state              = lb.Bytes(read_only=True)
 
     def connect (self):
         self.backend = Netsh()
@@ -122,7 +125,8 @@ class WLANStatus(lb.Device):
             self.state.observe(onchange)
             
             self.logger.debug('starting WLAN reconnect watchdog')
-            iface,target_ssid = self.settings.resource,self.ssid
+            iface = self.settings.resource
+            target_ssid = self.settings.ssid
             time.sleep(0.1)
             
             while True:
@@ -132,7 +136,7 @@ class WLANStatus(lb.Device):
                 if states.get('state',None) != 'disconnected':
                     if target_ssid is None:
                         target_ssid = states.get('ssid', None)
-                elif self.state.force_reconnect:
+                elif self.settings.force_reconnect:
                     if target_ssid is None:
                         self.logger.warn("{}, but don't know SSID for reconnection".format(iface))
                     else:
@@ -145,15 +149,39 @@ class WLANStatus(lb.Device):
         threading.Thread(target=reconnect).start()
 
     def disconnect (self):
-        pass
+        self.backend.disconnect()
     
     def command_get (self, command, trait):
         d = self.backend.get_wlan_interfaces()
-        if self.settings.resource['interface'] not in d:
+        resource = self.settings.resource
+        
+        if self.settings.resource is None:
+            if len(d) == 0:
+                raise OSError('no WLAN interfaces available')
+            if len(d) != 1:
+                available = ' ,'.join(d.keys())
+                raise Exception('resource needs to be specified to specify one of the available WLAN interfaces ({})'\
+                                .format())
+            resource = list(d.keys())[0]
+        
+        if resource not in d:
+            self.logger.warn('windows reports no WLAN interface named "{}"'\
+                             .format(self.settings.resource))
+            
+            if len(d) == 0:
+                msg = 'requested WLAN interface "{}" does not exist, and no other interfaces are available'\
+                      .format(resource)
+            else:
+                available = ' ,'.join(d.keys())
+                msg = 'requested WLAN interface "{}" does not exist. windows reports only {}'\
+                              .format(resource, available)
             #raise Exception('windows reports no WLAN interface named "{}"'.format(self.settings.resource['interface']))
-            self.logger.warn('windows reports no WLAN interface named "{}"'.format(self.settings.resource['interface']))
+            raise OSError(msg)
+            
+            self.logger.warn('windows reports no WLAN interface named "{}"'\
+                             .format(resource))
             return None
-        d = d[self.settings.resource['interface']]
+        d = d[resource]
         
         # Set the other traits with the other dictionary values
         for other in list(self.state.traits().values()):
@@ -167,7 +195,7 @@ class WLANStatus(lb.Device):
 if __name__ == '__main__':
     import time
         
-    with WLANStatus('Wi-Fi', ssid='EnGenius1') as wlan:
+    with WLANStatus(ssid='EnGenius1') as wlan:
         while True:
             if wlan.state.state == 'connected':
                 try:
