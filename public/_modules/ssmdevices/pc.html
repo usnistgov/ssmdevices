@@ -1,0 +1,110 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ssmdevices.pc &#8212; ssmdevices 0.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>ssmdevices 0.2 documentation</span></a></h1>
+        <h2 class="heading"><span>ssmdevices.pc</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for ssmdevices.pc</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ThisPC&#39;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+        
+<div class="viewcode-block" id="ThisPC"><a class="viewcode-back" href="../../ssmdevices.html#ssmdevices.pc.ThisPC">[docs]</a><span class="k">class</span> <span class="nc">ThisPC</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Device</span><span class="p">):</span>
+<div class="viewcode-block" id="ThisPC.state"><a class="viewcode-back" href="../../ssmdevices.html#ssmdevices.pc.ThisPC.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bytes</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+       
+<div class="viewcode-block" id="ThisPC.connect"><a class="viewcode-back" href="../../ssmdevices.html#ssmdevices.pc.ThisPC.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+    
+<div class="viewcode-block" id="ThisPC.disconnect"><a class="viewcode-back" href="../../ssmdevices.html#ssmdevices.pc.ThisPC.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+    
+<div class="viewcode-block" id="ThisPC.state_get"><a class="viewcode-back" href="../../ssmdevices.html#ssmdevices.pc.ThisPC.state_get">[docs]</a>    <span class="k">def</span> <span class="nf">state_get</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="n">getter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trait_metadata</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="s1">&#39;getter&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">getter</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">getter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>    </div>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__get_time</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">),</span><span class="n">now</span><span class="o">.</span><span class="n">microsecond</span><span class="p">)</span></div>
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+    <span class="n">lb</span><span class="o">.</span><span class="n">log_to_screen</span><span class="p">(</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="n">ThisPC</span><span class="p">()</span> <span class="k">as</span> <span class="n">pc</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright  does not apply.
+
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>

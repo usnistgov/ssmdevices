@@ -1,0 +1,86 @@
+ssmdevices\.instruments package
+===============================
+
+Submodules
+----------
+
+ssmdevices\.instruments\.attenuators module
+-------------------------------------------
+
+.. automodule:: ssmdevices.instruments.attenuators
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.instruments\.gps\_simulator module
+----------------------------------------------
+
+.. automodule:: ssmdevices.instruments.gps_simulator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.instruments\.motors module
+--------------------------------------
+
+.. automodule:: ssmdevices.instruments.motors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.instruments\.networking module
+------------------------------------------
+
+.. automodule:: ssmdevices.instruments.networking
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.instruments\.oscilloscopes module
+---------------------------------------------
+
+.. automodule:: ssmdevices.instruments.oscilloscopes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.instruments\.power\_sensors module
+----------------------------------------------
+
+.. automodule:: ssmdevices.instruments.power_sensors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.instruments\.signal\_analyzers module
+-------------------------------------------------
+
+.. automodule:: ssmdevices.instruments.signal_analyzers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.instruments\.signal\_generators module
+--------------------------------------------------
+
+.. automodule:: ssmdevices.instruments.signal_generators
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.instruments\.switches module
+----------------------------------------
+
+.. automodule:: ssmdevices.instruments.switches
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: ssmdevices.instruments
+    :members:
+    :undoc-members:
+    :show-inheritance:

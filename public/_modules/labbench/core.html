@@ -1,0 +1,732 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>labbench.core &#8212; ssmdevices 0.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
+          <span>ssmdevices 0.2 documentation</span></a></h1>
+        <h2 class="heading"><span>labbench.core</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for labbench.core</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">dict</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">super</span>
+<span class="kn">from</span> <span class="nn">future</span> <span class="k">import</span> <span class="n">standard_library</span>
+<span class="n">standard_library</span><span class="o">.</span><span class="n">install_aliases</span><span class="p">()</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">bytes</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">object</span>
+
+<span class="kn">import</span> <span class="nn">traitlets</span><span class="o">,</span> <span class="nn">inspect</span><span class="o">,</span> <span class="nn">numbers</span><span class="o">,</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">traitlets</span> <span class="k">import</span> <span class="n">All</span><span class="p">,</span> <span class="n">Undefined</span><span class="p">,</span> <span class="n">TraitType</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ConnectionError&#39;</span><span class="p">,</span> <span class="s1">&#39;DeviceNotReady&#39;</span><span class="p">,</span> <span class="s1">&#39;DeviceFatalError&#39;</span><span class="p">,</span> <span class="s1">&#39;DeviceException&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;Undefined&#39;</span><span class="p">,</span> <span class="s1">&#39;All&#39;</span><span class="p">,</span> <span class="s1">&#39;DeviceStateError&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;Int&#39;</span><span class="p">,</span> <span class="s1">&#39;Float&#39;</span><span class="p">,</span> <span class="s1">&#39;Unicode&#39;</span><span class="p">,</span><span class="s1">&#39;Complex&#39;</span><span class="p">,</span> <span class="s1">&#39;Bytes&#39;</span><span class="p">,</span> <span class="s1">&#39;CaselessBytesEnum&#39;</span><span class="p">,</span> <span class="s1">&#39;Bool&#39;</span><span class="p">,</span> <span class="s1">&#39;List&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;CaselessStrEnum&#39;</span><span class="p">,</span><span class="s1">&#39;LocalCaselessStrEnum&#39;</span><span class="p">,</span> <span class="s1">&#39;LocalList&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;LocalInt&#39;</span><span class="p">,</span> <span class="s1">&#39;LocalFloat&#39;</span><span class="p">,</span> <span class="s1">&#39;LocalUnicode&#39;</span><span class="p">,</span><span class="s1">&#39;LocalComplex&#39;</span><span class="p">,</span> <span class="s1">&#39;LocalBytes&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;LocalDict&#39;</span><span class="p">,</span><span class="s1">&#39;LocalCaselessBytesEnum&#39;</span><span class="p">,</span> <span class="s1">&#39;LocalBool&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="s1">&#39;list_devices&#39;</span><span class="p">,</span> <span class="s1">&#39;logger&#39;</span><span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;labbench&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">ConnectionError</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">TraitError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">DeviceStateError</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">TraitError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">DeviceNotReady</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">DeviceException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">DeviceFatalError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">CommandNotImplementedError</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">LocalTraitMixIn</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; This is a mix-in class that injects support for labbench-style</span>
+<span class="sd">        metadata and documentation into traitlet decriptors, making them</span>
+<span class="sd">        local state traits.</span>
+
+<span class="sd">        class MyRemoteTraitletClass(LocalTraitMixIn,traitlets.TraitletClass):</span>
+<span class="sd">            pass</span>
+
+<span class="sd">        In other words, the class should inherit LocalTraitMixIn first and the</span>
+<span class="sd">        desired traitlet type second.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">doc_attrs</span> <span class="o">=</span> <span class="s1">&#39;read_only&#39;</span><span class="p">,</span> <span class="s1">&#39;is_metadata&#39;</span><span class="p">,</span> <span class="s1">&#39;command&#39;</span>
+    <span class="n">is_metadata</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">read_only_if_connected</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">is_metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">command</span>
+                
+        <span class="k">if</span> <span class="n">read_only</span> <span class="o">==</span> <span class="s1">&#39;connected&#39;</span><span class="p">:</span>
+            <span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_metadata</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_only_if_connected</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">is_metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_metadata</span> <span class="o">=</span> <span class="n">is_metadata</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">default_value</span><span class="p">,</span>
+                                               <span class="n">allow_none</span><span class="o">=</span><span class="n">allow_none</span><span class="p">,</span>
+                                               <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span>
+                                               <span class="n">help</span><span class="o">=</span><span class="n">help</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__make_doc__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__make_doc__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">attr_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc_attrs</span><span class="p">:</span>
+            <span class="n">attr_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{k}</span><span class="s1">=</span><span class="si">{v}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">))))</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span>  <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                  <span class="s1">&#39;attrs&#39;</span><span class="p">:</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">attr_pairs</span><span class="p">),</span>
+                  <span class="s1">&#39;help&#39;</span><span class="p">:</span>  <span class="bp">self</span><span class="o">.</span><span class="n">help</span><span class="p">}</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="s1">&#39;labbench.</span><span class="si">{name}</span><span class="s1">(</span><span class="si">{attrs}</span><span class="s1">)</span><span class="se">\n</span><span class="si">{help}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span><span class="sa">r</span><span class="s1">&#39;\*&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">:</span>
+            <span class="n">sig</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span>
+        <span class="k">return</span> <span class="n">sig</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_trait_cls</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__cached_trait_cls</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmro</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">TraitType</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">LocalTraitMixIn</span><span class="p">):</span>
+                    <span class="bp">cls</span><span class="o">.</span><span class="n">__cached_trait_cls</span> <span class="o">=</span> <span class="n">c</span>
+                    <span class="k">return</span> <span class="n">c</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s1">&#39;could not identify any parent Trait class&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">RemoteTraitMixIn</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; This is a mix-in class that injects instrument gets and sets into</span>
+<span class="sd">        state decriptors.</span>
+
+<span class="sd">        Classes that use RemoteTraitMixIn as a mix-in should do so as follows:</span>
+
+<span class="sd">        class MyRemoteTraitletClass(RemoteTraitMixIn,traitlets.TraitletClass):</span>
+<span class="sd">            pass</span>
+
+<span class="sd">        Order is important - the class should inherit RemoteTraitMixIn first and the</span>
+<span class="sd">        desired traitlet type second.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">default_value</span> <span class="o">=</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">Undefined</span>
+    <span class="n">write_only</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">is_metadata</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">read_only_if_connected</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">doc_attrs</span> <span class="o">=</span> <span class="s1">&#39;command&#39;</span><span class="p">,</span> <span class="s1">&#39;read_only&#39;</span><span class="p">,</span> <span class="s1">&#39;write_only&#39;</span><span class="p">,</span> <span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="s1">&#39;is_metadata&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">write_only</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">getter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">setter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">is_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">Undefined</span><span class="p">,</span>
+                                               <span class="n">allow_none</span><span class="o">=</span><span class="n">allow_none</span><span class="p">,</span>
+                                               <span class="n">read_only</span><span class="o">=</span><span class="n">read_only</span><span class="p">,</span>
+                                               <span class="n">help</span><span class="o">=</span><span class="n">help</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_metadata</span> <span class="o">=</span> <span class="n">is_metadata</span>
+        <span class="k">if</span> <span class="n">write_only</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_only</span> <span class="o">=</span> <span class="n">write_only</span>
+        <span class="k">if</span> <span class="n">cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">cache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__last</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">if</span> <span class="n">setter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">setter</span><span class="o">=</span><span class="n">setter</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">getter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">getter</span><span class="o">=</span><span class="n">getter</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Overload the traitlet&#39;s get method to inject a call to get</span>
+<span class="sd">            from the remote device</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_only</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__last</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">TraitError</span><span class="p">(</span>
+                <span class="s1">&#39;tried to read remotelet value, but it is write-only and has not been set yet&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_only</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__last</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__last</span>
+
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;getter&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;getter&#39;</span><span class="p">](</span><span class="n">obj</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># self.command is not None:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">command_get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">CommandNotImplementedError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DeviceStateError</span><span class="p">(</span>
+                    <span class="s1">&#39;no command or getter defined - cannot get state from device&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trait_cls</span><span class="p">()</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_cls</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">TraitError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Overload the traitlet&#39;s get method to inject a call to a</span>
+<span class="sd">            method to set the state on a remote device.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">assert</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;devalidate&#39;</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devalidate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;setter&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;setter&#39;</span><span class="p">](</span><span class="n">obj</span><span class="o">.</span><span class="n">_device</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># self.command is not None:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">command_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">CommandNotImplementedError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DeviceStateError</span><span class="p">(</span>
+                    <span class="s1">&#39;no command or setter defined - cannot set state to device&#39;</span><span class="p">)</span>
+
+        <span class="n">rd_only</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trait_cls</span><span class="p">()</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_only</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_cls</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trait_cls</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="n">rd_only</span>
+        <span class="k">except</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">TraitError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="c1"># def devalidate(self, obj, value):</span>
+    <span class="c1">#     &#39;&#39;&#39; Overload this function to convert from the python representation of the</span>
+    <span class="c1">#         into the representation to be sent to the remote device</span>
+    <span class="c1">#     &#39;&#39;&#39;</span>
+    <span class="c1">#     return value</span>
+
+    <span class="k">def</span> <span class="nf">setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;setter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;getter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+
+<span class="k">class</span> <span class="nc">Int</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">CInt</span><span class="p">):</span>
+    <span class="n">doc_attrs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">RemoteTraitMixIn</span><span class="o">.</span><span class="n">doc_attrs</span>
+
+
+<span class="k">class</span> <span class="nc">LocalInt</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">CInt</span><span class="p">):</span>
+    <span class="n">doc_attrs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">LocalTraitMixIn</span><span class="o">.</span><span class="n">doc_attrs</span>
+
+
+<span class="k">class</span> <span class="nc">CFLoatSteppedTraitlet</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">CFloat</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">kws</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CFLoatSteppedTraitlet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Float</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="n">CFLoatSteppedTraitlet</span><span class="p">):</span>
+    <span class="n">doc_attrs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">RemoteTraitMixIn</span><span class="o">.</span><span class="n">doc_attrs</span>
+
+
+<span class="k">class</span> <span class="nc">LocalFloat</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="n">CFLoatSteppedTraitlet</span><span class="p">):</span>
+    <span class="n">doc_attrs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">LocalTraitMixIn</span><span class="o">.</span><span class="n">doc_attrs</span>
+
+
+<span class="k">class</span> <span class="nc">Unicode</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">CUnicode</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">LocalUnicode</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">CUnicode</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Complex</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">CComplex</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">LocalComplex</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">CComplex</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Bytes</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">CBytes</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">LocalBytes</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">CBytes</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">List</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">LocalList</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">List</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">EnumBytesTraitlet</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">CBytes</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[],</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must define at least one enum value&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">bytes</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">case_sensitive</span> <span class="o">=</span> <span class="n">case_sensitive</span>
+        <span class="k">if</span> <span class="n">case_sensitive</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">info_text</span> <span class="o">=</span> <span class="s1">&#39;castable to &#39;</span> <span class="o">+</span> \
+            <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">])</span> <span class="o">+</span> \
+            <span class="s1">&#39; (case insensitive)&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">EnumBytesTraitlet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">case_sensitive</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">devalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    
+    
+<span class="k">class</span> <span class="nc">CaselessBytesEnum</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="n">EnumBytesTraitlet</span><span class="p">):</span>
+    <span class="n">doc_attrs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;values&#39;</span><span class="p">,</span> <span class="s1">&#39;case_sensitive&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">RemoteTraitMixIn</span><span class="o">.</span><span class="n">doc_attrs</span>
+
+
+<span class="k">class</span> <span class="nc">LocalCaselessBytesEnum</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="n">EnumBytesTraitlet</span><span class="p">):</span>
+    <span class="n">doc_attrs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;values&#39;</span><span class="p">,</span> <span class="s1">&#39;case_sensitive&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">LocalTraitMixIn</span><span class="o">.</span><span class="n">doc_attrs</span>
+
+
+<span class="k">class</span> <span class="nc">CaselessStrEnum</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">CaselessStrEnum</span><span class="p">):</span>
+    <span class="n">doc_attrs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;values&#39;</span><span class="p">,)</span> <span class="o">+</span> <span class="n">RemoteTraitMixIn</span><span class="o">.</span><span class="n">doc_attrs</span>
+
+
+<span class="k">class</span> <span class="nc">LocalCaselessStrEnum</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">CaselessStrEnum</span><span class="p">):</span>
+    <span class="n">doc_attrs</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;values&#39;</span><span class="p">,)</span> <span class="o">+</span> <span class="n">LocalTraitMixIn</span><span class="o">.</span><span class="n">doc_attrs</span>
+
+
+<span class="k">class</span> <span class="nc">Dict</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">Dict</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">LocalDict</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="n">traitlets</span><span class="o">.</span><span class="n">Dict</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">BoolTraitlet</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">CBool</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">],</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trues</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">trues</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_falses</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">falses</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BoolTraitlet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trues</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_falses</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Need a boolean or numeric value to convert to integer, but given </span><span class="si">{}</span><span class="s1"> instead&#39;</span>\
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">devalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trues</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_falses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">Bool</span><span class="p">(</span><span class="n">RemoteTraitMixIn</span><span class="p">,</span> <span class="n">BoolTraitlet</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">LocalBool</span><span class="p">(</span><span class="n">LocalTraitMixIn</span><span class="p">,</span> <span class="n">BoolTraitlet</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">DisconnectedBackend</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; This &quot;Null Backend&quot; implementation exists to give sensible error</span>
+<span class="sd">        messages on attempts to use a backend before a Device is connected.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dev</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; dev may be a class or an object for error feedback</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dev__</span> <span class="o">=</span> <span class="n">dev</span>
+
+    <span class="k">def</span> <span class="nf">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dev__</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dev__</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dev__</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="s1">&#39;need to connect first to access backend.</span><span class="si">{key}</span><span class="s1"> in </span><span class="si">{clsname}</span><span class="s1"> instance (resource=</span><span class="si">{resource}</span><span class="s1">)&#39;</span>
+                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">clsname</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__dev__</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;DisconnectedBackend()&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">DeviceLogAdapter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">LoggerAdapter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This example adapter expects the passed in dict-like object to have a</span>
+<span class="sd">    &#39;connid&#39; key, whose value in brackets is prepended to the log message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> - </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extra</span><span class="p">[</span><span class="s1">&#39;device&#39;</span><span class="p">],</span> <span class="n">msg</span><span class="p">),</span> <span class="n">kwargs</span>
+
+
+<span class="k">class</span> <span class="nc">Device</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39;`Device` is the base class common to all labbench</span>
+<span class="sd">        drivers, regardless of backend types.</span>
+
+<span class="sd">        Drivers that subclass `Device` inherit</span>
+
+<span class="sd">        * device connection management via context management (the `with` statement)</span>
+<span class="sd">        * test state management for easy test logging and extension to UI</span>
+<span class="sd">        * a simple object protocol for stylistic consistency between drivers</span>
+
+<span class="sd">        :param resource: resource identifier, with type and format determined by backend (see specific subclasses for details)</span>
+<span class="sd">        :param **local_states: set the local state for each supplied state key and value</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Use `Device` by subclassing it only if you are</span>
+<span class="sd">            implementing a driver that needs a new type of backend. </span>
+
+<span class="sd">            Several types of backends have already been implemented</span>
+<span class="sd">            as part of labbench:</span>
+
+<span class="sd">                * VISADevice exposes a pyvisa backend for VISA Instruments</span>
+<span class="sd">                * CommandLineWrapper exposes a threaded pipes backend for command line tools</span>
+<span class="sd">                * Serial exposes a pyserial backend for serial port communication</span>
+<span class="sd">                * DotNetDevice exposes a pythonnet for wrapping dotnet libraries</span>
+
+<span class="sd">            (and others). If you are implementing a driver that uses one of</span>
+<span class="sd">            these backends, inherit from the corresponding class above, not</span>
+<span class="sd">            `Device`.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+    <span class="n">resource</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="s1">&#39;.. attribute::resource is the data needed to make a connection to a device. its type and format are determined by the subclass implementation&#39;</span>
+
+    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            Base class for accessing the local and remote state</span>
+<span class="sd">            parameters of a device.  Normally,</span>
+<span class="sd">            a device driver implemented as a :class:`Device` subclass</span>
+<span class="sd">            should add driver-specific states by subclassing this class.</span>
+
+<span class="sd">            Instantiating :class:`Device` (or one of its subclasses)</span>
+<span class="sd">            automatically instantiate this class as well.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">connected</span> <span class="o">=</span> <span class="n">LocalBool</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;whether the :class:`Device` instance is connected&#39;</span><span class="p">)</span>
+        
+        <span class="n">concurrency_support</span> <span class="o">=</span> <span class="n">LocalBool</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;whether this :class:`Device` implementation supports threading&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">traitlets</span><span class="o">.</span><span class="n">HasTraits</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
+            <span class="c1"># Monitor connections</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__on_connection_change</span><span class="p">,</span> <span class="s1">&#39;connected&#39;</span><span class="p">)</span>
+            
+        <span class="k">def</span> <span class="nf">__on_connection_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">trait</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">traits</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">trait</span><span class="o">.</span><span class="n">read_only_if_connected</span><span class="p">:</span>
+                    <span class="n">trait</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;new&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;new&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;setup done&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;new&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> cleanup raised exception </span><span class="si">{}</span><span class="s1">&#39;</span>
+                                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+
+
+    <span class="n">backend</span> <span class="o">=</span> <span class="n">DisconnectedBackend</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="sd">&#39;&#39;&#39; .. attribute::state is the backend that controls communication with the device.</span>
+<span class="sd">        it is to be set in `connect` and `disconnect` by the subclass that implements the backend.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Backend classes *must* overload these</span>
+    <span class="c1">#</span>
+    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Backend implementations overload this to open a backend</span>
+<span class="sd">            connection to the resource.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s1">&#39;complete the backend implementation by implementing a connect method&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Backend implementations must overload this to disconnect an</span>
+<span class="sd">            existing connection to the resource encapsulated in the object.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s1">&#39;complete the backend implementation by implementing a disconnect method&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Backend classes may optionally overload these, and do not need to call the parents</span>
+    <span class="c1"># defined here</span>
+    <span class="k">def</span> <span class="nf">command_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">trait</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Read a setting from a remote instrument, keyed on a command string.</span>
+<span class="sd">            Implement this for message-based protocols, like VISA SCPI or some serial devices.</span>
+
+<span class="sd">            :param str command: the command message to apply to `value`</span>
+<span class="sd">            :param trait: the state descriptor or traitlet</span>
+<span class="sd">            :returns: the value retrieved from the instrument</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="n">CommandNotImplementedError</span><span class="p">(</span><span class="s1">&#39;state &quot;</span><span class="si">{attr}</span><span class="s1">&quot; is defined but not implemented! implement </span><span class="si">{cls}</span><span class="s1">.command_set, or implement a setter for </span><span class="si">{cls}</span><span class="s1">.state.</span><span class="si">{attr}</span><span class="s1">&#39;</span>
+                                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="n">trait</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">command_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Apply an instrument setting to the instrument, keyed on a command string.</span>
+<span class="sd">            Implement this for message-based protocols, like VISA SCPI or some serial devices.</span>
+
+<span class="sd">            :param str command: the command message to apply to `value`</span>
+<span class="sd">            :param trait: the state descriptor or traitlet</span>
+<span class="sd">            :param value: the value to set</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="n">CommandNotImplementedError</span><span class="p">(</span><span class="s1">&#39;state &quot;</span><span class="si">{attr}</span><span class="s1">&quot; is defined but not implemented! implement </span><span class="si">{cls}</span><span class="s1">.command_get, or implement a getter for </span><span class="si">{cls}</span><span class="s1">.state.</span><span class="si">{attr}</span><span class="s1">&#39;</span>
+                                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="n">trait</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Called after connect() if no exceptions are raised.</span>
+<span class="sd">            :return: None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Called before a device is disconnected</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Return a dictionary of metadata about the device. This &quot;vanilla&quot; implementation</span>
+<span class="sd">            includes only state for traits for which trait.is_metadata evaluates as False,</span>
+<span class="sd">            as well as self.resource (if it is not None).</span>
+
+<span class="sd">        :return: dictionary of {metadata_name: metadata_value} pairs</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">traits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">traits</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="n">traits</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">is_metadata</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;resource&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">local_states</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">resource</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="n">resource</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">DisconnectedBackend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Instantiate state, and observe connection state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        
+        <span class="c1"># Set local state according to local_states</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">traits</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">local_states</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;tried to set local state trait </span><span class="si">{k}</span><span class="s1">, which is not defined in </span><span class="si">{clsname}</span><span class="s1">.state&#39;</span>
+                               <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">clsname</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">LocalTraitMixIn</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;tried to set local state trait </span><span class="si">{k}</span><span class="s1">, which is type </span><span class="si">{type_}</span><span class="s1">, but it is not a local state descriptor&#39;</span>
+                                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">states</span><span class="p">[</span><span class="n">k</span><span class="p">])</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__params</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;resource=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">))]</span> <span class="o">+</span> \
+                        <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">local_states</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">DeviceLogAdapter</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)})</span>
+
+    <span class="k">def</span> <span class="nf">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Redirect access to connect and disconnect to wrappers that ensure</span>
+<span class="sd">            self.state.connected gets set directly</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">def</span> <span class="nf">connect_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;called connect on a Device instance that is already connected&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="s1">&#39;connect&#39;</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+
+                <span class="n">traits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">traits</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;connected&#39;</span><span class="p">)</span>
+
+                <span class="c1"># Work around the readonlyness of state.connected to set it True</span>
+                <span class="n">traits</span><span class="p">[</span><span class="s1">&#39;connected&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">traits</span><span class="p">[</span><span class="s1">&#39;connected&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">def</span> <span class="nf">disconnect_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span>
+                        <span class="s1">&#39;disconnect&#39;</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;disconnected&#39;</span><span class="p">)</span>
+
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="c1"># Work around the readonlyness of state.connected to set it True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">traits</span><span class="p">()[</span><span class="s1">&#39;connected&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">traits</span><span class="p">()[</span><span class="s1">&#39;connected&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">True</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">DisconnectedBackend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;connect&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">actual</span><span class="p">:</span>
+            <span class="n">connect_wrapper</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span>
+                <span class="s1">&#39;connect&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="vm">__doc__</span>
+            <span class="k">return</span> <span class="n">connect_wrapper</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;disconnect&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">actual</span><span class="p">:</span>
+            <span class="n">disconnect_wrapper</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span>
+                <span class="s1">&#39;disconnect&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="vm">__doc__</span>
+            <span class="k">return</span> <span class="n">disconnect_wrapper</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;backend&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span>
+                        <span class="s2">&quot;not connected - connect first to access communication backend&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">DisconnectedBackend</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span>
+
+    <span class="fm">__str__</span> <span class="o">=</span> <span class="fm">__repr__</span>
+
+
+<span class="k">def</span> <span class="nf">list_devices</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">getouterframes</span><span class="p">,</span> <span class="n">currentframe</span>
+    <span class="kn">from</span> <span class="nn">sortedcontainers</span> <span class="k">import</span> <span class="n">sorteddict</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="n">getouterframes</span><span class="p">(</span><span class="n">currentframe</span><span class="p">())[</span><span class="n">depth</span><span class="p">]</span><span class="o">.</span><span class="n">frame</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">sorteddict</span><span class="o">.</span><span class="n">SortedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">f_locals</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Device</span><span class="p">):</span>
+            <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+<span class="c1">#        elif isinstance(v, StatesToRelationalTable):</span>
+<span class="c1">#            ret[&#39;host&#39;] = v.host</span>
+    <span class="k">return</span> <span class="n">ret</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright  does not apply.
+
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>

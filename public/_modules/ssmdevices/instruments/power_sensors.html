@@ -1,0 +1,264 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ssmdevices.instruments.power_sensors &#8212; ssmdevices 0.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>ssmdevices 0.2 documentation</span></a></h1>
+        <h2 class="heading"><span>ssmdevices.instruments.power_sensors</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for ssmdevices.instruments.power_sensors</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Fri Feb 10 13:35:02 2017</span>
+
+<span class="sd">@author: dkuester</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">str</span>
+<span class="kn">from</span> <span class="nn">future</span> <span class="k">import</span> <span class="n">standard_library</span>
+<span class="n">standard_library</span><span class="o">.</span><span class="n">install_aliases</span><span class="p">()</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;KeysightU2000XSeries&#39;</span><span class="p">,</span><span class="s1">&#39;RohdeSchwarzNRP8s&#39;</span><span class="p">,</span><span class="s1">&#39;RohdeSchwarzNRP18s&#39;</span><span class="p">,</span><span class="s1">&#39;RohdeSchwarzNRPSeries&#39;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+<span class="kn">from</span> <span class="nn">labbench</span> <span class="k">import</span> <span class="n">VISADevice</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<div class="viewcode-block" id="KeysightU2000XSeries"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.KeysightU2000XSeries">[docs]</a><span class="k">class</span> <span class="nc">KeysightU2000XSeries</span><span class="p">(</span><span class="n">VISADevice</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; This is my cool driver for Keysight U2040 X-Series power sensors</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="KeysightU2000XSeries.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.KeysightU2000XSeries.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span> <span class="p">(</span><span class="n">VISADevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">initiate_continuous</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INIT:CONT&#39;</span><span class="p">)</span>
+        <span class="n">output_trigger</span>      <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;OUTP:TRIG&#39;</span><span class="p">)</span>
+        <span class="n">trigger_source</span>      <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRIG:SOUR&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;IMM&#39;</span><span class="p">,</span><span class="s1">&#39;INT&#39;</span><span class="p">,</span><span class="s1">&#39;EXT&#39;</span><span class="p">,</span><span class="s1">&#39;BUS&#39;</span><span class="p">,</span><span class="s1">&#39;INT1&#39;</span><span class="p">])</span>
+        <span class="n">trigger_count</span>       <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span>       <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRIG:COUN&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span><span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">measurement_rate</span>    <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SENS:MRAT&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;NORM&#39;</span><span class="p">,</span><span class="s1">&#39;DOUB&#39;</span><span class="p">,</span><span class="s1">&#39;FAST&#39;</span><span class="p">])</span>
+        <span class="n">sweep_aperture</span>      <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SWE:APER&#39;</span><span class="p">,</span>  <span class="nb">min</span><span class="o">=</span><span class="mf">20e-6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">200e-3</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;time (in s)&#39;</span><span class="p">)</span>
+        <span class="n">frequency</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SENS:FREQ&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">10e6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">18e9</span><span class="p">,</span><span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;input signal center frequency (in Hz)&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KeysightU2000XSeries.preset"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.KeysightU2000XSeries.preset">[docs]</a>    <span class="k">def</span> <span class="nf">preset</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SYST:PRES&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KeysightU2000XSeries.fetch"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.KeysightU2000XSeries.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Return a single number or pandas Series containing the power readings</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;FETC?&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">response</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRPSeries">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzNRPSeries</span><span class="p">(</span><span class="n">VISADevice</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Requires drivers from the R&amp;S website; resource strings for connections take the form</span>
+<span class="sd">        &#39;RSNRP::0x00e2::103892::INSTR&#39;.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRPSeries.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">VISADevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="c1"># output_trigger = lb.Bool(command=&#39;OUTP:TRIG&#39;)</span>
+        <span class="c1">#</span>
+        <span class="c1"># measurement_rate = lb.CaselessStrEnum(command=&#39;SENS:MRAT&#39;, values=[&#39;NORM&#39;, &#39;DOUB&#39;, &#39;FAST&#39;])</span>
+        <span class="c1"># sweep_aperture = lb.Float(command=&#39;SWE:APER&#39;, min=20e-6, max=200e-3, label=&#39;s&#39;)</span>
+
+        <span class="n">frequency</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SENS:FREQ&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">10e6</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+        <span class="n">initiate_continuous</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INIT:CONT&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">])</span>
+        <span class="n">function</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">CaselessStrEnum</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SENS:FUNC&#39;</span><span class="p">,</span>\
+                                      <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POW:AVG&#39;</span><span class="p">,</span> <span class="s1">&#39;POW:BURS:AVG&#39;</span><span class="p">,</span> <span class="s1">&#39;POW:TSL:AVG&#39;</span><span class="p">,</span>
+                                              <span class="s1">&#39;XTIM:POW&#39;</span><span class="p">,</span> <span class="s2">&quot;XTIM:POWer&quot;</span><span class="p">])</span>
+
+        <span class="n">trigger_source</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">CaselessStrEnum</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRIG:SOUR&#39;</span><span class="p">,</span> \
+                                      <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;HOLD&#39;</span><span class="p">,</span> <span class="s1">&#39;IMM&#39;</span><span class="p">,</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span> <span class="s1">&#39;EXT&#39;</span><span class="p">,</span> <span class="s1">&#39;EXT1&#39;</span><span class="p">,</span> <span class="s1">&#39;EXT2&#39;</span><span class="p">,</span> <span class="s1">&#39;BUS&#39;</span><span class="p">,</span> <span class="s1">&#39;INT1&#39;</span><span class="p">],</span>
+                                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm&#39;</span><span class="p">)</span>
+        <span class="n">trigger_delay</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRIG:DELAY&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">trigger_count</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRIG:COUN&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;help me&quot;</span><span class="p">)</span>
+        <span class="n">trigger_holdoff</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRIG:HOLD&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">trigger_level</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRIG:LEV&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">200e-3</span><span class="p">)</span>
+
+        <span class="n">trace_points</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SENSe:TRACe:POINTs&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">trace_realtime</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRAC:REAL&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">])</span>
+        <span class="n">trace_time</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRAC:TIME&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">10e-6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">trace_offset_time</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRAC:OFFS:TIME&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">trace_average_count</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRAC:AVER:COUN&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">65536</span><span class="p">)</span>
+        <span class="n">trace_average_mode</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">CaselessStrEnum</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRAC:AVER:TCON&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MOV&#39;</span><span class="p">,</span><span class="s1">&#39;REP&#39;</span><span class="p">])</span>
+        <span class="n">trace_average_enable</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRAC:AVER&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">])</span>
+
+        <span class="n">average_count</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;AVER:COUN&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">65536</span><span class="p">)</span>
+        <span class="n">average_auto</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;AVER:COUN:AUTO&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">])</span>
+        <span class="n">average_enable</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;AVER&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">])</span>
+        <span class="n">smoothing_enable</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SMO:STAT&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">],</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalDict</span><span class="p">({},</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">read_termination</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="s1">&#39;connected&#39;</span><span class="p">)</span></div>
+
+        <span class="c1"># unit = lb.CaselessStrEnum(command=&#39;UNIT:POW&#39;, values=[&#39;DBM&#39;,&#39;W&#39;,&#39;DBUV&#39;]) # seems to fail</span>
+        <span class="c1"># format = lb.CaselessStrEnum(command=&#39;FORMat:DATA&#39;, values=[&#39;REAL&#39;, &#39;ASCII&#39;]) # Seems to fail</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SENSe:FUNCtion &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">trigger_source</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">remap</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;2&#39;</span><span class="p">:</span> <span class="s1">&#39;EXT2&#39;</span><span class="p">}</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;TRIG:SOUR?&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">remap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.preset"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRPSeries.preset">[docs]</a>    <span class="k">def</span> <span class="nf">preset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;*PRE&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.trigger_single"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRPSeries.trigger_single">[docs]</a>    <span class="k">def</span> <span class="nf">trigger_single</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;INIT&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.fetch"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRPSeries.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Return a single number or pandas Series containing the power readings</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;FETC?&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trace_time</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trace_points</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">response</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.fetch_buffer"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRPSeries.fetch_buffer">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Return a single number or pandas Series containing the power readings</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;FETC:ARR?&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="c1">#np.arange(len(response))*(self.state.trace_time/float(self.state.trace_points))</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">response</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.setup_trace"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRPSeries.setup_trace">[docs]</a>    <span class="k">def</span> <span class="nf">setup_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frequency</span><span class="p">,</span> <span class="n">trace_points</span><span class="p">,</span> <span class="n">sample_period</span><span class="p">,</span> <span class="n">trigger_level</span><span class="p">,</span>
+                    <span class="n">trigger_delay</span><span class="p">,</span> <span class="n">trigger_source</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">        :param frequency: in Hz</span>
+<span class="sd">        :param trace_points: number of points in the trace (perhaps as high as 5000)</span>
+<span class="sd">        :param sample_period: in s</span>
+<span class="sd">        :param trigger_level: in dBm</span>
+<span class="sd">        :param trigger_delay: in s</span>
+<span class="sd">        :param trigger_source: &#39;HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm&#39;</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;*RST&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="n">frequency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="s1">&#39;XTIM:POW&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trace_points</span> <span class="o">=</span> <span class="n">trace_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trace_time</span> <span class="o">=</span> <span class="n">trace_points</span> <span class="o">*</span> <span class="n">sample_period</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_level</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">trigger_level</span> <span class="o">/</span> <span class="mf">10.</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_delay</span> <span class="o">=</span> <span class="n">trigger_delay</span><span class="c1">#self.Ts / 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trace_realtime</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_source</span> <span class="o">=</span> <span class="n">trigger_source</span><span class="c1">#&#39;EXT2&#39;  # Signal analyzer trigger output (10kOhm impedance)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initiate_continuous</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="RohdeSchwarzNRP8s"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRP8s">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzNRP8s</span><span class="p">(</span><span class="n">RohdeSchwarzNRPSeries</span><span class="p">):</span>
+<div class="viewcode-block" id="RohdeSchwarzNRP8s.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRP8s.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">RohdeSchwarzNRPSeries</span><span class="p">):</span>
+        <span class="n">frequency</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SENS:FREQ&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">10e6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">8e9</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="RohdeSchwarzNRP18s"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRP18s">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzNRP18s</span><span class="p">(</span><span class="n">RohdeSchwarzNRPSeries</span><span class="p">):</span>
+<div class="viewcode-block" id="RohdeSchwarzNRP18s.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.power_sensors.RohdeSchwarzNRP18s.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">RohdeSchwarzNRPSeries</span><span class="p">):</span>
+        <span class="n">frequency</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SENS:FREQ&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">10e6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">18e9</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pylab</span> <span class="k">import</span> <span class="o">*</span>
+    <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+    <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;ticks&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Enable labbench debug messages</span>
+    <span class="c1"># log_to_screen()</span>
+
+    <span class="k">with</span> <span class="n">KeysightU2040XSeries</span><span class="p">(</span><span class="s1">&#39;USB0::0x2A8D::0x1E01::SG56360004::INSTR&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sensor</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Connected to &#39;</span><span class="p">,</span> <span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">identity</span><span class="p">)</span>
+
+        <span class="c1"># Configure</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">preset</span><span class="p">()</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="mf">1e9</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">measurement_rate</span> <span class="o">=</span> <span class="s1">&#39;FAST&#39;</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_count</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_aperture</span> <span class="o">=</span> <span class="mf">20e-6</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_source</span> <span class="o">=</span> <span class="s1">&#39;IMM&#39;</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initiate_continuous</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">power</span> <span class="o">=</span> <span class="n">sensor</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+
+    <span class="n">power</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+    <span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Power level&#39;</span><span class="p">);</span>
+    <span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Count&#39;</span><span class="p">);</span>
+    <span class="n">title</span><span class="p">(</span><span class="s1">&#39;Histogram of power sensor readings&#39;</span><span class="p">)</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright  does not apply.
+
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>

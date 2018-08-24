@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Feb 10 13:35:02 2017
 
-@author: dkuester
-"""
+def path(*subdirs):
+    import os
+    return os.path.join(__path__[0], *subdirs)

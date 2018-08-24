@@ -1,0 +1,38 @@
+ssmdevices\.electronics package
+===============================
+
+Submodules
+----------
+
+ssmdevices\.electronics\.gps module
+-----------------------------------
+
+.. automodule:: ssmdevices.electronics.gps
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.electronics\.mobile module
+--------------------------------------
+
+.. automodule:: ssmdevices.electronics.mobile
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices\.electronics\.usb module
+-----------------------------------
+
+.. automodule:: ssmdevices.electronics.usb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: ssmdevices.electronics
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -4,22 +4,25 @@ Created on Tue Mar 07 14:38:10 2017
 
 @author: dkuester
 """
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 
+from future import standard_library
+standard_library.install_aliases()
 __all__ = ['MiniCircuitsRCDAT']
 
-from labbench.dotnet import DotNetDevice
+from labbench import DotNetDevice
 import ssmdevices.lib
 import labbench as core
 
 class MiniCircuitsRCDAT(DotNetDevice):
     ''' A digitally controlled, 0 to 110 dB variable attenuator.
     
-        Ensure that the windows DLL driver is installed by copying mcl_RUDAT64.dll from
-        the manufacturer website or install CD into C:\Windows\SysWOW64\.
- 
-        This implementation calls the .NET drivers provided by the manufacturer
-        instead of the C DLL drivers recommended by the manufacturer in order
-        to support 64-bit python.
+        This implementation calls the .NET drivers provided by the
+        manufacturer instead of the recommended C DLL drivers in order to
+        support 64-bit python.
     '''
     
     library  = ssmdevices.lib    # Must be a module
@@ -31,9 +34,12 @@ class MiniCircuitsRCDAT(DotNetDevice):
     def connect (self):
         ''' Open the device resource.
         '''
+        super().connect()
+        if self.dll is None:
+            raise Exception('Minicircuits attenuator support currently requires pythonnet and windows')
         self.backend = self.dll.USB_RUDAT()
-        if self.backend.Connect(self.resource)[0] != 1:
-            raise Exception('Cannot connect to attenuator resource {}'.format(self.resource))
+        if self.backend.Connect(self.settings.resource)[0] != 1:
+            raise Exception('Cannot connect to attenuator resource {}'.format(self.settings.resource))
 
     def disconnect(self):
         ''' Release the attenuator hardware resource via the driver DLL.
@@ -45,8 +51,11 @@ class MiniCircuitsRCDAT(DotNetDevice):
         
     @state.attenuation.getter
     def _ (self):
-        return self.backend.Read_Att(0)[1]
+        ret = self.backend.Read_Att(0)[1]
+        self.logger.debug('got attenuation {} dB'.format(ret))
+        return ret
 
     @state.attenuation.setter
     def _ (self, value):
+        self.logger.debug('set attenuation {} dB'.format(value))
         self.backend.SetAttenuation(value)

@@ -1,43 +1,53 @@
-# ssmdevices
-The ssmdevices module is a library of python device drivers. The drivers are implemented with [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench),
-and provide data in [pandas](http://pandas.pydata.org/) data frames when possible to support rapid exploration of data.
+*ssmdevices* are the curated python device drivers to support data acquisition in shared spectrum metrology labs. Equipment support includes
+consumer wireless communication hardware, instruments, diagnostic software, and other miscellaneous lab electronics.
+The drivers are implemented with [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench). Acquired data are packaged into [pandas](http://pandas.pydata.org/) data frames for fast data exploration.
 It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name complications and to restrict
 access based on export control law.
 
-## Basic Installation
-1. Install a 64-bit python 2.7 distribution (you can use your favorite, though this process has been tested mainly with Anaconda)
-2. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/labbench`
-3. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
-4. If you need support for VISA instruments, install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
+## Installation
+1. Install a 64-bit python 3.6 distribution. This process has been tested only with anaconda; support for python 2.7 is not being actively maintained.
+2. If you installed python a while ago, make sure your distribution includes pandas 0.19.0 or newer.
+3. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/labbench`
+4. In an administrator anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
+5. If you need support for VISA instruments, install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
 That's it.
 
-## Supported devices
-RF power sensors
-* Keysight U2040 X series
+## Documentation
+* [ssmdevices API](http://ssm.ipages.nist.gov/ssmdevices/)
+* [examples](examples)
+* [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench#how-to)
 
-RF signal analyzers
-* Rohde Schwarz FSW series 
+## Device Support
+| *Class* | *Products* |
+|-------------|---------|
+|Power sensors|Keysight U2000 X series|
+|             |Rohde Schwarz NRP Series|
+|Signal analyzers|Rohde Schwarz FSW series|
+|Signal generators|Rohde Schwarz SMW series|
+|                 |Spirent GSS8000 GNSS Simulator|
+|Switches|Minicircuits SPnT USB|
+|Attenuators|Minicircuits RCDAT series|
+|Motors|ETS-Lindren Azi2005|
+|Networking testers|Cobham TM500 load tester|
+|Software virtual instruments|iperf version 2|
+|                            |UDP sockets control interface for exchanging data with LabView|
+|                            |Windows WLAN connection status and control|
+|                            |Cellular handset debug via Qualcomm QXDM|
+|Miscellaneous Lab Gear      |Acroname USBHub 2x4 (python 2.7 only)|
+|GPS Receivers               |SwiftNav Piksi|
 
-RF signal generators
-* Rohde Schwarz SMW series
-* Spirent GSS8000 GNSS Simulator
 
-RF attenuators
-* MiniCircuits RCDAT series
 
-Virtual software "instruments"
-* iperf version 2
-* UDP sockets control interface for exchanging data with LabView
-* Windows WLAN connection information
- 
-Misc. Test Electronics
-* Acroname USBHub 2x4
-
-GPS Receivers
-* SwiftNav Piksi
-
-## Examples
-These can be a jumping-off point for making your own scripts.
-
-### Acquisition
-* [Coexistence tests for LTE-LAA and WLAN](examples/lte-laa-wlan.ipynb)
+### Contributors
+| Name  |  Contact Info |
+|---|---|
+| Dan Kuester (maintainer)  |  <daniel.kuester@nist.gov> |
+| Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
+| Andre Rosete        | <andre.rosete@nist.gov> |
+| Paul Blanchard | <paul.blanchard@nist.gov> |
+| Michael Voecks | <michael.voecks@nist.gov> |
+| Ryan Jacobs | <ryan.jacobs@nist.gov> |
+| Alex Curtin | <alexandra.curtin@nist.gov> |
+| Audrey Puls | <audrey.puls@nist.gov> |
+| John Ladbury | <john.ladbury@nist.gov> |
+| Yao Ma | <yao.ma@nist.gov> |

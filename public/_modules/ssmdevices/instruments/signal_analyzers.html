@@ -1,0 +1,1125 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ssmdevices.instruments.signal_analyzers &#8212; ssmdevices 0.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>ssmdevices 0.2 documentation</span></a></h1>
+        <h2 class="heading"><span>ssmdevices.instruments.signal_analyzers</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for ssmdevices.instruments.signal_analyzers</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">super</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">int</span>
+<span class="kn">from</span> <span class="nn">future</span> <span class="k">import</span> <span class="n">standard_library</span>
+<span class="n">standard_library</span><span class="o">.</span><span class="n">install_aliases</span><span class="p">()</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">str</span><span class="p">,</span><span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">time</span><span class="o">,</span><span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;RohdeSchwarzFSW26Base&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;RohdeSchwarzFSW26SpectrumAnalyzer&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;RohdeSchwarzFSW26IQAnalyzer&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;RohdeSchwarzFSW26LTEAnalyzer&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;RohdeSchwarzFSW26RealTime&#39;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+<span class="kn">from</span> <span class="nn">labbench</span> <span class="k">import</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">CaselessStrEnum</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Float</span><span class="p">,</span> <span class="n">VISADevice</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pyvisa.constants</span> <span class="k">import</span> <span class="n">VI_SUCCESS_DEV_NPRESENT</span><span class="p">,</span><span class="n">VI_SUCCESS_MAX_CNT</span>
+
+<span class="n">default_channel_name</span> <span class="o">=</span> <span class="s1">&#39;remote&#39;</span>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzFSW26Base</span><span class="p">(</span><span class="n">VISADevice</span><span class="p">):</span>
+    <span class="n">expected_channel_type</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">cache_dir</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;c:\temp\remote-cache&#39;</span>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">VISADevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">frequency_center</span>        <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;FREQ:CENT&#39;</span><span class="p">,</span>  <span class="nb">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">26.5e9</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+        <span class="n">frequency_span</span>          <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;FREQ:SPAN&#39;</span><span class="p">,</span>  <span class="nb">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">26.5e9</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+        <span class="n">frequency_start</span>         <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;FREQ:START&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">26.5e9</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+        <span class="n">frequency_stop</span>          <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;FREQ:STOP&#39;</span><span class="p">,</span>  <span class="nb">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">26.5e9</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+        
+        <span class="n">resolution_bandwidth</span>    <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;BAND&#39;</span><span class="p">,</span>       <span class="nb">min</span><span class="o">=</span><span class="mf">45e3</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">5.76e6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+        <span class="n">sweep_time</span>              <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SWE:TIME&#39;</span><span class="p">,</span>   <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+        <span class="n">sweep_time_window2</span>      <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SENS2:SWE:TIME&#39;</span><span class="p">,</span>   <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+    
+        <span class="n">initiate_continuous</span>     <span class="o">=</span> <span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INIT:CONT&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">])</span>
+    
+        <span class="n">reference_level</span>         <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC1:Y:RLEV&#39;</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        <span class="n">reference_level_trace2</span>  <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC2:Y:RLEV&#39;</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        <span class="n">reference_level_trace3</span>  <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC3:Y:RLEV&#39;</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        <span class="n">reference_level_trace4</span>  <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC4:Y:RLEV&#39;</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        <span class="n">reference_level_trace5</span>  <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC5:Y:RLEV&#39;</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        <span class="n">reference_level_trace6</span>  <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC6:Y:RLEV&#39;</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        
+        <span class="n">amplitude_offset</span>        <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC1:Y:RLEV:OFFS&#39;</span><span class="p">,</span><span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        <span class="n">amplitude_offset_trace2</span> <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC2:Y:RLEV:OFFS&#39;</span><span class="p">,</span><span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        <span class="n">amplitude_offset_trace3</span> <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC3:Y:RLEV:OFFS&#39;</span><span class="p">,</span><span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        <span class="n">amplitude_offset_trace4</span> <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC4:Y:RLEV:OFFS&#39;</span><span class="p">,</span><span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        <span class="n">amplitude_offset_trace5</span> <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC5:Y:RLEV:OFFS&#39;</span><span class="p">,</span><span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+        <span class="n">amplitude_offset_trace6</span> <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;DISP:TRAC6:Y:RLEV:OFFS&#39;</span><span class="p">,</span><span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+
+        <span class="n">output_trigger2_direction</span> <span class="o">=</span> <span class="n">CaselessStrEnum</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;OUTP:TRIG2:DIR&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;INP&#39;</span><span class="p">,</span> <span class="s1">&#39;OUTP&#39;</span><span class="p">])</span>
+        <span class="n">output_trigger3_direction</span> <span class="o">=</span> <span class="n">CaselessStrEnum</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;OUTP:TRIG3:DIR&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;INP&#39;</span><span class="p">,</span> <span class="s1">&#39;OUTP&#39;</span><span class="p">])</span>
+        <span class="n">output_trigger2_type</span>    <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;OUTP:TRIG2:OTYP&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;DEV&#39;</span><span class="p">,</span> <span class="s1">&#39;TARM&#39;</span><span class="p">,</span> <span class="s1">&#39;UDEF&#39;</span><span class="p">])</span>
+        <span class="n">output_trigger3_type</span>    <span class="o">=</span> <span class="n">CaselessStrEnum</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;OUTP:TRIG3:OTYP&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;DEV&#39;</span><span class="p">,</span> <span class="s1">&#39;TARM&#39;</span><span class="p">,</span> <span class="s1">&#39;UDEF&#39;</span><span class="p">])</span>
+
+        <span class="n">input_preamplifier_enabled</span> <span class="o">=</span> <span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INP:GAIN:STATE&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">])</span>
+        <span class="n">input_attenuation_auto</span>   <span class="o">=</span> <span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INP:ATT:AUTO&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">])</span>
+        <span class="n">input_attenuation</span>        <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INP:ATT&#39;</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">79</span><span class="p">)</span>
+        
+        <span class="n">channel_type</span>            <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INST&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SAN&#39;</span><span class="p">,</span><span class="s1">&#39;IQ&#39;</span><span class="p">,</span><span class="s1">&#39;RTIM&#39;</span><span class="p">,</span> <span class="n">default_channel_name</span><span class="p">],</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">format</span>                  <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;FORM&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ASC,0&#39;</span><span class="p">,</span><span class="s1">&#39;REAL,32&#39;</span><span class="p">,</span><span class="s1">&#39;REAL,64&#39;</span><span class="p">,</span> <span class="s1">&#39;REAL,16&#39;</span><span class="p">])</span>
+        <span class="n">sweep_points</span>            <span class="o">=</span> <span class="n">Int</span>       <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SWE:POIN&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100001</span><span class="p">)</span>
+
+        <span class="n">display_update</span>          <span class="o">=</span> <span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SYST:DISP:UPD&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">])</span>
+
+        <span class="n">default_window</span>          <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;data window number to use if unspecified&#39;</span><span class="p">)</span>
+        <span class="n">default_trace</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;data trace number to use if unspecified&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.verify_channel_type"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.verify_channel_type">[docs]</a>    <span class="k">def</span> <span class="nf">verify_channel_type</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_channel_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
+           <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">channel_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_channel_type</span><span class="p">,</span> <span class="n">default_channel_name</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;expected </span><span class="si">{}</span><span class="s1"> mode, but got </span><span class="si">{}</span><span class="s1">&#39;</span>\
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_channel_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">channel_type</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.setup"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+        <span class="c1"># self.verify_channel_type()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s1">&#39;REAL,32&#39;</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.acquire_spectrogram"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.acquire_spectrogram">[docs]</a>    <span class="k">def</span> <span class="nf">acquire_spectrogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">acquisition_time_sec</span><span class="p">):</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="n">specs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">time_remaining</span> <span class="o">=</span> <span class="n">acquisition_time_sec</span>
+        <span class="n">active_time</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1">#        while time_remaining&gt;0:</span>
+        <span class="k">while</span> <span class="n">active_time</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Setup</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clear_spectrogram</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="c1"># Give the power sensor time to arm</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+            <span class="n">t0_active</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="c1"># Try to trigger; block until timeout.</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">time_remaining</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">trigger_single</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">active_time</span> <span class="o">+=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0_active</span>
+            <span class="c1">#             self.abort()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">50000</span>
+            <span class="n">single</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_spectrogram</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">1000</span>
+
+            <span class="k">if</span> <span class="n">single</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">single</span><span class="p">)</span>
+
+            <span class="n">time_remaining</span> <span class="o">=</span> <span class="n">acquisition_time_sec</span> <span class="o">-</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span>
+
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">specs</span> <span class="k">else</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;sa_spectrogram&#39;</span><span class="p">:</span> <span class="n">specs</span><span class="p">,</span>
+                <span class="s1">&#39;sa_spectrogram_acquisition_time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">,</span>
+                <span class="s1">&#39;sa_spectrogram_active_time&#39;</span><span class="p">:</span> <span class="n">active_time</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.cleanup"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.cleanup">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">abort</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clear_status</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.clear_status"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.clear_status">[docs]</a>    <span class="k">def</span> <span class="nf">clear_status</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;*CLS&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.status_preset"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.status_preset">[docs]</a>    <span class="k">def</span> <span class="nf">status_preset</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;STAT:PRES&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.save_state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.save_state">[docs]</a>    <span class="k">def</span> <span class="nf">save_state</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Save current state of the device to the default directory.</span>
+<span class="sd">            :param path: state file location on the instrument</span>
+<span class="sd">            :type path: string</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">basedir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">basedir</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">basedir</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;MMEMory:STORe:STATe 1,&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.load_state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.load_state">[docs]</a>    <span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Loads a previously saved state file in the instrument</span>
+<span class="sd">        </span>
+<span class="sd">            :param path: state file location on the instrument</span>
+<span class="sd">            :type path: string</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">basedir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">basedir</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.dfl&#39;</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;.dfl&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_info</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">DeviceException</span><span class="p">(</span><span class="s1">&#39;there is no file to load on the instrument at path &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span>\
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;MMEM:LOAD:STAT 1,&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.load_cache"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.load_cache">[docs]</a>    <span class="k">def</span> <span class="nf">load_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cache_name</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">hash_caller</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_state</span><span class="p">(</span><span class="n">cache_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">lb</span><span class="o">.</span><span class="n">DeviceException</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Successfully loaded cached save file&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.save_cache"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.save_cache">[docs]</a>    <span class="k">def</span> <span class="nf">save_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cache_name</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">hash_caller</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_state</span><span class="p">(</span><span class="n">cache_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.mkdir"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.mkdir">[docs]</a>    <span class="k">def</span> <span class="nf">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Make a new directory (optionally recursively) on the instrument</span>
+<span class="sd">            if we haven&#39;t tried to make it already.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__prev_dirs</span><span class="p">:</span>
+                <span class="k">return</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__prev_dirs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
+            <span class="n">subs</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">subs</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subs</span><span class="p">[:</span><span class="n">i</span><span class="p">]),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>              
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;MMEM:MDIR &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__prev_dirs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.file_info"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.file_info">[docs]</a>    <span class="k">def</span> <span class="nf">file_info</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">suppress_timeout</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;MMEM:CAT? &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.remove_window"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.remove_window">[docs]</a>    <span class="k">def</span> <span class="nf">remove_window</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;LAY:REM &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span></div>
+        
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.trigger_single"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.trigger_single">[docs]</a>    <span class="k">def</span> <span class="nf">trigger_single</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">disable_continuous</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Trigger once.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">disable_continuous</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initiate_continuous</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;INIT&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.autolevel"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.autolevel">[docs]</a>    <span class="k">def</span> <span class="nf">autolevel</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Try to automatically set the reference level on the instrument, which sets the</span>
+<span class="sd">            internal attenuation and preamplifier enable settings.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ADJ:LEV&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.abort"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.abort">[docs]</a>    <span class="k">def</span> <span class="nf">abort</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;ABORT&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.set_channel_type"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.set_channel_type">[docs]</a>    <span class="k">def</span> <span class="nf">set_channel_type</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Setup a channel with name default_channel_name, that has measurement type self.channel_type</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">channel_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;INST:LIST?&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">default_channel_name</span> <span class="ow">in</span> <span class="n">channel_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;INST:CRE:REPL &#39;</span><span class="si">{name}</span><span class="s2">&#39;,</span><span class="si">{type}</span><span class="s2">,&#39;</span><span class="si">{name}</span><span class="s2">&#39;&quot;</span>\
+                       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">default_channel_name</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_channel_type</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;INST:CRE </span><span class="si">{type}</span><span class="s2">,&#39;</span><span class="si">{name}</span><span class="s2">&#39;&quot;</span>\
+                       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">default_channel_name</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_channel_type</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.channel_preset"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.channel_preset">[docs]</a>    <span class="k">def</span> <span class="nf">channel_preset</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;SYST:PRES:CHAN&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.query_ieee_array"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.query_ieee_array">[docs]</a>    <span class="k">def</span> <span class="nf">query_ieee_array</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; An alternative to self.backend.query_binary_values for fetching block data. This</span>
+<span class="sd">        implementation works around slowness between pyvisa and the instrument that seems to</span>
+<span class="sd">        result from transferring in chunks of size self.backend.chunk_size as implemented</span>
+<span class="sd">        in pyvisa.</span>
+
+<span class="sd">        The performance of a transfer of a spectrogram with 100,000 time samples is impacted as follows:</span>
+
+<span class="sd">        # The pyvisa implementation</span>
+<span class="sd">        &gt;&gt;&gt;  %timeit -n 1 -r 1 sa.backend.query_binary_values(&#39;TRAC2:DATA? SPEC&#39;, container=np.array)</span>
+<span class="sd">        (takes at least 10 minutes)</span>
+
+<span class="sd">        # This implementation</span>
+<span class="sd">        &gt;&gt;&gt; %timeit -n 1 -r 1 sa.query_ieee_array(&#39;TRAC2:DATA? SPEC&#39;)</span>
+<span class="sd">        (~23 sec)</span>
+
+<span class="sd">        :param msg: The SCPI command to send</span>
+<span class="sd">        :return: a numpy array containing the response.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;query </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+
+        <span class="c1"># The read_termination seems to cause unwanted behavior in self.backend.visalib.read</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">read_termination</span><span class="p">,</span> <span class="n">old_read_term</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">read_termination</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">ignore_warning</span><span class="p">(</span><span class="n">VI_SUCCESS_DEV_NPRESENT</span><span class="p">,</span> <span class="n">VI_SUCCESS_MAX_CNT</span><span class="p">):</span>
+                <span class="c1"># Reproduce the behavior of pyvisa.util.from_ieee_block without</span>
+                <span class="c1"># a priori access to the entire buffer.</span>
+                <span class="n">raw</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">visalib</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">digits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">raw</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">visalib</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="n">digits</span><span class="p">)</span>
+                <span class="n">data_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">))</span>
+    
+                <span class="c1"># Read the actual data</span>
+                <span class="n">raw</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">visalib</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="n">data_size</span><span class="p">)</span>
+    
+                <span class="c1"># Read termination characters so that the instrument doesn&#39;t show</span>
+                <span class="c1"># a &quot;QUERY INTERRUPTED&quot; error when there is unread buffer</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">visalib</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">old_read_term</span><span class="p">))</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">read_termination</span> <span class="o">=</span> <span class="n">old_read_term</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;      -&gt; </span><span class="si">{}</span><span class="s1"> bytes (</span><span class="si">{}</span><span class="s1"> values)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_size</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.fetch_horizontal"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.fetch_horizontal">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_horizontal</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+        <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_trace</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_ieee_array</span><span class="p">(</span><span class="s2">&quot;TRAC</span><span class="si">{window}</span><span class="s2">:DATA:X? TRACE</span><span class="si">{trace}</span><span class="s2">&quot;</span>\
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.fetch_trace"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.fetch_trace">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">horizontal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Fetch trace data with &#39;TRAC:DATA TRACE?&#39; and return the result in</span>
+<span class="sd">            a pandas series.fetch and return the current trace data. This does not</span>
+<span class="sd">            initiate a trigger; this must be done separately if desired.</span>
+<span class="sd">            (see :method:`trigger_single`). This method is meant to be used</span>
+<span class="sd">            in all signal analyzer modes (spectrum analyzer, IQ analyzer, LTE analyzer,</span>
+<span class="sd">            etc.), because variants of TRAC:DATA TRACE? are implemented for each.</span>
+
+<span class="sd">            The `trace` and `window` parameters have different meaning in different</span>
+<span class="sd">            modes. Specify `window` only in signal analyzer modes that support it,</span>
+<span class="sd">            which include LTE.  When `window` is not supported, specifying it (any</span>
+<span class="sd">            value besides `None`) will cause a timeout.</span>
+
+<span class="sd">            Trace data is returned in single-precision (32-bit) binary blocks.</span>
+
+<span class="sd">            If necessary, we can read the count, set count to 1, read, adjust level</span>
+<span class="sd">            then set the count back, and read again like this:</span>
+
+<span class="sd">            ::</span>
+<span class="sd">                count = inst.query(&quot;SENSE:SWEEP:COUNT?&quot;)</span>
+<span class="sd">                self.write(&quot;SENSE:SWEEP:COUNT 1&quot;)</span>
+
+<span class="sd">        :param trace: The trace number to query (or None, the default, to use self.state.default_trace)</span>
+<span class="sd">        :param horizontal: Set the index of the returned Series by a call to :method:`fetch_horizontal`</span>
+<span class="sd">        :param window: The window number to query (or None, the default, to use self.state.default_window)</span>
+<span class="sd">        :return: a pd.Series object containing the returned data</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_trace</span>
+        <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">fetch_trace</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">horizontal</span><span class="o">=</span><span class="n">horizontal</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trace</span><span class="p">])</span>
+        
+        <span class="k">if</span> <span class="n">horizontal</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_horizontal</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_ieee_array</span><span class="p">(</span><span class="s2">&quot;TRAC</span><span class="si">{window}</span><span class="s2">:DATA? TRACE</span><span class="si">{trace}</span><span class="s2">&quot;</span>\
+                                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">))</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Trace </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_ieee_array</span><span class="p">(</span><span class="s2">&quot;TRAC</span><span class="si">{window}</span><span class="s2">:DATA? TRACE</span><span class="si">{trace}</span><span class="s2">&quot;</span>\
+                                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.fetch_timestamps"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.fetch_timestamps">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_timestamps</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">50000</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Fetch data timestamps associated with acquired data. Not all types of acquired data support timestamping,</span>
+<span class="sd">            and not all modes support the trace argument. A choice that is incompatible with the current state</span>
+<span class="sd">            of the signal analyzer should lead to a TimeoutError.</span>
+
+<span class="sd">        :param all: If True, acquire and return all available timestamps; if False, only the most current timestamp.</span>
+<span class="sd">        :param window: The window number corresponding to the desired timestamp data (or self.state.default_window when window=None)</span>
+<span class="sd">        :return: A number (when `all` is False) or a np.array (when `all` is True)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+
+        <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
+            <span class="n">_to</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="n">timeout</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">scope</span> <span class="o">=</span> <span class="s1">&#39;ALL&#39;</span> <span class="k">if</span> <span class="nb">all</span> <span class="k">else</span> <span class="s1">&#39;CURR&#39;</span>
+            <span class="n">timestamps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">query_ascii_values</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;CALC</span><span class="si">{window}</span><span class="s1">:SGR:TST:DATA? </span><span class="si">{scope}</span><span class="s1">&#39;</span>\
+                                                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="n">scope</span><span class="p">),</span>\
+                                                         <span class="n">container</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+            <span class="n">timestamps</span> <span class="o">=</span> <span class="n">timestamps</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">timestamps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">//</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))[:,:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">timestamps</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="o">*</span><span class="n">timestamps</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">_to</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.fetch_spectrogram"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.fetch_spectrogram">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_spectrogram</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">freqs</span><span class="o">=</span><span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Fetch a spectrogram without initiating a new trigger. This has been tested in IQ Analyzer and real time</span>
+<span class="sd">        spectrum analyzer modes. Not all instrument operating modes support trace selection; a choice that is</span>
+<span class="sd">        incompatible with the current state of the signal analyzer should lead to a TimeoutError.</span>
+
+<span class="sd">        :param freqs: &#39;exact&#39; (to fetch the frequency axis), &#39;fast&#39; (to guess at index values based on FFT parameters), or None (leaving the integer indices)</span>
+<span class="sd">        :param timestamps: &#39;exact&#39; (to fetch the frequency axis), &#39;fast&#39; (to guess at index values based on sweep time), or None (leaving the integer indices)</span>
+<span class="sd">        :param window: The window number corresponding to the desired timestamp data (or self.state.default_window when window=None)</span>
+<span class="sd">        :return: a pandas DataFrame containing the acquired data</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_source</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;mask&#39;</span><span class="p">:</span>
+                <span class="n">max_trigger_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_post_time</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">max_trigger_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_dwell_time</span>
+    
+            <span class="n">old_timeout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>\
+                                                <span class="mi">6</span><span class="o">*</span><span class="mf">1e3</span><span class="o">*</span><span class="n">max_trigger_time</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">old_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+                                            
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">suppress_timeout</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_ieee_array</span><span class="p">(</span><span class="s1">&#39;TRAC</span><span class="si">{window}</span><span class="s1">:DATA? SPEC&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">))</span>
+
+            <span class="c1"># Fetch time axis</span>
+            <span class="k">if</span> <span class="n">timestamps</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;fast&#39;</span><span class="p">,</span><span class="s1">&#39;exact&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;timestamps argument must be &#39;fast&#39;, &#39;exact&#39;, or None&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">timestamps</span> <span class="o">==</span> <span class="s1">&#39;exact&#39;</span><span class="p">:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_timestamps</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">timestamps</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># Fetch frequency axis</span>
+            <span class="k">if</span> <span class="n">freqs</span> <span class="o">==</span> <span class="s1">&#39;fast&#39;</span><span class="p">:</span>
+                <span class="n">fc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">frequency_center</span>
+                <span class="n">fsamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">iq_sample_rate</span>
+                <span class="n">Nfreqs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_points</span>
+                <span class="n">f_</span> <span class="o">=</span> <span class="n">fc</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">fsamp</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="mf">1.</span><span class="o">/</span><span class="n">Nfreqs</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="o">+</span><span class="n">fsamp</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="mf">1.</span><span class="o">/</span><span class="n">Nfreqs</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">Nfreqs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">freqs</span> <span class="o">==</span> <span class="s1">&#39;exact&#39;</span><span class="p">:</span>
+                <span class="n">f_</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_horizontal</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+                <span class="n">Nfreqs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">f_</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">freqs</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">f_</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">Nfreqs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_points</span>
+
+            <span class="c1"># Reshape data according to frequency axis, since we&#39;ll be most certain</span>
+            <span class="c1"># to know that dimension</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="n">Nfreqs</span><span class="p">,</span><span class="n">Nfreqs</span><span class="p">))</span>
+
+            <span class="c1"># Generate timestamps if we&#39;re going to guesstimate</span>
+            <span class="k">if</span> <span class="n">timestamps</span> <span class="o">==</span> <span class="s1">&#39;fast&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">window</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">sweep_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_time</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sweep_time</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="s1">&#39;sweep_time_window</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="p">))</span>
+                <span class="n">ts0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_timestamps</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">ts0</span><span class="o">-</span><span class="n">sweep_time</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span><span class="n">sweep_time</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">old_timeout</span>
+
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">f_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">t</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([],</span> <span class="n">columns</span><span class="o">=</span><span class="n">f_</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">old_timeout</span>            
+
+        <span class="c1"># If there is a timeout, the return above will not happen.</span>
+        <span class="c1"># In this case, abort the acquisition and return</span>
+        <span class="c1"># None.</span>
+        <span class="c1"># self.logger.warning(&#39;received no spectrogram data&#39;)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abort</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+        
+        <span class="c1">#self.clear_status()</span>
+        <span class="c1">#self.wait()</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+    
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.fetch_marker"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.fetch_marker">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_marker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">marker</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Get marker value</span>
+<span class="sd">        </span>
+<span class="sd">            :param marker: marker number on instrument display</span>
+<span class="sd">            :type marker: int</span>
+<span class="sd">            :param axis: &#39;X&#39; for x axis or &#39;Y&#39; for y axis</span>
+<span class="sd">            :type axis: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">mark_cmd</span> <span class="o">=</span> <span class="s2">&quot;CALC:MARK&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">axis</span> <span class="o">+</span> <span class="s2">&quot;?&quot;</span>
+        <span class="n">marker_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mark_cmd</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">marker_val</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.get_marker_enables"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.get_marker_enables">[docs]</a>    <span class="k">def</span> <span class="nf">get_marker_enables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">enable_cmd</span> <span class="o">=</span> <span class="s1">&#39;CALC:MARK</span><span class="si">{}</span><span class="s1">:STATE?&#39;</span>
+        <span class="n">bw_cmd</span> <span class="o">=</span> <span class="s1">&#39;CALC:MARK</span><span class="si">{}</span><span class="s1">:FUNC:BPOW:STATE?&#39;</span>
+
+        <span class="n">markers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">17</span><span class="p">))</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">enable_cmd</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m</span><span class="p">)),</span>
+                   <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">bw_cmd</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m</span><span class="p">))]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">markers</span><span class="p">]</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Marker&#39;</span><span class="p">,</span> <span class="s1">&#39;Band&#39;</span><span class="p">],</span>
+                          <span class="n">index</span><span class="o">=</span><span class="n">markers</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Marker&#39;</span>
+        
+        <span class="k">return</span> <span class="n">df</span></div>
+        
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.get_marker_power"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.get_marker_power">[docs]</a>    <span class="k">def</span> <span class="nf">get_marker_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">marker</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Get marker value (on vertical axis)</span>
+<span class="sd">        </span>
+<span class="sd">            :param marker: marker number on instrument display</span>
+<span class="sd">            </span>
+<span class="sd">            :type marker: int</span>
+<span class="sd">            </span>
+<span class="sd">            :param axis: &#39;X&#39; for x axis or &#39;Y&#39; for y axis</span>
+<span class="sd">            </span>
+<span class="sd">            :type axis: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">mark_cmd</span> <span class="o">=</span> <span class="s2">&quot;CALC:MARK</span><span class="si">{}</span><span class="s2">:Y?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mark_cmd</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.get_marker_position"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.get_marker_position">[docs]</a>    <span class="k">def</span> <span class="nf">get_marker_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">marker</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Get marker position (on horizontal axis)</span>
+<span class="sd">        </span>
+<span class="sd">            :param marker: marker number on instrument display</span>
+<span class="sd">            </span>
+<span class="sd">            :type marker: int</span>
+<span class="sd">            </span>
+<span class="sd">            :param axis: &#39;X&#39; for x axis or &#39;Y&#39; for y axis</span>
+<span class="sd">            </span>
+<span class="sd">            :type axis: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">mark_cmd</span> <span class="o">=</span> <span class="s2">&quot;CALC:MARK</span><span class="si">{}</span><span class="s2">:X?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mark_cmd</span><span class="p">))</span></div>
+    
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.set_marker_position"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.set_marker_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_marker_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">marker</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Get marker position (on horizontal axis)</span>
+<span class="sd">        </span>
+<span class="sd">            :param marker: marker number on instrument display</span>
+<span class="sd">            </span>
+<span class="sd">            :type marker: int</span>
+<span class="sd">            </span>
+<span class="sd">            :param axis: &#39;X&#39; for x axis or &#39;Y&#39; for y axis</span>
+<span class="sd">            </span>
+<span class="sd">            :type axis: str</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">mark_cmd</span> <span class="o">=</span> <span class="s2">&quot;CALC:MARK</span><span class="si">{}</span><span class="s2">:X </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">marker</span><span class="p">,</span><span class="n">position</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">mark_cmd</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.trigger_output_pulse"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.trigger_output_pulse">[docs]</a>    <span class="k">def</span> <span class="nf">trigger_output_pulse</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">        :param port: Trigger port number</span>
+<span class="sd">        :param duration: &quot;On&quot; time duration of pulse(in s)</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;OUTPUT:TRIGGER</span><span class="si">{port}</span><span class="s1">:PULS:IMM&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">))</span></div></div>
+    
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26SpectrumAnalyzer"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzFSW26SpectrumAnalyzer</span><span class="p">(</span><span class="n">RohdeSchwarzFSW26Base</span><span class="p">):</span>
+    <span class="n">expected_channel_type</span> <span class="o">=</span> <span class="s1">&#39;SAN&#39;</span>
+    
+<div class="viewcode-block" id="RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_band_power"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_band_power">[docs]</a>    <span class="k">def</span> <span class="nf">get_marker_band_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">marker</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Get marker band power measurement</span>
+<span class="sd">        </span>
+<span class="sd">            :param marker: marker number on instrument display</span>
+<span class="sd">e            </span>
+<span class="sd">            :type marker: int</span>
+<span class="sd">            </span>
+<span class="sd">            :return: power in dBm</span>
+<span class="sd">            </span>
+<span class="sd">            :rtype: float</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">mark_cmd</span> <span class="o">=</span> <span class="s2">&quot;CALC:MARK</span><span class="si">{}</span><span class="s2">:FUNC:BPOW:RES?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mark_cmd</span><span class="p">))</span></div>
+        
+<div class="viewcode-block" id="RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_band_span"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_band_span">[docs]</a>    <span class="k">def</span> <span class="nf">get_marker_band_span</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">marker</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Get span of marker band power measurement</span>
+<span class="sd">        </span>
+<span class="sd">            :param marker: marker number on instrument display</span>
+<span class="sd">            </span>
+<span class="sd">            :type marker: int</span>
+<span class="sd">            </span>
+<span class="sd">            :return: bandwidth</span>
+<span class="sd">            </span>
+<span class="sd">            :rtype: float</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">mark_cmd</span> <span class="o">=</span> <span class="s2">&quot;CALC:MARK</span><span class="si">{}</span><span class="s2">:FUNC:BPOW:SPAN?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mark_cmd</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_power_table"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.get_marker_power_table">[docs]</a>    <span class="k">def</span> <span class="nf">get_marker_power_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Get the values of all markers.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">enables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_marker_enables</span><span class="p">()</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Frequency&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">enables</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span><span class="n">index</span><span class="o">=</span><span class="n">enables</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                              <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">enables</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">enables</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="s1">&#39;Marker&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="s1">&#39;Marker&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_marker_power</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="s1">&#39;Frequency&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_marker_position</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">enables</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="s1">&#39;Band&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="s1">&#39;Band&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_marker_band_power</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+        <span class="n">values</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span></div>
+    
+<div class="viewcode-block" id="RohdeSchwarzFSW26SpectrumAnalyzer.fetch_marker_bpow"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_marker_bpow">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_marker_bpow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">marker</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Get marker band power measurement</span>
+<span class="sd">        </span>
+<span class="sd">            :param marker: marker number on instrument display</span>
+<span class="sd">            </span>
+<span class="sd">            :type marker: int</span>
+<span class="sd">            </span>
+<span class="sd">            :return: power in dBm</span>
+<span class="sd">            </span>
+<span class="sd">            :rtype: float</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">mark_cmd</span> <span class="o">=</span> <span class="s2">&quot;CALC:MARK&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:FUNC:BPOW:RES?&quot;</span>
+        <span class="n">marker_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mark_cmd</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">marker_val</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26SpectrumAnalyzer.fetch_marker_bpow_span"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26SpectrumAnalyzer.fetch_marker_bpow_span">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_marker_bpow_span</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">marker</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Get marker band power measurement</span>
+<span class="sd">        </span>
+<span class="sd">            :param marker: marker number on instrument display</span>
+<span class="sd">            </span>
+<span class="sd">            :type marker: int</span>
+<span class="sd">            </span>
+<span class="sd">            :return: bandwidth</span>
+<span class="sd">            </span>
+<span class="sd">            :rtype: float</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="n">mark_cmd</span> <span class="o">=</span> <span class="s2">&quot;CALC:MARK&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:FUNC:BPOW:SPAN?&quot;</span>
+        <span class="n">marker_span</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">mark_cmd</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">marker_span</span>    </div></div>
+
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26LTEAnalyzer"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26LTEAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzFSW26LTEAnalyzer</span><span class="p">(</span><span class="n">RohdeSchwarzFSW26Base</span><span class="p">):</span>
+<div class="viewcode-block" id="RohdeSchwarzFSW26LTEAnalyzer.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26LTEAnalyzer.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">RohdeSchwarzFSW26Base</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="nb">format</span> <span class="o">=</span> <span class="n">CaselessStrEnum</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;FORM&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;REAL&#39;</span><span class="p">,</span> <span class="s1">&#39;ASCII&#39;</span><span class="p">])</span>
+        <span class="n">uplink_sample_rate</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">downlink_sample_rate</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">uplink_sample_rate</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;CONF:LTE:UL:BW?&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">))</span><span class="o">*</span><span class="mf">1e6</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">downlink_sample_rate</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;CONF:LTE:DL:BW?&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">))</span><span class="o">*</span><span class="mf">1e6</span>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26LTEAnalyzer.connect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26LTEAnalyzer.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">VISADevice</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># self.verify_channel_type()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s1">&#39;REAL&#39;</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26LTEAnalyzer.fetch_power_vs_symbol_x_carrier"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26LTEAnalyzer.fetch_power_vs_symbol_x_carrier">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_power_vs_symbol_x_carrier</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_trace</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">)</span>
+
+        <span class="c1"># Dimensioning is based on LTE standard definitions</span>
+        <span class="c1"># of the resource block</span>
+        <span class="n">Ncarrier</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">50</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">uplink_sample_rate</span><span class="o">/</span><span class="mf">10e6</span><span class="p">)</span>
+        <span class="n">Nsubcarrier</span> <span class="o">=</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">Ncarrier</span>
+        <span class="n">Nsymbol</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="n">Nsubcarrier</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mf">1e30</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">Nsymbol</span><span class="p">,</span> <span class="n">Nsubcarrier</span><span class="p">))</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Symbol&#39;</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Subcarrier&#39;</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+    <span class="c1"># The methods should be deprecatable now, since the base fetch_trace() should work fine now that format is set</span>
+    <span class="c1"># in the connect() method and the window parameter is supported by fetch_trace()</span>
+<div class="viewcode-block" id="RohdeSchwarzFSW26LTEAnalyzer.get_ascii_window_trace"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26LTEAnalyzer.get_ascii_window_trace">[docs]</a>    <span class="k">def</span> <span class="nf">get_ascii_window_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">window</span><span class="p">,</span><span class="n">trace</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;FORM ASCII&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">query_ascii_values</span><span class="p">(</span><span class="s2">&quot;TRAC</span><span class="si">{window}</span><span class="s2">:DATA? TRACE</span><span class="si">{trace}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">),</span> <span class="n">container</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26LTEAnalyzer.get_binary_window_trace"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26LTEAnalyzer.get_binary_window_trace">[docs]</a>    <span class="k">def</span> <span class="nf">get_binary_window_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">window</span><span class="p">,</span><span class="n">trace</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;FORM REAL&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">query_binary_values</span><span class="p">(</span><span class="s2">&quot;TRAC</span><span class="si">{window}</span><span class="s2">:DATA? TRACE</span><span class="si">{trace}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">),</span> <span class="n">datatype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="n">is_big_endian</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">container</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26LTEAnalyzer.get_allocation_summary"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26LTEAnalyzer.get_allocation_summary">[docs]</a>    <span class="k">def</span> <span class="nf">get_allocation_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">window</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;FORM ASCII&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;TRAC</span><span class="si">{window}</span><span class="s2">:DATA? TRACE1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+    
+    
+<div class="viewcode-block" id="RohdeSchwarzFSW26IQAnalyzer"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzFSW26IQAnalyzer</span><span class="p">(</span><span class="n">RohdeSchwarzFSW26Base</span><span class="p">):</span>
+    <span class="n">expected_channel_type</span> <span class="o">=</span> <span class="s1">&#39;RTIM&#39;</span>
+    
+<div class="viewcode-block" id="RohdeSchwarzFSW26IQAnalyzer.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">RohdeSchwarzFSW26Base</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">iq_simple_enabled</span>     <span class="o">=</span> <span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;CALC:IQ&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">])</span>
+        <span class="n">iq_evaluation_enabled</span> <span class="o">=</span> <span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;CALC:IQ:EVAL&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">])</span>
+        <span class="n">iq_mode</span>               <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;CALC:IQ:MODE&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;TDOMain&#39;</span><span class="p">,</span><span class="s1">&#39;FDOMain&#39;</span><span class="p">,</span><span class="s1">&#39;IQ&#39;</span><span class="p">])</span>
+        <span class="n">iq_record_length</span>      <span class="o">=</span> <span class="n">Int</span>       <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRAC:IQ:RLEN&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">461373440</span><span class="p">)</span>
+        <span class="n">iq_sample_rate</span>        <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRAC:IQ:SRAT&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">160e6</span><span class="p">)</span>
+        <span class="n">iq_format</span>             <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;CALC:FORM&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;FREQ&#39;</span><span class="p">,</span><span class="s1">&#39;MAGN&#39;</span><span class="p">,</span> <span class="s1">&#39;MTAB&#39;</span><span class="p">,</span><span class="s1">&#39;PEAK&#39;</span><span class="p">,</span><span class="s1">&#39;RIM&#39;</span><span class="p">,</span><span class="s1">&#39;VECT&#39;</span><span class="p">])</span>
+        <span class="n">iq_format_window2</span>     <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;CALC2:FORM&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;FREQ&#39;</span><span class="p">,</span><span class="s1">&#39;MAGN&#39;</span><span class="p">,</span> <span class="s1">&#39;MTAB&#39;</span><span class="p">,</span><span class="s1">&#39;PEAK&#39;</span><span class="p">,</span><span class="s1">&#39;RIM&#39;</span><span class="p">,</span><span class="s1">&#39;VECT&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26IQAnalyzer.fetch_trace"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.fetch_trace">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">horizontal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">iq_format</span>
+        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s1">&#39;VECT&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">RohdeSchwarzFSW26Base</span><span class="o">.</span><span class="n">fetch_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">horizontal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">RohdeSchwarzFSW26Base</span><span class="o">.</span><span class="n">fetch_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">horizontal</span><span class="o">=</span><span class="n">horizontal</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s1">&#39;RIM&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="s1">&#39;columns&#39;</span><span class="p">):</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                  <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">],</span>
+                                  <span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                  <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s1">&#39;VECT&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26IQAnalyzer.store_trace"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26IQAnalyzer.store_trace">[docs]</a>    <span class="k">def</span> <span class="nf">store_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;MMEM:STOR:IQ:STAT 1, &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzFSW26RealTime</span><span class="p">(</span><span class="n">RohdeSchwarzFSW26Base</span><span class="p">):</span>
+    <span class="n">expected_channel_type</span> <span class="o">=</span> <span class="s1">&#39;RTIM&#39;</span>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">RohdeSchwarzFSW26Base</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">trigger_source</span>      <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRIG:SOUR&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;IMM&#39;</span><span class="p">,</span> <span class="s1">&#39;EXT&#39;</span><span class="p">,</span> <span class="s1">&#39;EXT2&#39;</span><span class="p">,</span> <span class="s1">&#39;EXT3&#39;</span><span class="p">,</span> <span class="s1">&#39;MASK&#39;</span><span class="p">,</span> <span class="s1">&#39;TDTR&#39;</span><span class="p">])</span>
+        <span class="n">trigger_post_time</span>   <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRIG:POST&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">trigger_pre_time</span>    <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRIG:PRET&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">iq_fft_length</span>       <span class="o">=</span> <span class="n">Int</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;IQ:FFT:LENG&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">iq_bandwidth</span>        <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRAC:IQ:BWID&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">iq_sample_rate</span>      <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRACe:IQ:SRAT&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">iq_trigger_position</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;TRAC:IQ:TPIS&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">sweep_dwell_auto</span>    <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SWE:DTIM:AUTO&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">])</span>
+        <span class="n">sweep_dwell_time</span>    <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SWE:DTIM&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">30e-3</span><span class="p">)</span>
+        <span class="n">sweep_window_type</span>   <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SWE:FFT:WIND:TYP&#39;</span><span class="p">,</span>
+                                               <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BLAC&#39;</span><span class="p">,</span><span class="s1">&#39;FLAT&#39;</span><span class="p">,</span><span class="s1">&#39;GAUS&#39;</span><span class="p">,</span><span class="s1">&#39;HAMM&#39;</span><span class="p">,</span><span class="s1">&#39;HANN&#39;</span><span class="p">,</span><span class="s1">&#39;KAIS&#39;</span><span class="p">,</span><span class="s1">&#39;RECT&#39;</span><span class="p">])</span>
+
+        <span class="n">spectrogram_depth</span>   <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">781</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span> <span class="c1"># implemented with setter/getter below</span>
+
+        <span class="n">trigger_mask_threshold</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;defined in dB relative to the reference level&#39;</span><span class="p">)</span></div>
+
+<span class="c1">#    def fetch_trace(self, horizontal=False):</span>
+<span class="c1">#        fmt = self.state.iq_format</span>
+<span class="c1">#        if fmt == &#39;VECT&#39;:</span>
+<span class="c1">#            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,False)</span>
+<span class="c1">#        else:</span>
+<span class="c1">#            df = RohdeSchwarzFSW26Base.fetch_trace(self,1,horizontal)</span>
+<span class="c1">#        </span>
+<span class="c1">#        if fmt == &#39;RIM&#39;:</span>
+<span class="c1">#            if hasattr(df,&#39;columns&#39;):</span>
+<span class="c1">#                df = pd.DataFrame(df.iloc[:len(df)//2].values+1j*df.iloc[len(df)//2:].values,</span>
+<span class="c1">#                                  index=df.index[:len(df)//2],</span>
+<span class="c1">#                                  columns=df.columns)</span>
+<span class="c1">#            else:</span>
+<span class="c1">#                df = pd.Series(df.iloc[:len(df)//2].values+1j*df.iloc[len(df)//2:].values,</span>
+<span class="c1">#                                  index=df.index[:len(df)//2])</span>
+<span class="c1">#        if fmt == &#39;VECT&#39;:</span>
+<span class="c1">#            df = pd.DataFrame(df.iloc[1::2].values,index=df.iloc[::2].values)</span>
+<span class="c1">#            </span>
+<span class="c1">#        return df</span>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.store_spectrogram"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.store_spectrogram">[docs]</a>    <span class="k">def</span> <span class="nf">store_spectrogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;MMEM:STOR</span><span class="si">{window}</span><span class="s2">:SGR &#39;</span><span class="si">{path}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.clear_spectrogram"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.clear_spectrogram">[docs]</a>    <span class="k">def</span> <span class="nf">clear_spectrogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;CALC</span><span class="si">{window}</span><span class="s2">:SGR:CLE&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.fetch_horizontal"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.fetch_horizontal">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_horizontal</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">query_binary_values</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;TRAC</span><span class="si">{window}</span><span class="s2">:X? TRACE</span><span class="si">{trace}</span><span class="s2">&quot;</span>\
+                                                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">),</span>
+                                                <span class="n">datatype</span><span class="o">=</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="n">container</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.set_detector_type"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.set_detector_type">[docs]</a>    <span class="k">def</span> <span class="nf">set_detector_type</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+        <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_trace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;WIND</span><span class="si">{window}</span><span class="s1">:DET</span><span class="si">{trace}</span><span class="s1"> </span><span class="si">{type}</span><span class="s1">&#39;</span>\
+                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">type_</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.get_detector_type"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.get_detector_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_detector_type</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+        <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_trace</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;WIND</span><span class="si">{window}</span><span class="s1">:DET</span><span class="si">{trace}</span><span class="s1">?&#39;</span>\
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">))</span></div>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">spectrogram_depth</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;CALC</span><span class="si">{window}</span><span class="s1">:SPEC:HDEP </span><span class="si">{value}</span><span class="s1">&#39;</span>\
+                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">depth</span><span class="p">))</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">spectrogram_depth</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;CALC</span><span class="si">{window}</span><span class="s1">:SPEC:HDEP?&#39;</span>\
+                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">))</span>
+
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">trigger_mask_threshold</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_frequency_mask</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">trigger_mask_threshold</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frequency_mask</span><span class="p">(</span><span class="n">first_threshold_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.set_frequency_mask"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.set_frequency_mask">[docs]</a>    <span class="k">def</span> <span class="nf">set_frequency_mask</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">,</span> <span class="n">frequency_offsets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Define the frequency-dependent trigger threshold values for a frequency mask trigger.</span>
+
+<span class="sd">        :param thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`), or a scalar to use a constant value across the band</span>
+<span class="sd">        :param array-like frequency_offsets: frequencies at which the mask is defined, or None (to specify across the whole band)</span>
+<span class="sd">        :param kind: either &#39;upper&#39; or &#39;lower,&#39; corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition</span>
+<span class="sd">        :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+        <span class="k">if</span> <span class="n">kind</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span><span class="s1">&#39;lower&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;frequency mask is </span><span class="si">{}</span><span class="s1"> but must be &quot;upper&quot; or &quot;lower&quot;&#39;</span>\
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">kind</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">frequency_offsets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">iq_bandwidth</span>
+            <span class="n">frequency_offsets</span> <span class="o">=</span> <span class="o">-</span><span class="n">bw</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">bw</span><span class="o">/</span><span class="mi">2</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
+                <span class="n">thresholds</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">frequency_offsets</span><span class="p">)</span><span class="o">*</span><span class="p">[</span><span class="n">thresholds</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">thresholds</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;with frequency_offsets=None, thresholds must be a scalar or have length 2&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;CALC</span><span class="si">{window}</span><span class="s2">:MASK:CDIR &#39;.&#39;&quot;</span>\
+                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;CALC</span><span class="si">{window}</span><span class="s2">:MASK:NAME &#39;</span><span class="si">{name}</span><span class="s2">&#39;&quot;</span>\
+                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">default_channel_name</span><span class="p">))</span>
+        <span class="n">flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">frequency_offsets</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="n">plist</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">flat</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;CALC</span><span class="si">{window}</span><span class="s2">:MASK:</span><span class="si">{kind}</span><span class="s2"> </span><span class="si">{list}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span><span class="nb">list</span><span class="o">=</span><span class="n">plist</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.get_frequency_mask"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.get_frequency_mask">[docs]</a>    <span class="k">def</span> <span class="nf">get_frequency_mask</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first_threshold_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Define the frequency-dependent trigger threshold values for a frequency mask trigger.</span>
+
+<span class="sd">        :param kind: either &#39;upper&#39; or &#39;lower,&#39; corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition</span>
+<span class="sd">        :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)</span>
+<span class="sd">        :param bool first_threshold_only: if True, return only the threshold; otherwise, return a complete parameter dict</span>
+<span class="sd">        :return: the threshold or a dictionary with keys &quot;frequency_offsets&quot; and &quot;thresholds&quot; and corresponding values (in Hz and dBm, respectively) of equal length</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+        <span class="k">if</span> <span class="n">kind</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span><span class="s1">&#39;lower&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;frequency mask is </span><span class="si">{}</span><span class="s1"> but must be &quot;upper&quot; or &quot;lower&quot;&#39;</span>\
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">kind</span><span class="p">)))</span>
+
+        <span class="n">plist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;CALC</span><span class="si">{window}</span><span class="s2">:MASK:</span><span class="si">{kind}</span><span class="s2">?&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">))</span>
+        <span class="n">plist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">plist</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">first_threshold_only</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">plist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;frequency_offsets&#39;</span><span class="p">:</span> <span class="n">plist</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="s1">&#39;thresholds&#39;</span><span class="p">:</span> <span class="n">plist</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]}</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.setup_spectrogram"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.setup_spectrogram">[docs]</a>    <span class="k">def</span> <span class="nf">setup_spectrogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center_frequency</span><span class="p">,</span> <span class="n">analysis_bandwidth</span><span class="p">,</span> <span class="n">reference_level</span><span class="p">,</span>
+                                <span class="n">time_resolution</span><span class="p">,</span> <span class="n">acquisition_time</span><span class="p">,</span> <span class="n">input_attenuation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">trigger_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">detector</span><span class="o">=</span><span class="s1">&#39;SAMP&#39;</span><span class="p">,</span> <span class="n">analysis_window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Quick setup for a spectrogram measurement in RTSA mode.</span>
+
+<span class="sd">        :param center_frequency: in Hz</span>
+<span class="sd">        :param frequency_span: in Hz</span>
+<span class="sd">        :param reference_level: in dBm</span>
+<span class="sd">        :param time_resolution: in s</span>
+<span class="sd">        :param acquisition_time: in s</span>
+<span class="sd">        :param input_attenuation: in dB (or None to autoset based on the reference level)</span>
+<span class="sd">        :param trigger_threshold: in dB (or None to free run)</span>
+<span class="sd">        :param detector: &#39;SAMP&#39; or &#39;AVER&#39;</span>
+<span class="sd">        :param analysis_window: one of [&#39;BLAC&#39;,&#39;FLAT&#39;,&#39;GAUS&#39;,&#39;HAMM&#39;,&#39;HANN&#39;,&#39;KAIS&#39;,&#39;RECT&#39;]</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="n">kws</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;ignoring spectrogram setup keyword arguments </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kws</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_trace</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_cache</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Work around an apparent SCPI bug by setting</span>
+        <span class="c1"># frequency parameters in spectrum analyzer mode</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_channel_type</span><span class="p">(</span><span class="s1">&#39;SAN&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channel_preset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">frequency_center</span> <span class="o">=</span> <span class="n">center_frequency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_channel_type</span><span class="p">(</span><span class="s1">&#39;RTIM&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initiate_continuous</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">frequency_span</span> <span class="o">=</span> <span class="n">analysis_bandwidth</span>
+
+        <span class="c1"># Setup traces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_window</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">reference_level</span> <span class="o">=</span> <span class="n">reference_level</span>
+        <span class="k">if</span> <span class="n">input_attenuation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">input_attenuation</span> <span class="o">=</span> <span class="n">input_attenuation</span>
+            <span class="k">if</span> <span class="n">reference_level</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mi">30</span>\
+                    <span class="ow">and</span> <span class="n">input_attenuation</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">input_preamplifier_enabled</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Trace acquisition parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_detector_type</span><span class="p">(</span><span class="n">detector</span><span class="p">)</span>
+
+        <span class="c1"># Sweep parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_time_window2</span> <span class="o">=</span> <span class="n">time_resolution</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_time_window2</span> <span class="o">!=</span> <span class="n">time_resolution</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;requested time resolution </span><span class="si">{}</span><span class="s1">, but instrument adjusted to </span><span class="si">{}</span><span class="s1">&#39;</span>\
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_resolution</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_time_window2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">spectrogram_depth</span> <span class="o">=</span> <span class="mi">100000</span>
+
+        <span class="c1"># Triggering</span>
+        <span class="k">if</span> <span class="n">trigger_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_source</span> <span class="o">=</span> <span class="s1">&#39;MASK&#39;</span>
+            <span class="n">th</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">[</span><span class="n">trigger_threshold</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="p">[</span><span class="n">trigger_threshold</span><span class="p">]</span>
+            <span class="n">rbw</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">resolution_bandwidth</span>
+            <span class="n">fr</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">analysis_bandwidth</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="n">rbw</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">rbw</span><span class="p">,</span><span class="n">analysis_bandwidth</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_frequency_mask</span><span class="p">(</span><span class="n">thresholds</span><span class="o">=</span><span class="n">th</span><span class="p">,</span> <span class="n">frequency_offsets</span><span class="o">=</span><span class="n">fr</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_post_time</span> <span class="o">=</span> <span class="n">acquisition_time</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_pre_time</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_post_time</span> <span class="o">=</span> <span class="n">acquisition_time</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_dwell_auto</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_dwell_time</span> <span class="o">=</span> <span class="n">acquisition_time</span>
+
+        <span class="c1"># TODO: Parameterize somehow</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">output_trigger2_direction</span> <span class="o">=</span> <span class="s1">&#39;OUTP&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">output_trigger2_type</span> <span class="o">=</span> <span class="s1">&#39;DEV&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">output_trigger3_direction</span> <span class="o">=</span> <span class="s1">&#39;OUTP&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">output_trigger3_type</span> <span class="o">=</span> <span class="s1">&#39;DEV&#39;</span>
+        <span class="k">if</span> <span class="n">analysis_window</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_window_type</span> <span class="o">=</span> <span class="s1">&#39;BLAC&#39;</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">2500</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_cache</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">spectrogram_depth</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.acquire_spectrogram_sequence"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.acquire_spectrogram_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">acquire_spectrogram_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loop_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delay_time</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">timestamps</span><span class="o">=</span><span class="s1">&#39;fast&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Trigger and fetch data, optionally in a loop that continues for a specified</span>
+<span class="sd">        duration.</span>
+
+<span class="sd">        :param loop_time: time (in s) to spend looping repeated trigger-fetch cycles, or None to execute once</span>
+<span class="sd">        :param delay_time: delay time before starting (in s)</span>
+<span class="sd">        :param timestamps: &#39;fast&#39; (with potential for rounding errors to ~ 10 ns) or &#39;exact&#39; (slow and not recommended)</span>
+<span class="sd">        :return: dictionary structured as {&#39;spectrogram&#39;: pd.DataFrame, &#39;spectrogram_acquisition_time&#39;: float, &#39;spectrogram_active_time&#39;: float}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_source</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;mask&#39;</span><span class="p">:</span>
+            <span class="n">max_trigger_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_post_time</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">max_trigger_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_dwell_time</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">time_remaining</span> <span class="o">=</span> <span class="n">loop_time</span>
+        <span class="n">active_time</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">while</span> <span class="n">loop_time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">time_remaining</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Setup</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clear_spectrogram</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="c1"># Give the power sensor time to arm</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay_time</span><span class="p">)</span>
+
+            <span class="n">t0_active</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="c1"># Try to trigger; block until timeout.</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">suppress_timeout</span><span class="p">():</span>
+                <span class="c1"># print(max(30*max_trigger_time,time_remaining or 0.1))</span>
+                <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e3</span> <span class="o">*</span> <span class="mi">30</span><span class="o">*</span><span class="n">max_trigger_time</span><span class="p">)):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">trigger_single</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+                <span class="n">active_time</span> <span class="o">+=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0_active</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">6</span><span class="o">*</span><span class="mf">1e3</span><span class="o">*</span><span class="n">max_trigger_time</span>
+                <span class="n">single</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_spectrogram</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+                                                <span class="n">timestamps</span><span class="o">=</span><span class="n">timestamps</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">1000</span>
+                <span class="k">if</span> <span class="n">single</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">single</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">abort</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">loop_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">time_remaining</span> <span class="o">=</span> <span class="n">loop_time</span> <span class="o">-</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">specs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">specs</span> <span class="k">else</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">specs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;no data acquired&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;spectrogram_data&#39;</span><span class="p">:</span> <span class="n">specs</span><span class="p">,</span>
+                <span class="s1">&#39;spectrogram_acquisition_time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">,</span>
+                <span class="s1">&#39;spectrogram_active_time&#39;</span><span class="p">:</span> <span class="n">active_time</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.arm_spectrogram"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.arm_spectrogram">[docs]</a>    <span class="k">def</span> <span class="nf">arm_spectrogram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_spectrogram</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.acquire_spectrogram"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.acquire_spectrogram">[docs]</a>    <span class="k">def</span> <span class="nf">acquire_spectrogram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Trigger and acquire data, optionally in a loop that continues for a specified</span>
+<span class="sd">            duration.</span>
+
+<span class="sd">            :return: dictionary structured as {&#39;spectrogram_active_time&#39;: float}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_source</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;mask&#39;</span><span class="p">:</span>
+            <span class="n">max_trigger_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">trigger_post_time</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">max_trigger_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">sweep_dwell_time</span>
+
+        <span class="c1"># Try to trigger; block until timeout.</span>
+        <span class="c1"># print(max(30*max_trigger_time,time_remaining or 0.1))</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e3</span> <span class="o">*</span> <span class="mi">30</span><span class="o">*</span><span class="n">max_trigger_time</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trigger_single</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;spectrogram_active_time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">}</span></div></div>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright  does not apply.
+
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
+  </body>
+</html>

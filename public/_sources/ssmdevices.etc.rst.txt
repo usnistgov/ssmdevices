@@ -1,0 +1,10 @@
+ssmdevices\.etc package
+=======================
+
+Module contents
+---------------
+
+.. automodule:: ssmdevices.etc
+    :members:
+    :undoc-members:
+    :show-inheritance:

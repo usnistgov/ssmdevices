@@ -3,10 +3,16 @@ Drivers for USB peripherals
 
 :author: Dan Kuester <daniel.kuester@nist.gov>, Andre Rosete <andre.rosete@nist.gov>
 '''
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from builtins import super
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
 import labbench as lb
-
-import logging
-logger = logging.getLogger('labbench')
 
 class AcronameUSBHub2x4(lb.Device):
     ''' This class wraps brainstem drivers to simplify control over USB hubs
@@ -39,9 +45,8 @@ class AcronameUSBHub2x4(lb.Device):
         
         try:
             import brainstem
-        except Exception,e:
-            logger.error('Could not import the brainstem package, a prerequisite for {} control'\
-                         .format(type(self).__name__))
+        except Exception as e:
+            self.logger.error('could not import the dependency "brainstem"')
             raise e
             
     def connect (self):
@@ -50,11 +55,11 @@ class AcronameUSBHub2x4(lb.Device):
         specs = self._bs.discover.findAllModules(brainstem.link.Spec.USB)
 
         specs = [s for s in specs if s.model == self.model]        
-        if self.resource is not None:
-            specs = [s for s in specs if s.serial_number == self.resource]
+        if self.settings.resource is not None:
+            specs = [s for s in specs if s.serial_number == self.settings.resource]
     
         if len(specs)>1:
-            if self.resource is None:
+            if self.settings.resource is None:
                 raise Exception("More than one connected USB device matches model " + str(self.model) + " - provide serial number?")
             else:
                 raise Exception("More than one connected USB device match model " + str(self.model) + " and serial " + str(self.serial))
@@ -88,7 +93,7 @@ class AcronameUSBHub2x4(lb.Device):
              ports on the hub.
         '''
         if channel == "all":
-            channels = range(4)
+            channels = list(range(4))
         elif isinstance(channel, collections.Iterable):
             channels = channel
         else:
