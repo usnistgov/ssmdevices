@@ -170,10 +170,12 @@ class QXDM(lb.Win32ComDevice):
         try:
             f1 = self._qpst.disconnect
         except AttributeError:
+            f1 = lambda: None
             self.logger.debug('QPST already quit')
         try:
             f2 = self._window.QuitApplication
         except AttributeError:
+            f2 = lambda: None
             self.logger.debug('QXDM already quit')
         
         lb.concurrently(f1,f2)
@@ -308,7 +310,11 @@ class QXDM(lb.Win32ComDevice):
         '''
         if com_port is None:
             com_port = 0
+<<<<<<< HEAD
+        if int(com_port) > 0:
+=======
         if com_port > 0:
+>>>>>>> c585bbdba994884778d966153cee917b43be38b7
             self.__connection_info = self._qpst.add_port(self.settings.resource)
 
         try:
@@ -319,7 +325,7 @@ class QXDM(lb.Win32ComDevice):
                 if ret == -1:
                     raise Exception('Connection error')
                 actual = self._get_com_port()
-                if actual == com_port:
+                if str(actual) == str(com_port):
                     break
                 else:
                     code = self._window.GetServerState()
@@ -331,7 +337,7 @@ class QXDM(lb.Win32ComDevice):
                     raise TimeoutError('QXDM timeout connecting to UE (connected to {})'.format(actual))
                 else:
                     raise TimeoutError('QXDM timeout disconnecting to UE (return code {})'.format(actual))
-            if com_port > 0:
+            if int(com_port )> 0:
                 self.logger.debug('connected to COM{} in {}s'\
                                   .format(self.settings.resource, time.time()-t0))
             else:
@@ -339,7 +345,11 @@ class QXDM(lb.Win32ComDevice):
                                   .format(self.settings.resource, time.time()-t0))
                 
         finally:
+<<<<<<< HEAD
+            if int(com_port) == 0:
+=======
             if com_port == 0:
+>>>>>>> c585bbdba994884778d966153cee917b43be38b7
                 self._qpst.remove_port(self.settings.resource)
 
     def _clear(self):
