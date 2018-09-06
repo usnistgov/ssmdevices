@@ -35,13 +35,13 @@ class QPST(lb.Win32ComDevice):
     def add_port(self, port):
         ''' Make sure that QPST is configured to enable the desired port
         '''
-        state_to_qpst_api = {'phone_model_number': 'ModelNumber',
-                             'phone_mode':         'PhoneMode',
-                             'phone_imei':         'IMEI',
-                             'phone_esn':          'ESN',
-                             'phone_build_id':     'BuildId'}
+        state_to_qpst_api = {'ue_model_number': 'ModelNumber',
+                             'ue_mode':         'PhoneMode',
+                             'ue_imei':         'IMEI',
+                             'ue_esn':          'ESN',
+                             'ue_build_id':     'BuildId'}
     
-        codes = {'phone_mode':   {0: 'No phone detected',
+        codes = {'ue_mode':   {0: 'No phone detected',
                                   2: 'Download',
                                   3: 'Diagnostic',
                                   4: 'Offline and diagnostic',
@@ -120,11 +120,11 @@ class QXDM(lb.Win32ComDevice):
     class state(lb.Win32ComDevice.state):
         version              = lb.Unicode(read_only=True,  cache=True,
                                           help='QXDM application version')
-        phone_model_number   = lb.Int(help='model number code')
-        phone_mode           = lb.Unicode(help='current state of the phone')
-        phone_imei           = lb.Int(help='Phone IMEI')
-        phone_esn            = lb.Int(help='Phone ESN')
-        phone_build_id       = lb.Unicode(help='Build ID of software on the phone')
+        ue_model_number   = lb.Int(help='model number code', command='ue_model_number')
+        ue_mode           = lb.Unicode(help='current state of the phone', command='ue_mode')
+        ue_imei           = lb.Int(help='Phone IMEI', command='ue_imei')
+        ue_esn            = lb.Int(help='Phone ESN', command='ue_esn')
+        ue_build_id       = lb.Unicode(help='Build ID of software on the phone', command='ue_build_id')
 
     def connect(self):
         for pid in psutil.pids():
@@ -141,6 +141,7 @@ class QXDM(lb.Win32ComDevice):
         self._qpst = QPST()
         self._qpst.connect()
         super(QXDM, self).connect()
+        self.__connection_info = self._qpst.add_port(self.settings.resource)
 
     def setup(self):
         ''' Like all other Device subclasses, this setup method is run
@@ -164,7 +165,7 @@ class QXDM(lb.Win32ComDevice):
         try:
             return self.__connection_info[command]
         except KeyError:
-            raise lb.CommandNotImplementedError('command {} not implemented'.format(command))
+            raise lb.DeviceStateError('no state {} in {}'.format(command, repr(self)))
 
     def disconnect (self):
         try:
@@ -310,11 +311,7 @@ class QXDM(lb.Win32ComDevice):
         '''
         if com_port is None:
             com_port = 0
-<<<<<<< HEAD
         if int(com_port) > 0:
-=======
-        if com_port > 0:
->>>>>>> c585bbdba994884778d966153cee917b43be38b7
             self.__connection_info = self._qpst.add_port(self.settings.resource)
 
         try:
@@ -345,11 +342,7 @@ class QXDM(lb.Win32ComDevice):
                                   .format(self.settings.resource, time.time()-t0))
                 
         finally:
-<<<<<<< HEAD
             if int(com_port) == 0:
-=======
-            if com_port == 0:
->>>>>>> c585bbdba994884778d966153cee917b43be38b7
                 self._qpst.remove_port(self.settings.resource)
 
     def _clear(self):
