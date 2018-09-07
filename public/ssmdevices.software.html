@@ -4,28 +4,19 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ssmdevices.software package &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="ssmdevices.lib package" href="ssmdevices.lib.html" /> 
-  </head>
-  <body>
+  </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
           <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.software package</span></h2>
@@ -49,11 +40,11 @@
 </div>
 <div class="section" id="module-ssmdevices.software.iperf">
 <span id="ssmdevices-software-iperf-module"></span><h2>ssmdevices.software.iperf module<a class="headerlink" href="#module-ssmdevices.software.iperf" title="Permalink to this headline">¶</a></h2>
-<p>&#64;author: Dan Kuester &lt;<a class="reference external" href="mailto:daniel&#46;kuester&#37;&#52;&#48;nist&#46;gov">daniel<span>&#46;</span>kuester<span>&#64;</span>nist<span>&#46;</span>gov</a>&gt;</p>
+<p>&#64;author: Dan Kuester &lt;<a class="reference external" href="mailto:daniel&#46;kuester&#37;&#52;&#48;nist&#46;gov">daniel<span>&#46;</span>kuester<span>&#64;</span>nist<span>&#46;</span>gov</a>&gt;, Michael Voecks &lt;<a class="reference external" href="mailto:michael&#46;voecks&#37;&#52;&#48;nist&#46;gov">michael<span>&#46;</span>voecks<span>&#64;</span>nist<span>&#46;</span>gov</a>&gt;</p>
 <dl class="class">
 <dt id="ssmdevices.software.iperf.IPerfClient">
 <em class="property">class </em><code class="descclassname">ssmdevices.software.iperf.</code><code class="descname">IPerfClient</code><span class="sig-paren">(</span><em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ssmdevices.software.iperf.IPerf" title="ssmdevices.software.iperf.IPerf"><code class="xref py py-class docutils literal"><span class="pre">ssmdevices.software.iperf.IPerf</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#ssmdevices.software.iperf.IPerf" title="ssmdevices.software.iperf.IPerf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ssmdevices.software.iperf.IPerf</span></code></a></p>
 <p>This class is deprected. Use IPerf instead</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.backend">
@@ -63,7 +54,35 @@
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.background">
 <code class="descname">background</code><span class="sig-paren">(</span><em>*extra_args</em>, <em>**flags</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.background" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run the executable in the background (returning immediately while
+the executable continues running).</p>
+<p>Once the background process is running,
+* Retreive standard output from the executable with self.read_stdout
+* Write to standard input self.write_stdin
+* Kill the process with self.kill
+* Check whether the process is running with self.running</p>
+<p>Normally, the command line arguments are determined by
+* appending extra_arguments to the global arguments in self.settings.arguments, and
+* appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
+<blockquote>
+<div>global flags defined with command flags in local state traits in
+<cite>self.settings</cite></div></blockquote>
+<p>Use the self.no_state_arguments context manager to skip these
+global arguments like this:</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
+with self.no_state_arguments:</p>
+<blockquote>
+<div>self.background(…)</div></blockquote>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.cleanup">
@@ -123,16 +142,18 @@ Implement this for message-based protocols, like VISA SCPI or some serial device
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <a class="reference internal" href="#ssmdevices.software.iperf.IPerfClient.connect" title="ssmdevices.software.iperf.IPerfClient.connect"><code class="xref py py-meth docutils literal"><span class="pre">connect()</span></code></a> method exists to comply with the
-<code class="xref py py-class docutils literal"><span class="pre">Device</span></code> object protocol. Call the
-<code class="xref py py-meth docutils literal"><span class="pre">execute()</span></code> method when connected to
+<dd><p>The <a class="reference internal" href="#ssmdevices.software.iperf.IPerfClient.connect" title="ssmdevices.software.iperf.IPerfClient.connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a> method exists to comply with the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> object protocol. Call the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code> method when connected to
 execute the binary.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.exception_on_stderr">
@@ -152,20 +173,20 @@ a pandas DataFrame.</p>
 <dt id="ssmdevices.software.iperf.IPerfClient.foreground">
 <code class="descname">foreground</code><span class="sig-paren">(</span><em>*extra_arguments</em>, <em>**flags</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.foreground" title="Permalink to this definition">¶</a></dt>
 <dd><p>Blocking execution of the binary at the file location
-<cite>self.state.binary_path</cite>.</p>
+<cite>self.settings.binary_path</cite>.</p>
 <p>Normally, the command line arguments are determined by
-* appending extra_arguments to the global arguments in self.state.arguments, and
+* appending extra_arguments to the global arguments in self.settings.arguments, and
 * appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
 <blockquote>
 <div>global flags defined with command flags in local state traits in
-<cite>self.state</cite></div></blockquote>
+<cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
+<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>python
 with self.no_state_arguments:</p>
 <blockquote>
 <div>self.foreground(…)</div></blockquote>
-<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<p><a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -180,24 +201,6 @@ with self.no_state_arguments:</p>
 <dt id="ssmdevices.software.iperf.IPerfClient.kill">
 <code class="descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.kill" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfClient.metadata">
-<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
-<dd>includes only state for traits for which trait.is_metadata evaluates as False,
-as well as self.resource (if it is not None).</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.no_state_arguments">
@@ -248,6 +251,179 @@ executed or is empty. Running the command line multiple times overwrites the que
 </table>
 </dd></dl>
 
+<dl class="class">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings">
+<em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.settings</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.arguments">
+<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.List(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.arguments_min">
+<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)
+minimum number of extra command line arguments to pass to the executable</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.bidirectional">
+<code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=’-d’,read_only=False,write_only=False,cache=False)
+Send and receive simultaneously</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.binary_path">
+<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.binary_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.bind">
+<code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=’-B’,read_only=False,write_only=False,cache=False)
+bind connection to specified IP</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.bit_rate">
+<code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=’-b’,read_only=False,write_only=False,cache=False)
+Maximum bit rate (append unit for size, e.g. 10K)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.buffer_size">
+<code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=’-l’,read_only=False,write_only=False,cache=False)
+Size of data buffer that generates traffic (bytes)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.define">
+<em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this class with default values of the traits
+redefined according to each keyword argument. For example,</p>
+<dl class="docutils">
+<dt><a href="#id17"><span class="problematic" id="id18">``</span></a><a href="#id19"><span class="problematic" id="id20">`</span></a>python</dt>
+<dd>mylocaltraitcls.define(parameter=7)</dd>
+</dl>
+<p><a href="#id21"><span class="problematic" id="id22">``</span></a><a href="#id23"><span class="problematic" id="id24">`</span></a></p>
+<p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
+named <cite>parameter</cite> is redefined to have default_value=7.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.interval">
+<code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0.01,max=inf,step=None,command=’-i’,read_only=False,write_only=False,cache=False)
+Interval between throughput reports (s)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.port">
+<code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=’-p’,read_only=False,write_only=False,cache=False)
+connection port</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.resource">
+<code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
+the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.tcp_window_size">
+<code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=’-w’,read_only=False,write_only=False,cache=False)
+(bytes)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.time">
+<code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)
+time in seconds to transmit before quitting (default 10s)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.timeout">
+<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
+wait time for traffic results before throwing a timeout exception (s)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfClient.settings.udp">
+<code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.udp" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=’-u’,read_only=False,write_only=False,cache=False)
+UDP instead of TCP networking</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.setup">
 <code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.setup" title="Permalink to this definition">¶</a></dt>
@@ -263,82 +439,38 @@ executed or is empty. Running the command line multiple times overwrites the que
 <dl class="class">
 <dt id="ssmdevices.software.iperf.IPerfClient.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.state</span></code></p>
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.arguments">
-<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalList(read_only=False,is_metadata=False,command=None)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.arguments_min">
-<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=0,max=None,read_only=True,is_metadata=False,command=None)
-minimum number of extra command line arguments to pass to the executable</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.bidirectional">
-<code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=False,is_metadata=False,command=’-d’)
-Send and receive simultaneously</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.binary_path">
-<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=None)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.bind">
-<code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=’-B’)
-bind connection to specified IP</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.bit_rate">
-<code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=’-b’)
-Maximum bit rate (append unit for size, e.g. 10K)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.buffer_size">
-<code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=False,command=’-l’)
-Size of data buffer that generates traffic (bytes)</p>
-</dd></dl>
-
-<dl class="method">
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasStateTraits</span></code></p>
+<p>Basic remote state
+Instantiating <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> (or one of its subclasses)
+automatically instantiate this class as well.</p>
+<dl class="classmethod">
 <dt id="ssmdevices.software.iperf.IPerfClient.state.class_own_trait_events">
-<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.iperf.IPerfClient.state.class_own_traits">
-<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
 <p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.iperf.IPerfClient.state.class_trait_names">
-<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
 but is unbound.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.iperf.IPerfClient.state.class_traits">
-<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
 is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
 <p>The TraitTypes returned don’t know anything about the values
 that the various HasTrait’s instances are holding.</p>
 <p>The metadata kwargs allow functions to be passed in which
@@ -350,71 +482,22 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.concurrency_support">
-<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.interval">
-<code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0.01,max=inf,step=None,read_only=False,is_metadata=False,command=’-i’)
-Interval between throughput reports (s)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.port">
-<code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=False,command=’-p’)
-connection port</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.tcp_window_size">
-<code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=False,command=’-w’)
-(bytes)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.time">
-<code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=0,max=16535,read_only=False,is_metadata=False,command=’-t’)
-time in seconds to transmit before quitting (default 10s)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.timeout">
-<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=False,command=None)
-wait time for traffic results before throwing a timeout exception (s)</p>
-</dd></dl>
-
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.iperf.IPerfClient.state.trait_events">
-<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
 <dl class="docutils">
 <dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
 the event handlers of this class will be returned instead.</dd>
 </dl>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.state.udp">
-<code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=False,is_metadata=False,command=’-u’)
-UDP instead of TCP networking</p>
 </dd></dl>
 
 </dd></dl>
@@ -428,8 +511,8 @@ UDP instead of TCP networking</p>
 
 <dl class="class">
 <dt id="ssmdevices.software.iperf.IPerf">
-<em class="property">class </em><code class="descclassname">ssmdevices.software.iperf.</code><code class="descname">IPerf</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**local_states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.CommandLineWrapper</span></code></p>
+<em class="property">class </em><code class="descclassname">ssmdevices.software.iperf.</code><code class="descname">IPerf</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.CommandLineWrapper</span></code></p>
 <p>Run an instance of iperf, collecting output data in a background thread.
 When running as an iperf client (server=False), 
 The default value is the path that installs with 64-bit cygwin.</p>
@@ -441,7 +524,35 @@ The default value is the path that installs with 64-bit cygwin.</p>
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerf.background">
 <code class="descname">background</code><span class="sig-paren">(</span><em>*extra_args</em>, <em>**flags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerf.background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.background" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run the executable in the background (returning immediately while
+the executable continues running).</p>
+<p>Once the background process is running,
+* Retreive standard output from the executable with self.read_stdout
+* Write to standard input self.write_stdin
+* Kill the process with self.kill
+* Check whether the process is running with self.running</p>
+<p>Normally, the command line arguments are determined by
+* appending extra_arguments to the global arguments in self.settings.arguments, and
+* appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
+<blockquote>
+<div>global flags defined with command flags in local state traits in
+<cite>self.settings</cite></div></blockquote>
+<p>Use the self.no_state_arguments context manager to skip these
+global arguments like this:</p>
+<p><a href="#id25"><span class="problematic" id="id26">``</span></a><a href="#id27"><span class="problematic" id="id28">`</span></a>python
+with self.no_state_arguments:</p>
+<blockquote>
+<div>self.background(…)</div></blockquote>
+<p><a href="#id29"><span class="problematic" id="id30">``</span></a><a href="#id31"><span class="problematic" id="id32">`</span></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerf.cleanup">
@@ -501,16 +612,18 @@ Implement this for message-based protocols, like VISA SCPI or some serial device
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerf.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <a class="reference internal" href="#ssmdevices.software.iperf.IPerf.connect" title="ssmdevices.software.iperf.IPerf.connect"><code class="xref py py-meth docutils literal"><span class="pre">connect()</span></code></a> method exists to comply with the
-<code class="xref py py-class docutils literal"><span class="pre">Device</span></code> object protocol. Call the
-<code class="xref py py-meth docutils literal"><span class="pre">execute()</span></code> method when connected to
+<dd><p>The <a class="reference internal" href="#ssmdevices.software.iperf.IPerf.connect" title="ssmdevices.software.iperf.IPerf.connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a> method exists to comply with the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> object protocol. Call the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code> method when connected to
 execute the binary.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerf.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.exception_on_stderr">
@@ -530,20 +643,20 @@ a pandas DataFrame.</p>
 <dt id="ssmdevices.software.iperf.IPerf.foreground">
 <code class="descname">foreground</code><span class="sig-paren">(</span><em>*extra_arguments</em>, <em>**flags</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.foreground" title="Permalink to this definition">¶</a></dt>
 <dd><p>Blocking execution of the binary at the file location
-<cite>self.state.binary_path</cite>.</p>
+<cite>self.settings.binary_path</cite>.</p>
 <p>Normally, the command line arguments are determined by
-* appending extra_arguments to the global arguments in self.state.arguments, and
+* appending extra_arguments to the global arguments in self.settings.arguments, and
 * appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
 <blockquote>
 <div>global flags defined with command flags in local state traits in
-<cite>self.state</cite></div></blockquote>
+<cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>python
+<p><a href="#id33"><span class="problematic" id="id34">``</span></a><a href="#id35"><span class="problematic" id="id36">`</span></a>python
 with self.no_state_arguments:</p>
 <blockquote>
 <div>self.foreground(…)</div></blockquote>
-<p><a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a></p>
+<p><a href="#id37"><span class="problematic" id="id38">``</span></a><a href="#id39"><span class="problematic" id="id40">`</span></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -558,24 +671,6 @@ with self.no_state_arguments:</p>
 <dt id="ssmdevices.software.iperf.IPerf.kill">
 <code class="descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.kill" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerf.metadata">
-<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
-<dd>includes only state for traits for which trait.is_metadata evaluates as False,
-as well as self.resource (if it is not None).</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.no_state_arguments">
@@ -626,6 +721,179 @@ executed or is empty. Running the command line multiple times overwrites the que
 </table>
 </dd></dl>
 
+<dl class="class">
+<dt id="ssmdevices.software.iperf.IPerf.settings">
+<em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerf.settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.settings</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.arguments">
+<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.List(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.arguments_min">
+<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)
+minimum number of extra command line arguments to pass to the executable</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.bidirectional">
+<code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=’-d’,read_only=False,write_only=False,cache=False)
+Send and receive simultaneously</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.binary_path">
+<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.binary_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.bind">
+<code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=’-B’,read_only=False,write_only=False,cache=False)
+bind connection to specified IP</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.bit_rate">
+<code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=’-b’,read_only=False,write_only=False,cache=False)
+Maximum bit rate (append unit for size, e.g. 10K)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.buffer_size">
+<code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=’-l’,read_only=False,write_only=False,cache=False)
+Size of data buffer that generates traffic (bytes)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerf.settings.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerf.settings.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerf.settings.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerf.settings.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerf.settings.define">
+<em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this class with default values of the traits
+redefined according to each keyword argument. For example,</p>
+<dl class="docutils">
+<dt><a href="#id41"><span class="problematic" id="id42">``</span></a><a href="#id43"><span class="problematic" id="id44">`</span></a>python</dt>
+<dd>mylocaltraitcls.define(parameter=7)</dd>
+</dl>
+<p><a href="#id45"><span class="problematic" id="id46">``</span></a><a href="#id47"><span class="problematic" id="id48">`</span></a></p>
+<p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
+named <cite>parameter</cite> is redefined to have default_value=7.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.interval">
+<code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0.01,max=inf,step=None,command=’-i’,read_only=False,write_only=False,cache=False)
+Interval between throughput reports (s)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.port">
+<code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=’-p’,read_only=False,write_only=False,cache=False)
+connection port</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.resource">
+<code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
+the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.tcp_window_size">
+<code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=’-w’,read_only=False,write_only=False,cache=False)
+(bytes)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.time">
+<code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)
+time in seconds to transmit before quitting (default 10s)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.timeout">
+<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
+wait time for traffic results before throwing a timeout exception (s)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerf.settings.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerf.settings.udp">
+<code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.udp" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=’-u’,read_only=False,write_only=False,cache=False)
+UDP instead of TCP networking</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerf.setup">
 <code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.setup" title="Permalink to this definition">¶</a></dt>
@@ -640,83 +908,39 @@ executed or is empty. Running the command line multiple times overwrites the que
 
 <dl class="class">
 <dt id="ssmdevices.software.iperf.IPerf.state">
-<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerf.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.state</span></code></p>
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.arguments">
-<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalList(read_only=False,is_metadata=False,command=None)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.arguments_min">
-<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=0,max=None,read_only=True,is_metadata=False,command=None)
-minimum number of extra command line arguments to pass to the executable</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.bidirectional">
-<code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=False,is_metadata=False,command=’-d’)
-Send and receive simultaneously</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.binary_path">
-<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=None)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.bind">
-<code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=’-B’)
-bind connection to specified IP</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.bit_rate">
-<code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=’-b’)
-Maximum bit rate (append unit for size, e.g. 10K)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.buffer_size">
-<code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=False,command=’-l’)
-Size of data buffer that generates traffic (bytes)</p>
-</dd></dl>
-
-<dl class="method">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasStateTraits</span></code></p>
+<p>Basic remote state
+Instantiating <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> (or one of its subclasses)
+automatically instantiate this class as well.</p>
+<dl class="classmethod">
 <dt id="ssmdevices.software.iperf.IPerf.state.class_own_trait_events">
-<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.iperf.IPerf.state.class_own_traits">
-<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
 <p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.iperf.IPerf.state.class_trait_names">
-<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
 but is unbound.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.iperf.IPerf.state.class_traits">
-<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
 is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
 <p>The TraitTypes returned don’t know anything about the values
 that the various HasTrait’s instances are holding.</p>
 <p>The metadata kwargs allow functions to be passed in which
@@ -728,71 +952,22 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.concurrency_support">
-<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.interval">
-<code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0.01,max=inf,step=None,read_only=False,is_metadata=False,command=’-i’)
-Interval between throughput reports (s)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.port">
-<code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=False,command=’-p’)
-connection port</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.tcp_window_size">
-<code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=False,command=’-w’)
-(bytes)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.time">
-<code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=0,max=16535,read_only=False,is_metadata=False,command=’-t’)
-time in seconds to transmit before quitting (default 10s)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.timeout">
-<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=False,command=None)
-wait time for traffic results before throwing a timeout exception (s)</p>
-</dd></dl>
-
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.iperf.IPerf.state.trait_events">
-<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
 <dl class="docutils">
 <dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
 the event handlers of this class will be returned instead.</dd>
 </dl>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.state.udp">
-<code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=False,is_metadata=False,command=’-u’)
-UDP instead of TCP networking</p>
 </dd></dl>
 
 </dd></dl>
@@ -806,8 +981,8 @@ UDP instead of TCP networking</p>
 
 <dl class="class">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid">
-<em class="property">class </em><code class="descclassname">ssmdevices.software.iperf.</code><code class="descname">IPerfOnAndroid</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**local_states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ssmdevices.software.iperf.IPerf" title="ssmdevices.software.iperf.IPerf"><code class="xref py py-class docutils literal"><span class="pre">ssmdevices.software.iperf.IPerf</span></code></a></p>
+<em class="property">class </em><code class="descclassname">ssmdevices.software.iperf.</code><code class="descname">IPerfOnAndroid</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ssmdevices.software.iperf.IPerf" title="ssmdevices.software.iperf.IPerf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ssmdevices.software.iperf.IPerf</span></code></a></p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.backend">
 <code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.backend" title="Permalink to this definition">¶</a></dt>
@@ -816,7 +991,35 @@ UDP instead of TCP networking</p>
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.background">
 <code class="descname">background</code><span class="sig-paren">(</span><em>*extra_args</em>, <em>**flags</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.background" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run the executable in the background (returning immediately while
+the executable continues running).</p>
+<p>Once the background process is running,
+* Retreive standard output from the executable with self.read_stdout
+* Write to standard input self.write_stdin
+* Kill the process with self.kill
+* Check whether the process is running with self.running</p>
+<p>Normally, the command line arguments are determined by
+* appending extra_arguments to the global arguments in self.settings.arguments, and
+* appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
+<blockquote>
+<div>global flags defined with command flags in local state traits in
+<cite>self.settings</cite></div></blockquote>
+<p>Use the self.no_state_arguments context manager to skip these
+global arguments like this:</p>
+<p><a href="#id49"><span class="problematic" id="id50">``</span></a><a href="#id51"><span class="problematic" id="id52">`</span></a>python
+with self.no_state_arguments:</p>
+<blockquote>
+<div>self.background(…)</div></blockquote>
+<p><a href="#id53"><span class="problematic" id="id54">``</span></a><a href="#id55"><span class="problematic" id="id56">`</span></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.cleanup">
@@ -876,16 +1079,18 @@ Implement this for message-based protocols, like VISA SCPI or some serial device
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <a class="reference internal" href="#ssmdevices.software.iperf.IPerfOnAndroid.connect" title="ssmdevices.software.iperf.IPerfOnAndroid.connect"><code class="xref py py-meth docutils literal"><span class="pre">connect()</span></code></a> method exists to comply with the
-<code class="xref py py-class docutils literal"><span class="pre">Device</span></code> object protocol. Call the
-<code class="xref py py-meth docutils literal"><span class="pre">execute()</span></code> method when connected to
+<dd><p>The <a class="reference internal" href="#ssmdevices.software.iperf.IPerfOnAndroid.connect" title="ssmdevices.software.iperf.IPerfOnAndroid.connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a> method exists to comply with the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> object protocol. Call the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code> method when connected to
 execute the binary.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.exception_on_stderr">
@@ -897,26 +1102,28 @@ to standard error during background execution.</p>
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.fetch">
 <code class="descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.fetch" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Retreive csv-formatted text from standard output and parse into
+a pandas DataFrame.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.foreground">
 <code class="descname">foreground</code><span class="sig-paren">(</span><em>*extra_arguments</em>, <em>**flags</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.foreground" title="Permalink to this definition">¶</a></dt>
 <dd><p>Blocking execution of the binary at the file location
-<cite>self.state.binary_path</cite>.</p>
+<cite>self.settings.binary_path</cite>.</p>
 <p>Normally, the command line arguments are determined by
-* appending extra_arguments to the global arguments in self.state.arguments, and
+* appending extra_arguments to the global arguments in self.settings.arguments, and
 * appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
 <blockquote>
 <div>global flags defined with command flags in local state traits in
-<cite>self.state</cite></div></blockquote>
+<cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id17"><span class="problematic" id="id18">``</span></a><a href="#id19"><span class="problematic" id="id20">`</span></a>python
+<p><a href="#id57"><span class="problematic" id="id58">``</span></a><a href="#id59"><span class="problematic" id="id60">`</span></a>python
 with self.no_state_arguments:</p>
 <blockquote>
 <div>self.foreground(…)</div></blockquote>
-<p><a href="#id21"><span class="problematic" id="id22">``</span></a><a href="#id23"><span class="problematic" id="id24">`</span></a></p>
+<p><a href="#id61"><span class="problematic" id="id62">``</span></a><a href="#id63"><span class="problematic" id="id64">`</span></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -933,24 +1140,6 @@ with self.no_state_arguments:</p>
 <dd><p>Kill the local process and the iperf process on the UE.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.metadata">
-<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
-<dd>includes only state for traits for which trait.is_metadata evaluates as False,
-as well as self.resource (if it is not None).</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.no_state_arguments">
 <code class="descname">no_state_arguments</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.no_state_arguments" title="Permalink to this definition">¶</a></dt>
@@ -963,6 +1152,22 @@ in generating argument strings.</p>
 <code class="descname">read_stdout</code><span class="sig-paren">(</span><em>n=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.read_stdout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.read_stdout" title="Permalink to this definition">¶</a></dt>
 <dd><p>adb seems to forward stderr as stdout. Filter out some undesired
 resulting status messages.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.reboot">
+<code class="descname">reboot</code><span class="sig-paren">(</span><em>block=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.reboot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.reboot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reboot the device.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>block</strong> – if this evaluates to True, block until the device is ready to accept commands</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -995,95 +1200,85 @@ resulting status messages.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.setup" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.start">
-<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.start" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="class">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state">
-<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ssmdevices.software.iperf.state</span></code></p>
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings">
+<em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ssmdevices.software.iperf.settings</span></code></p>
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.arguments">
-<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalList(read_only=False,is_metadata=False,command=None)</p>
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.arguments">
+<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.List(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.arguments_min">
-<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=0,max=None,read_only=True,is_metadata=False,command=None)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.arguments_min">
+<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)
 minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.bidirectional">
-<code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=False,is_metadata=False,command=’-d’)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.bidirectional">
+<code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=’-d’,read_only=False,write_only=False,cache=False)
 Send and receive simultaneously</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.binary_path">
-<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=True,command=None)</p>
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.binary_path">
+<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.binary_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.bind">
-<code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=’-B’)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.bind">
+<code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=’-B’,read_only=False,write_only=False,cache=False)
 bind connection to specified IP</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.bit_rate">
-<code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=’-b’)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.bit_rate">
+<code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=’-b’,read_only=False,write_only=False,cache=False)
 Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.buffer_size">
-<code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=False,command=’-l’)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.buffer_size">
+<code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=’-l’,read_only=False,write_only=False,cache=False)
 Size of data buffer that generates traffic (bytes)</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.class_own_trait_events">
-<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.class_own_traits">
-<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
 <p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.class_trait_names">
-<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
 but is unbound.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.class_traits">
-<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
 is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
 <p>The TraitTypes returned don’t know anything about the values
 that the various HasTrait’s instances are holding.</p>
 <p>The metadata kwargs allow functions to be passed in which
@@ -1095,79 +1290,201 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.concurrency_support">
-<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.define">
+<em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this class with default values of the traits
+redefined according to each keyword argument. For example,</p>
+<dl class="docutils">
+<dt><a href="#id65"><span class="problematic" id="id66">``</span></a><a href="#id67"><span class="problematic" id="id68">`</span></a>python</dt>
+<dd>mylocaltraitcls.define(parameter=7)</dd>
+</dl>
+<p><a href="#id69"><span class="problematic" id="id70">``</span></a><a href="#id71"><span class="problematic" id="id72">`</span></a></p>
+<p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
+named <cite>parameter</cite> is redefined to have default_value=7.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.connected">
-<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.interval">
-<code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0.01,max=inf,step=None,read_only=False,is_metadata=False,command=’-i’)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.interval">
+<code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0.01,max=inf,step=None,command=’-i’,read_only=False,write_only=False,cache=False)
 Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.port">
-<code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=False,command=’-p’)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.port">
+<code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=’-p’,read_only=False,write_only=False,cache=False)
 connection port</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.remote_binary_path">
-<code class="descname">remote_binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.remote_binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=True,command=None)</p>
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.remote_binary_path">
+<code class="descname">remote_binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.remote_binary_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.tcp_window_size">
-<code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=False,command=’-w’)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.resource">
+<code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
+the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.tcp_window_size">
+<code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=’-w’,read_only=False,write_only=False,cache=False)
 (bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.time">
-<code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=0,max=16535,read_only=False,is_metadata=False,command=’-t’)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.time">
+<code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)
 time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.timeout">
-<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=False,command=None)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.timeout">
+<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
 wait time for traffic results before throwing a timeout exception (s)</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.trait_events">
-<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
 <dl class="docutils">
 <dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
 the event handlers of this class will be returned instead.</dd>
 </dl>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.udp">
-<code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=False,is_metadata=False,command=’-u’)
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.udp">
+<code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.udp" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=’-u’,read_only=False,write_only=False,cache=False)
 UDP instead of TCP networking</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after connect() if no exceptions are raised.
+:return: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasStateTraits</span></code></p>
+<p>Basic remote state
+Instantiating <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> (or one of its subclasses)
+automatically instantiate this class as well.</p>
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.wait">
+<code class="descname">wait</code><span class="sig-paren">(</span><em>timeout=30</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.wait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Block until the device is ready to accept commands</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.wait_for_cell_data">
+<code class="descname">wait_for_cell_data</code><span class="sig-paren">(</span><em>timeout=60</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.wait_for_cell_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.wait_for_cell_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Block until cellular data is available</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timeout</strong> – how long to wait for a connection before raising a Timeout error</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -1178,6 +1495,9 @@ UDP instead of TCP networking</p>
 </dd></dl>
 
 </div>
+<div class="section" id="ssmdevices-software-qpst-module">
+<h2>ssmdevices.software.qpst module<a class="headerlink" href="#ssmdevices-software-qpst-module" title="Permalink to this headline">¶</a></h2>
+</div>
 <div class="section" id="module-ssmdevices.software.qxdm">
 <span id="ssmdevices-software-qxdm-module"></span><h2>ssmdevices.software.qxdm module<a class="headerlink" href="#module-ssmdevices.software.qxdm" title="Permalink to this headline">¶</a></h2>
 <p>Basic control over the QXDM software.</p>
@@ -1186,7 +1506,7 @@ Edits by Dan Kuester (<a class="reference external" href="mailto:dkuester&#37;&#
 <dl class="class">
 <dt id="ssmdevices.software.qxdm.QXDM">
 <em class="property">class </em><code class="descclassname">ssmdevices.software.qxdm.</code><code class="descname">QXDM</code><span class="sig-paren">(</span><em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.Win32ComDevice</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.Win32ComDevice</span></code></p>
 <p>Class to provide some basic control over the QXDM software.</p>
 <dl class="docutils">
 <dt>Required parameters:</dt>
@@ -1207,7 +1527,7 @@ config_path str;</dd>
 
 <dl class="method">
 <dt id="ssmdevices.software.qxdm.QXDM.command_get">
-<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.command_get" title="Permalink to this definition">¶</a></dt>
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM.command_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.command_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a setting from a remote instrument, keyed on a command string.
 Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1259,41 +1579,21 @@ file size.</p>
 <dl class="method">
 <dt id="ssmdevices.software.qxdm.QXDM.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.connect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Connect to the win32 com object</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.qxdm.QXDM.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.qxdm.QXDM.metadata">
-<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
-<dd>includes only state for traits for which trait.is_metadata evaluates as False,
-as well as self.resource (if it is not None).</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
 </dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.resource">
-<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.resource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.qxdm.QXDM.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.save" title="Permalink to this definition">¶</a></dt>
+<code class="descname">save</code><span class="sig-paren">(</span><em>path=None</em>, <em>saveNm=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop the run and save the data in a file at the specified path.
-If path is None, autogenerate with self.state.cache_path and
+If path is None, autogenerate with self.settings.cache_path and
 self.data_filename.</p>
 <p>This method is threadsafe.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1304,6 +1604,110 @@ self.data_filename.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.software.qxdm.QXDM.settings">
+<em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM.settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.settings</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.cache_path">
+<code class="descname">cache_path</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.cache_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
+folder path to contain auto-saved isf file(s)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.com_object">
+<code class="descname">com_object</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.com_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)
+whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.connection_timeout">
+<code class="descname">connection_timeout</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.connection_timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0.5,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
+connection timeout in seconds</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.define">
+<em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this class with default values of the traits
+redefined according to each keyword argument. For example,</p>
+<dl class="docutils">
+<dt><a href="#id73"><span class="problematic" id="id74">``</span></a><a href="#id75"><span class="problematic" id="id76">`</span></a>python</dt>
+<dd>mylocaltraitcls.define(parameter=7)</dd>
+</dl>
+<p><a href="#id77"><span class="problematic" id="id78">``</span></a><a href="#id79"><span class="problematic" id="id80">`</span></a></p>
+<p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
+named <cite>parameter</cite> is redefined to have default_value=7.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.resource">
+<code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
+the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.qxdm.QXDM.settings.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="method">
@@ -1323,42 +1727,35 @@ new data enters the QXDM item store.</p>
 <dl class="class">
 <dt id="ssmdevices.software.qxdm.QXDM.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.state</span></code></p>
-<dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.state.cache_path">
-<code class="descname">cache_path</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.cache_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=True,command=None)
-folder path to contain auto-saved isf file(s)</p>
-</dd></dl>
-
-<dl class="method">
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.state</span></code></p>
+<dl class="classmethod">
 <dt id="ssmdevices.software.qxdm.QXDM.state.class_own_trait_events">
-<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.qxdm.QXDM.state.class_own_traits">
-<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
 <p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.qxdm.QXDM.state.class_trait_names">
-<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
 but is unbound.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.qxdm.QXDM.state.class_traits">
-<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
 is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
 <p>The TraitTypes returned don’t know anything about the values
 that the various HasTrait’s instances are holding.</p>
 <p>The metadata kwargs allow functions to be passed in which
@@ -1370,83 +1767,63 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.state.com_object">
-<code class="descname">com_object</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.com_object" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=True,command=None)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.state.concurrency_support">
-<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=False,is_metadata=True,command=None)
-whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.state.connection_timeout">
-<code class="descname">connection_timeout</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.connection_timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0.5,max=inf,step=None,read_only=False,is_metadata=False,command=None)
-connection timeout in seconds</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.state.phone_build_id">
-<code class="descname">phone_build_id</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.phone_build_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=None)
-Build ID of software on the phone</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.state.phone_esn">
-<code class="descname">phone_esn</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.phone_esn" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=None,max=None,read_only=False,is_metadata=False,command=None)
-Phone ESN</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.state.phone_imei">
-<code class="descname">phone_imei</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.phone_imei" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=None,max=None,read_only=False,is_metadata=False,command=None)
-Phone IMEI</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.state.phone_mode">
-<code class="descname">phone_mode</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.phone_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=None)
-current state of the phone</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.state.phone_model_number">
-<code class="descname">phone_model_number</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.phone_model_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=None,max=None,read_only=False,is_metadata=False,command=None)
-model number code</p>
-</dd></dl>
-
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.qxdm.QXDM.state.trait_events">
-<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
 <dl class="docutils">
 <dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
 the event handlers of this class will be returned instead.</dd>
 </dl>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.state.ue_build_id">
+<code class="descname">ue_build_id</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_build_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=’ue_build_id’,read_only=False,write_only=False,cache=False)
+Build ID of software on the phone</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.state.ue_esn">
+<code class="descname">ue_esn</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_esn" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=None,max=None,command=’ue_esn’,read_only=False,write_only=False,cache=False)
+Phone ESN</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.state.ue_imei">
+<code class="descname">ue_imei</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_imei" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=None,max=None,command=’ue_imei’,read_only=False,write_only=False,cache=False)
+Phone IMEI</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.state.ue_mode">
+<code class="descname">ue_mode</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=’ue_mode’,read_only=False,write_only=False,cache=False)
+current state of the phone</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.state.ue_model_number">
+<code class="descname">ue_model_number</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_model_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=None,max=None,command=’ue_model_number’,read_only=False,write_only=False,cache=False)
+model number code</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.version">
 <code class="descname">version</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.version" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=True,write_only=False,cache=False,is_metadata=False)
+<dd><p>labbench.Unicode(command=None,read_only=True,write_only=False,cache=True)
 QXDM application version</p>
 </dd></dl>
 
@@ -1459,8 +1836,8 @@ QXDM application version</p>
 <span id="ssmdevices-software-windows-module"></span><h2>ssmdevices.software.windows module<a class="headerlink" href="#module-ssmdevices.software.windows" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ssmdevices.software.windows.Netsh">
-<em class="property">class </em><code class="descclassname">ssmdevices.software.windows.</code><code class="descname">Netsh</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**local_states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.CommandLineWrapper</span></code></p>
+<em class="property">class </em><code class="descclassname">ssmdevices.software.windows.</code><code class="descname">Netsh</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.CommandLineWrapper</span></code></p>
 <p>Parse calls to netsh to get information about available WLAN access
 points.</p>
 <dl class="attribute">
@@ -1479,18 +1856,18 @@ the executable continues running).</p>
 * Kill the process with self.kill
 * Check whether the process is running with self.running</p>
 <p>Normally, the command line arguments are determined by
-* appending extra_arguments to the global arguments in self.state.arguments, and
+* appending extra_arguments to the global arguments in self.settings.arguments, and
 * appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
 <blockquote>
 <div>global flags defined with command flags in local state traits in
-<cite>self.state</cite></div></blockquote>
+<cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id25"><span class="problematic" id="id26">``</span></a><a href="#id27"><span class="problematic" id="id28">`</span></a>python
+<p><a href="#id81"><span class="problematic" id="id82">``</span></a><a href="#id83"><span class="problematic" id="id84">`</span></a>python
 with self.no_state_arguments:</p>
 <blockquote>
 <div>self.background(…)</div></blockquote>
-<p><a href="#id29"><span class="problematic" id="id30">``</span></a><a href="#id31"><span class="problematic" id="id32">`</span></a></p>
+<p><a href="#id85"><span class="problematic" id="id86">``</span></a><a href="#id87"><span class="problematic" id="id88">`</span></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1500,11 +1877,6 @@ with self.no_state_arguments:</p>
 </tbody>
 </table>
 </dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.windows.Netsh.binary_path">
-<code class="descname">binary_path</code><em class="property"> = 'C:\\Windows\\System32\\netsh.exe'</em><a class="headerlink" href="#ssmdevices.software.windows.Netsh.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.cleanup">
@@ -1564,16 +1936,18 @@ Implement this for message-based protocols, like VISA SCPI or some serial device
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <a class="reference internal" href="#ssmdevices.software.windows.Netsh.connect" title="ssmdevices.software.windows.Netsh.connect"><code class="xref py py-meth docutils literal"><span class="pre">connect()</span></code></a> method exists to comply with the
-<code class="xref py py-class docutils literal"><span class="pre">Device</span></code> object protocol. Call the
-<code class="xref py py-meth docutils literal"><span class="pre">execute()</span></code> method when connected to
+<dd><p>The <a class="reference internal" href="#ssmdevices.software.windows.Netsh.connect" title="ssmdevices.software.windows.Netsh.connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a> method exists to comply with the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> object protocol. Call the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code> method when connected to
 execute the binary.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.exception_on_stderr">
@@ -1586,20 +1960,20 @@ to standard error during background execution.</p>
 <dt id="ssmdevices.software.windows.Netsh.foreground">
 <code class="descname">foreground</code><span class="sig-paren">(</span><em>*extra_arguments</em>, <em>**flags</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.foreground" title="Permalink to this definition">¶</a></dt>
 <dd><p>Blocking execution of the binary at the file location
-<cite>self.state.binary_path</cite>.</p>
+<cite>self.settings.binary_path</cite>.</p>
 <p>Normally, the command line arguments are determined by
-* appending extra_arguments to the global arguments in self.state.arguments, and
+* appending extra_arguments to the global arguments in self.settings.arguments, and
 * appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
 <blockquote>
 <div>global flags defined with command flags in local state traits in
-<cite>self.state</cite></div></blockquote>
+<cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id33"><span class="problematic" id="id34">``</span></a><a href="#id35"><span class="problematic" id="id36">`</span></a>python
+<p><a href="#id89"><span class="problematic" id="id90">``</span></a><a href="#id91"><span class="problematic" id="id92">`</span></a>python
 with self.no_state_arguments:</p>
 <blockquote>
 <div>self.foreground(…)</div></blockquote>
-<p><a href="#id37"><span class="problematic" id="id38">``</span></a><a href="#id39"><span class="problematic" id="id40">`</span></a></p>
+<p><a href="#id93"><span class="problematic" id="id94">``</span></a><a href="#id95"><span class="problematic" id="id96">`</span></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1624,24 +1998,6 @@ with self.no_state_arguments:</p>
 <dt id="ssmdevices.software.windows.Netsh.kill">
 <code class="descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.kill" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.windows.Netsh.metadata">
-<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
-<dd>includes only state for traits for which trait.is_metadata evaluates as False,
-as well as self.resource (if it is not None).</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.no_state_arguments">
@@ -1668,11 +2024,6 @@ executed or is empty. Running the command line multiple times overwrites the que
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.windows.Netsh.resource">
-<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.windows.Netsh.resource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.respawn">
 <code class="descname">respawn</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.respawn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use this context manager to respawning background execution.</p>
@@ -1697,66 +2048,59 @@ executed or is empty. Running the command line multiple times overwrites the que
 <code class="descname">set_interface_connected</code><span class="sig-paren">(</span><em>interface</em>, <em>profile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#Netsh.set_interface_connected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.Netsh.set_interface_connected" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.windows.Netsh.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after connect() if no exceptions are raised.
-:return: None</p>
-</dd></dl>
-
 <dl class="class">
-<dt id="ssmdevices.software.windows.Netsh.state">
-<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
+<dt id="ssmdevices.software.windows.Netsh.settings">
+<em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.settings</span></code></p>
 <dl class="attribute">
-<dt id="ssmdevices.software.windows.Netsh.state.arguments">
-<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalList(read_only=False,is_metadata=False,command=None)
+<dt id="ssmdevices.software.windows.Netsh.settings.arguments">
+<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.List(command=None,read_only=False,write_only=False,cache=False)
 list of command line arguments to pass into the executable</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.windows.Netsh.state.arguments_min">
-<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=0,max=None,read_only=True,is_metadata=False,command=None)
+<dt id="ssmdevices.software.windows.Netsh.settings.arguments_min">
+<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)
 minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.windows.Netsh.state.binary_path">
-<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=True,command=None)
+<dt id="ssmdevices.software.windows.Netsh.settings.binary_path">
+<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.binary_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
 path to the file to run</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.windows.Netsh.state.class_own_trait_events">
-<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.settings.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.windows.Netsh.state.class_own_traits">
-<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.settings.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
 <p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.windows.Netsh.state.class_trait_names">
-<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.settings.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
 but is unbound.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.windows.Netsh.state.class_traits">
-<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.settings.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
 is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
 <p>The TraitTypes returned don’t know anything about the values
 that the various HasTrait’s instances are holding.</p>
 <p>The metadata kwargs allow functions to be passed in which
@@ -1768,33 +2112,120 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.windows.Netsh.state.concurrency_support">
-<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
+<dt id="ssmdevices.software.windows.Netsh.settings.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.settings.define">
+<em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this class with default values of the traits
+redefined according to each keyword argument. For example,</p>
+<dl class="docutils">
+<dt><a href="#id97"><span class="problematic" id="id98">``</span></a><a href="#id99"><span class="problematic" id="id100">`</span></a>python</dt>
+<dd>mylocaltraitcls.define(parameter=7)</dd>
+</dl>
+<p><a href="#id101"><span class="problematic" id="id102">``</span></a><a href="#id103"><span class="problematic" id="id104">`</span></a></p>
+<p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
+named <cite>parameter</cite> is redefined to have default_value=7.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.Netsh.settings.resource">
+<code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
+the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.Netsh.settings.timeout">
+<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
+Timeout (sec) after disconnect is called before killing the process</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.settings.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.Netsh.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after connect() if no exceptions are raised.
+:return: None</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.software.windows.Netsh.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasStateTraits</span></code></p>
+<p>Basic remote state
+Instantiating <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> (or one of its subclasses)
+automatically instantiate this class as well.</p>
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.state.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.state.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.state.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.state.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ssmdevices.software.windows.Netsh.state.timeout">
-<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=True,command=None)
-Timeout (sec) after disconnect is called before killing the process</p>
-</dd></dl>
-
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.windows.Netsh.state.trait_events">
-<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
 <dl class="docutils">
 <dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
 the event handlers of this class will be returned instead.</dd>
 </dl>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
@@ -1816,8 +2247,8 @@ the event handlers of this class will be returned instead.</dd>
 
 <dl class="class">
 <dt id="ssmdevices.software.windows.WLANStatus">
-<em class="property">class </em><code class="descclassname">ssmdevices.software.windows.</code><code class="descname">WLANStatus</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**local_states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.Device</span></code></p>
+<em class="property">class </em><code class="descclassname">ssmdevices.software.windows.</code><code class="descname">WLANStatus</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.Device</span></code></p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.backend">
 <code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.backend" title="Permalink to this definition">¶</a></dt>
@@ -1833,7 +2264,24 @@ the event handlers of this class will be returned instead.</dd>
 <dl class="method">
 <dt id="ssmdevices.software.windows.WLANStatus.command_get">
 <code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.command_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.command_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Read a setting from a remote instrument, keyed on a command string.
+Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
+<li><strong>trait</strong> – the state descriptor or traitlet</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.WLANStatus.command_set">
@@ -1858,92 +2306,49 @@ Implement this for message-based protocols, like VISA SCPI or some serial device
 <dl class="method">
 <dt id="ssmdevices.software.windows.WLANStatus.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.connect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Backend implementations overload this to open a backend
+connection to the resource.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.WLANStatus.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.windows.WLANStatus.metadata">
-<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
-<dd>includes only state for traits for which trait.is_metadata evaluates as False,
-as well as self.resource (if it is not None).</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
 </dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.windows.WLANStatus.resource">
-<code class="descname">resource</code><em class="property"> = 'Wi-Fi'</em><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.resource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.windows.WLANStatus.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after connect() if no exceptions are raised.
-:return: None</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.windows.WLANStatus.ssid">
-<code class="descname">ssid</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.ssid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="class">
-<dt id="ssmdevices.software.windows.WLANStatus.state">
-<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
-<dl class="attribute">
-<dt id="ssmdevices.software.windows.WLANStatus.state.bssid">
-<code class="descname">bssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.windows.WLANStatus.state.channel">
-<code class="descname">channel</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.channel" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=None,command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.windows.WLANStatus.state.class_own_trait_events">
-<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.software.windows.WLANStatus.settings">
+<em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.settings</span></code></p>
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.settings.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.windows.WLANStatus.state.class_own_traits">
-<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.settings.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
 <p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.windows.WLANStatus.state.class_trait_names">
-<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.settings.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
 but is unbound.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.windows.WLANStatus.state.class_traits">
-<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.settings.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
 is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
 <p>The TraitTypes returned don’t know anything about the values
 that the various HasTrait’s instances are holding.</p>
 <p>The metadata kwargs allow functions to be passed in which
@@ -1955,56 +2360,157 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.windows.WLANStatus.state.concurrency_support">
-<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
+<dt id="ssmdevices.software.windows.WLANStatus.settings.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.settings.define">
+<em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this class with default values of the traits
+redefined according to each keyword argument. For example,</p>
+<dl class="docutils">
+<dt><a href="#id105"><span class="problematic" id="id106">``</span></a><a href="#id107"><span class="problematic" id="id108">`</span></a>python</dt>
+<dd>mylocaltraitcls.define(parameter=7)</dd>
+</dl>
+<p><a href="#id109"><span class="problematic" id="id110">``</span></a><a href="#id111"><span class="problematic" id="id112">`</span></a></p>
+<p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
+named <cite>parameter</cite> is redefined to have default_value=7.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.settings.force_reconnect">
+<code class="descname">force_reconnect</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.force_reconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean (True, False) trait.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.settings.resource">
+<code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.settings.ssid">
+<code class="descname">ssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.ssid" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.settings.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.windows.WLANStatus.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after connect() if no exceptions are raised.
+:return: None</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.software.windows.WLANStatus.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.state</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.bssid">
+<code class="descname">bssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.state.channel">
+<code class="descname">channel</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.state.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.state.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.state.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.state.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.software.windows.WLANStatus.state.force_reconnect">
-<code class="descname">force_reconnect</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.force_reconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>A boolean (True, False) trait.</p>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.radio_type">
 <code class="descname">radio_type</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.radio_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.signal">
 <code class="descname">signal</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.signal" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=100,command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Int(min=0,max=100,command=None,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.ssid">
 <code class="descname">ssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.ssid" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.state">
 <code class="descname">state</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.software.windows.WLANStatus.state.trait_events">
-<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
 <dl class="docutils">
 <dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
 the event handlers of this class will be returned instead.</dd>
 </dl>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
@@ -2013,7 +2519,7 @@ the event handlers of this class will be returned instead.</dd>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.transmit_rate_mbps">
 <code class="descname">transmit_rate_mbps</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.transmit_rate_mbps" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=None,command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 </dd></dl>
@@ -2060,7 +2566,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
     </div>
   </body>
 </html>

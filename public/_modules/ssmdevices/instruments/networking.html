@@ -4,27 +4,18 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ssmdevices.instruments.networking &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '0.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head>
-  <body>
+  </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.instruments.networking</span></h2>
@@ -74,31 +65,24 @@
 <span class="sd">        from a file that could be treated as a config file.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="AeroflexTM500.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.networking.AeroflexTM500.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">TelnetDevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
-        <span class="n">timeout</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalFloat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                <span class="n">help</span><span class="o">=</span><span class="s1">&#39;leave the timeout small to allow keyboard interrupts&#39;</span><span class="p">)</span>
-        <span class="n">ack_timeout</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalFloat</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;how long to wait for a command acknowledgment from the TM500 (s)&#39;</span><span class="p">)</span>
-        <span class="n">busy_retries</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">remote_ip</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s1">&#39;10.133.0.203&#39;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;ip address of TM500 backend&#39;</span><span class="p">)</span>
-        <span class="n">remote_ports</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s1">&#39;5001 5002 5003&#39;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                       <span class="n">help</span><span class="o">=</span><span class="s1">&#39;port of TM500 backend&#39;</span><span class="p">)</span>
-        <span class="n">min_acquisition_time</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;minimum time to spend acquiring logs (s)&#39;</span><span class="p">)</span>
-
-        <span class="n">port</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="mi">5003</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">config_root</span>  <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                       <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to the command scripts directory&#39;</span><span class="p">)</span>
-        <span class="n">data_root</span>  <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;remote save root directory&#39;</span><span class="p">,</span>
-                                     <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">convert_files</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalList</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;text to match in the filename of data output files to convert&#39;</span><span class="p">)</span></div>
+<div class="viewcode-block" id="AeroflexTM500.settings"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.networking.AeroflexTM500.settings">[docs]</a>    <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">TelnetDevice</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;leave the timeout small to allow keyboard interrupts&#39;</span><span class="p">)</span>
+        <span class="n">ack_timeout</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;how long to wait for a command acknowledgment from the TM500 (s)&#39;</span><span class="p">)</span>
+        <span class="n">busy_retries</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">remote_ip</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;10.133.0.203&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;ip address of TM500 backend&#39;</span><span class="p">)</span>
+        <span class="n">remote_ports</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;5001 5002 5003&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;port of TM500 backend&#39;</span><span class="p">)</span>
+        <span class="n">min_acquisition_time</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;minimum time to spend acquiring logs (s)&#39;</span><span class="p">)</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">5003</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">config_root</span>  <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to the command scripts directory&#39;</span><span class="p">)</span>
+        <span class="n">data_root</span>  <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;remote save root directory&#39;</span><span class="p">)</span>
+        <span class="n">convert_files</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">List</span><span class="p">([],</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;text to match in the filename of data output files to convert&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AeroflexTM500.arm"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.networking.AeroflexTM500.arm">[docs]</a>    <span class="k">def</span> <span class="nf">arm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scenario_name</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Load the scenario from the command listing in a local TM500</span>
 <span class="sd">            configuration file.</span>
 <span class="sd">            The the full path to the configuration file is</span>
-<span class="sd">            `os.path.join(self.state.config_root, self.state.config_file)+&#39;.conf&#39;`</span>
+<span class="sd">            `os.path.join(self.settings.config_root, self.settings.config_file)+&#39;.conf&#39;`</span>
 <span class="sd">            (on the host computer running this python instance).</span>
 
 <span class="sd">            If the last script that was run is the same as the selected config</span>
@@ -113,7 +97,7 @@
         <span class="k">if</span> <span class="n">scenario_name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">__latest</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;scenario_name&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">TM500Error</span><span class="p">(</span><span class="s1">&#39;the TM500 is already armed with the scenario named </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scenario_name</span><span class="p">))</span>
 
-        <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">config_root</span><span class="p">,</span> <span class="n">scenario_name</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.conf&#39;</span>
+        <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">config_root</span><span class="p">,</span> <span class="n">scenario_name</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.conf&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;arming TM500 scenario </span><span class="si">{}</span><span class="s1">&#39;</span>\
                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">config_path</span><span class="p">)))</span>
 
@@ -122,8 +106,8 @@
             <span class="n">seq</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect</span><span class="p">()</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">data_root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s1">&#39;#$$DATA_LOG_FOLDER 1 &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">data_root</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">data_root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s1">&#39;#$$DATA_LOG_FOLDER 1 &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">data_root</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;armed in </span><span class="si">{:.2f}</span><span class="s1">s&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__latest</span><span class="p">[</span><span class="s1">&#39;scenario_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scenario_name</span>
         <span class="k">return</span> <span class="n">ret</span></div>
@@ -301,7 +285,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Now connect</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s1">&#39;#$$PORT </span><span class="si">{ip}</span><span class="s1"> </span><span class="si">{ports}</span><span class="s1">&#39;</span>\
-                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">remote_ip</span><span class="p">,</span> <span class="n">ports</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">remote_ports</span><span class="p">),</span>
+                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">remote_ip</span><span class="p">,</span> <span class="n">ports</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">remote_ports</span><span class="p">),</span>
                       <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s1">&#39;#$$CONNECT&#39;</span><span class="p">)</span>
             
@@ -312,8 +296,8 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__latest</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;trigger_time&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">__latest</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;trigger_time&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">min_acquisition_time</span><span class="p">:</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">min_acquisition_time</span><span class="o">-</span><span class="n">elapsed</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">min_acquisition_time</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">min_acquisition_time</span><span class="o">-</span><span class="n">elapsed</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">_send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">data_lines</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">confirm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Send a message, then block until a confirmation message is received.</span>
@@ -385,10 +369,10 @@
         <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">]</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span><span class="n">paths</span><span class="p">))</span>
         
-        <span class="c1"># Remove items not listed in self.state.convert_files</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">convert_files</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ret</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">inc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">convert_files</span><span class="p">:</span>
+        <span class="c1"># Remove items not listed in self.settings.convert_files</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">convert_files</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">for</span> <span class="n">inc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">convert_files</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">inc</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span>
                         <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -401,7 +385,7 @@
 
     <span class="k">def</span> <span class="nf">_read_until</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rsp</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ack_timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">ack_timeout</span>
+            <span class="n">ack_timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">ack_timeout</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ack_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
 <span class="c1">#        self.logger.debug(&#39;awaiting response {}&#39;.format(repr(rsp)))</span>
@@ -413,7 +397,7 @@
         <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="n">ack_timeout</span><span class="p">:</span>
             <span class="c1"># Looping on short blocking makes it easier to</span>
             <span class="c1"># cancel execution with a KeyboardInterrupt</span>
-            <span class="n">ret</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">read_until</span><span class="p">(</span><span class="n">rsp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">read_until</span><span class="p">(</span><span class="n">rsp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">rsp</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
@@ -463,7 +447,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
     </div>
   </body>
 </html>

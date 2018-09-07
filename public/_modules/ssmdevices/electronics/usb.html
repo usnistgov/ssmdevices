@@ -4,27 +4,18 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ssmdevices.electronics.usb &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '0.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head>
-  <body>
+  </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.electronics.usb</span></h2>
@@ -97,11 +88,11 @@
         <span class="n">specs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bs</span><span class="o">.</span><span class="n">discover</span><span class="o">.</span><span class="n">findAllModules</span><span class="p">(</span><span class="n">brainstem</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">Spec</span><span class="o">.</span><span class="n">USB</span><span class="p">)</span>
 
         <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">specs</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">]</span>        
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">specs</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">serial_number</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">specs</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">serial_number</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">]</span>
     
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one connected USB device matches model &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; - provide serial number?&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one connected USB device match model &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; and serial &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serial</span><span class="p">))</span>
@@ -182,7 +173,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
     </div>
   </body>
 </html>

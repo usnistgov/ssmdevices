@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ssmdevices.electronics package &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="ssmdevices.etc package" href="ssmdevices.etc.html" />
     <link rel="prev" title="ssmdevices package" href="ssmdevices.html" /> 
-  </head>
-  <body>
+  </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
           <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.electronics package</span></h2>
@@ -50,6 +41,253 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-ssmdevices.electronics.cellular">
+<span id="ssmdevices-electronics-cellular-module"></span><h2>ssmdevices.electronics.cellular module<a class="headerlink" href="#module-ssmdevices.electronics.cellular" title="Permalink to this headline">¶</a></h2>
+<p>Drivers for USB peripherals</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">author:</th><td class="field-body">Dan Kuester &lt;<a class="reference external" href="mailto:daniel&#46;kuester&#37;&#52;&#48;nist&#46;gov">daniel<span>&#46;</span>kuester<span>&#64;</span>nist<span>&#46;</span>gov</a>&gt;, Andre Rosete &lt;<a class="reference external" href="mailto:andre&#46;rosete&#37;&#52;&#48;nist&#46;gov">andre<span>&#46;</span>rosete<span>&#64;</span>nist<span>&#46;</span>gov</a>&gt;</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="ssmdevices.electronics.cellular.QxDM">
+<em class="property">class </em><code class="descclassname">ssmdevices.electronics.cellular.</code><code class="descname">QxDM</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/cellular.html#QxDM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.Device</span></code></p>
+<p>Control an already running instance of “Qualcomm eXtensible Diagnostic Monitor” (QxDM).</p>
+<dl class="attribute">
+<dt id="ssmdevices.electronics.cellular.QxDM.backend">
+<code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.cellular.QxDM.cleanup">
+<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called before a device is disconnected
+:return: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.cellular.QxDM.command_get">
+<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.command_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a setting from a remote instrument, keyed on a command string.
+Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
+<li><strong>trait</strong> – the state descriptor or traitlet</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.cellular.QxDM.command_set">
+<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.command_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an instrument setting to the instrument, keyed on a command string.
+Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
+<li><strong>trait</strong> – the state descriptor or traitlet</li>
+<li><strong>value</strong> – the value to set</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.cellular.QxDM.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backend implementations overload this to open a backend
+connection to the resource.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.cellular.QxDM.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.electronics.cellular.QxDM.settings">
+<em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasSettingsTraits</span></code></p>
+<p>Connection settings stored here on the host
+side. These could include resource information, data rates, ports, and
+so forth.</p>
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.settings.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.settings.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.settings.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.settings.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.settings.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.cellular.QxDM.settings.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.settings.define">
+<em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.settings.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this class with default values of the traits
+redefined according to each keyword argument. For example,</p>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python</dt>
+<dd>mylocaltraitcls.define(parameter=7)</dd>
+</dl>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
+named <cite>parameter</cite> is redefined to have default_value=7.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.cellular.QxDM.settings.resource">
+<code class="descname">resource</code><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.settings.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
+the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.settings.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.settings.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.cellular.QxDM.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after connect() if no exceptions are raised.
+:return: None</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.electronics.cellular.QxDM.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasStateTraits</span></code></p>
+<p>Basic remote state
+Instantiating <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> (or one of its subclasses)
+automatically instantiate this class as well.</p>
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.state.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.state.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.state.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.state.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.cellular.QxDM.state.connected">
+<code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.state.connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.cellular.QxDM.state.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.cellular.QxDM.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-ssmdevices.electronics.gps">
 <span id="ssmdevices-electronics-gps-module"></span><h2>ssmdevices.electronics.gps module<a class="headerlink" href="#module-ssmdevices.electronics.gps" title="Permalink to this headline">¶</a></h2>
 <p>Drivers for USB peripherals</p>
@@ -63,8 +301,8 @@
 </table>
 <dl class="class">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi">
-<em class="property">class </em><code class="descclassname">ssmdevices.electronics.gps.</code><code class="descname">SwiftNavPiksi</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**local_states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/gps.html#SwiftNavPiksi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.SerialLoggingDevice</span></code></p>
+<em class="property">class </em><code class="descclassname">ssmdevices.electronics.gps.</code><code class="descname">SwiftNavPiksi</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/gps.html#SwiftNavPiksi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.SerialLoggingDevice</span></code></p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.backend">
 <code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.backend" title="Permalink to this definition">¶</a></dt>
@@ -133,31 +371,32 @@ Implement this for message-based protocols, like VISA SCPI or some serial device
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connect to the serial device with the VISA resource string defined
-in self.resource</p>
+in self.settings.resource</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Disconnect the serial instrument</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.fetch">
 <code class="descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.fetch" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.from_hwid">
-<code class="descname">from_hwid</code><span class="sig-paren">(</span><em>hwid=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.from_hwid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instantiate a new SerialDevice from a <a href="#id1"><span class="problematic" id="id2">`</span></a>hwid’ resource instead
+<em class="property">classmethod </em><code class="descname">from_hwid</code><span class="sig-paren">(</span><em>hwid=None</em>, <em>*args</em>, <em>**connection_params</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.from_hwid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate a new SerialDevice from a <a href="#id9"><span class="problematic" id="id10">`</span></a>hwid’ resource instead
 of a comport resource. A hwid string in windows might look something
 like:</p>
 <p>r’PCIVEN_8086&amp;DEV_9D3D&amp;SUBSYS_06DC1028&amp;REV_213&amp;11583659&amp;1&amp;B3’</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="staticmethod">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.list_ports">
-<code class="descname">list_ports</code><span class="sig-paren">(</span><em>hwid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.list_ports" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">list_ports</code><span class="sig-paren">(</span><em>hwid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.list_ports" title="Permalink to this definition">¶</a></dt>
 <dd><p>List USB serial devices on the computer</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -170,32 +409,169 @@ like:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.metadata">
-<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
-<dd>includes only state for traits for which trait.is_metadata evaluates as False,
-as well as self.resource (if it is not None).</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.resource">
-<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.resource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.running">
 <code class="descname">running</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.running" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings">
+<em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/gps.html#SwiftNavPiksi.settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.settings</span></code></p>
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.baud_rate">
+<code class="descname">baud_rate</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.baud_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.data_format">
+<code class="descname">data_format</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.data_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False)
+Data format metadata</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.define">
+<em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this class with default values of the traits
+redefined according to each keyword argument. For example,</p>
+<dl class="docutils">
+<dt><a href="#id11"><span class="problematic" id="id12">``</span></a><a href="#id13"><span class="problematic" id="id14">`</span></a>python</dt>
+<dd>mylocaltraitcls.define(parameter=7)</dd>
+</dl>
+<p><a href="#id15"><span class="problematic" id="id16">``</span></a><a href="#id17"><span class="problematic" id="id18">`</span></a></p>
+<p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
+named <cite>parameter</cite> is redefined to have default_value=7.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.dsrdtr">
+<code class="descname">dsrdtr</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.dsrdtr" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.max_queue_size">
+<code class="descname">max_queue_size</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.max_queue_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=1,max=None,command=None,read_only=False,write_only=False,cache=False)
+Number of bytes to allocate in the data retreival buffer</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.parity">
+<code class="descname">parity</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.parity" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.poll_rate">
+<code class="descname">poll_rate</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.poll_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
+Data retreival rate from the device (in seconds)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.resource">
+<code class="descname">resource</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
+the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.rtscts">
+<code class="descname">rtscts</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.rtscts" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.stop_timeout">
+<code class="descname">stop_timeout</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.stop_timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
+Delay after a call to <cite>stop</cite> before terminating the runloop thread</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.stopbits">
+<code class="descname">stopbits</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.stopbits" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=1,max=2,step=0.5,command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.timeout">
+<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.write_termination">
+<code class="descname">write_termination</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.write_termination" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bytes(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.xonxoff">
+<code class="descname">xonxoff</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.xonxoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.setup">
@@ -212,42 +588,39 @@ as well as self.resource (if it is not None).</dd>
 
 <dl class="class">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state">
-<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/gps.html#SwiftNavPiksi.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.state</span></code></p>
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.baud_rate">
-<code class="descname">baud_rate</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.baud_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=True,command=None)</p>
-</dd></dl>
-
-<dl class="method">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasStateTraits</span></code></p>
+<p>Basic remote state
+Instantiating <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> (or one of its subclasses)
+automatically instantiate this class as well.</p>
+<dl class="classmethod">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_trait_events">
-<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_traits">
-<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
 <p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.class_trait_names">
-<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
 but is unbound.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.class_traits">
-<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
 is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
 <p>The TraitTypes returned don’t know anything about the values
 that the various HasTrait’s instances are holding.</p>
 <p>The metadata kwargs allow functions to be passed in which
@@ -259,99 +632,22 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.concurrency_support">
-<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.data_format">
-<code class="descname">data_format</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.data_format" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBytes(read_only=False,is_metadata=True,command=None)
-Data format metadata</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.dsrdtr">
-<code class="descname">dsrdtr</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.dsrdtr" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=False,is_metadata=True,command=None)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.max_queue_size">
-<code class="descname">max_queue_size</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.max_queue_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=1,max=None,read_only=False,is_metadata=True,command=None)
-Number of bytes to allocate in the data retreival buffer</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.parity">
-<code class="descname">parity</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.parity" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBytes(read_only=False,is_metadata=True,command=None)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.poll_rate">
-<code class="descname">poll_rate</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.poll_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=True,command=None)
-Data retreival rate from the device (in seconds)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.rtscts">
-<code class="descname">rtscts</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.rtscts" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=False,is_metadata=True,command=None)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.stop_timeout">
-<code class="descname">stop_timeout</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.stop_timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=True,command=None)
-Delay after a call to <cite>stop</cite> before terminating the runloop thread</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.stopbits">
-<code class="descname">stopbits</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.stopbits" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=1,max=2,step=0.5,read_only=False,is_metadata=True,command=None)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.timeout">
-<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=True,command=None)</p>
-</dd></dl>
-
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.trait_events">
-<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
 <dl class="docutils">
 <dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
 the event handlers of this class will be returned instead.</dd>
 </dl>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.write_termination">
-<code class="descname">write_termination</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.write_termination" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBytes(read_only=False,is_metadata=True,command=None)</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.xonxoff">
-<code class="descname">xonxoff</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.xonxoff" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=False,is_metadata=True,command=None)</p>
 </dd></dl>
 
 </dd></dl>
@@ -369,8 +665,8 @@ the event handlers of this class will be returned instead.</dd>
 <p>Made by Michael Voecks</p>
 <dl class="class">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge">
-<em class="property">class </em><code class="descclassname">ssmdevices.electronics.mobile.</code><code class="descname">AndroidDebugBridge</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**local_states</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.CommandLineWrapper</span></code></p>
+<em class="property">class </em><code class="descclassname">ssmdevices.electronics.mobile.</code><code class="descname">AndroidDebugBridge</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.CommandLineWrapper</span></code></p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.backend">
 <code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.backend" title="Permalink to this definition">¶</a></dt>
@@ -387,18 +683,18 @@ the executable continues running).</p>
 * Kill the process with self.kill
 * Check whether the process is running with self.running</p>
 <p>Normally, the command line arguments are determined by
-* appending extra_arguments to the global arguments in self.state.arguments, and
+* appending extra_arguments to the global arguments in self.settings.arguments, and
 * appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
 <blockquote>
 <div>global flags defined with command flags in local state traits in
-<cite>self.state</cite></div></blockquote>
+<cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a>python
+<p><a href="#id19"><span class="problematic" id="id20">``</span></a><a href="#id21"><span class="problematic" id="id22">`</span></a>python
 with self.no_state_arguments:</p>
 <blockquote>
 <div>self.background(…)</div></blockquote>
-<p><a href="#id7"><span class="problematic" id="id8">``</span></a><a href="#id9"><span class="problematic" id="id10">`</span></a></p>
+<p><a href="#id23"><span class="problematic" id="id24">``</span></a><a href="#id25"><span class="problematic" id="id26">`</span></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -476,9 +772,9 @@ Implement this for message-based protocols, like VISA SCPI or some serial device
 <dl class="method">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <a class="reference internal" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.connect" title="ssmdevices.electronics.mobile.AndroidDebugBridge.connect"><code class="xref py py-meth docutils literal"><span class="pre">connect()</span></code></a> method exists to comply with the
-<code class="xref py py-class docutils literal"><span class="pre">Device</span></code> object protocol. Call the
-<code class="xref py py-meth docutils literal"><span class="pre">execute()</span></code> method when connected to
+<dd><p>The <a class="reference internal" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.connect" title="ssmdevices.electronics.mobile.AndroidDebugBridge.connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a> method exists to comply with the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> object protocol. Call the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code> method when connected to
 execute the binary.</p>
 </dd></dl>
 
@@ -496,7 +792,9 @@ one connected device with id f0593056.</p>
 <dl class="method">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.disconnect">
 <code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.exception_on_stderr">
@@ -509,20 +807,20 @@ to standard error during background execution.</p>
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.foreground">
 <code class="descname">foreground</code><span class="sig-paren">(</span><em>*extra_arguments</em>, <em>**flags</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.foreground" title="Permalink to this definition">¶</a></dt>
 <dd><p>Blocking execution of the binary at the file location
-<cite>self.state.binary_path</cite>.</p>
+<cite>self.settings.binary_path</cite>.</p>
 <p>Normally, the command line arguments are determined by
-* appending extra_arguments to the global arguments in self.state.arguments, and
+* appending extra_arguments to the global arguments in self.settings.arguments, and
 * appending pairs of [key,value] from the <cite>flags</cite> dictionary to the</p>
 <blockquote>
 <div>global flags defined with command flags in local state traits in
-<cite>self.state</cite></div></blockquote>
+<cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id11"><span class="problematic" id="id12">``</span></a><a href="#id13"><span class="problematic" id="id14">`</span></a>python
+<p><a href="#id27"><span class="problematic" id="id28">``</span></a><a href="#id29"><span class="problematic" id="id30">`</span></a>python
 with self.no_state_arguments:</p>
 <blockquote>
 <div>self.foreground(…)</div></blockquote>
-<p><a href="#id15"><span class="problematic" id="id16">``</span></a><a href="#id17"><span class="problematic" id="id18">`</span></a></p>
+<p><a href="#id31"><span class="problematic" id="id32">``</span></a><a href="#id33"><span class="problematic" id="id34">`</span></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -544,24 +842,6 @@ serialNum argument) is connected to the ADB server, return true/false</p>
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.kill">
 <code class="descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.kill" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.metadata">
-<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
-<dd>includes only state for traits for which trait.is_metadata evaluates as False,
-as well as self.resource (if it is not None).</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.no_state_arguments">
@@ -603,11 +883,6 @@ the specified device.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.resource">
-<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.resource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.respawn">
 <code class="descname">respawn</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.respawn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use this context manager to respawning background execution.</p>
@@ -636,65 +911,58 @@ status should be set to either 0 or 1, 0 indicating that the airplane_mode
 should be turned off, 1 indicating it should be turned on</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after connect() if no exceptions are raised.
-:return: None</p>
-</dd></dl>
-
 <dl class="class">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state">
-<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.backends.state</span></code></p>
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings">
+<em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge.settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.settings</span></code></p>
 <dl class="attribute">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.arguments">
-<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalList(read_only=False,is_metadata=False,command=None)
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.arguments">
+<code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.List(command=None,read_only=False,write_only=False,cache=False)
 list of command line arguments to pass into the executable</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.arguments_min">
-<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalInt(min=0,max=None,read_only=True,is_metadata=False,command=None)
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.arguments_min">
+<code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)
 minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.binary_path">
-<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalUnicode(read_only=False,is_metadata=False,command=None)</p>
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.binary_path">
+<code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.binary_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_trait_events">
-<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_traits">
-<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
 <p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_trait_names">
-<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
 but is unbound.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_traits">
-<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
 is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
 <p>The TraitTypes returned don’t know anything about the values
 that the various HasTrait’s instances are holding.</p>
 <p>The metadata kwargs allow functions to be passed in which
@@ -706,33 +974,120 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.concurrency_support">
-<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.define">
+<em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this class with default values of the traits
+redefined according to each keyword argument. For example,</p>
+<dl class="docutils">
+<dt><a href="#id35"><span class="problematic" id="id36">``</span></a><a href="#id37"><span class="problematic" id="id38">`</span></a>python</dt>
+<dd>mylocaltraitcls.define(parameter=7)</dd>
+</dl>
+<p><a href="#id39"><span class="problematic" id="id40">``</span></a><a href="#id41"><span class="problematic" id="id42">`</span></a></p>
+<p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
+named <cite>parameter</cite> is redefined to have default_value=7.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.resource">
+<code class="descname">resource</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
+the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.timeout">
+<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
+wait time for traffic results before throwing a timeout exception (s)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after connect() if no exceptions are raised.
+:return: None</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasStateTraits</span></code></p>
+<p>Basic remote state
+Instantiating <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> (or one of its subclasses)
+automatically instantiate this class as well.</p>
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.timeout">
-<code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalFloat(min=0,max=inf,step=None,read_only=False,is_metadata=False,command=None)
-wait time for traffic results before throwing a timeout exception (s)</p>
-</dd></dl>
-
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.trait_events">
-<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
 <dl class="docutils">
 <dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
 the event handlers of this class will be returned instead.</dd>
 </dl>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
@@ -762,7 +1117,7 @@ the event handlers of this class will be returned instead.</dd>
 <dl class="class">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4">
 <em class="property">class </em><code class="descclassname">ssmdevices.electronics.usb.</code><code class="descname">AcronameUSBHub2x4</code><span class="sig-paren">(</span><em>resource=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.Device</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.Device</span></code></p>
 <p>This class wraps brainstem drivers to simplify control over USB hubs
 via the brainstem package.</p>
 <p>The only functionality exposed by method of this class is the ability
@@ -814,14 +1169,16 @@ Implement this for message-based protocols, like VISA SCPI or some serial device
 <dl class="method">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set">
 <code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.command_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument. The value <a href="#id19"><span class="problematic" id="id20">``</span></a>value’’
-will be applied to the trait attriute <a href="#id21"><span class="problematic" id="id22">``</span></a>attr’’ in type(self).</p>
+<dd><p>Apply an instrument setting to the instrument. The value <a href="#id43"><span class="problematic" id="id44">``</span></a>value’’
+will be applied to the trait attriute <a href="#id45"><span class="problematic" id="id46">``</span></a>attr’’ in type(self).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.connect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Backend implementations overload this to open a backend
+connection to the resource.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.disconnect">
@@ -850,24 +1207,6 @@ ports on the hub.</li>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.metadata">
-<code class="descname">metadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Return a dictionary of metadata about the device. This “vanilla” implementation</dt>
-<dd>includes only state for traits for which trait.is_metadata evaluates as False,
-as well as self.resource (if it is not None).</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of {metadata_name: metadata_value} pairs</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.model">
 <code class="descname">model</code><em class="property"> = 17</em><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.model" title="Permalink to this definition">¶</a></dt>
@@ -878,45 +1217,41 @@ as well as self.resource (if it is not None).</dd>
 <code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.resource" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after connect() if no exceptions are raised.
-:return: None</p>
-</dd></dl>
-
 <dl class="class">
-<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state">
-<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">labbench.core.state</span></code></p>
-<dl class="method">
-<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_trait_events">
-<code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings">
+<em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasSettingsTraits</span></code></p>
+<p>Connection settings stored here on the host
+side. These could include resource information, data rates, ports, and
+so forth.</p>
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_traits">
-<code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
 <p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_trait_names">
-<code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">trait_names()</span></code> method,
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
 but is unbound.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_traits">
-<code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
 is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
 <p>The TraitTypes returned don’t know anything about the values
 that the various HasTrait’s instances are holding.</p>
 <p>The metadata kwargs allow functions to be passed in which
@@ -928,74 +1263,158 @@ to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.concurrency_support">
-<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether this <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> implementation supports threading</p>
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.concurrency_support">
+<code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.define">
+<em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this class with default values of the traits
+redefined according to each keyword argument. For example,</p>
+<dl class="docutils">
+<dt><a href="#id47"><span class="problematic" id="id48">``</span></a><a href="#id49"><span class="problematic" id="id50">`</span></a>python</dt>
+<dd>mylocaltraitcls.define(parameter=7)</dd>
+</dl>
+<p><a href="#id51"><span class="problematic" id="id52">``</span></a><a href="#id53"><span class="problematic" id="id54">`</span></a></p>
+<p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
+named <cite>parameter</cite> is redefined to have default_value=7.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.resource">
+<code class="descname">resource</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
+the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.trait_events">
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<dl class="docutils">
+<dt>name: str (default: None)</dt>
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
+the event handlers of this class will be returned instead.</dd>
+</dl>
+<p>The event handlers associated with a trait name, or all event handlers.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after connect() if no exceptions are raised.
+:return: None</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state">
+<em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.state</span></code></p>
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_trait_events">
+<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
+<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_traits">
+<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
+<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_trait_names">
+<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all the names of this class’ traits.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
+but is unbound.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_traits">
+<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_traits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
+is keyed on the name and the values are the TraitType objects.</p>
+<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
+<p>The TraitTypes returned don’t know anything about the values
+that the various HasTrait’s instances are holding.</p>
+<p>The metadata kwargs allow functions to be passed in which
+filter traits based on metadata values.  The functions should
+take a single value as an argument and return a boolean.  If
+any function returns False, then the trait is not included in
+the output.  If a metadata key doesn’t exist, None will be passed
+to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.LocalBool(read_only=True,is_metadata=False,command=None)
-whether the <code class="xref py py-class docutils literal"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
+whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data0_enabled">
 <code class="descname">data0_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data0_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data1_enabled">
 <code class="descname">data1_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data1_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data2_enabled">
 <code class="descname">data2_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data2_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data3_enabled">
 <code class="descname">data3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data3_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power0_enabled">
 <code class="descname">power0_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power0_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power1_enabled">
 <code class="descname">power1_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power1_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power2_enabled">
 <code class="descname">power2_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power2_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power3_enabled">
 <code class="descname">power3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power3_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False,is_metadata=False)</p>
+<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.trait_events">
-<code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
+<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.trait_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
 <dl class="docutils">
 <dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal"><span class="pre">None</span></code> then all
+<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
 the event handlers of this class will be returned instead.</dd>
 </dl>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
@@ -1047,7 +1466,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
     </div>
   </body>
 </html>

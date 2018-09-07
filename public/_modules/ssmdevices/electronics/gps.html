@@ -4,27 +4,18 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ssmdevices.electronics.gps &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '0.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head>
-  <body>
+  </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.electronics.gps</span></h2>
@@ -56,8 +47,8 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SwiftNavPiksi&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="SwiftNavPiksi"><a class="viewcode-back" href="../../../ssmdevices.electronics.html#ssmdevices.electronics.gps.SwiftNavPiksi">[docs]</a><span class="k">class</span> <span class="nc">SwiftNavPiksi</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">SerialLoggingDevice</span><span class="p">):</span>
-<div class="viewcode-block" id="SwiftNavPiksi.state"><a class="viewcode-back" href="../../../ssmdevices.electronics.html#ssmdevices.electronics.gps.SwiftNavPiksi.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">SerialLoggingDevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
-        <span class="n">baud_rate</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="mi">1000000</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+<div class="viewcode-block" id="SwiftNavPiksi.settings"><a class="viewcode-back" href="../../../ssmdevices.electronics.html#ssmdevices.electronics.gps.SwiftNavPiksi.settings">[docs]</a>    <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">SerialLoggingDevice</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
+        <span class="n">baud_rate</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">1000000</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span></div></div>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
@@ -101,7 +92,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
     </div>
   </body>
 </html>
