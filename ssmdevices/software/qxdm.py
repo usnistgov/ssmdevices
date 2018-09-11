@@ -272,7 +272,7 @@ class QXDM(lb.Win32ComDevice):
         if wait:
             self._wait_for_start()
         self.logger.debug('started run in {}s'.format(time.time()-t0))
-
+        
         self.__start_time = time.time()
 
     # Bare wrapper methods for the low level QXDM COM API
@@ -344,28 +344,33 @@ class QXDM(lb.Win32ComDevice):
         finally:
             if int(com_port) == 0:
                 self._qpst.remove_port(self.settings.resource)
-
-    def _clear(self):
+                
+    def reconnect(self):
+        self.logger.info('reinitializing')
+        self.disconnect()
+        self.connect()
+                
+    def _clear(self, timeout=20):
         ''' Clear the buffer of data. 
         '''
-        t0 = time.time()
-        for item in 'Item view',:
-            if not self._window.ClearViewItems(item):
-                pass
-#                raise Exception('failed to clear item {}'.format(repr(item)))
-
         start = self._get_item_count()
+        for item in 'Item view','Filtered view':
+            if not self._window.ClearViewItems(item):
+                if item == 'Item view':
+                    self.logger.error('failed to clear view '+repr(item))
 
+        t0 = time.time()
         # Block until the item store is clear
-        while time.time()-t0 < 20:
+        while time.time()-t0 < timeout:
             count = self._get_item_count()
-            if count < start or count <= 5:
+            if count < start or count < 10:
                 break
             time.sleep(.05)
         else:
-            raise Exception('timeout waiting for qxdm to clear, buffer still had {} items'.format(self._get_item_count()))
+            raise TimeoutError('timeout waiting for qxdm to clear, buffer still had {} items'
+                               .format(self._get_item_count()))
 
-        self.logger.debug('cleared data buffer in {}s'.format(time.time()-t0))
+        self.logger.debug('cleared item store buffer in {}s'.format(time.time()-t0))        
 
     def _wait_for_stop (self):
         ''' Block until the reported number of data rows stops growing.
@@ -380,7 +385,7 @@ class QXDM(lb.Win32ComDevice):
             else:
                 prev = new
         else:
-            raise Exception('timeout waiting for qxdm to buffer data')
+            raise TimeoutError('timeout waiting for qxdm to buffer data')
 
     def _wait_for_start (self):
         ''' Block until the reported number of data rows starts growing
