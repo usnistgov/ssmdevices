@@ -120,10 +120,10 @@ class QXDM(lb.Win32ComDevice):
     class state(lb.Win32ComDevice.state):
         version              = lb.Unicode(read_only=True,  cache=True,
                                           help='QXDM application version')
-        ue_model_number   = lb.Int(help='model number code', command='ue_model_number')
+        ue_model_number   = lb.Unicode(help='model number code', command='ue_model_number')
         ue_mode           = lb.Unicode(help='current state of the phone', command='ue_mode')
-        ue_imei           = lb.Int(help='Phone IMEI', command='ue_imei')
-        ue_esn            = lb.Int(help='Phone ESN', command='ue_esn')
+        ue_imei           = lb.Unicode(help='Phone IMEI', command='ue_imei')
+        ue_esn            = lb.Unicode(help='Phone ESN', command='ue_esn')
         ue_build_id       = lb.Unicode(help='Build ID of software on the phone', command='ue_build_id')
 
     def connect(self):
@@ -271,7 +271,7 @@ class QXDM(lb.Win32ComDevice):
         self._set_com_port(self.settings.resource)
         if wait:
             self._wait_for_start()
-        self.logger.debug('started run in {}s'.format(time.time()-t0))
+        self.logger.debug('running after setup for {}s'.format(time.time()-t0))
         
         self.__start_time = time.time()
 
@@ -344,14 +344,17 @@ class QXDM(lb.Win32ComDevice):
         finally:
             if int(com_port) == 0:
                 self._qpst.remove_port(self.settings.resource)
-                
+
     def reconnect(self):
         self.logger.info('reinitializing')
         self.disconnect()
         self.connect()
                 
     def _clear(self, timeout=20):
-        ''' Clear the buffer of data. 
+        ''' Clear the buffer of data.
+        
+            TODO: Depending on if QXDM is already running, wait for the item
+            count store to start increasing again?
         '''
         start = self._get_item_count()
         for item in 'Item view','Filtered view':
