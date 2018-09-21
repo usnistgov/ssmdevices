@@ -199,19 +199,18 @@ class AeroflexTM500(lb.TelnetDevice):
             f.write(b'\r\n'.join(commands))
 
     def disconnect(self):
-        if self.__latest.get('scenario_name') is not None:
-            try:
-                self.stop(convert=False)
-            except TM500Error as e:
-                if e.errcode not in (0x02, 0x06):
-                    raise
-
         try:
-            self._send('#$$DISCONNECT', confirm=False)
-        except:
-            pass
-
-        super(AeroflexTM500, self).disconnect()
+            if self.__latest.get('scenario_name') is not None:
+                self.stop(convert=False)
+        except TM500Error as e:
+            if e.errcode not in (0x02, 0x06):
+                raise
+        finally:
+            try:
+                self._send('#$$DISCONNECT', confirm=False)
+            except:
+                pass
+            super(AeroflexTM500, self).disconnect()
 
     def setup(self):
         # Invalidate any incomplete previous commands in the remote telnet buffer
