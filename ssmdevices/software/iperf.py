@@ -139,7 +139,8 @@ class IPerfOnAndroid(IPerf):
             # Find and kill processes on the UE
             out = self.foreground('shell', 'ps')
             for line in out.splitlines():
-                if self.settings.remote_binary_path.encode() in line.lower():
+                line = line.decode(errors='replace')
+                if self.settings.remote_binary_path in line.lower():
                     pid = line.split()[1]
                     self.logger.debug('killing zombie iperf. stdout: {}'\
                                       .format(self.foreground('shell', 'kill', '-9', pid)))
@@ -184,9 +185,10 @@ class IPerfOnAndroid(IPerf):
         out = ''
         while time.time() - t0 < timeout or timeout is None:
             out = sp.run([self.settings.binary_path, 'shell', 'dumpsys', 'telephony.registry'],
-                         stdout=sp.PIPE, check=True, timeout=timeout, universal_newlines=True).stdout
+                         stdout=sp.PIPE, check=True, timeout=timeout).stdout
 
-            con = re.findall('mDataConnectionState=([\-0-9]+)', out)
+            con = re.findall('mDataConnectionState=([\-0-9]+)',
+                             out.decode(errors='replace'))
 
             if len(con) > 0:
                 if con[0] == '2':
