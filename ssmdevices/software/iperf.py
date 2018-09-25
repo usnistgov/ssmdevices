@@ -75,7 +75,7 @@ class IPerf(lb.CommandLineWrapper):
         if self.settings.udp and self.settings.buffer_size is not None:
             self.logger.warning('iperf might not behave nicely setting udp=True with buffer_size')
 
-        with self.respawn, self.exception_on_stderr:
+        with self.respawn:#, self.exception_on_stderr:
             if self.settings.resource:
                 super(IPerf, self).background('-c', str(self.settings.resource), *extra_args, **flags)
             else:
@@ -103,10 +103,12 @@ class IPerfOnAndroid(IPerf):
 #            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
 #            if len(devices) == 0:
 #                raise Exception('adb lists no devices. is the UE connected?')
+            self.logger.debug('waiting for USB connection to phone')
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True,
                    timeout=30)
 
             time.sleep(.1)
+            self.logger.debug('copying iperf onto phone')
             sp.run([self.settings.binary_path, "push", ssmdevices.lib.path('android','iperf'),
                    self.settings.remote_binary_path], check=True, timeout=2)
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
@@ -115,11 +117,13 @@ class IPerfOnAndroid(IPerf):
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
     
 #            # Check that it's executable
+            self.logger.debug('verifying iperf execution on phone')
             cp = sp.run([self.settings.binary_path, 'shell',
                          self.settings.remote_binary_path, '--help'],
                          timeout=2, stdout=sp.PIPE)
             if cp.stdout.startswith(b'/system/bin/sh'):
                 raise Exception('could not execute!!! ', cp.stdout)
+            self.logger.debug('phone is ready to execute iperf')
 
     def start (self):
         super(IPerfOnAndroid,self).start()
@@ -194,7 +198,7 @@ class IPerfOnAndroid(IPerf):
                 if con[0] == '2':
                     break
         else:
-            raise TimeoutError('timeout waiting for cellular data')
+            raise TimeoutError('phone did not connect for cellular data before timeout')
         self.logger.debug('cellular data available after {} s'.format(time.time() - t0))
 
     def reboot(self, block=True):
