@@ -213,12 +213,13 @@ class AeroflexTM500(lb.TelnetDevice):
             super(AeroflexTM500, self).disconnect()
 
     def connect(self):
+        self.__latest = {}
+
         # Invalidate any incomplete previous commands in the remote telnet buffer
         try:
             self._send('***', timeout=1)
         except (ValueError,TimeoutError):
             pass
-        self.__latest = {}
         
         try:
             self._send('#$$DISCONNECT', timeout=1)
