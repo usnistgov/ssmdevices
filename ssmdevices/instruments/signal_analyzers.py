@@ -78,8 +78,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
             self.logger.warning('expected {} mode, but got {}'\
                             .format(self.expected_channel_type, self.state.channel_type))
 
-    def setup(self):
-        super().setup()
+    def connect(self):
         # self.verify_channel_type()
         self.state.format = 'REAL,32'
 
@@ -120,7 +119,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
                 'sa_spectrogram_active_time': active_time}
 
 
-    def cleanup(self):
+    def disconnect(self):
         try:
             self.abort()
         except:

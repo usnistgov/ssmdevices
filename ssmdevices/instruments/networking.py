@@ -212,7 +212,7 @@ class AeroflexTM500(lb.TelnetDevice):
                 pass
             super(AeroflexTM500, self).disconnect()
 
-    def setup(self):
+    def connect(self):
         # Invalidate any incomplete previous commands in the remote telnet buffer
         try:
             self._send('***', timeout=1)

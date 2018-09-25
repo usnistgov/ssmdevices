@@ -23,7 +23,7 @@ class QPST(lb.Win32ComDevice):
     class settings(lb.Win32ComDevice.settings):
         com_object           = lb.Unicode('QPSTAtmnServer.Application', )
     
-    def setup(self):
+    def connect(self):
         self.backend._FlagAsMethod('AddPort')
         self.backend._FlagAsMethod('RemovePort')
         self.backend._FlagAsMethod('GetPort')
@@ -143,10 +143,6 @@ class QXDM(lb.Win32ComDevice):
         super(QXDM, self).connect()
         self.__connection_info = self._qpst.add_port(self.settings.resource)
 
-    def setup(self):
-        ''' Like all other Device subclasses, this setup method is run
-            automatically right after .connect().
-        '''
         self.__start_time = None
         self._window = self.backend.GetAutomationWindow()
         self.settings.cache_path = os.path.abspath(self.settings.cache_path)

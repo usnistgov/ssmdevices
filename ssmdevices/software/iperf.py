@@ -97,7 +97,7 @@ class IPerfOnAndroid(IPerf):
                                      # '-y', 'C'
                                           ])
 
-    def setup (self):
+    def connect(self):
         with self.no_state_arguments:
 #            self.logger.warning('TODO: need to fix setup for android iperf, but ok for now')
 #            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
