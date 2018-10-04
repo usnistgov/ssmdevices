@@ -127,7 +127,7 @@ class WLANStatus(lb.Device):
             self.logger.debug('starting WLAN reconnect watchdog')
             iface = self.settings.resource
             target_ssid = self.settings.ssid
-            time.sleep(0.1)
+            lb.sleep(0.1)
             
             while True:
                 if not self.state.connected:
@@ -144,7 +144,7 @@ class WLANStatus(lb.Device):
                         self.backend.set_interface_connected(self.settings.resource,
                                                              target_ssid)
                         
-                time.sleep(.1)
+                lb.sleep(.1)
         
         threading.Thread(target=reconnect).start()
 
@@ -207,4 +207,4 @@ if __name__ == '__main__':
                     pass
             else:
                 print('not connected')
-            time.sleep(.25)
+            lb.sleep(.25)

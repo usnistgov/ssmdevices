@@ -95,7 +95,7 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     
     def stop(self):
         self.write('ST')
-        time.sleep(3)
+        lb.sleep(3)
         print(self.wheredoigo())
         '''If wheredoigo returns N, we are stopped'''
         #didistop = self.wheredoigo()

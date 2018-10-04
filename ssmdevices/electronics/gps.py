@@ -24,7 +24,7 @@ if __name__ == '__main__':
     lb.debug_to_screen(lb.DEBUG)
     with SwiftNavPiksi.from_hwid(r'USB VID:PID=0403:6014 SER=5') as piksi:
         piksi.start()
-        time.sleep(5)
+        lb.sleep(5)
         piksi.stop()
         result = piksi.fetch()
         print('Received:\n', result)

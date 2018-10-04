@@ -111,7 +111,7 @@ class IPerfOnAndroid(IPerf):
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True,
                    timeout=30)
 
-            time.sleep(.1)
+            lb.sleep(.1)
             self.logger.debug('copying iperf onto phone')
             sp.run([self.settings.binary_path, "push", ssmdevices.lib.path('android','iperf'),
                    self.settings.remote_binary_path], check=True, timeout=2)
@@ -152,14 +152,14 @@ class IPerfOnAndroid(IPerf):
                     pid = line.split()[1]
                     self.logger.debug('killing zombie iperf. stdout: {}'\
                                       .format(self.foreground('shell', 'kill', '-9', pid)))
-            time.sleep(.1)
+            lb.sleep(.1)
             # Wait for any iperf zombie processes to die
             t0 = time.time()
             while time.time()-t0 < wait_time and wait_time != 0:
                 out = self.foreground('shell', 'ps').lower()
                 if b'iperf' not in out:
                     break
-                time.sleep(.25)
+                lb.sleep(.25)
             else:
                 raise TimeoutError('timeout waiting for iperf process termination on UE')
 
@@ -244,9 +244,9 @@ if __name__ == '__main__':
     with ipc,ips:
         for i in range(1):
             ips.start()
-            time.sleep(1)
+            lb.sleep(1)
             ipc.start()
-            time.sleep(20)
+            lb.sleep(20)
             ipc.kill()
             ips.kill()
             ips_result = ips.read_stdout()

@@ -71,7 +71,7 @@ class QPST(lb.Win32ComDevice):
                 else:
                     raise Exception('QXDM: could not add port at COM{}'.format(port))
             except ValueError:
-                time.sleep(0.1)
+                lb.sleep(0.1)
                 continue
             break
         else:
@@ -94,7 +94,7 @@ class QPST(lb.Win32ComDevice):
                 else:
                     break
             except ValueError:
-                time.sleep(0.1)
+                lb.sleep(0.1)
                 continue
             break
         else:
@@ -149,7 +149,7 @@ class QXDM(lb.Win32ComDevice):
         os.makedirs(self.settings.cache_path, exist_ok=True)
 
         while not self._qpst.state.connected:
-            time.sleep(0.1)
+            lb.sleep(0.1)
 
         # Disable to prevent undesired data streaming on startup
         try:
@@ -229,7 +229,7 @@ class QXDM(lb.Win32ComDevice):
         if self._min_acquisition_time is not None:
             t_elapsed = time.time()-self.__start_time
             if t_elapsed < self._min_acquisition_time:
-                time.sleep(self._min_acquisition_time-t_elapsed)
+                lb.sleep(self._min_acquisition_time-t_elapsed)
         # Munge path
         if path is None:
             now = datetime.datetime.now()
@@ -324,7 +324,7 @@ class QXDM(lb.Win32ComDevice):
                     code = self._window.GetServerState()
                     if code == 0xFFFFFFFF:
                         raise Exception('Connection error')
-                    time.sleep(0.1)
+                    lb.sleep(0.1)
             else:
                 if com_port:
                     raise TimeoutError('QXDM timeout connecting to UE (connected to {})'.format(actual))
@@ -364,7 +364,7 @@ class QXDM(lb.Win32ComDevice):
             count = self._get_item_count()
             if count < start or count < 10:
                 break
-            time.sleep(.05)
+            lb.sleep(.05)
         else:
             raise TimeoutError('timeout waiting for qxdm to clear, buffer still had {} items'
                                .format(self._get_item_count()))
@@ -377,7 +377,7 @@ class QXDM(lb.Win32ComDevice):
         t0 = time.time()
         prev = self._get_item_count()
         while time.time()-t0 < 10:
-            time.sleep(.25)
+            lb.sleep(.25)
             new = self._get_item_count()
             if new == prev:
                 break
@@ -393,12 +393,12 @@ class QXDM(lb.Win32ComDevice):
         t0 = time.time()
         start = self._get_item_count()
         while time.time()-t0 < 10:
-            time.sleep(.05)
+            lb.sleep(.05)
             if self._get_item_count() != start:
                 break
         else:
             raise Exception('timeout waiting for qxdm to start acquisition')
-#        time.sleep(1)
+#        lb.sleep(1)
         self.logger.debug('activity began after observing items after {}s'\
                           .format(self._get_item_count(), time.time()-t0))
 
@@ -406,10 +406,10 @@ class QXDM(lb.Win32ComDevice):
 #    def fetch(self):
 #        time_elapsed = time.time() - self.__start_time
 #        if time_elapsed < self.settings.min_acquisition_time:
-#            time.sleep(self.settings.min_acquisition_time - time_elapsed)
+#            lb.sleep(self.settings.min_acquisition_time - time_elapsed)
 #
 #        self.stop()
-##        time.sleep(1)
+##        lb.sleep(1)
 #
 #        # Quitting the application should force QXDM to write a "temporary" .isf file containing
 #        # whatever hasn't already been saved.  This needs to be renamed with the .isf base name.
@@ -433,5 +433,5 @@ class QXDM(lb.Win32ComDevice):
 #        qxdm.configure(r'C:\Python Code\potato\180201_QXDMConfig.dmc')
 #        for i in range(1):
 #            qxdm.start()
-#            time.sleep(10)
+#            lb.sleep(10)
 #            qxdm.save(r'C:\python code\potato\junk-{}.isf'.format(i))

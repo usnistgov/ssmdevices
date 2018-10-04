@@ -95,7 +95,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
             self.clear_spectrogram()
             self.wait()
             # Give the power sensor time to arm
-            time.sleep(0.1)
+            lb.sleep(0.1)
 
             t0_active = time.time()
             # Try to trigger; block until timeout.
@@ -958,7 +958,7 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
 
         with self.overlap_and_block(timeout=2500):
             self.save_cache()
-        time.sleep(0.05)
+        lb.sleep(0.05)
         super().setup()
 
         with self.overlap_and_block():
@@ -988,7 +988,7 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
             self.clear_spectrogram()
             self.wait()
             # Give the power sensor time to arm
-            time.sleep(delay_time)
+            lb.sleep(delay_time)
 
             t0_active = time.time()
             # Try to trigger; block until timeout.
@@ -996,7 +996,7 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
                 # print(max(30*max_trigger_time,time_remaining or 0.1))
                 with self.overlap_and_block(timeout=int(1e3 * 30*max_trigger_time)):
                     self.trigger_single(wait=False)
-                time.sleep(0.05)
+                lb.sleep(0.05)
                 active_time += time.time() - t0_active
 
                 self.backend.timeout = 6*1e3*max_trigger_time

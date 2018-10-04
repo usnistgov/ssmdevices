@@ -264,7 +264,7 @@ class AeroflexTM500(lb.TelnetDevice):
         if self.__latest.get('trigger_time',0) > 0:
             elapsed = time.time()-self.__latest.get('trigger_time',0)
             if elapsed < self.settings.min_acquisition_time:
-                time.sleep(self.settings.min_acquisition_time-elapsed)
+                lb.sleep(self.settings.min_acquisition_time-elapsed)
         
     def _send(self, msg, data_lines=1, confirm=True, timeout=None):
         ''' Send a message, then block until a confirmation message is received.
@@ -326,7 +326,7 @@ class AeroflexTM500(lb.TelnetDevice):
         root = self.__latest['data']
 
         t0 = time.time()
-        time.sleep(0.25) # TODO Is this really necessary?
+        lb.sleep(0.25) # TODO Is this really necessary?
 #            pre_entries = [f for f in os.listdir(root)]
         self._send('#$$CONVERT_TO_TEXT')
         entries = [f for f in os.listdir(root)\
