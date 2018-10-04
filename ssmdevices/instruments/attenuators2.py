@@ -13,7 +13,7 @@ __all__ = ['MiniCircuitsRCDAT2']
 
 from labbench import DotNetDevice
 import ssmdevices.lib
-import labbench as core
+import labbench as lb
 
 class MiniCircuitsRCDAT2(DotNetDevice):
     ''' A digitally controlled, 0 to 110 dB variable attenuator.
@@ -27,7 +27,7 @@ class MiniCircuitsRCDAT2(DotNetDevice):
     dll_name = 'mcl_RUDAT64.dll'
     
     class state(DotNetDevice.state):
-        attenuation = core.Float(min=0, max=115, step=0.25)
+        attenuation = lb.Float(min=0, max=115, step=0.25)
 
     def connect (self):
         ''' Open the device resource.
