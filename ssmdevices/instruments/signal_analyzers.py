@@ -959,7 +959,6 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         with self.overlap_and_block(timeout=2500):
             self.save_cache()
         lb.sleep(0.05)
-        super().setup()
 
         with self.overlap_and_block():
             self.state.spectrogram_depth
