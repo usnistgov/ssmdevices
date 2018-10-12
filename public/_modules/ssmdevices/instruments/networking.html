@@ -33,19 +33,25 @@
   <h1>Source code for ssmdevices.instruments.networking</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="sd">&quot;&quot;&quot; Network test instrument control classes</span>
-
-<span class="sd">:author: Aziz Kord &lt;azizollah.kord@nist.gov&gt;, Dan Kuester &lt;daniel.kuester@nist.gov&gt;</span>
+<span class="sd">&quot;&quot;&quot; Network test instruments</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">future</span> <span class="k">import</span> <span class="n">standard_library</span>
 <span class="n">standard_library</span><span class="o">.</span><span class="n">install_aliases</span><span class="p">()</span>
 
 <span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
-<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">ssmdevices.etc</span>
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numbers</span>
 
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s2">&quot;U.S. government work, not subject to copyright in the U.S.&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Rob Knight&quot;</span><span class="p">,</span> <span class="s2">&quot;Peter Maxwell&quot;</span><span class="p">,</span> <span class="s2">&quot;Gavin Huttley&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Matthew Wakefield&quot;</span><span class="p">]</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__credits__</span><span class="p">)</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;NIST&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Dan Kuester&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;daniel.kuester@nist.gov&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;AeroflexTM500&#39;</span><span class="p">]</span>
 
 <span class="k">class</span> <span class="nc">TM500Error</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
