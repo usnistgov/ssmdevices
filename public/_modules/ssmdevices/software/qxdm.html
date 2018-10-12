@@ -56,7 +56,7 @@
     <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Win32ComDevice</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
         <span class="n">com_object</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;QPSTAtmnServer.Application&#39;</span><span class="p">,</span> <span class="p">)</span>
     
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">_FlagAsMethod</span><span class="p">(</span><span class="s1">&#39;AddPort&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">_FlagAsMethod</span><span class="p">(</span><span class="s1">&#39;RemovePort&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">_FlagAsMethod</span><span class="p">(</span><span class="s1">&#39;GetPort&#39;</span><span class="p">)</span>
@@ -104,7 +104,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;QXDM: could not add port at COM</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
                 <span class="k">continue</span>
             <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
@@ -127,7 +127,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
                 <span class="k">continue</span>
             <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
@@ -153,10 +153,10 @@
 <div class="viewcode-block" id="QXDM.state"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Win32ComDevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
         <span class="n">version</span>              <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;QXDM application version&#39;</span><span class="p">)</span>
-        <span class="n">ue_model_number</span>   <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;model number code&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_model_number&#39;</span><span class="p">)</span>
+        <span class="n">ue_model_number</span>   <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;model number code&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_model_number&#39;</span><span class="p">)</span>
         <span class="n">ue_mode</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;current state of the phone&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_mode&#39;</span><span class="p">)</span>
-        <span class="n">ue_imei</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Phone IMEI&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_imei&#39;</span><span class="p">)</span>
-        <span class="n">ue_esn</span>            <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Phone ESN&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_esn&#39;</span><span class="p">)</span>
+        <span class="n">ue_imei</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Phone IMEI&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_imei&#39;</span><span class="p">)</span>
+        <span class="n">ue_esn</span>            <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Phone ESN&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_esn&#39;</span><span class="p">)</span>
         <span class="n">ue_build_id</span>       <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Build ID of software on the phone&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_build_id&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QXDM.connect"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -174,19 +174,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span> <span class="o">=</span> <span class="n">QPST</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">QXDM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__connection_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">add_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__connection_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">add_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QXDM.setup"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Like all other Device subclasses, this setup method is run</span>
-<span class="sd">            automatically right after .connect().</span>
-<span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__start_time</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">GetAutomationWindow</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
 
         <span class="c1"># Disable to prevent undesired data streaming on startup</span>
         <span class="k">try</span><span class="p">:</span>
@@ -194,11 +190,12 @@
         <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;could not disable UE; does QXDM work if you start it manually?&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="QXDM.command_get"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.command_get">[docs]</a>    <span class="k">def</span> <span class="nf">command_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">trait</span><span class="p">):</span>
+    <span class="nd">@state</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__connection_info</span><span class="p">[</span><span class="n">command</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__connection_info</span><span class="p">[</span><span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">DeviceStateError</span><span class="p">(</span><span class="s1">&#39;no state </span><span class="si">{}</span><span class="s1"> in </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span></div>
+            <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">DeviceStateError</span><span class="p">(</span><span class="s1">&#39;no state </span><span class="si">{}</span><span class="s1"> in </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
 
 <div class="viewcode-block" id="QXDM.disconnect"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -266,7 +263,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_acquisition_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">t_elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">__start_time</span>
             <span class="k">if</span> <span class="n">t_elapsed</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_acquisition_time</span><span class="p">:</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_acquisition_time</span><span class="o">-</span><span class="n">t_elapsed</span><span class="p">)</span>
+                <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_acquisition_time</span><span class="o">-</span><span class="n">t_elapsed</span><span class="p">)</span>
         <span class="c1"># Munge path</span>
         <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
@@ -304,8 +301,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_com_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_start</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;started run in </span><span class="si">{}</span><span class="s1">s&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;running after setup for </span><span class="si">{}</span><span class="s1">s&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">__start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span></div>
 
     <span class="c1"># Bare wrapper methods for the low level QXDM COM API</span>
@@ -361,7 +358,7 @@
                     <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">GetServerState</span><span class="p">()</span>
                     <span class="k">if</span> <span class="n">code</span> <span class="o">==</span> <span class="mh">0xFFFFFFFF</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Connection error&#39;</span><span class="p">)</span>
-                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                    <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">com_port</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;QXDM timeout connecting to UE (connected to </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">actual</span><span class="p">))</span>
@@ -378,27 +375,35 @@
             <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">com_port</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">remove_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Clear the buffer of data. </span>
+<div class="viewcode-block" id="QXDM.reconnect"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.reconnect">[docs]</a>    <span class="k">def</span> <span class="nf">reconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;reinitializing&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span></div>
+                
+    <span class="k">def</span> <span class="nf">_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Clear the buffer of data.</span>
+<span class="sd">        </span>
+<span class="sd">            TODO: Depending on if QXDM is already running, wait for the item</span>
+<span class="sd">            count store to start increasing again?</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="s1">&#39;Item view&#39;</span><span class="p">,:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">ClearViewItems</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
-                <span class="k">pass</span>
-<span class="c1">#                raise Exception(&#39;failed to clear item {}&#39;.format(repr(item)))</span>
-
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="s1">&#39;Item view&#39;</span><span class="p">,</span><span class="s1">&#39;Filtered view&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">ClearViewItems</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;Item view&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;failed to clear view &#39;</span><span class="o">+</span><span class="nb">repr</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
 
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="c1"># Block until the item store is clear</span>
-        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="n">timeout</span><span class="p">:</span>
             <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">start</span> <span class="ow">or</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">start</span> <span class="ow">or</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
                 <span class="k">break</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;timeout waiting for qxdm to clear, buffer still had </span><span class="si">{}</span><span class="s1"> items&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()))</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;timeout waiting for qxdm to clear, buffer still had </span><span class="si">{}</span><span class="s1"> items&#39;</span>
+                               <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;cleared data buffer in </span><span class="si">{}</span><span class="s1">s&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;cleared item store buffer in </span><span class="si">{}</span><span class="s1">s&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>        
 
     <span class="k">def</span> <span class="nf">_wait_for_stop</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Block until the reported number of data rows stops growing.</span>
@@ -406,14 +411,14 @@
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="n">prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span>
         <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">25</span><span class="p">)</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">25</span><span class="p">)</span>
             <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">new</span> <span class="o">==</span> <span class="n">prev</span><span class="p">:</span>
                 <span class="k">break</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">prev</span> <span class="o">=</span> <span class="n">new</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;timeout waiting for qxdm to buffer data&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;timeout waiting for qxdm to buffer data&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_wait_for_start</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Block until the reported number of data rows starts growing</span>
@@ -422,12 +427,12 @@
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span>
         <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span> <span class="o">!=</span> <span class="n">start</span><span class="p">:</span>
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;timeout waiting for qxdm to start acquisition&#39;</span><span class="p">)</span>
-<span class="c1">#        time.sleep(1)</span>
+<span class="c1">#        lb.sleep(1)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;activity began after observing items after </span><span class="si">{}</span><span class="s1">s&#39;</span>\
                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">(),</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span></div>
 
@@ -435,10 +440,10 @@
 <span class="c1">#    def fetch(self):</span>
 <span class="c1">#        time_elapsed = time.time() - self.__start_time</span>
 <span class="c1">#        if time_elapsed &lt; self.settings.min_acquisition_time:</span>
-<span class="c1">#            time.sleep(self.settings.min_acquisition_time - time_elapsed)</span>
+<span class="c1">#            lb.sleep(self.settings.min_acquisition_time - time_elapsed)</span>
 <span class="c1">#</span>
 <span class="c1">#        self.stop()</span>
-<span class="c1">##        time.sleep(1)</span>
+<span class="c1">##        lb.sleep(1)</span>
 <span class="c1">#</span>
 <span class="c1">#        # Quitting the application should force QXDM to write a &quot;temporary&quot; .isf file containing</span>
 <span class="c1">#        # whatever hasn&#39;t already been saved.  This needs to be renamed with the .isf base name.</span>
@@ -462,7 +467,7 @@
 <span class="c1">#        qxdm.configure(r&#39;C:\Python Code\potato\180201_QXDMConfig.dmc&#39;)</span>
 <span class="c1">#        for i in range(1):</span>
 <span class="c1">#            qxdm.start()</span>
-<span class="c1">#            time.sleep(10)</span>
+<span class="c1">#            lb.sleep(10)</span>
 <span class="c1">#            qxdm.save(r&#39;C:\python code\potato\junk-{}.isf&#39;.format(i))</span>
 </pre></div>
 

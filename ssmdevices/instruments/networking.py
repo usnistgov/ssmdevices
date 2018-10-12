@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
 
-""" Network test instrument control classes
-
-:author: Aziz Kord <azizollah.kord@nist.gov>, Dan Kuester <daniel.kuester@nist.gov>
+""" Network test instruments
 """
+
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from future import standard_library
 standard_library.install_aliases()
 
 import labbench as lb
-import time, os, ssmdevices.etc
+import time, os
 import numbers
 
+__copyright__ = "U.S. government work, not subject to copyright in the U.S."
+__credits__ = ["Aziz Kord", "Dan Kuester"]
+__author__ = ','.join(__credits__)
+__license__ = "NIST"
+__maintainer__ = "Dan Kuester"
+__email__ = "daniel.kuester@nist.gov"
 __all__ = ['AeroflexTM500']
 
 class TM500Error(ValueError):

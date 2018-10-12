@@ -12,14 +12,6 @@ ssmdevices.software.iperf module
     :undoc-members:
     :show-inheritance:
 
-ssmdevices.software.qpst module
--------------------------------
-
-.. automodule:: ssmdevices.software.qpst
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 ssmdevices.software.qxdm module
 -------------------------------
 

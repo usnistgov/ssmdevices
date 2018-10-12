@@ -157,9 +157,10 @@ class QXDM(lb.Win32ComDevice):
         except TimeoutError:
             raise Exception('could not disable UE; does QXDM work if you start it manually?')
 
-    def command_get(self, command, trait):
+    @state.getter
+    def __(self, trait):
         try:
-            return self.__connection_info[command]
+            return self.__connection_info[trait.command]
         except KeyError:
             raise lb.DeviceStateError('no state {} in {}'.format(command, repr(self)))
 

@@ -4,14 +4,6 @@ ssmdevices.electronics package
 Submodules
 ----------
 
-ssmdevices.electronics.cellular module
---------------------------------------
-
-.. automodule:: ssmdevices.electronics.cellular
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 ssmdevices.electronics.gps module
 ---------------------------------
 

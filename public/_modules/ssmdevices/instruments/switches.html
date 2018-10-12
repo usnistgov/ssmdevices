@@ -43,7 +43,7 @@
 
 <span class="kn">from</span> <span class="nn">labbench</span> <span class="k">import</span> <span class="n">DotNetDevice</span>
 <span class="kn">import</span> <span class="nn">ssmdevices.lib</span>
-<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">core</span>
+<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
 
 <div class="viewcode-block" id="MiniCircuitsUSBSwitch"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.switches.MiniCircuitsUSBSwitch">[docs]</a><span class="k">class</span> <span class="nc">MiniCircuitsUSBSwitch</span><span class="p">(</span><span class="n">DotNetDevice</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; A digitally controlled solid-state switch.</span>
@@ -60,7 +60,7 @@
     <span class="n">dll_name</span> <span class="o">=</span> <span class="s1">&#39;mcl_SolidStateSwitch64.dll&#39;</span>
 
 <div class="viewcode-block" id="MiniCircuitsUSBSwitch.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.switches.MiniCircuitsUSBSwitch.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">DotNetDevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
-        <span class="n">port</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MiniCircuitsUSBSwitch.connect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.switches.MiniCircuitsUSBSwitch.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Open the device resource.</span>
