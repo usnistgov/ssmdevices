@@ -13,8 +13,7 @@ import time, os
 import numbers
 
 __copyright__ = "U.S. government work, not subject to copyright in the U.S."
-__credits__ = ["Rob Knight", "Peter Maxwell", "Gavin Huttley",
-                    "Matthew Wakefield"]
+__credits__ = ["Aziz Kord", "Dan Kuester"]
 __author__ = ','.join(__credits__)
 __license__ = "NIST"
 __maintainer__ = "Dan Kuester"
