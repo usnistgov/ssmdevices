@@ -40,18 +40,11 @@ class AcronameUSBHub2x4(lb.Device):
         power2_enabled = lb.Bool()
         power3_enabled = lb.Bool()
     
-    def __init__ (self, resource=None):
-        super(type(self), self).__init__(resource)
-        
-        try:
-            import brainstem
-        except Exception as e:
-            self.logger.error('could not import the dependency "brainstem"')
-            raise e
-            
-    def connect (self):
+    def __import__ (self):
+        global brainstem
         import brainstem
-        
+
+    def connect (self):
         specs = self._bs.discover.findAllModules(brainstem.link.Spec.USB)
 
         specs = [s for s in specs if s.model == self.model]        
@@ -73,13 +66,14 @@ class AcronameUSBHub2x4(lb.Device):
         ''' Release control over the device.
         '''
         self.backend.disconnect()
-        
-    def command_set (self, command, trait, value):
-        ''' Apply an instrument setting to the instrument. The value ``value''
-            will be applied to the trait attriute ``attr'' in type(self).
-        '''
-        raise NotImplementedError('state "{attr}" is defined but not implemented! implement {cls}.command_get, or implement a getter for {cls}.state.{attr}'\
-                                  .format(cls=type(self).__name__, attr=attr))
+
+    # @state.setter
+    # def __ (self, trait, value):
+    #     ''' Apply an instrument setting to the instrument. The value ``value''
+    #         will be applied to the trait attriute ``attr'' in type(self).
+    #     '''
+    #     raise NotImplementedError('state "{attr}" is defined but not implemented! implement {cls}.command_get, or implement a getter for {cls}.state.{attr}'\
+    #                               .format(cls=type(self).__name__, trait=trait))
         
     def enable (self, data = True, power = True, channel= "all"):
         ''' Enable or disable of USB port features at one or all hub ports.

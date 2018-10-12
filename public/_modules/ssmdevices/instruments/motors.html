@@ -79,18 +79,10 @@
         <span class="n">dsrdtr</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="p">)</span>
         <span class="n">read_termination</span>  <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="s1">&#39;connected&#39;</span><span class="p">)</span> <span class="c1">#this is an acknowledge byte</span>
         <span class="n">write_termination</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="s1">&#39;connected&#39;</span><span class="p">)</span> <span class="c1">#this is a carriage return</span></div>
-        
-<div class="viewcode-block" id="ETSLindgrenAzi2005.command_set"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.motors.ETSLindgrenAzi2005.command_set">[docs]</a>    <span class="k">def</span> <span class="nf">command_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Send an SCPI command to set a state value on the</span>
-<span class="sd">            device. This is</span>
-<span class="sd">            automatically called for `state` attributes that</span>
-<span class="sd">            define a message.</span>
 
-<span class="sd">            :param str command: The SCPI command to send</span>
-<span class="sd">            :param trait: The trait state corresponding with the command (ignored)</span>
-<span class="sd">            :param str value: The value to assign to the parameter</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">command</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>    </div>
+    <span class="nd">@state</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">trait</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
 <div class="viewcode-block" id="ETSLindgrenAzi2005.config"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.motors.ETSLindgrenAzi2005.config">[docs]</a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="s1">&#39;CR&#39;</span> <span class="ow">or</span> <span class="s1">&#39;NCR&#39;</span><span class="p">:</span>
@@ -110,7 +102,7 @@
     
 <div class="viewcode-block" id="ETSLindgrenAzi2005.set_limits"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.motors.ETSLindgrenAzi2005.set_limits">[docs]</a>    <span class="k">def</span> <span class="nf">set_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Probably should put some error checking in here to make sure value is a float</span>
-<span class="sd">        Also, note we use write here becuase command_set inserts a space&#39;&#39;&#39;</span>
+<span class="sd">        Also, note we use write here becuase state.setter inserts a space&#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">side</span> <span class="ow">is</span> <span class="s1">&#39;lower&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;LL&#39;</span><span class="o">+</span><span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">side</span> <span class="ow">is</span> <span class="s1">&#39;upper&#39;</span><span class="p">:</span>
@@ -128,7 +120,7 @@
     
 <div class="viewcode-block" id="ETSLindgrenAzi2005.stop"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.motors.ETSLindgrenAzi2005.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;ST&#39;</span><span class="p">)</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wheredoigo</span><span class="p">())</span>
         <span class="sd">&#39;&#39;&#39;If wheredoigo returns N, we are stopped&#39;&#39;&#39;</span></div></div>
         <span class="c1">#didistop = self.wheredoigo()</span>

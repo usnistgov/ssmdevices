@@ -57,7 +57,7 @@
     <span class="n">lb</span><span class="o">.</span><span class="n">debug_to_screen</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">SwiftNavPiksi</span><span class="o">.</span><span class="n">from_hwid</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;USB VID:PID=0403:6014 SER=5&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">piksi</span><span class="p">:</span>
         <span class="n">piksi</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
         <span class="n">piksi</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">piksi</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Received:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>

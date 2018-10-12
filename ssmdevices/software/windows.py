@@ -154,10 +154,11 @@ class WLANStatus(lb.Device):
         except lb.ConnectionError:
             pass
 
-    def command_get (self, command, trait):
+    @state.getter
+    def __(self, trait):
         d = self.backend.get_wlan_interfaces()
         resource = self.settings.resource
-        
+
         if self.settings.resource is None:
             if len(d) == 0:
                 raise OSError('no WLAN interfaces available')

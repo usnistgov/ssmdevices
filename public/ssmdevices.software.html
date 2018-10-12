@@ -46,6 +46,51 @@
 <em class="property">class </em><code class="descclassname">ssmdevices.software.iperf.</code><code class="descname">IPerfClient</code><span class="sig-paren">(</span><em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ssmdevices.software.iperf.IPerf" title="ssmdevices.software.iperf.IPerf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ssmdevices.software.iperf.IPerf</span></code></a></p>
 <p>This class is deprected. Use IPerf instead</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>arguments</strong> – List(read_only=False,write_only=False,cache=False)</li>
+<li><strong>bidirectional</strong> – <p>Bool(command=’-d’,read_only=False,write_only=False,cache=False)</p>
+<p>Send and receive simultaneously</p>
+</li>
+<li><strong>binary_path</strong> – Unicode(read_only=False,write_only=False,cache=False)</li>
+<li><strong>bind</strong> – <p>Unicode(command=’-B’,read_only=False,write_only=False,cache=False)</p>
+<p>bind connection to specified IP</p>
+</li>
+<li><strong>bit_rate</strong> – <p>Unicode(command=’-b’,read_only=False,write_only=False,cache=False)</p>
+<p>Maximum bit rate (append unit for size, e.g. 10K)</p>
+</li>
+<li><strong>buffer_size</strong> – <p>Int(min=1,command=’-l’,read_only=False,write_only=False,cache=False)</p>
+<p>Size of data buffer that generates traffic (bytes)</p>
+</li>
+<li><strong>interval</strong> – <p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,cache=False)</p>
+<p>Interval between throughput reports (s)</p>
+</li>
+<li><strong>port</strong> – <p>Int(min=1,command=’-p’,read_only=False,write_only=False,cache=False)</p>
+<p>connection port</p>
+</li>
+<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</li>
+<li><strong>tcp_window_size</strong> – <p>Int(min=1,command=’-w’,read_only=False,write_only=False,cache=False)</p>
+<p>(bytes)</p>
+</li>
+<li><strong>time</strong> – <p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)</p>
+<p>time in seconds to transmit before quitting (default 10s)</p>
+</li>
+<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<p>wait time for traffic results before throwing a timeout exception (s)</p>
+</li>
+<li><strong>udp</strong> – <p>Bool(command=’-u’,read_only=False,write_only=False,cache=False)</p>
+<p>use UDP instead of the default, TCP</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.backend">
 <code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.backend" title="Permalink to this definition">¶</a></dt>
@@ -85,58 +130,9 @@ with self.no_state_arguments:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfClient.cleanup">
-<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.cleanup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called before a device is disconnected
-:return: None</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfClient.clear">
 <code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear queued standard output, discarding any contents</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfClient.command_get">
-<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.command_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a setting from a remote instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfClient.command_set">
-<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-<li><strong>value</strong> – the value to set</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
@@ -227,11 +223,6 @@ executed or is empty. Running the command line multiple times overwrites the que
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfClient.resource">
-<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.resource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.respawn">
 <code class="descname">respawn</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.respawn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use this context manager to respawning background execution.</p>
@@ -258,48 +249,48 @@ executed or is empty. Running the command line multiple times overwrites the que
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.arguments">
 <code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.List(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>List(read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)
-minimum number of extra command line arguments to pass to the executable</p>
+<dd><p>Int(min=0,read_only=True,write_only=False,cache=False)</p>
+<p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=’-d’,read_only=False,write_only=False,cache=False)
-Send and receive simultaneously</p>
+<dd><p>Bool(command=’-d’,read_only=False,write_only=False,cache=False)</p>
+<p>Send and receive simultaneously</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.binary_path">
 <code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.bind">
 <code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=’-B’,read_only=False,write_only=False,cache=False)
-bind connection to specified IP</p>
+<dd><p>Unicode(command=’-B’,read_only=False,write_only=False,cache=False)</p>
+<p>bind connection to specified IP</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=’-b’,read_only=False,write_only=False,cache=False)
-Maximum bit rate (append unit for size, e.g. 10K)</p>
+<dd><p>Unicode(command=’-b’,read_only=False,write_only=False,cache=False)</p>
+<p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=None,command=’-l’,read_only=False,write_only=False,cache=False)
-Size of data buffer that generates traffic (bytes)</p>
+<dd><p>Int(min=1,command=’-l’,read_only=False,write_only=False,cache=False)</p>
+<p>Size of data buffer that generates traffic (bytes)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -343,8 +334,8 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -364,43 +355,43 @@ named <cite>parameter</cite> is redefined to have default_value=7.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=0.01,max=inf,step=None,command=’-i’,read_only=False,write_only=False,cache=False)
-Interval between throughput reports (s)</p>
+<dd><p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,cache=False)</p>
+<p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=None,command=’-p’,read_only=False,write_only=False,cache=False)
-connection port</p>
+<dd><p>Int(min=1,command=’-p’,read_only=False,write_only=False,cache=False)</p>
+<p>connection port</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
-the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=None,command=’-w’,read_only=False,write_only=False,cache=False)
-(bytes)</p>
+<dd><p>Int(min=1,command=’-w’,read_only=False,write_only=False,cache=False)</p>
+<p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)
-time in seconds to transmit before quitting (default 10s)</p>
+<dd><p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)</p>
+<p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
-wait time for traffic results before throwing a timeout exception (s)</p>
+<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<p>wait time for traffic results before throwing a timeout exception (s)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -418,17 +409,10 @@ the event handlers of this class will be returned instead.</dd>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=’-u’,read_only=False,write_only=False,cache=False)
-UDP instead of TCP networking</p>
+<dd><p>Bool(command=’-u’,read_only=False,write_only=False,cache=False)</p>
+<p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfClient.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after connect() if no exceptions are raised.
-:return: None</p>
 </dd></dl>
 
 <dl class="method">
@@ -484,8 +468,38 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfClient.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfClient.state.getter">
+<em class="property">classmethod </em><code class="descname">getter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.getter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The getter should take one argument: the instance
+of the trait to get. It should perform any
+operation needed to retrieve the current value of the device state
+corresponding to the supplied trait, using <cite>self._device</cite>.</p>
+<p>One example is to send a command defined by
+trait.command.</p>
+<p>The function should return a value that is the state from the
+device.</p>
+<p>A trait that has its own getter defined will ignore this
+one.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfClient.state.setter">
+<em class="property">classmethod </em><code class="descname">setter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfClient.state.setter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The setter should take two arguments: the instance
+of the trait to get, and the value to set. It should perform any
+operation needed to apply the given value to the trait’s state
+in <cite>self._device</cite>. One example is to send a command defined by
+trait.command.</p>
+<p>Any return value from the function is ignored.</p>
+<p>A trait that has its own setter defined will ignore this
+one.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -514,8 +528,53 @@ the event handlers of this class will be returned instead.</dd>
 <em class="property">class </em><code class="descclassname">ssmdevices.software.iperf.</code><code class="descname">IPerf</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.CommandLineWrapper</span></code></p>
 <p>Run an instance of iperf, collecting output data in a background thread.
-When running as an iperf client (server=False), 
+When running as an iperf client (server=False),
 The default value is the path that installs with 64-bit cygwin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>arguments</strong> – List(read_only=False,write_only=False,cache=False)</li>
+<li><strong>bidirectional</strong> – <p>Bool(command=’-d’,read_only=False,write_only=False,cache=False)</p>
+<p>Send and receive simultaneously</p>
+</li>
+<li><strong>binary_path</strong> – Unicode(read_only=False,write_only=False,cache=False)</li>
+<li><strong>bind</strong> – <p>Unicode(command=’-B’,read_only=False,write_only=False,cache=False)</p>
+<p>bind connection to specified IP</p>
+</li>
+<li><strong>bit_rate</strong> – <p>Unicode(command=’-b’,read_only=False,write_only=False,cache=False)</p>
+<p>Maximum bit rate (append unit for size, e.g. 10K)</p>
+</li>
+<li><strong>buffer_size</strong> – <p>Int(min=1,command=’-l’,read_only=False,write_only=False,cache=False)</p>
+<p>Size of data buffer that generates traffic (bytes)</p>
+</li>
+<li><strong>interval</strong> – <p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,cache=False)</p>
+<p>Interval between throughput reports (s)</p>
+</li>
+<li><strong>port</strong> – <p>Int(min=1,command=’-p’,read_only=False,write_only=False,cache=False)</p>
+<p>connection port</p>
+</li>
+<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</li>
+<li><strong>tcp_window_size</strong> – <p>Int(min=1,command=’-w’,read_only=False,write_only=False,cache=False)</p>
+<p>(bytes)</p>
+</li>
+<li><strong>time</strong> – <p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)</p>
+<p>time in seconds to transmit before quitting (default 10s)</p>
+</li>
+<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<p>wait time for traffic results before throwing a timeout exception (s)</p>
+</li>
+<li><strong>udp</strong> – <p>Bool(command=’-u’,read_only=False,write_only=False,cache=False)</p>
+<p>use UDP instead of the default, TCP</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.backend">
 <code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.backend" title="Permalink to this definition">¶</a></dt>
@@ -555,58 +614,9 @@ with self.no_state_arguments:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.software.iperf.IPerf.cleanup">
-<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.cleanup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called before a device is disconnected
-:return: None</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="ssmdevices.software.iperf.IPerf.clear">
 <code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear queued standard output, discarding any contents</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerf.command_get">
-<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.command_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a setting from a remote instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerf.command_set">
-<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-<li><strong>value</strong> – the value to set</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
@@ -697,11 +707,6 @@ executed or is empty. Running the command line multiple times overwrites the que
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerf.resource">
-<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.resource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.respawn">
 <code class="descname">respawn</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.respawn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use this context manager to respawning background execution.</p>
@@ -728,48 +733,48 @@ executed or is empty. Running the command line multiple times overwrites the que
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.arguments">
 <code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.List(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>List(read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)
-minimum number of extra command line arguments to pass to the executable</p>
+<dd><p>Int(min=0,read_only=True,write_only=False,cache=False)</p>
+<p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=’-d’,read_only=False,write_only=False,cache=False)
-Send and receive simultaneously</p>
+<dd><p>Bool(command=’-d’,read_only=False,write_only=False,cache=False)</p>
+<p>Send and receive simultaneously</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.binary_path">
 <code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.bind">
 <code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=’-B’,read_only=False,write_only=False,cache=False)
-bind connection to specified IP</p>
+<dd><p>Unicode(command=’-B’,read_only=False,write_only=False,cache=False)</p>
+<p>bind connection to specified IP</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=’-b’,read_only=False,write_only=False,cache=False)
-Maximum bit rate (append unit for size, e.g. 10K)</p>
+<dd><p>Unicode(command=’-b’,read_only=False,write_only=False,cache=False)</p>
+<p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=None,command=’-l’,read_only=False,write_only=False,cache=False)
-Size of data buffer that generates traffic (bytes)</p>
+<dd><p>Int(min=1,command=’-l’,read_only=False,write_only=False,cache=False)</p>
+<p>Size of data buffer that generates traffic (bytes)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -813,8 +818,8 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -834,43 +839,43 @@ named <cite>parameter</cite> is redefined to have default_value=7.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=0.01,max=inf,step=None,command=’-i’,read_only=False,write_only=False,cache=False)
-Interval between throughput reports (s)</p>
+<dd><p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,cache=False)</p>
+<p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=None,command=’-p’,read_only=False,write_only=False,cache=False)
-connection port</p>
+<dd><p>Int(min=1,command=’-p’,read_only=False,write_only=False,cache=False)</p>
+<p>connection port</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
-the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=None,command=’-w’,read_only=False,write_only=False,cache=False)
-(bytes)</p>
+<dd><p>Int(min=1,command=’-w’,read_only=False,write_only=False,cache=False)</p>
+<p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)
-time in seconds to transmit before quitting (default 10s)</p>
+<dd><p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)</p>
+<p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
-wait time for traffic results before throwing a timeout exception (s)</p>
+<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<p>wait time for traffic results before throwing a timeout exception (s)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -888,17 +893,10 @@ the event handlers of this class will be returned instead.</dd>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=’-u’,read_only=False,write_only=False,cache=False)
-UDP instead of TCP networking</p>
+<dd><p>Bool(command=’-u’,read_only=False,write_only=False,cache=False)</p>
+<p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerf.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after connect() if no exceptions are raised.
-:return: None</p>
 </dd></dl>
 
 <dl class="method">
@@ -954,8 +952,38 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerf.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerf.state.getter">
+<em class="property">classmethod </em><code class="descname">getter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.getter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The getter should take one argument: the instance
+of the trait to get. It should perform any
+operation needed to retrieve the current value of the device state
+corresponding to the supplied trait, using <cite>self._device</cite>.</p>
+<p>One example is to send a command defined by
+trait.command.</p>
+<p>The function should return a value that is the state from the
+device.</p>
+<p>A trait that has its own getter defined will ignore this
+one.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerf.state.setter">
+<em class="property">classmethod </em><code class="descname">setter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerf.state.setter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The setter should take two arguments: the instance
+of the trait to get, and the value to set. It should perform any
+operation needed to apply the given value to the trait’s state
+in <cite>self._device</cite>. One example is to send a command defined by
+trait.command.</p>
+<p>Any return value from the function is ignored.</p>
+<p>A trait that has its own setter defined will ignore this
+one.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -983,6 +1011,52 @@ the event handlers of this class will be returned instead.</dd>
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid">
 <em class="property">class </em><code class="descclassname">ssmdevices.software.iperf.</code><code class="descname">IPerfOnAndroid</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ssmdevices.software.iperf.IPerf" title="ssmdevices.software.iperf.IPerf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ssmdevices.software.iperf.IPerf</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>arguments</strong> – List(read_only=False,write_only=False,cache=False)</li>
+<li><strong>bidirectional</strong> – <p>Bool(command=’-d’,read_only=False,write_only=False,cache=False)</p>
+<p>Send and receive simultaneously</p>
+</li>
+<li><strong>binary_path</strong> – Unicode(read_only=False,write_only=False,cache=False)</li>
+<li><strong>bind</strong> – <p>Unicode(command=’-B’,read_only=False,write_only=False,cache=False)</p>
+<p>bind connection to specified IP</p>
+</li>
+<li><strong>bit_rate</strong> – <p>Unicode(command=’-b’,read_only=False,write_only=False,cache=False)</p>
+<p>Maximum bit rate (append unit for size, e.g. 10K)</p>
+</li>
+<li><strong>buffer_size</strong> – <p>Int(min=1,command=’-l’,read_only=False,write_only=False,cache=False)</p>
+<p>Size of data buffer that generates traffic (bytes)</p>
+</li>
+<li><strong>interval</strong> – <p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,cache=False)</p>
+<p>Interval between throughput reports (s)</p>
+</li>
+<li><strong>port</strong> – <p>Int(min=1,command=’-p’,read_only=False,write_only=False,cache=False)</p>
+<p>connection port</p>
+</li>
+<li><strong>remote_binary_path</strong> – Unicode(read_only=False,write_only=False,cache=False)</li>
+<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</li>
+<li><strong>tcp_window_size</strong> – <p>Int(min=1,command=’-w’,read_only=False,write_only=False,cache=False)</p>
+<p>(bytes)</p>
+</li>
+<li><strong>time</strong> – <p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)</p>
+<p>time in seconds to transmit before quitting (default 10s)</p>
+</li>
+<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<p>wait time for traffic results before throwing a timeout exception (s)</p>
+</li>
+<li><strong>udp</strong> – <p>Bool(command=’-u’,read_only=False,write_only=False,cache=False)</p>
+<p>use UDP instead of the default, TCP</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.backend">
 <code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.backend" title="Permalink to this definition">¶</a></dt>
@@ -1022,63 +1096,14 @@ with self.no_state_arguments:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.cleanup">
-<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.cleanup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called before a device is disconnected
-:return: None</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.clear">
 <code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear queued standard output, discarding any contents</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.command_get">
-<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.command_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a setting from a remote instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.command_set">
-<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-<li><strong>value</strong> – the value to set</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.connect" title="Permalink to this definition">¶</a></dt>
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <a class="reference internal" href="#ssmdevices.software.iperf.IPerfOnAndroid.connect" title="ssmdevices.software.iperf.IPerfOnAndroid.connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a> method exists to comply with the
 <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> object protocol. Call the
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code> method when connected to
@@ -1176,11 +1201,6 @@ resulting status messages.</p>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.resource">
-<code class="descname">resource</code><em class="property"> = None</em><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.resource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.respawn">
 <code class="descname">respawn</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.respawn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use this context manager to respawning background execution.</p>
@@ -1207,48 +1227,48 @@ resulting status messages.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.arguments">
 <code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.List(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>List(read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)
-minimum number of extra command line arguments to pass to the executable</p>
+<dd><p>Int(min=0,read_only=True,write_only=False,cache=False)</p>
+<p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=’-d’,read_only=False,write_only=False,cache=False)
-Send and receive simultaneously</p>
+<dd><p>Bool(command=’-d’,read_only=False,write_only=False,cache=False)</p>
+<p>Send and receive simultaneously</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.binary_path">
 <code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.bind">
 <code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=’-B’,read_only=False,write_only=False,cache=False)
-bind connection to specified IP</p>
+<dd><p>Unicode(command=’-B’,read_only=False,write_only=False,cache=False)</p>
+<p>bind connection to specified IP</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=’-b’,read_only=False,write_only=False,cache=False)
-Maximum bit rate (append unit for size, e.g. 10K)</p>
+<dd><p>Unicode(command=’-b’,read_only=False,write_only=False,cache=False)</p>
+<p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=None,command=’-l’,read_only=False,write_only=False,cache=False)
-Size of data buffer that generates traffic (bytes)</p>
+<dd><p>Int(min=1,command=’-l’,read_only=False,write_only=False,cache=False)</p>
+<p>Size of data buffer that generates traffic (bytes)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1292,8 +1312,8 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1313,49 +1333,49 @@ named <cite>parameter</cite> is redefined to have default_value=7.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=0.01,max=inf,step=None,command=’-i’,read_only=False,write_only=False,cache=False)
-Interval between throughput reports (s)</p>
+<dd><p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,cache=False)</p>
+<p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=None,command=’-p’,read_only=False,write_only=False,cache=False)
-connection port</p>
+<dd><p>Int(min=1,command=’-p’,read_only=False,write_only=False,cache=False)</p>
+<p>connection port</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.remote_binary_path">
 <code class="descname">remote_binary_path</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.remote_binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
-the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=1,max=None,command=’-w’,read_only=False,write_only=False,cache=False)
-(bytes)</p>
+<dd><p>Int(min=1,command=’-w’,read_only=False,write_only=False,cache=False)</p>
+<p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)
-time in seconds to transmit before quitting (default 10s)</p>
+<dd><p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,cache=False)</p>
+<p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
-wait time for traffic results before throwing a timeout exception (s)</p>
+<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<p>wait time for traffic results before throwing a timeout exception (s)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1373,17 +1393,10 @@ the event handlers of this class will be returned instead.</dd>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=’-u’,read_only=False,write_only=False,cache=False)
-UDP instead of TCP networking</p>
+<dd><p>Bool(command=’-u’,read_only=False,write_only=False,cache=False)</p>
+<p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.iperf.IPerfOnAndroid.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/iperf.html#IPerfOnAndroid.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after connect() if no exceptions are raised.
-:return: None</p>
 </dd></dl>
 
 <dl class="method">
@@ -1439,8 +1452,38 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.getter">
+<em class="property">classmethod </em><code class="descname">getter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.getter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The getter should take one argument: the instance
+of the trait to get. It should perform any
+operation needed to retrieve the current value of the device state
+corresponding to the supplied trait, using <cite>self._device</cite>.</p>
+<p>One example is to send a command defined by
+trait.command.</p>
+<p>The function should return a value that is the state from the
+device.</p>
+<p>A trait that has its own getter defined will ignore this
+one.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.iperf.IPerfOnAndroid.state.setter">
+<em class="property">classmethod </em><code class="descname">setter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.iperf.IPerfOnAndroid.state.setter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The setter should take two arguments: the instance
+of the trait to get, and the value to set. It should perform any
+operation needed to apply the given value to the trait’s state
+in <cite>self._device</cite>. One example is to send a command defined by
+trait.command.</p>
+<p>Any return value from the function is ignored.</p>
+<p>A trait that has its own setter defined will ignore this
+one.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1495,9 +1538,6 @@ the event handlers of this class will be returned instead.</dd>
 </dd></dl>
 
 </div>
-<div class="section" id="ssmdevices-software-qpst-module">
-<h2>ssmdevices.software.qpst module<a class="headerlink" href="#ssmdevices-software-qpst-module" title="Permalink to this headline">¶</a></h2>
-</div>
 <div class="section" id="module-ssmdevices.software.qxdm">
 <span id="ssmdevices-software-qxdm-module"></span><h2>ssmdevices.software.qxdm module<a class="headerlink" href="#module-ssmdevices.software.qxdm" title="Permalink to this headline">¶</a></h2>
 <p>Basic control over the QXDM software.</p>
@@ -1505,7 +1545,7 @@ the event handlers of this class will be returned instead.</dd>
 Edits by Dan Kuester (<a class="reference external" href="mailto:dkuester&#37;&#52;&#48;nist&#46;gov">dkuester<span>&#64;</span>nist<span>&#46;</span>gov</a>)</p>
 <dl class="class">
 <dt id="ssmdevices.software.qxdm.QXDM">
-<em class="property">class </em><code class="descclassname">ssmdevices.software.qxdm.</code><code class="descname">QXDM</code><span class="sig-paren">(</span><em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ssmdevices.software.qxdm.</code><code class="descname">QXDM</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.Win32ComDevice</span></code></p>
 <p>Class to provide some basic control over the QXDM software.</p>
 <dl class="docutils">
@@ -1513,59 +1553,33 @@ Edits by Dan Kuester (<a class="reference external" href="mailto:dkuester&#37;&#
 <dd>resource int; port number in QXDM to which UE is connected, e.g. 10 for COM10
 config_path str;</dd>
 </dl>
-<dl class="attribute">
-<dt id="ssmdevices.software.qxdm.QXDM.backend">
-<code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.backend" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.qxdm.QXDM.cleanup">
-<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.cleanup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called before a device is disconnected
-:return: None</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.qxdm.QXDM.command_get">
-<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM.command_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.command_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a setting from a remote instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.qxdm.QXDM.command_set">
-<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-<li><strong>value</strong> – the value to set</li>
+<li><strong>cache_path</strong> – <p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>folder path to contain auto-saved isf file(s)</p>
+</li>
+<li><strong>com_object</strong> – Unicode(read_only=False,write_only=False,cache=False)</li>
+<li><strong>concurrency_support</strong> – <p>Bool(read_only=False,write_only=False,cache=False)</p>
+<p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+</li>
+<li><strong>connection_timeout</strong> – <p>Float(min=0.5,max=inf,read_only=False,write_only=False,cache=False)</p>
+<p>connection timeout in seconds</p>
+</li>
+<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
+<dl class="attribute">
+<dt id="ssmdevices.software.qxdm.QXDM.backend">
+<code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.qxdm.QXDM.configure">
@@ -1588,6 +1602,11 @@ file size.</p>
 <dd><p>Backend implementations must overload this to disconnect an
 existing connection to the resource encapsulated in the object.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="ssmdevices.software.qxdm.QXDM.reconnect">
+<code class="descname">reconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM.reconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.reconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.qxdm.QXDM.save">
@@ -1613,8 +1632,8 @@ self.data_filename.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.cache_path">
 <code class="descname">cache_path</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.cache_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
-folder path to contain auto-saved isf file(s)</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>folder path to contain auto-saved isf file(s)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1658,21 +1677,21 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.com_object">
 <code class="descname">com_object</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.com_object" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=False,write_only=False,cache=False)
-whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.connection_timeout">
 <code class="descname">connection_timeout</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.connection_timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=0.5,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
-connection timeout in seconds</p>
+<dd><p>Float(min=0.5,max=inf,read_only=False,write_only=False,cache=False)</p>
+<p>connection timeout in seconds</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1692,8 +1711,8 @@ named <cite>parameter</cite> is redefined to have default_value=7.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
-the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1708,13 +1727,6 @@ the event handlers of this class will be returned instead.</dd>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.qxdm.QXDM.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/qxdm.html#QXDM.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Like all other Device subclasses, this setup method is run
-automatically right after .connect().</p>
 </dd></dl>
 
 <dl class="method">
@@ -1769,8 +1781,38 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.qxdm.QXDM.state.getter">
+<em class="property">classmethod </em><code class="descname">getter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.getter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The getter should take one argument: the instance
+of the trait to get. It should perform any
+operation needed to retrieve the current value of the device state
+corresponding to the supplied trait, using <cite>self._device</cite>.</p>
+<p>One example is to send a command defined by
+trait.command.</p>
+<p>The function should return a value that is the state from the
+device.</p>
+<p>A trait that has its own getter defined will ignore this
+one.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.qxdm.QXDM.state.setter">
+<em class="property">classmethod </em><code class="descname">setter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.setter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The setter should take two arguments: the instance
+of the trait to get, and the value to set. It should perform any
+operation needed to apply the given value to the trait’s state
+in <cite>self._device</cite>. One example is to send a command defined by
+trait.command.</p>
+<p>Any return value from the function is ignored.</p>
+<p>A trait that has its own setter defined will ignore this
+one.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1788,43 +1830,43 @@ the event handlers of this class will be returned instead.</dd>
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_build_id">
 <code class="descname">ue_build_id</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_build_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=’ue_build_id’,read_only=False,write_only=False,cache=False)
-Build ID of software on the phone</p>
+<dd><p>Unicode(command=’ue_build_id’,read_only=False,write_only=False,cache=False)</p>
+<p>Build ID of software on the phone</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_esn">
 <code class="descname">ue_esn</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_esn" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=None,max=None,command=’ue_esn’,read_only=False,write_only=False,cache=False)
-Phone ESN</p>
+<dd><p>Unicode(command=’ue_esn’,read_only=False,write_only=False,cache=False)</p>
+<p>Phone ESN</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_imei">
 <code class="descname">ue_imei</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_imei" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=None,max=None,command=’ue_imei’,read_only=False,write_only=False,cache=False)
-Phone IMEI</p>
+<dd><p>Unicode(command=’ue_imei’,read_only=False,write_only=False,cache=False)</p>
+<p>Phone IMEI</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_mode">
 <code class="descname">ue_mode</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=’ue_mode’,read_only=False,write_only=False,cache=False)
-current state of the phone</p>
+<dd><p>Unicode(command=’ue_mode’,read_only=False,write_only=False,cache=False)</p>
+<p>current state of the phone</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_model_number">
 <code class="descname">ue_model_number</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_model_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=None,max=None,command=’ue_model_number’,read_only=False,write_only=False,cache=False)
-model number code</p>
+<dd><p>Unicode(command=’ue_model_number’,read_only=False,write_only=False,cache=False)</p>
+<p>model number code</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.version">
 <code class="descname">version</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.version" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=True,write_only=False,cache=True)
-QXDM application version</p>
+<dd><p>Unicode(read_only=True,write_only=False,cache=True)</p>
+<p>QXDM application version</p>
 </dd></dl>
 
 </dd></dl>
@@ -1840,6 +1882,28 @@ QXDM application version</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.CommandLineWrapper</span></code></p>
 <p>Parse calls to netsh to get information about available WLAN access
 points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>arguments</strong> – <p>List(read_only=False,write_only=False,cache=False)</p>
+<p>list of command line arguments to pass into the executable</p>
+</li>
+<li><strong>binary_path</strong> – <p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>path to the file to run</p>
+</li>
+<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+</li>
+<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<p>Timeout (sec) after disconnect is called before killing the process</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.backend">
 <code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.software.windows.Netsh.backend" title="Permalink to this definition">¶</a></dt>
@@ -1879,58 +1943,9 @@ with self.no_state_arguments:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="ssmdevices.software.windows.Netsh.cleanup">
-<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.cleanup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called before a device is disconnected
-:return: None</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="ssmdevices.software.windows.Netsh.clear">
 <code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear queued standard output, discarding any contents</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.windows.Netsh.command_get">
-<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.command_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a setting from a remote instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.windows.Netsh.command_set">
-<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-<li><strong>value</strong> – the value to set</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
@@ -2055,22 +2070,22 @@ executed or is empty. Running the command line multiple times overwrites the que
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.arguments">
 <code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.List(command=None,read_only=False,write_only=False,cache=False)
-list of command line arguments to pass into the executable</p>
+<dd><p>List(read_only=False,write_only=False,cache=False)</p>
+<p>list of command line arguments to pass into the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)
-minimum number of extra command line arguments to pass to the executable</p>
+<dd><p>Int(min=0,read_only=True,write_only=False,cache=False)</p>
+<p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.binary_path">
 <code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
-path to the file to run</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>path to the file to run</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2114,8 +2129,8 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2135,15 +2150,15 @@ named <cite>parameter</cite> is redefined to have default_value=7.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)
-the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Float(min=0,max=inf,step=None,command=None,read_only=False,write_only=False,cache=False)
-Timeout (sec) after disconnect is called before killing the process</p>
+<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<p>Timeout (sec) after disconnect is called before killing the process</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2158,13 +2173,6 @@ the event handlers of this class will be returned instead.</dd>
 <p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.windows.Netsh.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after connect() if no exceptions are raised.
-:return: None</p>
 </dd></dl>
 
 <dl class="class">
@@ -2215,8 +2223,38 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.state.getter">
+<em class="property">classmethod </em><code class="descname">getter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.getter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The getter should take one argument: the instance
+of the trait to get. It should perform any
+operation needed to retrieve the current value of the device state
+corresponding to the supplied trait, using <cite>self._device</cite>.</p>
+<p>One example is to send a command defined by
+trait.command.</p>
+<p>The function should return a value that is the state from the
+device.</p>
+<p>A trait that has its own getter defined will ignore this
+one.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.Netsh.state.setter">
+<em class="property">classmethod </em><code class="descname">setter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.setter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The setter should take two arguments: the instance
+of the trait to get, and the value to set. It should perform any
+operation needed to apply the given value to the trait’s state
+in <cite>self._device</cite>. One example is to send a command defined by
+trait.command.</p>
+<p>Any return value from the function is ignored.</p>
+<p>A trait that has its own setter defined will ignore this
+one.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2249,59 +2287,23 @@ the event handlers of this class will be returned instead.</dd>
 <dt id="ssmdevices.software.windows.WLANStatus">
 <em class="property">class </em><code class="descclassname">ssmdevices.software.windows.</code><code class="descname">WLANStatus</code><span class="sig-paren">(</span><em>resource=None</em>, <em>**settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.Device</span></code></p>
-<dl class="attribute">
-<dt id="ssmdevices.software.windows.WLANStatus.backend">
-<code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.backend" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.windows.WLANStatus.cleanup">
-<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.cleanup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called before a device is disconnected
-:return: None</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.windows.WLANStatus.command_get">
-<code class="descname">command_get</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.command_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.command_get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a setting from a remote instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value retrieved from the instrument</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ssmdevices.software.windows.WLANStatus.command_set">
-<code class="descname">command_set</code><span class="sig-paren">(</span><em>command</em>, <em>trait</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.command_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply an instrument setting to the instrument, keyed on a command string.
-Implement this for message-based protocols, like VISA SCPI or some serial devices.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>command</strong> (<em>str</em>) – the command message to apply to <cite>value</cite></li>
-<li><strong>trait</strong> – the state descriptor or traitlet</li>
-<li><strong>value</strong> – the value to set</li>
+<li><strong>force_reconnect</strong> – a boolean</li>
+<li><strong>resource</strong> – Unicode(read_only=False,write_only=False,cache=False)</li>
+<li><strong>ssid</strong> – Unicode(read_only=False,write_only=False,cache=False)</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
+<dl class="attribute">
+<dt id="ssmdevices.software.windows.WLANStatus.backend">
+<code class="descname">backend</code><em class="property"> = DisconnectedBackend()</em><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="ssmdevices.software.windows.WLANStatus.connect">
@@ -2362,8 +2364,8 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2389,13 +2391,13 @@ named <cite>parameter</cite> is redefined to have default_value=7.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.settings.ssid">
 <code class="descname">ssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.ssid" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Unicode(command=None,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2412,13 +2414,6 @@ the event handlers of this class will be returned instead.</dd>
 
 </dd></dl>
 
-<dl class="method">
-<dt id="ssmdevices.software.windows.WLANStatus.setup">
-<code class="descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.setup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after connect() if no exceptions are raised.
-:return: None</p>
-</dd></dl>
-
 <dl class="class">
 <dt id="ssmdevices.software.windows.WLANStatus.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/software/windows.html#WLANStatus.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state" title="Permalink to this definition">¶</a></dt>
@@ -2426,13 +2421,13 @@ the event handlers of this class will be returned instead.</dd>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid">
 <code class="descname">bssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>Bytes(read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.channel">
 <code class="descname">channel</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.channel" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>Int(min=0,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2476,32 +2471,62 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bool(command=None,read_only=True,write_only=False,cache=False)
-whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.state.getter">
+<em class="property">classmethod </em><code class="descname">getter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.getter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The getter should take one argument: the instance
+of the trait to get. It should perform any
+operation needed to retrieve the current value of the device state
+corresponding to the supplied trait, using <cite>self._device</cite>.</p>
+<p>One example is to send a command defined by
+trait.command.</p>
+<p>The function should return a value that is the state from the
+device.</p>
+<p>A trait that has its own getter defined will ignore this
+one.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.radio_type">
 <code class="descname">radio_type</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.radio_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>Bytes(read_only=True,write_only=False,cache=False)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ssmdevices.software.windows.WLANStatus.state.setter">
+<em class="property">classmethod </em><code class="descname">setter</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.setter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this as a decorator to define a setter function for all traits
+in this class. The setter should take two arguments: the instance
+of the trait to get, and the value to set. It should perform any
+operation needed to apply the given value to the trait’s state
+in <cite>self._device</cite>. One example is to send a command defined by
+trait.command.</p>
+<p>Any return value from the function is ignored.</p>
+<p>A trait that has its own setter defined will ignore this
+one.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.signal">
 <code class="descname">signal</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.signal" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=100,command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>Int(min=0,max=100,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.ssid">
 <code class="descname">ssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.ssid" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>Bytes(read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.state">
 <code class="descname">state</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Bytes(command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>Bytes(read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2519,7 +2544,7 @@ the event handlers of this class will be returned instead.</dd>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.transmit_rate_mbps">
 <code class="descname">transmit_rate_mbps</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.transmit_rate_mbps" title="Permalink to this definition">¶</a></dt>
-<dd><p>labbench.Int(min=0,max=None,command=None,read_only=True,write_only=False,cache=False)</p>
+<dd><p>Int(min=0,read_only=True,write_only=False,cache=False)</p>
 </dd></dl>
 
 </dd></dl>
