@@ -1,5 +1,5 @@
-ssmdevices\.lib package
-=======================
+ssmdevices.lib package
+======================
 
 Module contents
 ---------------

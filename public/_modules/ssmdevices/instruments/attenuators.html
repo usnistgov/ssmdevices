@@ -4,27 +4,18 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ssmdevices.instruments.attenuators &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '0.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head>
-  <body>
+  </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.instruments.attenuators</span></h2>
@@ -57,7 +48,7 @@
 
 <span class="kn">from</span> <span class="nn">labbench</span> <span class="k">import</span> <span class="n">DotNetDevice</span>
 <span class="kn">import</span> <span class="nn">ssmdevices.lib</span>
-<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">core</span>
+<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
 
 <div class="viewcode-block" id="MiniCircuitsRCDAT"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT">[docs]</a><span class="k">class</span> <span class="nc">MiniCircuitsRCDAT</span><span class="p">(</span><span class="n">DotNetDevice</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; A digitally controlled, 0 to 110 dB variable attenuator.</span>
@@ -71,7 +62,7 @@
     <span class="n">dll_name</span> <span class="o">=</span> <span class="s1">&#39;mcl_RUDAT64.dll&#39;</span>
     
 <div class="viewcode-block" id="MiniCircuitsRCDAT.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">DotNetDevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
-        <span class="n">attenuation</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span></div>
+        <span class="n">attenuation</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MiniCircuitsRCDAT.connect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Open the device resource.</span>
@@ -80,8 +71,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Minicircuits attenuator support currently requires pythonnet and windows&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll</span><span class="o">.</span><span class="n">USB_RUDAT</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Cannot connect to attenuator resource </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Cannot connect to attenuator resource </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="MiniCircuitsRCDAT.disconnect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Release the attenuator hardware resource via the driver DLL.</span>
@@ -132,7 +123,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
     </div>
   </body>
 </html>

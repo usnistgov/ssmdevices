@@ -10,7 +10,7 @@ __all__ = ['MiniCircuitsUSBSwitch']
 
 from labbench import DotNetDevice
 import ssmdevices.lib
-import labbench as core
+import labbench as lb
 
 class MiniCircuitsUSBSwitch(DotNetDevice):
     ''' A digitally controlled solid-state switch.
@@ -27,12 +27,11 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
     dll_name = 'mcl_SolidStateSwitch64.dll'
 
     class state(DotNetDevice.state):
-        port = core.Int(min=1)
+        port = lb.Int(min=1)
 
     def connect (self):
         ''' Open the device resource.
         '''
-        super().connect()
         if self.dll is None:
             raise Exception('Minicircuits attenuator support currently requires pythonnet and windows')
         # The USB_Digital_Switch namespace is given in the minicircuits docs

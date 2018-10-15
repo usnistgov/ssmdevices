@@ -127,7 +127,7 @@ class WLANStatus(lb.Device):
             self.logger.debug('starting WLAN reconnect watchdog')
             iface = self.settings.resource
             target_ssid = self.settings.ssid
-            time.sleep(0.1)
+            lb.sleep(0.1)
             
             while True:
                 if not self.state.connected:
@@ -144,7 +144,7 @@ class WLANStatus(lb.Device):
                         self.backend.set_interface_connected(self.settings.resource,
                                                              target_ssid)
                         
-                time.sleep(.1)
+                lb.sleep(.1)
         
         threading.Thread(target=reconnect).start()
 
@@ -154,10 +154,11 @@ class WLANStatus(lb.Device):
         except lb.ConnectionError:
             pass
 
-    def command_get (self, command, trait):
+    @state.getter
+    def __(self, trait):
         d = self.backend.get_wlan_interfaces()
         resource = self.settings.resource
-        
+
         if self.settings.resource is None:
             if len(d) == 0:
                 raise OSError('no WLAN interfaces available')
@@ -207,4 +208,4 @@ if __name__ == '__main__':
                     pass
             else:
                 print('not connected')
-            time.sleep(.25)
+            lb.sleep(.25)

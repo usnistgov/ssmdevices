@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
 
-""" Network test instrument control classes
-
-:author: Aziz Kord <azizollah.kord@nist.gov>, Dan Kuester <daniel.kuester@nist.gov>
+""" Network test instruments
 """
+
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from future import standard_library
 standard_library.install_aliases()
 
 import labbench as lb
-import time, os, ssmdevices.etc
+import time, os
 import numbers
 
+__copyright__ = "U.S. government work, not subject to copyright in the U.S."
+__credits__ = ["Aziz Kord", "Dan Kuester"]
+__author__ = ','.join(__credits__)
+__license__ = "NIST"
+__maintainer__ = "Dan Kuester"
+__email__ = "daniel.kuester@nist.gov"
 __all__ = ['AeroflexTM500']
 
 class TM500Error(ValueError):
@@ -116,13 +121,12 @@ class AeroflexTM500(lb.TelnetDevice):
                     ret = self._convert_to_text()
                 self._send('forw mte GetRrcStats [] [] [] [1] [1]')
                 self._send('forw mte GetNasStats [] [] [] [] [1] [1]')
-        finally:
-            try:
-                self._send('SDLI LTE_RADIO_CONTEXT 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
-                self._send('SDLI LTE_NAS_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
-                self._send('SDLI LTE_RRC_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
-            except TM500Error as e:
-                self.logger.debug('exception on attempt to cleanup scenario: {}'.format(str(e)))
+        try:
+            self._send('SDLI LTE_RADIO_CONTEXT 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
+            self._send('SDLI LTE_NAS_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
+            self._send('SDLI LTE_RRC_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
+        except TM500Error as e:
+            self.logger.debug('exception on attempt to cleanup scenario: {}'.format(str(e)))
 
         self.__latest['scenario_name'] = None
         self.__latest['data'] = None
@@ -199,27 +203,27 @@ class AeroflexTM500(lb.TelnetDevice):
             f.write(b'\r\n'.join(commands))
 
     def disconnect(self):
-        if self.__latest.get('scenario_name') is not None:
-            try:
-                self.stop(convert=False)
-            except TM500Error as e:
-                if e.errcode not in (0x02, 0x06):
-                    raise
-
         try:
-            self._send('#$$DISCONNECT', confirm=False)
-        except:
-            pass
+            if self.__latest.get('scenario_name') is not None:
+                self.stop(convert=False)
+        except TM500Error as e:
+            if e.errcode not in (0x02, 0x06):
+                raise
+        finally:
+            try:
+                self._send('#$$DISCONNECT', confirm=False)
+            except:
+                pass
+            super(AeroflexTM500, self).disconnect()
 
-        super(AeroflexTM500, self).disconnect()
+    def connect(self):
+        self.__latest = {}
 
-    def setup(self):
         # Invalidate any incomplete previous commands in the remote telnet buffer
         try:
             self._send('***', timeout=1)
         except (ValueError,TimeoutError):
             pass
-        self.__latest = {}
         
         try:
             self._send('#$$DISCONNECT', timeout=1)
@@ -255,7 +259,7 @@ class AeroflexTM500(lb.TelnetDevice):
                       .format(ip=self.settings.remote_ip, ports=self.settings.remote_ports),
                       timeout=1)
             self._send('#$$CONNECT')
-            
+
     def _block_until_min_acquisition(self):
         ''' Make sure the minimum acquisition time has elapsed to avoid putting
             the TM500 in a sad state
@@ -264,8 +268,8 @@ class AeroflexTM500(lb.TelnetDevice):
         if self.__latest.get('trigger_time',0) > 0:
             elapsed = time.time()-self.__latest.get('trigger_time',0)
             if elapsed < self.settings.min_acquisition_time:
-                time.sleep(self.settings.min_acquisition_time-elapsed)
-        
+                lb.sleep(self.settings.min_acquisition_time-elapsed)
+
     def _send(self, msg, data_lines=1, confirm=True, timeout=None):
         ''' Send a message, then block until a confirmation message is received.
         
@@ -302,15 +306,23 @@ class AeroflexTM500(lb.TelnetDevice):
         rsp = b'C: ' + rsp + b' '
 
         # Block until the response
-        ret = self._read_until(rsp, timeout)
-        # Receive through the end of line for the rest of the status response
-        ret = rsp
-        for i in range(data_lines):
-            ret = ret + self.backend.read_until(b'\r')
-            code = int(ret.strip().split(b'0x',1)[1].split(maxsplit=1)[0],16)
-            if i == 0 and code != 0:
-                raise TM500Error('Error in message {}: {}'\
-                                 .format(repr(msg), repr(ret)), code)
+        try:
+            ret = self._read_until(rsp, timeout)
+            
+            # Receive through the end of line for the rest of the status response
+            if timeout is None:
+                timeout = self.settings.timeout
+            ret = rsp
+            for i in range(data_lines):
+                ret = ret + self.backend.read_until(b'\r', timeout=timeout)
+                code = int(ret.strip().split(b'0x',1)[1].split(maxsplit=1)[0],16)
+                if i == 0 and code != 0:
+                    raise TM500Error('Error in message {}: {}'\
+                                     .format(repr(msg), repr(ret)), code)
+        except TimeoutError:
+            raise TimeoutError('timeout waiting for response to command {}'\
+                               .format(repr(msg)))
+
         # Receive any other data received during the delay
         extra = self.backend.read_very_eager().strip().rstrip()
         if extra:
@@ -322,13 +334,14 @@ class AeroflexTM500(lb.TelnetDevice):
 
     def _convert_to_text(self):
         ''' Convert the latest data to text
-        '''
+        ''' 
         root = self.__latest['data']
 
         t0 = time.time()
-        time.sleep(0.25) # TODO Is this really necessary?
+        lb.sleep(0.5) # TODO Is this really necessary?
+
 #            pre_entries = [f for f in os.listdir(root)]
-        self._send('#$$CONVERT_TO_TEXT')
+        self._send('#$$CONVERT_TO_TEXT', timeout=30)
         entries = [f for f in os.listdir(root)\
                    if f.lower().endswith(('csv','txt'))]
         names = ['_'.join(e.split('_')[3:-1]).replace('-','_')\
@@ -344,6 +357,8 @@ class AeroflexTM500(lb.TelnetDevice):
                         break
                 else:
                     del ret[name]
+                    
+        lb.sleep(0.5)
         
         self.logger.info('converted TM500 logs from binary in {:0.2f}s'
                        .format(time.time()-t0))
@@ -364,7 +379,7 @@ class AeroflexTM500(lb.TelnetDevice):
         while time.time()-t0 < ack_timeout:
             # Looping on short blocking makes it easier to
             # cancel execution with a KeyboardInterrupt
-            ret += self.backend.read_until(rsp, self.settings.timeout)
+            ret += self.backend.read_until(rsp, ack_timeout)
             if rsp in ret:
                 break
         else:

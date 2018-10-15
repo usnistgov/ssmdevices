@@ -46,18 +46,10 @@ class ETSLindgrenAzi2005(lb.VISADevice):
         dsrdtr = lb.Bool(False, )
         read_termination  = lb.Unicode('\n', read_only='connected') #this is an acknowledge byte
         write_termination = lb.Unicode('\r', read_only='connected') #this is a carriage return
-        
-    def command_set(self, command, trait, value):
-        ''' Send an SCPI command to set a state value on the
-            device. This is
-            automatically called for `state` attributes that
-            define a message.
 
-            :param str command: The SCPI command to send
-            :param trait: The trait state corresponding with the command (ignored)
-            :param str value: The value to assign to the parameter
-        '''
-        self.write(command + str(value))    
+    @state.setter
+    def __(self, trait, value):
+        self.write(trait.command + str(value))
 
     def config(self, mode):
         if mode is 'CR' or 'NCR':
@@ -77,7 +69,7 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     
     def set_limits(self, side, value):
         '''Probably should put some error checking in here to make sure value is a float
-        Also, note we use write here becuase command_set inserts a space'''
+        Also, note we use write here becuase state.setter inserts a space'''
         if side is 'lower':
             self.write('LL'+value)
         elif side is 'upper':
@@ -95,7 +87,7 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     
     def stop(self):
         self.write('ST')
-        time.sleep(3)
+        lb.sleep(3)
         print(self.wheredoigo())
         '''If wheredoigo returns N, we are stopped'''
         #didistop = self.wheredoigo()

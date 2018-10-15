@@ -23,20 +23,22 @@ class IPerf(lb.CommandLineWrapper):
         When running as an iperf client (server=False), 
         The default value is the path that installs with 64-bit cygwin.
     '''
-    resource = None
-
+    
     class settings(lb.CommandLineWrapper.settings):
         binary_path   = lb.Unicode(ssmdevices.lib.path('iperf.exe'))
         timeout       = lb.Float(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
         port          = lb.Int(5001, command='-p', min=1, help='connection port')
-        bind          = lb.Unicode('', command='-B', help='bind connection to specified IP')
-        tcp_window_size = lb.Int(8192, command='-w', min=1, help='(bytes)')
-        buffer_size   = lb.Int(8192, command='-l', min=1, help='Size of data buffer that generates traffic (bytes)')
+        bind          = lb.Unicode(None, command='-B', allow_none=True, help='bind connection to specified IP')
+        tcp_window_size = lb.Int(None, command='-w', min=1, help='(bytes)', allow_none=True)
+        buffer_size   = lb.Int(None, command='-l', min=1, allow_none=True,
+                               help='Size of data buffer that generates traffic (bytes)')
         interval      = lb.Float(0.25, command='-i', min=0.01, help='Interval between throughput reports (s)')
         bidirectional = lb.Bool(False, command='-d', help='Send and receive simultaneously')
-        udp           = lb.Bool(False, command='-u', help='UDP instead of TCP networking')
-        bit_rate      = lb.Unicode('100G', command='-b', help='Maximum bit rate (append unit for size, e.g. 10K)')
-        time          = lb.Int(10, min=0, max=16535, command='-t', help='time in seconds to transmit before quitting (default 10s)')
+        udp           = lb.Bool(False, command='-u', help='use UDP instead of the default, TCP')
+        bit_rate      = lb.Unicode(None, allow_none=True, command='-b',
+                                   help='Maximum bit rate (append unit for size, e.g. 10K)')
+        time          = lb.Int(10, min=0, max=16535, command='-t',
+                               help='time in seconds to transmit before quitting (default 10s)')
         arguments     = lb.List(['-n','-1','-y','C'])
 
     def fetch (self):
@@ -74,8 +76,10 @@ class IPerf(lb.CommandLineWrapper):
     def background (self, *extra_args, **flags):
         if self.settings.udp and self.settings.buffer_size is not None:
             self.logger.warning('iperf might not behave nicely setting udp=True with buffer_size')
+        if not self.settings.udp and self.settings.bit_rate is not None:
+            raise ValueError('iperf does not support setting bit_rate in TCP')
 
-        with self.respawn, self.exception_on_stderr:
+        with self.respawn:#, self.exception_on_stderr:
             if self.settings.resource:
                 super(IPerf, self).background('-c', str(self.settings.resource), *extra_args, **flags)
             else:
@@ -97,16 +101,18 @@ class IPerfOnAndroid(IPerf):
                                      # '-y', 'C'
                                           ])
 
-    def setup (self):
+    def connect(self):
         with self.no_state_arguments:
 #            self.logger.warning('TODO: need to fix setup for android iperf, but ok for now')
 #            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
 #            if len(devices) == 0:
 #                raise Exception('adb lists no devices. is the UE connected?')
+            self.logger.debug('waiting for USB connection to phone')
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True,
                    timeout=30)
 
-            time.sleep(.1)
+            lb.sleep(.1)
+            self.logger.debug('copying iperf onto phone')
             sp.run([self.settings.binary_path, "push", ssmdevices.lib.path('android','iperf'),
                    self.settings.remote_binary_path], check=True, timeout=2)
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
@@ -115,11 +121,13 @@ class IPerfOnAndroid(IPerf):
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
     
 #            # Check that it's executable
+            self.logger.debug('verifying iperf execution on phone')
             cp = sp.run([self.settings.binary_path, 'shell',
                          self.settings.remote_binary_path, '--help'],
                          timeout=2, stdout=sp.PIPE)
             if cp.stdout.startswith(b'/system/bin/sh'):
                 raise Exception('could not execute!!! ', cp.stdout)
+            self.logger.debug('phone is ready to execute iperf')
 
     def start (self):
         super(IPerfOnAndroid,self).start()
@@ -139,18 +147,19 @@ class IPerfOnAndroid(IPerf):
             # Find and kill processes on the UE
             out = self.foreground('shell', 'ps')
             for line in out.splitlines():
-                if self.settings.remote_binary_path.encode() in line.lower():
+                line = line.decode(errors='replace')
+                if self.settings.remote_binary_path in line.lower():
                     pid = line.split()[1]
                     self.logger.debug('killing zombie iperf. stdout: {}'\
                                       .format(self.foreground('shell', 'kill', '-9', pid)))
-            time.sleep(.1)
+            lb.sleep(.1)
             # Wait for any iperf zombie processes to die
             t0 = time.time()
             while time.time()-t0 < wait_time and wait_time != 0:
                 out = self.foreground('shell', 'ps').lower()
                 if b'iperf' not in out:
                     break
-                time.sleep(.25)
+                lb.sleep(.25)
             else:
                 raise TimeoutError('timeout waiting for iperf process termination on UE')
 
@@ -184,15 +193,16 @@ class IPerfOnAndroid(IPerf):
         out = ''
         while time.time() - t0 < timeout or timeout is None:
             out = sp.run([self.settings.binary_path, 'shell', 'dumpsys', 'telephony.registry'],
-                         stdout=sp.PIPE, check=True, timeout=timeout, universal_newlines=True).stdout
+                         stdout=sp.PIPE, check=True, timeout=timeout).stdout
 
-            con = re.findall('mDataConnectionState=([\-0-9]+)', out)
+            con = re.findall('mDataConnectionState=([\-0-9]+)',
+                             out.decode(errors='replace'))
 
             if len(con) > 0:
                 if con[0] == '2':
                     break
         else:
-            raise TimeoutError('timeout waiting for cellular data')
+            raise TimeoutError('phone did not connect for cellular data before timeout')
         self.logger.debug('cellular data available after {} s'.format(time.time() - t0))
 
     def reboot(self, block=True):
@@ -224,20 +234,19 @@ class IPerfClient(IPerf):
         super(IPerfClient, self).__init__(*args, **kws)
 
 
-if __name__ == '__main__':   
+if __name__ == '__main__':
     lb.show_messages('debug')
     ips = IPerf(interval=0.5, udp=True)
 
-    ipc = IPerfOnAndroid('10.133.0.201',interval=1, time=10000,
-                         udp=True, bit_rate='1M')
+    ipc = IPerf('127.0.0.1',interval=1, time=10000, udp=True, bit_rate='1M')
 #    ipc.iperf_path = r'..\lib\iperf.exe'
-    
+
     with ipc,ips:
         for i in range(1):
             ips.start()
-            time.sleep(1)
+            lb.sleep(1)
             ipc.start()
-            time.sleep(20)
+            lb.sleep(20)
             ipc.kill()
             ips.kill()
             ips_result = ips.read_stdout()

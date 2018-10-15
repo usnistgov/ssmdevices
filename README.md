@@ -25,6 +25,7 @@ That's it.
 |Signal analyzers|Rohde Schwarz FSW series|
 |Signal generators|Rohde Schwarz SMW series|
 |                 |Spirent GSS8000 GNSS Simulator|
+|Oscilloscopes|Rigol products|
 |Switches|Minicircuits SPnT USB|
 |Attenuators|Minicircuits RCDAT series|
 |Motors|ETS-Lindren Azi2005|
@@ -34,7 +35,8 @@ That's it.
 |                            |Windows WLAN connection status and control|
 |                            |Cellular handset debug via Qualcomm QXDM|
 |Miscellaneous Lab Gear      |Acroname USBHub 2x4 (python 2.7 only)|
-|GPS Receivers               |SwiftNav Piksi|
+|Consumer Electronics        |SwiftNav Piksi GPS Receiver|
+|                            |Android handsets|
 
 
 
@@ -46,8 +48,8 @@ That's it.
 | Andre Rosete        | <andre.rosete@nist.gov> |
 | Paul Blanchard | <paul.blanchard@nist.gov> |
 | Michael Voecks | <michael.voecks@nist.gov> |
-| Ryan Jacobs | <ryan.jacobs@nist.gov> |
-| Alex Curtin | <alexandra.curtin@nist.gov> |
+| Ryan Jacobs | ryan.jacobs@nist.gov |
+| Alex Curtin | alexandra.curtin@nist.gov |
 | Audrey Puls | <audrey.puls@nist.gov> |
 | John Ladbury | <john.ladbury@nist.gov> |
 | Yao Ma | <yao.ma@nist.gov> |

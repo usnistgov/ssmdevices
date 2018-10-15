@@ -12,6 +12,18 @@ Subpackages
     ssmdevices.lib
     ssmdevices.software
 
+Submodules
+----------
+
+ssmdevices.attenuators2 module
+------------------------------
+
+.. automodule:: ssmdevices.attenuators2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 Module contents
 ---------------
 

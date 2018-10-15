@@ -4,27 +4,18 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ssmdevices.instruments.signal_analyzers &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '0.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head>
-  <body>
+  </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.instruments.signal_analyzers</span></h2>
@@ -104,14 +95,15 @@
         <span class="n">input_attenuation_auto</span>   <span class="o">=</span> <span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INP:ATT:AUTO&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">])</span>
         <span class="n">input_attenuation</span>        <span class="o">=</span> <span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INP:ATT&#39;</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">79</span><span class="p">)</span>
         
-        <span class="n">channel_type</span>            <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INST&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SAN&#39;</span><span class="p">,</span><span class="s1">&#39;IQ&#39;</span><span class="p">,</span><span class="s1">&#39;RTIM&#39;</span><span class="p">,</span> <span class="n">default_channel_name</span><span class="p">],</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">channel_type</span>            <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INST&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SAN&#39;</span><span class="p">,</span><span class="s1">&#39;IQ&#39;</span><span class="p">,</span><span class="s1">&#39;RTIM&#39;</span><span class="p">,</span> <span class="n">default_channel_name</span><span class="p">],</span> <span class="p">)</span>
         <span class="nb">format</span>                  <span class="o">=</span> <span class="n">CaselessStrEnum</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;FORM&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ASC,0&#39;</span><span class="p">,</span><span class="s1">&#39;REAL,32&#39;</span><span class="p">,</span><span class="s1">&#39;REAL,64&#39;</span><span class="p">,</span> <span class="s1">&#39;REAL,16&#39;</span><span class="p">])</span>
         <span class="n">sweep_points</span>            <span class="o">=</span> <span class="n">Int</span>       <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SWE:POIN&#39;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100001</span><span class="p">)</span>
 
-        <span class="n">display_update</span>          <span class="o">=</span> <span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SYST:DISP:UPD&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">])</span>
+        <span class="n">display_update</span>          <span class="o">=</span> <span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;SYST:DISP:UPD&#39;</span><span class="p">,</span> <span class="n">trues</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ON&#39;</span><span class="p">],</span> <span class="n">falses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OFF&#39;</span><span class="p">])</span></div>
 
-        <span class="n">default_window</span>          <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;data window number to use if unspecified&#39;</span><span class="p">)</span>
-        <span class="n">default_trace</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;data trace number to use if unspecified&#39;</span><span class="p">)</span></div>
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.settings"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.settings">[docs]</a>    <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">VISADevice</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
+        <span class="n">default_window</span>          <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span>  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;data window number to use if unspecified&#39;</span><span class="p">)</span>
+        <span class="n">default_trace</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span>  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;data trace number to use if unspecified&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="RohdeSchwarzFSW26Base.verify_channel_type"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.verify_channel_type">[docs]</a>    <span class="k">def</span> <span class="nf">verify_channel_type</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_channel_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
@@ -119,8 +111,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;expected </span><span class="si">{}</span><span class="s1"> mode, but got </span><span class="si">{}</span><span class="s1">&#39;</span>\
                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_channel_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">channel_type</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="RohdeSchwarzFSW26Base.setup"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.connect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># self.verify_channel_type()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="s1">&#39;REAL,32&#39;</span></div>
 
@@ -137,7 +128,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">clear_spectrogram</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
             <span class="c1"># Give the power sensor time to arm</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
 
             <span class="n">t0_active</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="c1"># Try to trigger; block until timeout.</span>
@@ -161,7 +152,7 @@
                 <span class="s1">&#39;sa_spectrogram_active_time&#39;</span><span class="p">:</span> <span class="n">active_time</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="RohdeSchwarzFSW26Base.cleanup"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.cleanup">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RohdeSchwarzFSW26Base.disconnect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">abort</span><span class="p">()</span>
         <span class="k">except</span><span class="p">:</span>
@@ -338,9 +329,9 @@
 
 <div class="viewcode-block" id="RohdeSchwarzFSW26Base.fetch_horizontal"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26Base.fetch_horizontal">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_horizontal</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span>
         <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_trace</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_trace</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_ieee_array</span><span class="p">(</span><span class="s2">&quot;TRAC</span><span class="si">{window}</span><span class="s2">:DATA:X? TRACE</span><span class="si">{trace}</span><span class="s2">&quot;</span>\
                                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">))</span></div>
@@ -367,16 +358,16 @@
 <span class="sd">                count = inst.query(&quot;SENSE:SWEEP:COUNT?&quot;)</span>
 <span class="sd">                self.write(&quot;SENSE:SWEEP:COUNT 1&quot;)</span>
 
-<span class="sd">        :param trace: The trace number to query (or None, the default, to use self.state.default_trace)</span>
+<span class="sd">        :param trace: The trace number to query (or None, the default, to use self.settings.default_trace)</span>
 <span class="sd">        :param horizontal: Set the index of the returned Series by a call to :method:`fetch_horizontal`</span>
-<span class="sd">        :param window: The window number to query (or None, the default, to use self.state.default_window)</span>
+<span class="sd">        :param window: The window number to query (or None, the default, to use self.settings.default_window)</span>
 <span class="sd">        :return: a pd.Series object containing the returned data</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_trace</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_trace</span>
         <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">fetch_trace</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">horizontal</span><span class="o">=</span><span class="n">horizontal</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trace</span><span class="p">])</span>
         
@@ -397,12 +388,12 @@
 <span class="sd">            of the signal analyzer should lead to a TimeoutError.</span>
 
 <span class="sd">        :param all: If True, acquire and return all available timestamps; if False, only the most current timestamp.</span>
-<span class="sd">        :param window: The window number corresponding to the desired timestamp data (or self.state.default_window when window=None)</span>
+<span class="sd">        :param window: The window number corresponding to the desired timestamp data (or self.settings.default_window when window=None)</span>
 <span class="sd">        :return: A number (when `all` is False) or a np.array (when `all` is True)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span>
 
         <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
             <span class="n">_to</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="n">timeout</span>
@@ -431,7 +422,7 @@
 
 <span class="sd">        :param freqs: &#39;exact&#39; (to fetch the frequency axis), &#39;fast&#39; (to guess at index values based on FFT parameters), or None (leaving the integer indices)</span>
 <span class="sd">        :param timestamps: &#39;exact&#39; (to fetch the frequency axis), &#39;fast&#39; (to guess at index values based on sweep time), or None (leaving the integer indices)</span>
-<span class="sd">        :param window: The window number corresponding to the desired timestamp data (or self.state.default_window when window=None)</span>
+<span class="sd">        :param window: The window number corresponding to the desired timestamp data (or self.settings.default_window when window=None)</span>
 <span class="sd">        :return: a pandas DataFrame containing the acquired data</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
@@ -449,7 +440,7 @@
 
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">suppress_timeout</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+                <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span>
 
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_ieee_array</span><span class="p">(</span><span class="s1">&#39;TRAC</span><span class="si">{window}</span><span class="s1">:DATA? SPEC&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">))</span>
 
@@ -818,24 +809,24 @@
 
 <div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.set_detector_type"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.set_detector_type">[docs]</a>    <span class="k">def</span> <span class="nf">set_detector_type</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span>
         <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_trace</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_trace</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;WIND</span><span class="si">{window}</span><span class="s1">:DET</span><span class="si">{trace}</span><span class="s1"> </span><span class="si">{type}</span><span class="s1">&#39;</span>\
                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">type_</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="RohdeSchwarzFSW26RealTime.get_detector_type"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_analyzers.RohdeSchwarzFSW26RealTime.get_detector_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_detector_type</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span>
         <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_trace</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_trace</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;WIND</span><span class="si">{window}</span><span class="s1">:DET</span><span class="si">{trace}</span><span class="s1">?&#39;</span>\
                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">trace</span><span class="p">))</span></div>
 
     <span class="nd">@state</span><span class="o">.</span><span class="n">spectrogram_depth</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;CALC</span><span class="si">{window}</span><span class="s1">:SPEC:HDEP </span><span class="si">{value}</span><span class="s1">&#39;</span>\
                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">depth</span><span class="p">))</span>
@@ -843,7 +834,7 @@
     <span class="nd">@state</span><span class="o">.</span><span class="n">spectrogram_depth</span><span class="o">.</span><span class="n">getter</span>
     <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;CALC</span><span class="si">{window}</span><span class="s1">:SPEC:HDEP?&#39;</span>\
                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">))</span>
@@ -864,11 +855,11 @@
 <span class="sd">        :param thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`), or a scalar to use a constant value across the band</span>
 <span class="sd">        :param array-like frequency_offsets: frequencies at which the mask is defined, or None (to specify across the whole band)</span>
 <span class="sd">        :param kind: either &#39;upper&#39; or &#39;lower,&#39; corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition</span>
-<span class="sd">        :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)</span>
+<span class="sd">        :param window: The window number corresponding to the desired trigger setting (or self.settings.default_window when window=None)</span>
 <span class="sd">        :return: None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span>
         <span class="k">if</span> <span class="n">kind</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span><span class="s1">&#39;lower&#39;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;frequency mask is </span><span class="si">{}</span><span class="s1"> but must be &quot;upper&quot; or &quot;lower&quot;&#39;</span>\
                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">kind</span><span class="p">)))</span>
@@ -895,13 +886,13 @@
         <span class="sd">&#39;&#39;&#39; Define the frequency-dependent trigger threshold values for a frequency mask trigger.</span>
 
 <span class="sd">        :param kind: either &#39;upper&#39; or &#39;lower,&#39; corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition</span>
-<span class="sd">        :param window: The window number corresponding to the desired trigger setting (or self.state.default_window when window=None)</span>
+<span class="sd">        :param window: The window number corresponding to the desired trigger setting (or self.settings.default_window when window=None)</span>
 <span class="sd">        :param bool first_threshold_only: if True, return only the threshold; otherwise, return a complete parameter dict</span>
 <span class="sd">        :return: the threshold or a dictionary with keys &quot;frequency_offsets&quot; and &quot;thresholds&quot; and corresponding values (in Hz and dBm, respectively) of equal length</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="k">if</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span>
         <span class="k">if</span> <span class="n">kind</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span><span class="s1">&#39;lower&#39;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;frequency mask is </span><span class="si">{}</span><span class="s1"> but must be &quot;upper&quot; or &quot;lower&quot;&#39;</span>\
                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">kind</span><span class="p">)))</span>
@@ -935,8 +926,8 @@
         <span class="k">if</span> <span class="n">kws</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;ignoring spectrogram setup keyword arguments </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kws</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_window</span> <span class="o">=</span> <span class="mi">2</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">default_trace</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_window</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">default_trace</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_cache</span><span class="p">():</span>
             <span class="k">return</span>
@@ -1000,8 +991,7 @@
 
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">2500</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">save_cache</span><span class="p">()</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+        <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">spectrogram_depth</span></div>
@@ -1030,7 +1020,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">clear_spectrogram</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
             <span class="c1"># Give the power sensor time to arm</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay_time</span><span class="p">)</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay_time</span><span class="p">)</span>
 
             <span class="n">t0_active</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="c1"># Try to trigger; block until timeout.</span>
@@ -1038,7 +1028,7 @@
                 <span class="c1"># print(max(30*max_trigger_time,time_remaining or 0.1))</span>
                 <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e3</span> <span class="o">*</span> <span class="mi">30</span><span class="o">*</span><span class="n">max_trigger_time</span><span class="p">)):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">trigger_single</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+                <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
                 <span class="n">active_time</span> <span class="o">+=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0_active</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">6</span><span class="o">*</span><span class="mf">1e3</span><span class="o">*</span><span class="n">max_trigger_time</span>
@@ -1119,7 +1109,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
     </div>
   </body>
 </html>

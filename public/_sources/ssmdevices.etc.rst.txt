@@ -1,5 +1,5 @@
-ssmdevices\.etc package
-=======================
+ssmdevices.etc package
+======================
 
 Module contents
 ---------------

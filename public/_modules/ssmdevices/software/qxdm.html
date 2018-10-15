@@ -4,27 +4,18 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ssmdevices.software.qxdm &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '0.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head>
-  <body>
+  </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.software.qxdm</span></h2>
@@ -62,10 +53,10 @@
 <span class="kn">from</span> <span class="nn">xml.etree</span> <span class="k">import</span> <span class="n">ElementTree</span> <span class="k">as</span> <span class="n">ET</span>
 
 <span class="k">class</span> <span class="nc">QPST</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Win32ComDevice</span><span class="p">):</span>
-    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Win32ComDevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
-        <span class="n">com_object</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s1">&#39;QPSTAtmnServer.Application&#39;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Win32ComDevice</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
+        <span class="n">com_object</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;QPSTAtmnServer.Application&#39;</span><span class="p">,</span> <span class="p">)</span>
     
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">_FlagAsMethod</span><span class="p">(</span><span class="s1">&#39;AddPort&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">_FlagAsMethod</span><span class="p">(</span><span class="s1">&#39;RemovePort&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">_FlagAsMethod</span><span class="p">(</span><span class="s1">&#39;GetPort&#39;</span><span class="p">)</span>
@@ -77,13 +68,13 @@
     <span class="k">def</span> <span class="nf">add_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Make sure that QPST is configured to enable the desired port</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">state_to_qpst_api</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;phone_model_number&#39;</span><span class="p">:</span> <span class="s1">&#39;ModelNumber&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;phone_mode&#39;</span><span class="p">:</span>         <span class="s1">&#39;PhoneMode&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;phone_imei&#39;</span><span class="p">:</span>         <span class="s1">&#39;IMEI&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;phone_esn&#39;</span><span class="p">:</span>          <span class="s1">&#39;ESN&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;phone_build_id&#39;</span><span class="p">:</span>     <span class="s1">&#39;BuildId&#39;</span><span class="p">}</span>
+        <span class="n">state_to_qpst_api</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ue_model_number&#39;</span><span class="p">:</span> <span class="s1">&#39;ModelNumber&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;ue_mode&#39;</span><span class="p">:</span>         <span class="s1">&#39;PhoneMode&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;ue_imei&#39;</span><span class="p">:</span>         <span class="s1">&#39;IMEI&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;ue_esn&#39;</span><span class="p">:</span>          <span class="s1">&#39;ESN&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;ue_build_id&#39;</span><span class="p">:</span>     <span class="s1">&#39;BuildId&#39;</span><span class="p">}</span>
     
-        <span class="n">codes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;phone_mode&#39;</span><span class="p">:</span>   <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;No phone detected&#39;</span><span class="p">,</span>
+        <span class="n">codes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ue_mode&#39;</span><span class="p">:</span>   <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;No phone detected&#39;</span><span class="p">,</span>
                                   <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;Download&#39;</span><span class="p">,</span>
                                   <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;Diagnostic&#39;</span><span class="p">,</span>
                                   <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;Offline and diagnostic&#39;</span><span class="p">,</span>
@@ -101,22 +92,25 @@
                     <span class="k">if</span> <span class="n">port_list</span><span class="o">.</span><span class="n">PortName</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;COM</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
                         <span class="k">if</span> <span class="n">port_list</span><span class="o">.</span><span class="n">PhoneStatus</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">:</span>
                             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;QXDM: no phone detected on COM</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>
+                        <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
                         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">api_name</span> <span class="ow">in</span> <span class="n">state_to_qpst_api</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                             <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">port_list</span><span class="p">,</span><span class="n">api_name</span><span class="p">)(</span><span class="n">i</span><span class="p">)</span>
                             
                             <span class="c1"># Remap integers to strings</span>
                             <span class="n">value</span> <span class="o">=</span> <span class="n">codes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
-                            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                            <span class="n">ret</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
                         <span class="k">break</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;QXDM: could not add port at COM</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
                 <span class="k">continue</span>
             <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;QXDM: could not connect to port on COM</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">ret</span>
     
     <span class="k">def</span> <span class="nf">remove_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Remove the port from QPST for consistency</span>
@@ -133,7 +127,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
                 <span class="k">continue</span>
             <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
@@ -151,18 +145,19 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="QXDM.settings"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.settings">[docs]</a>    <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Win32ComDevice</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
+        <span class="n">com_object</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;QXDM.QXDMAutoApplication&quot;</span><span class="p">,</span> <span class="p">)</span>
+        <span class="n">cache_path</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;temp&quot;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;folder path to contain auto-saved isf file(s)&#39;</span><span class="p">)</span>
+        <span class="n">connection_timeout</span>   <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;connection timeout in seconds&#39;</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="QXDM.state"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Win32ComDevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
-        <span class="n">com_object</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s2">&quot;QXDM.QXDMAutoApplication&quot;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">cache_path</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="s2">&quot;temp&quot;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                               <span class="n">help</span><span class="o">=</span><span class="s1">&#39;folder path to contain auto-saved isf file(s)&#39;</span><span class="p">)</span>
-        <span class="n">connection_timeout</span>   <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalFloat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;connection timeout in seconds&#39;</span><span class="p">)</span>
-        <span class="n">version</span>              <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">version</span>              <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;QXDM application version&#39;</span><span class="p">)</span>
-        <span class="n">phone_model_number</span>   <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;model number code&#39;</span><span class="p">)</span>
-        <span class="n">phone_mode</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;current state of the phone&#39;</span><span class="p">)</span>
-        <span class="n">phone_imei</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Phone IMEI&#39;</span><span class="p">)</span>
-        <span class="n">phone_esn</span>            <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalInt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Phone ESN&#39;</span><span class="p">)</span>
-        <span class="n">phone_build_id</span>       <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">LocalUnicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Build ID of software on the phone&#39;</span><span class="p">)</span></div>
+        <span class="n">ue_model_number</span>   <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;model number code&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_model_number&#39;</span><span class="p">)</span>
+        <span class="n">ue_mode</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;current state of the phone&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_mode&#39;</span><span class="p">)</span>
+        <span class="n">ue_imei</span>           <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Phone IMEI&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_imei&#39;</span><span class="p">)</span>
+        <span class="n">ue_esn</span>            <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Phone ESN&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_esn&#39;</span><span class="p">)</span>
+        <span class="n">ue_build_id</span>       <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Build ID of software on the phone&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;ue_build_id&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="QXDM.connect"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">psutil</span><span class="o">.</span><span class="n">pids</span><span class="p">():</span>
@@ -174,23 +169,20 @@
                         <span class="n">proc</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
             <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">:</span>
                 <span class="k">pass</span>
-<span class="c1">#</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__connection_info</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span> <span class="o">=</span> <span class="n">QPST</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">QXDM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span></div>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QXDM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__connection_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">add_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QXDM.setup"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Like all other Device subclasses, this setup method is run</span>
-<span class="sd">            automatically right after .connect().</span>
-<span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__start_time</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">GetAutomationWindow</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">cache_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">cache_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
 
         <span class="c1"># Disable to prevent undesired data streaming on startup</span>
         <span class="k">try</span><span class="p">:</span>
@@ -198,14 +190,23 @@
         <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;could not disable UE; does QXDM work if you start it manually?&#39;</span><span class="p">)</span></div>
 
+    <span class="nd">@state</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__connection_info</span><span class="p">[</span><span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">DeviceStateError</span><span class="p">(</span><span class="s1">&#39;no state </span><span class="si">{}</span><span class="s1"> in </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
 <div class="viewcode-block" id="QXDM.disconnect"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">f1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">disconnect</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;QPST already quit&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">f2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">QuitApplication</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;QXDM already quit&#39;</span><span class="p">)</span>
         
         <span class="n">lb</span><span class="o">.</span><span class="n">concurrently</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">)</span></div>
@@ -221,7 +222,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_min_acquisition_time</span> <span class="o">=</span> <span class="n">min_acquisition_time</span>
 
         <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">config_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;-live.dmc&#39;</span>
-        <span class="n">path_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">cache_path</span><span class="p">,</span> <span class="n">basename</span><span class="p">)</span>
+        <span class="n">path_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="p">,</span> <span class="n">basename</span><span class="p">)</span>
 
         <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
@@ -232,25 +233,25 @@
         <span class="n">settings</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;QuickISFSave&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
         <span class="n">settings</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;QueryISFSave&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
         <span class="c1"># These seem to be irrelevant now</span>
-<span class="c1">#        settings.find(&#39;BaseISFName&#39;).text = self.state.save_base_name</span>
-<span class="c1">#        settings.find(&#39;ISFFolder&#39;).text = self.state.cache_path</span>
-        <span class="n">settings</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;MaxISFSize&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="c1">#str(self.state.save_size_limit_MB)</span>
+<span class="c1">#        settings.find(&#39;BaseISFName&#39;).text = self.settings.save_base_name</span>
+<span class="c1">#        settings.find(&#39;ISFFolder&#39;).text = self.settings.cache_path</span>
+        <span class="n">settings</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;MaxISFSize&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="c1">#str(self.settings.save_size_limit_MB)</span>
         <span class="n">settings</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;MaxISFDuration&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
         <span class="n">settings</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;MaxISFDurationFraction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="c1">#str(self.state.save_time_limit)</span>
         <span class="n">settings</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Advanced&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
         
         <span class="c1"># Don&#39;t care about this any more?</span>
 <span class="c1">#        isv_config = root.find(&#39;Persistence&#39;).find(&#39;LoggingView&#39;).find(&#39;ISVConfig&#39;)</span>
-<span class="c1">#        isv_config.find(&#39;LogFilePath&#39;).text = self.state.cache_path</span>
+<span class="c1">#        isv_config.find(&#39;LogFilePath&#39;).text = self.settings.cache_path</span>
         
         <span class="n">tree</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path_out</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_config</span><span class="p">(</span><span class="n">path_out</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;loaded modified configuration at </span><span class="si">{}</span><span class="s1">&#39;</span>\
                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">path_out</span><span class="p">)))</span></div>
 
-<div class="viewcode-block" id="QXDM.save"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="QXDM.save"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">saveNm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Stop the run and save the data in a file at the specified path.</span>
-<span class="sd">            If path is None, autogenerate with self.state.cache_path and</span>
+<span class="sd">            If path is None, autogenerate with self.settings.cache_path and</span>
 <span class="sd">            self.data_filename.</span>
 <span class="sd">            </span>
 <span class="sd">            This method is threadsafe.</span>
@@ -262,16 +263,21 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_acquisition_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">t_elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">__start_time</span>
             <span class="k">if</span> <span class="n">t_elapsed</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_acquisition_time</span><span class="p">:</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_acquisition_time</span><span class="o">-</span><span class="n">t_elapsed</span><span class="p">)</span>
+                <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_acquisition_time</span><span class="o">-</span><span class="n">t_elapsed</span><span class="p">)</span>
         <span class="c1"># Munge path</span>
         <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
             <span class="n">fmt</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Host</span><span class="o">.</span><span class="n">time_format</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
             <span class="n">timestamp</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">fmt</span><span class="p">),</span>
                                        <span class="n">now</span><span class="o">.</span><span class="n">microsecond</span><span class="p">)</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">cache_path</span><span class="p">,</span> <span class="s1">&#39;qxdm-</span><span class="si">{}</span><span class="s1">.isf&#39;</span>\
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">saveNm</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">.isf&#39;</span>\
+                                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">saveNm</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="p">,</span> <span class="s1">&#39;qxdm-</span><span class="si">{}</span><span class="s1">.isf&#39;</span>\
                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timestamp</span><span class="p">))</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         
         <span class="c1"># Stop acquisition</span>
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -292,11 +298,11 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_clear</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_com_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_com_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_start</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;started run in </span><span class="si">{}</span><span class="s1">s&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;running after setup for </span><span class="si">{}</span><span class="s1">s&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">__start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span></div>
 
     <span class="c1"># Bare wrapper methods for the low level QXDM COM API</span>
@@ -309,7 +315,7 @@
     <span class="nd">@state</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">getter</span>
     <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">GetAutomationWindow</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">connected</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">DeviceNotReady</span><span class="p">(</span><span class="s1">&#39;need to connect to get application version&#39;</span><span class="p">)</span>
         <span class="n">version</span> <span class="o">=</span> <span class="n">_window</span><span class="o">.</span><span class="n">AppVersion</span>
         <span class="k">return</span> <span class="n">version</span>
@@ -335,61 +341,69 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">com_port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">com_port</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="n">com_port</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">add_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">com_port</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__connection_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">add_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">code</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-            <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connection_timeout</span><span class="p">:</span>
+            <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">connection_timeout</span><span class="p">:</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">setCOMPort</span><span class="p">(</span><span class="n">com_port</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Connection error&#39;</span><span class="p">)</span>
                 <span class="n">actual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_com_port</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">com_port</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">com_port</span><span class="p">):</span>
                     <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">GetServerState</span><span class="p">()</span>
                     <span class="k">if</span> <span class="n">code</span> <span class="o">==</span> <span class="mh">0xFFFFFFFF</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Connection error&#39;</span><span class="p">)</span>
-                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                    <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">com_port</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;QXDM timeout connecting to UE (connected to </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">actual</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;QXDM timeout disconnecting to UE (return code </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">actual</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">com_port</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">com_port</span> <span class="p">)</span><span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;connected to COM</span><span class="si">{}</span><span class="s1"> in </span><span class="si">{}</span><span class="s1">s&#39;</span>\
-                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
+                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;disconnected from COM</span><span class="si">{}</span><span class="s1"> in </span><span class="si">{}</span><span class="s1">s&#39;</span>\
-                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
+                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
                 
         <span class="k">finally</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">com_port</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">remove_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">com_port</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_qpst</span><span class="o">.</span><span class="n">remove_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Clear the buffer of data. </span>
+<div class="viewcode-block" id="QXDM.reconnect"><a class="viewcode-back" href="../../../ssmdevices.software.html#ssmdevices.software.qxdm.QXDM.reconnect">[docs]</a>    <span class="k">def</span> <span class="nf">reconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;reinitializing&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span></div>
+                
+    <span class="k">def</span> <span class="nf">_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Clear the buffer of data.</span>
+<span class="sd">        </span>
+<span class="sd">            TODO: Depending on if QXDM is already running, wait for the item</span>
+<span class="sd">            count store to start increasing again?</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="s1">&#39;Item view&#39;</span><span class="p">,:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">ClearViewItems</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
-                <span class="k">pass</span>
-<span class="c1">#                raise Exception(&#39;failed to clear item {}&#39;.format(repr(item)))</span>
-
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="s1">&#39;Item view&#39;</span><span class="p">,</span><span class="s1">&#39;Filtered view&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="o">.</span><span class="n">ClearViewItems</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;Item view&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;failed to clear view &#39;</span><span class="o">+</span><span class="nb">repr</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
 
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="c1"># Block until the item store is clear</span>
-        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="n">timeout</span><span class="p">:</span>
             <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">start</span> <span class="ow">or</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">start</span> <span class="ow">or</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
                 <span class="k">break</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;timeout waiting for qxdm to clear, buffer still had </span><span class="si">{}</span><span class="s1"> items&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()))</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;timeout waiting for qxdm to clear, buffer still had </span><span class="si">{}</span><span class="s1"> items&#39;</span>
+                               <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;cleared data buffer in </span><span class="si">{}</span><span class="s1">s&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;cleared item store buffer in </span><span class="si">{}</span><span class="s1">s&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span>        
 
     <span class="k">def</span> <span class="nf">_wait_for_stop</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Block until the reported number of data rows stops growing.</span>
@@ -397,14 +411,14 @@
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="n">prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span>
         <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">25</span><span class="p">)</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">25</span><span class="p">)</span>
             <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">new</span> <span class="o">==</span> <span class="n">prev</span><span class="p">:</span>
                 <span class="k">break</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">prev</span> <span class="o">=</span> <span class="n">new</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;timeout waiting for qxdm to buffer data&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;timeout waiting for qxdm to buffer data&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_wait_for_start</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Block until the reported number of data rows starts growing</span>
@@ -413,31 +427,31 @@
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span>
         <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">05</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">()</span> <span class="o">!=</span> <span class="n">start</span><span class="p">:</span>
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;timeout waiting for qxdm to start acquisition&#39;</span><span class="p">)</span>
-<span class="c1">#        time.sleep(1)</span>
+<span class="c1">#        lb.sleep(1)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;activity began after observing items after </span><span class="si">{}</span><span class="s1">s&#39;</span>\
                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_item_count</span><span class="p">(),</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">))</span></div>
 
     <span class="c1"># Deprecated</span>
 <span class="c1">#    def fetch(self):</span>
 <span class="c1">#        time_elapsed = time.time() - self.__start_time</span>
-<span class="c1">#        if time_elapsed &lt; self.state.min_acquisition_time:</span>
-<span class="c1">#            time.sleep(self.state.min_acquisition_time - time_elapsed)</span>
+<span class="c1">#        if time_elapsed &lt; self.settings.min_acquisition_time:</span>
+<span class="c1">#            lb.sleep(self.settings.min_acquisition_time - time_elapsed)</span>
 <span class="c1">#</span>
 <span class="c1">#        self.stop()</span>
-<span class="c1">##        time.sleep(1)</span>
+<span class="c1">##        lb.sleep(1)</span>
 <span class="c1">#</span>
 <span class="c1">#        # Quitting the application should force QXDM to write a &quot;temporary&quot; .isf file containing</span>
 <span class="c1">#        # whatever hasn&#39;t already been saved.  This needs to be renamed with the .isf base name.</span>
-<span class="c1">#        path = self.renameLatestISF(&#39;99-Final&#39;, self.state.max_cleanup_tries)</span>
+<span class="c1">#        path = self.renameLatestISF(&#39;99-Final&#39;, self.settings.max_cleanup_tries)</span>
 <span class="c1">##        self.clear_stale_isf(path)</span>
 <span class="c1">#        return path</span>
 <span class="c1">#    def _list_isf(self):</span>
-<span class="c1">#        return [e for e in os.listdir(self.state.cache_path)\</span>
+<span class="c1">#        return [e for e in os.listdir(self.settings.cache_path)\</span>
 <span class="c1">#                if e.lower().endswith(&#39;.isf&#39;)]</span>
 <span class="c1">#</span>
 
@@ -453,7 +467,7 @@
 <span class="c1">#        qxdm.configure(r&#39;C:\Python Code\potato\180201_QXDMConfig.dmc&#39;)</span>
 <span class="c1">#        for i in range(1):</span>
 <span class="c1">#            qxdm.start()</span>
-<span class="c1">#            time.sleep(10)</span>
+<span class="c1">#            lb.sleep(10)</span>
 <span class="c1">#            qxdm.save(r&#39;C:\python code\potato\junk-{}.isf&#39;.format(i))</span>
 </pre></div>
 
@@ -486,7 +500,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
     </div>
   </body>
 </html>

@@ -4,27 +4,18 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>ssmdevices.electronics.usb &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     '0.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-  </head>
-  <body>
+  </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
           <span>ssmdevices 0.2 documentation</span></a></h1>
         <h2 class="heading"><span>ssmdevices.electronics.usb</span></h2>
@@ -82,26 +73,19 @@
         <span class="n">power2_enabled</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span><span class="p">()</span>
         <span class="n">power3_enabled</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span><span class="p">()</span></div>
     
-    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span>
-        
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">brainstem</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;could not import the dependency &quot;brainstem&quot;&#39;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">e</span>
-            
-<div class="viewcode-block" id="AcronameUSBHub2x4.connect"><a class="viewcode-back" href="../../../ssmdevices.electronics.html#ssmdevices.electronics.usb.AcronameUSBHub2x4.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__import__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">brainstem</span>
         <span class="kn">import</span> <span class="nn">brainstem</span>
-        
+
+<div class="viewcode-block" id="AcronameUSBHub2x4.connect"><a class="viewcode-back" href="../../../ssmdevices.electronics.html#ssmdevices.electronics.usb.AcronameUSBHub2x4.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">specs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bs</span><span class="o">.</span><span class="n">discover</span><span class="o">.</span><span class="n">findAllModules</span><span class="p">(</span><span class="n">brainstem</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">Spec</span><span class="o">.</span><span class="n">USB</span><span class="p">)</span>
 
         <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">specs</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">]</span>        
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">specs</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">serial_number</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">specs</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">serial_number</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">]</span>
     
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one connected USB device matches model &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; - provide serial number?&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than one connected USB device match model &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; and serial &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serial</span><span class="p">))</span>
@@ -115,13 +99,14 @@
         <span class="sd">&#39;&#39;&#39; Release control over the device.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span></div>
-        
-<div class="viewcode-block" id="AcronameUSBHub2x4.command_set"><a class="viewcode-back" href="../../../ssmdevices.electronics.html#ssmdevices.electronics.usb.AcronameUSBHub2x4.command_set">[docs]</a>    <span class="k">def</span> <span class="nf">command_set</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Apply an instrument setting to the instrument. The value ``value&#39;&#39;</span>
-<span class="sd">            will be applied to the trait attriute ``attr&#39;&#39; in type(self).</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;state &quot;</span><span class="si">{attr}</span><span class="s1">&quot; is defined but not implemented! implement </span><span class="si">{cls}</span><span class="s1">.command_get, or implement a getter for </span><span class="si">{cls}</span><span class="s1">.state.</span><span class="si">{attr}</span><span class="s1">&#39;</span>\
-                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="n">attr</span><span class="p">))</span></div>
+
+    <span class="c1"># @state.setter</span>
+    <span class="c1"># def __ (self, trait, value):</span>
+    <span class="c1">#     &#39;&#39;&#39; Apply an instrument setting to the instrument. The value ``value&#39;&#39;</span>
+    <span class="c1">#         will be applied to the trait attriute ``attr&#39;&#39; in type(self).</span>
+    <span class="c1">#     &#39;&#39;&#39;</span>
+    <span class="c1">#     raise NotImplementedError(&#39;state &quot;{attr}&quot; is defined but not implemented! implement {cls}.command_get, or implement a getter for {cls}.state.{attr}&#39;\</span>
+    <span class="c1">#                               .format(cls=type(self).__name__, trait=trait))</span>
         
 <div class="viewcode-block" id="AcronameUSBHub2x4.enable"><a class="viewcode-back" href="../../../ssmdevices.electronics.html#ssmdevices.electronics.usb.AcronameUSBHub2x4.enable">[docs]</a>    <span class="k">def</span> <span class="nf">enable</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">power</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Enable or disable of USB port features at one or all hub ports.</span>
@@ -182,7 +167,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
     </div>
   </body>
 </html>
