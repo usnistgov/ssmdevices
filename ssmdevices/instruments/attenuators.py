@@ -110,10 +110,12 @@ class MiniCircuitsRCBase(DotNetDevice):
 class MiniCircuitsRCDAT(MiniCircuitsRCBase):
     ''' A digitally-controlled single-channel solid-state attenuator.
     '''
-    
+
     model_includes = 'RCDAT'
+    
     class state(MiniCircuitsRCBase.state):
         attenuation          = lb.Float(min=0, max=115, step=0.25)
+        
 
     @state.attenuation.getter
     def __ (self):
@@ -142,6 +144,7 @@ class MiniCircuitsRC4DAT(MiniCircuitsRCBase):
         attenuation2 = lb.Float(min=0, max=115, step=0.25, command=2)
         attenuation3 = lb.Float(min=0, max=115, step=0.25, command=3)
         attenuation4 = lb.Float(min=0, max=115, step=0.25, command=4)
+
 
     @state.getter
     def __ (self, trait):
