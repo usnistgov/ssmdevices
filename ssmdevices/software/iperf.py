@@ -59,7 +59,7 @@ class IPerf(lb.CommandLineWrapper):
                                  'datagrams_out_of_order')
 
         columns = ['iperf_'+c for c in columns]
-        open(r'C:\python code\junk.csv','wb').write(StringIO(result).read().encode())
+        
         data = pd.read_csv(StringIO(result), header=None,index_col=False,
                            names=columns)
         
