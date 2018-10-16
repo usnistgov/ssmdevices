@@ -37,9 +37,9 @@ class IPerf(lb.CommandLineWrapper):
         udp           = lb.Bool(False, command='-u', help='use UDP instead of the default, TCP')
         bit_rate      = lb.Unicode(None, allow_none=True, command='-b',
                                    help='Maximum bit rate (append unit for size, e.g. 10K)')
-        time          = lb.Int(10, min=0, max=16535, command='-t',
+        time          = lb.Int(None, min=0, max=16535, command='-t', allow_none=True,
                                help='time in seconds to transmit before quitting (default 10s)')
-        arguments     = lb.List(['-n','-1','-y','C'])
+        arguments     = lb.List(['-n','-1','-y','C'], allow_none=True)
 
     def fetch (self):
         ''' Retreive csv-formatted text from standard output and parse into
@@ -228,10 +228,10 @@ class IPerfClient(IPerf):
     ''' This class is deprected. Use IPerf instead
     '''
     
-    def __init__ (self, *args, **kws):
+    def __imports__ (self, *args, **kws):
         self.logger.warning('this class is deprecated! use {} instead'\
                             .format(repr(IPerf)))
-        super(IPerfClient, self).__init__(*args, **kws)
+        super(IPerfClient, self).__imports__(*args, **kws)
 
 
 if __name__ == '__main__':
