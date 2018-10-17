@@ -131,7 +131,38 @@ class AeroflexTM500(lb.TelnetDevice):
         self.__latest['scenario_name'] = None
         self.__latest['data'] = None
         self.__latest['trigger_time'] = 0
-        return ret        
+        return ret
+    
+    def reboot(self, timeout=180):
+        ''' Reboot the TMA and TM500 hardware.
+        '''
+        self._send('RBOT')
+        lb.TelnetDevice.disconnect(self)
+        t0 = time.time()
+        while time.time()-t0 < timeout:
+            try:
+                lb.TelnetDevice.connect(self)
+                break
+            except TimeoutError:
+                lb.sleep(1)
+                continue
+            except:
+                raise
+        else:
+            raise TimeoutError('timeout reconnecting to the tm500 after reboot')
+
+        ret = b''
+        while time.time()-t0 < timeout:
+            ret = ret + self.backend.read_very_eager()
+            
+            if b'I: REBOOT - The Test Mobile has rebooted' in ret:
+                break
+            else:
+                lb.sleep(1)
+        else:
+            raise TimeoutError('no message confirming reboot')
+        
+        self.logger.debug('tm500 rebooted after {}s'.format(time.time()-t0))    
     
     @staticmethod
     def command_log_to_script(path):
