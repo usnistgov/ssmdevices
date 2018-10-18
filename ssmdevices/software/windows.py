@@ -4,15 +4,22 @@ from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
 
-from builtins import super
 from future import standard_library
 standard_library.install_aliases()
-__all__ = ['Netsh','WLANStatus']
+__all__ = ['Netsh','WLANStatus','WLANException','WLANAPException']
 
 import labbench as lb
 import traitlets as tl
-import re,threading,time
-import subprocess as sp
+import re,time
+
+class WLANException(lb.DeviceException):
+    pass
+
+class WLANInterfaceException(WLANException):
+    pass
+
+class WLANAPException(WLANException):
+    pass
 
 class Netsh(lb.CommandLineWrapper):
     ''' Parse calls to netsh to get information about available WLAN access
@@ -22,7 +29,8 @@ class Netsh(lb.CommandLineWrapper):
     settings = lb.CommandLineWrapper\
                  .settings\
                  .define(binary_path=r'C:\Windows\System32\netsh.exe',
-                         arguments=['wlan'])
+                         arguments=['wlan'],
+                         timeout=3)
     
     def wait (self):
         try:
@@ -46,13 +54,8 @@ class Netsh(lb.CommandLineWrapper):
             return d
 
         # Execute the binary
-#        self.wait()
-        super(Netsh,self).foreground('show', 'networks', 'mode=bssid')
-        
-        # Block until the call finishes, then fetch the output text
-#        self.wait()
-        txt = self.read_stdout()
-        
+        txt = self.foreground('show', 'networks', 'mode=bssid').decode()
+
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r'^\s*(.*?)\s*:\s*(.*?)\s*$',txt,flags=re.MULTILINE)
 
@@ -75,12 +78,7 @@ class Netsh(lb.CommandLineWrapper):
             return d
         
         # Execute the binary
-#        self.wait()
-        super(Netsh,self).foreground('show', 'interfaces')
-        
-        # Block until the call finishes, then fetch the output text
-#        self.wait()
-        txt = self.read_stdout()
+        txt = self.foreground('show', 'interfaces').decode()
         
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r'^\s*(\S+.*?)\s+:\s+(\S+.*?)\s*$',txt,flags=re.MULTILINE)
@@ -88,113 +86,170 @@ class Netsh(lb.CommandLineWrapper):
         return pairs_to_dict(lines)
 
     def set_interface_connected (self, interface, profile):
-        args = ['wlan', 'connect', 'name="{}"'.format(profile),'interface="{}"'.format(interface)]
-        self.wait()
-        si = sp.STARTUPINFO()
-        si.dwFlags |= sp.STARTF_USESHOWWINDOW
-        proc = sp.Popen(args, stdout=sp.PIPE, startupinfo=si,
-                        bufsize=1, universal_newlines=True,
-                        creationflags=sp.CREATE_NEW_PROCESS_GROUP,
-                        stderr=sp.PIPE)
-        proc.wait()
+        ret = self.foreground('connect',
+                              'name="{}"'.format(profile),
+                              'interface="{}"'.format(interface)).decode()
+        
+        if 'success' in ret:
+            return
+        elif 'there is no profile' in ret.lower():
+            raise WLANAPException(ret)
+        elif 'no such wireless interface' in ret.lower():
+            raise WLANInterfaceException(ret)
+        else:
+            raise ValueError('unknown netsh return {}'.format(repr(ret)))
+            
+    def set_interface_disconnected (self, interface):
+        ret = self.foreground('disconnect',
+                              'interface="{}"'.format(interface)).decode()
+        
+        if 'success' in ret:
+            return
+        elif 'no such wireless interface' in ret.lower():
+            raise WLANInterfaceException(ret)
+        else:
+            raise ValueError('unknown netsh return {}'.format(repr(ret)))
+        
 
 
 class WLANStatus(lb.Device):
     class settings(lb.Device.settings):
         resource           = lb.Unicode(allow_none=True)
         ssid               = lb.Unicode(allow_none=True)
-        force_reconnect    = tl.Bool(True)        
 
     class state(lb.Device.state):
-        bssid              = lb.Bytes(read_only=True,)
-        channel            = lb.Int(min=0,read_only=True)
-        signal             = lb.Int(min=0,max=100,read_only=True)
-        ssid               = lb.Bytes(read_only=True,)
-        transmit_rate_mbps = lb.Int(min=0,read_only=True)
-        radio_type         = lb.Bytes(read_only=True)
-        state              = lb.Bytes(read_only=True)
+        # SSID info
+        bssid              = lb.Unicode(read_only=True,allow_none=True,command='ssid')
+        bssid_1            = lb.Unicode(read_only=True,allow_none=True,command='ssid')
+        bssid_2            = lb.Unicode(read_only=True,allow_none=True,command='ssid')
+        bssid_3            = lb.Unicode(read_only=True,allow_none=True,command='ssid')
+        bssid_4            = lb.Unicode(read_only=True,allow_none=True,command='ssid')
+        channel            = lb.Int(min=0,allow_none=True,read_only=True,command='ssid')
+        signal             = lb.Int(min=0,allow_none=True,max=100,read_only=True,command='ssid')
+        ssid               = lb.Unicode(read_only=True,allow_none=True,command='ssid')
+        transmit_rate_mbps = lb.Int(min=0,read_only=True,allow_none=True,command='ssid')
+        radio_type         = lb.Unicode(read_only=True,allow_none=True,command='ssid')
+        encryption         = lb.Unicode(read_only=True,allow_none=True,command='ssid')
+
+        # Interface info
+        description        = lb.Unicode(read_only=True,command='interface')
+        state              = lb.Unicode(read_only=True,command='interface')
+        radio_status       = lb.Unicode(read_only=True,command='interface')
 
     def connect (self):
         self.backend = Netsh()
         self.backend.connect()
-        
-        def reconnect():
-            states = {}
-            def onchange (args):
-                states[args['name']] = args['new']
-            self.state.observe(onchange)
-            
-            self.logger.debug('starting WLAN reconnect watchdog')
-            iface = self.settings.resource
-            target_ssid = self.settings.ssid
-            lb.sleep(0.1)
-            
-            while True:
-                if not self.state.connected:
-                    return
-#                self.state.state
-                if states.get('state',None) != 'disconnected':
-                    if target_ssid is None:
-                        target_ssid = states.get('ssid', None)
-                elif self.settings.force_reconnect:
-                    if target_ssid is None:
-                        self.logger.warn("{}, but don't know SSID for reconnection".format(iface))
-                    else:
-                        self.logger.warn("{}, reconnecting to {}".format(iface,target_ssid))
-                        self.backend.set_interface_connected(self.settings.resource,
-                                                             target_ssid)
-                        
-                lb.sleep(.1)
-        
-        threading.Thread(target=reconnect).start()
+
+        # Check that this interface exists
+        available_interfaces = list(self.backend.get_wlan_interfaces().keys())
+        if self.settings.resource not in available_interfaces:
+            raise WLANInterfaceException('requested WLAN interface {}, but only {} are available'\
+                                         .format(repr(self.settings.resource),
+                                                 repr(available_interfaces)))
 
     def disconnect (self):
-        try:
-            self.backend.disconnect()
-        except lb.ConnectionError:
-            pass
+        self.backend.disconnect()
+
+    def reconnect_interface(self, timeout=2):
+        ''' Disconnect from the WLAN interface, and reconnect.
+        '''
+        
+        # Disconnect, if necessary
+        if self.state.state != 'disconnected':
+            self.backend.set_interface_disconnected(self.settings.resource)
+
+            t0 = time.time()
+            while time.time()-t0 < timeout:
+                s = self.state.state
+                if s == 'disconnected':
+                    break
+                lb.sleep(.05)
+            else:
+                raise TimeoutError('tried to connect but only achieved the state '+s)
+
+        # Connect
+        self.backend.set_interface_connected(self.settings.resource,
+                                             self.settings.ssid)
+
+        t0 = time.time()
+        while time.time()-t0 < timeout:
+            s = self.state.state
+            if s == 'connected':
+                break
+            lb.sleep(.05)
+        else:
+            self.logger.debug('failed to reconnect to WLAN AP with SSID {}'\
+                              .format(self.settings.ssid))
+            raise TimeoutError('tried to connect but only achieved the {} state '\
+                               .format(repr(s)))
+            
+        self.logger.debug('reconnected')
 
     @state.getter
     def __(self, trait):
-        d = self.backend.get_wlan_interfaces()
+        ret = lb.concurrently(self.backend.get_wlan_interfaces,
+                              self.backend.get_wlan_ssids,flatten=False)
+        interfaces = ret.pop('get_wlan_interfaces')
+        ssids = ret.pop('get_wlan_ssids')
+        
         resource = self.settings.resource
 
+        # When resource is None, try to automatically pick one
         if self.settings.resource is None:
-            if len(d) == 0:
+            if len(interfaces) == 0:
                 raise OSError('no WLAN interfaces available')
-            if len(d) != 1:
-                available = ' ,'.join(d.keys())
+            elif len(interfaces) != 1:
+                available = ' ,'.join(interfaces.keys())
                 raise Exception('resource needs to be specified to specify one of the available WLAN interfaces ({})'\
                                 .format())
-            resource = list(d.keys())[0]
+            elif len(interfaces) == 1:
+                resource = list(interfaces.keys())[0]
         
-        if resource not in d:
+        if resource not in interfaces:
             self.logger.warn('windows reports no WLAN interface named "{}"'\
                              .format(self.settings.resource))
             
-            if len(d) == 0:
+            if len(interfaces) == 0:
                 msg = 'requested WLAN interface "{}" does not exist, and no other interfaces are available'\
                       .format(resource)
             else:
-                available = ' ,'.join(d.keys())
+                available = ' ,'.join(interfaces.keys())
                 msg = 'requested WLAN interface "{}" does not exist. windows reports only {}'\
                               .format(resource, available)
             #raise Exception('windows reports no WLAN interface named "{}"'.format(self.settings.resource['interface']))
             raise OSError(msg)
             
-            self.logger.warn('windows reports no WLAN interface named "{}"'\
-                             .format(resource))
+            self.logger.warn('OS reports no WLAN interface named {}'\
+                             .format(repr(resource)))
             return None
-        d = d[resource]
-        
+        interface = interfaces[resource]
+
+        # Look for info
+        ssid = ssids.get(self.settings.ssid, {})
+        if ssid is {}:
+            self.logger.debug('OS does not report requested ssid {} on {}'\
+                              .format(self.settings.ssid,self.settings.resource))
+
         # Set the other traits with the other dictionary values
-        for other in list(self.state.traits().values()):
-            if other.name in d and other.name != trait.name:
-                # sneak in under the hood and set the other traits directly 
-                # with traitlets
-                other._parent.set(other, self.state, d[other.name])
-            
-        return d[trait.name]
+        for name,other_trait in self.state.traits().items():
+            # set the other traits directly with traitlets, bypassing the labbench
+            # remote get/set
+            if other_trait.command == 'ssid':
+                if name == 'signal' and name in ssid:
+                    ssid['signal'] = ssid['signal'].replace('%','')
+                other_trait._parent.set(other_trait, self.state,
+                                        ssid.get(name,None))
+            elif other_trait.command == 'interface':
+                other_trait._parent.set(other_trait, self.state,
+                                        interface.get(name,None))
+                
+            if other_trait is trait:
+                if name in interface:
+                    ret = interface[name]
+                else:
+                    ret = ssid.get(name, None)
+
+        return ret
 
 if __name__ == '__main__':
     import time
