@@ -17,7 +17,6 @@ class RigolOscilloscope(lb.VISADevice):
         time_scale         = lb.Float (command=':TIM:SCAL', label='s')
     
     def connect (self, horizontal=False):
-        super(RigolOscilloscope,self).connect()
         self.write(':WAVeform:FORMat ASCii')
         
     def fetch (self):

@@ -140,7 +140,6 @@ class QXDM(lb.Win32ComDevice):
         self.__connection_info = {}
         self._qpst = QPST()
         self._qpst.connect()
-        super(QXDM, self).connect()
         self.__connection_info = self._qpst.add_port(self.settings.resource)
 
         self.__start_time = None
