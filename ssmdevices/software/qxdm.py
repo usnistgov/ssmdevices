@@ -132,7 +132,7 @@ class QXDM(lb.Win32ComDevice):
                 proc = psutil.Process(pid)
                 for target in 'qpst','qxdm','atmnserver':
                     if proc.name().lower().startswith(target.lower()):
-                        self.logger.info('killing zombie process {}'.format(proc.name()))
+                        self.logger.debug('killing zombie process {}'.format(proc.name()))
                         proc.kill()
             except psutil.NoSuchProcess:
                 pass
