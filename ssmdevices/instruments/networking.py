@@ -245,7 +245,6 @@ class AeroflexTM500(lb.TelnetDevice):
                 self._send('#$$DISCONNECT', confirm=False)
             except:
                 pass
-            super(AeroflexTM500, self).disconnect()
 
     def connect(self):
         self.__latest = {}
