@@ -9,8 +9,8 @@ standard_library.install_aliases()
 __all__ = ['Netsh','WLANStatus','WLANException','WLANAPException']
 
 import labbench as lb
-import traitlets as tl
 import re,time
+import subprocess as sp
 
 class WLANException(lb.DeviceException):
     pass
@@ -30,7 +30,7 @@ class Netsh(lb.CommandLineWrapper):
                  .settings\
                  .define(binary_path=r'C:\Windows\System32\netsh.exe',
                          arguments=['wlan'],
-                         timeout=3)
+                         timeout=5)
     
     def wait (self):
         try:
@@ -39,7 +39,8 @@ class Netsh(lb.CommandLineWrapper):
         except:
             pass
     
-    def get_wlan_ssids (self):
+    @lb.retry(sp.TimeoutExpired, tries=5)
+    def get_wlan_ssids (self, retries=5):
         def pairs_to_dict(lines):
             d = {}
             ssid = None
@@ -60,7 +61,8 @@ class Netsh(lb.CommandLineWrapper):
         lines = re.findall(r'^\s*(.*?)\s*:\s*(.*?)\s*$',txt,flags=re.MULTILINE)
 
         return pairs_to_dict(lines)
-    
+
+    @lb.retry(sp.TimeoutExpired, tries=5)
     def get_wlan_interfaces (self, name=None, param=None):
         def pairs_to_dict(lines):
             d = {}
@@ -76,15 +78,16 @@ class Netsh(lb.CommandLineWrapper):
                         v = v.replace('%','')
                     d[name][k] = v
             return d
-        
+
         # Execute the binary
-        txt = self.foreground('show', 'interfaces').decode()
+        txt = self.foreground('show', 'interfaces').decode()       
         
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r'^\s*(\S+.*?)\s+:\s+(\S+.*?)\s*$',txt,flags=re.MULTILINE)
 
         return pairs_to_dict(lines)
 
+    @lb.retry(sp.TimeoutExpired, tries=5)
     def set_interface_connected (self, interface, profile):
         ret = self.foreground('connect',
                               'name="{}"'.format(profile),
@@ -98,18 +101,18 @@ class Netsh(lb.CommandLineWrapper):
             raise WLANInterfaceException(ret)
         else:
             raise ValueError('unknown netsh return {}'.format(repr(ret)))
-            
+
+    @lb.retry(sp.TimeoutExpired, tries=5)            
     def set_interface_disconnected (self, interface):
         ret = self.foreground('disconnect',
                               'interface="{}"'.format(interface)).decode()
         
-        if 'success' in ret:
+        if 'success' in ret or len(ret.strip())==0:
             return
         elif 'no such wireless interface' in ret.lower():
             raise WLANInterfaceException(ret)
         else:
             raise ValueError('unknown netsh return {}'.format(repr(ret)))
-        
 
 
 class WLANStatus(lb.Device):
@@ -119,22 +122,22 @@ class WLANStatus(lb.Device):
 
     class state(lb.Device.state):
         # SSID info
-        bssid              = lb.Unicode(read_only=True,allow_none=True,command='ssid')
-        bssid_1            = lb.Unicode(read_only=True,allow_none=True,command='ssid')
-        bssid_2            = lb.Unicode(read_only=True,allow_none=True,command='ssid')
-        bssid_3            = lb.Unicode(read_only=True,allow_none=True,command='ssid')
-        bssid_4            = lb.Unicode(read_only=True,allow_none=True,command='ssid')
-        channel            = lb.Int(min=0,allow_none=True,read_only=True,command='ssid')
-        signal             = lb.Int(min=0,allow_none=True,max=100,read_only=True,command='ssid')
-        ssid               = lb.Unicode(read_only=True,allow_none=True,command='ssid')
-        transmit_rate_mbps = lb.Int(min=0,read_only=True,allow_none=True,command='ssid')
-        radio_type         = lb.Unicode(read_only=True,allow_none=True,command='ssid')
-        encryption         = lb.Unicode(read_only=True,allow_none=True,command='ssid')
+        bssid              = lb.Unicode('',read_only=True,allow_none=True,command='ssid')
+        bssid_1            = lb.Unicode('',read_only=True,allow_none=True,command='ssid')
+        bssid_2            = lb.Unicode('',read_only=True,allow_none=True,command='ssid')
+        bssid_3            = lb.Unicode('',read_only=True,allow_none=True,command='ssid')
+        bssid_4            = lb.Unicode('',read_only=True,allow_none=True,command='ssid')
+        channel            = lb.Int(None,min=0,allow_none=True,read_only=True,command='ssid')
+        signal             = lb.Int(None,min=0,allow_none=True,max=100,read_only=True,command='ssid')
+        ssid               = lb.Unicode('',read_only=True,allow_none=True,command='ssid')
+        transmit_rate_mbps = lb.Int(None,min=0,read_only=True,allow_none=True,command='ssid')
+        radio_type         = lb.Unicode('',read_only=True,allow_none=True,command='ssid')
+        encryption         = lb.Unicode('',read_only=True,allow_none=True,command='ssid')
 
         # Interface info
-        description        = lb.Unicode(read_only=True,command='interface')
-        state              = lb.Unicode(read_only=True,command='interface')
-        radio_status       = lb.Unicode(read_only=True,command='interface')
+        description        = lb.Unicode('',read_only=True,command='interface')
+        state              = lb.Unicode('',read_only=True,command='interface')
+        radio_status       = lb.Unicode('',read_only=True,command='interface')
 
     def connect (self):
         self.backend = Netsh()
@@ -150,26 +153,31 @@ class WLANStatus(lb.Device):
     def disconnect (self):
         self.backend.disconnect()
 
-    def reconnect_interface(self, timeout=2):
+    def interface_disconnect(self, timeout=10):
         ''' Disconnect from the WLAN interface, and reconnect.
         '''
         
         # Disconnect, if necessary
-        if self.state.state != 'disconnected':
-            self.backend.set_interface_disconnected(self.settings.resource)
+        self.backend.set_interface_disconnected(self.settings.resource)
 
-            t0 = time.time()
-            while time.time()-t0 < timeout:
-                s = self.state.state
-                if s == 'disconnected':
-                    break
-                lb.sleep(.05)
-            else:
-                raise TimeoutError('tried to connect but only achieved the state '+s)
+        t0 = time.time()
+        while time.time()-t0 < timeout:
+            s = self.state.state
+            if s == 'disconnected':
+                break
+            lb.sleep(.05)
+        else:
+            raise TimeoutError('tried to disconnect but only achieved the {} state '\
+                               .format(repr(s)))
+            
+        self.logger.debug('disconnected WLAN interface')
 
+    def interface_connect(self, timeout=10):
         # Connect
         self.backend.set_interface_connected(self.settings.resource,
                                              self.settings.ssid)
+        
+        lb.sleep(0.5)
 
         t0 = time.time()
         while time.time()-t0 < timeout:
@@ -183,7 +191,7 @@ class WLANStatus(lb.Device):
             raise TimeoutError('tried to connect but only achieved the {} state '\
                                .format(repr(s)))
             
-        self.logger.debug('reconnected')
+        self.logger.debug('connected WLAN interface to {}'.format(self.settings.ssid))
 
     @state.getter
     def __(self, trait):
@@ -237,12 +245,16 @@ class WLANStatus(lb.Device):
             if other_trait.command == 'ssid':
                 if name == 'signal' and name in ssid:
                     ssid['signal'] = ssid['signal'].replace('%','')
-                other_trait._parent.set(other_trait, self.state,
-                                        ssid.get(name,None))
+                old = other_trait._parent.get(other_trait, self.state)
+                new = ssid.get(name,None)
+                if old or new:
+                    other_trait._parent.set(other_trait, self.state, new)
             elif other_trait.command == 'interface':
-                other_trait._parent.set(other_trait, self.state,
-                                        interface.get(name,None))
-                
+                old = other_trait._parent.get(other_trait, self.state)
+                new = interface.get(name,None)
+                if old or new:                
+                    other_trait._parent.set(other_trait, self.state, new)
+
             if other_trait is trait:
                 if name in interface:
                     ret = interface[name]
@@ -252,8 +264,6 @@ class WLANStatus(lb.Device):
         return ret
 
 if __name__ == '__main__':
-    import time
-        
     with WLANStatus(ssid='EnGenius1') as wlan:
         while True:
             if wlan.state.state == 'connected':
