@@ -262,6 +262,9 @@ class WLANStatus(lb.Device):
                     ret = ssid.get(name, None)
 
         return ret
+    
+    def refresh(self):
+        self.state.signal # A little bit silly, but this refreshes all state
 
 if __name__ == '__main__':
     with WLANStatus(ssid='EnGenius1') as wlan:
