@@ -20,21 +20,24 @@ That's it.
 ## Device Support
 | *Class* | *Products* |
 |-------------|---------|
+|Attenuators|Minicircuits RUDAT series|
+|           |Minicircuits RCDAT series|
+|           |Minicircuits RCDAT4 series|
+|Motors|ETS-Lindren Azi2005|
+|Networking testers|Cobham TM500 load tester|
+|Oscilloscopes|Rigol ...|
 |Power sensors|Keysight U2000 X series|
 |             |Rohde Schwarz NRP Series|
 |Power supplies|Rigol DP800 series|
 |Signal analyzers|Rohde Schwarz FSW series|
 |Signal generators|Rohde Schwarz SMW series|
 |                 |Spirent GSS8000 GNSS Simulator|
-|Oscilloscopes|Rigol products|
-|Switches|Minicircuits SPnT USB|
-|Attenuators|Minicircuits RCDAT series|
-|Motors|ETS-Lindren Azi2005|
-|Networking testers|Cobham TM500 load tester|
-|Software virtual instruments|iperf version 2|
+|Software virtual instruments|iperf 2.08 on host|
+|                            |iperf on randroid over adb|
 |                            |UDP sockets control interface for exchanging data with LabView|
-|                            |Windows WLAN connection status and control|
-|                            |Cellular handset debug via Qualcomm QXDM|
+|                            |Windows WLAN adapters|
+|                            |Qualcomm QXDM|
+|Switches|Minicircuits SPnT USB|
 |Miscellaneous Lab Gear      |Acroname USBHub 2x4 (python 2.7 only)|
 |Consumer Electronics        |SwiftNav Piksi GPS Receiver|
 |                            |Android handsets|
