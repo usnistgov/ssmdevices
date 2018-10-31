@@ -154,7 +154,11 @@ class WLANStatus(lb.Device):
         self.backend.disconnect()
 
     def interface_disconnect(self, timeout=10):
-        ''' Disconnect from the WLAN interface, and reconnect.
+        ''' Try to disconnect to the WLAN interface, or raise TimeoutError
+            if there is no connection after the specified timeout.
+            
+            :param timeout: timeout to wait before raising TimeoutError
+            :type timeout: float
         '''
         
         # Disconnect, if necessary
@@ -173,10 +177,16 @@ class WLANStatus(lb.Device):
         self.logger.debug('disconnected WLAN interface')
 
     def interface_connect(self, timeout=10):
-        # Connect
+        ''' Try to connect the WLAN interface to the AP with the SSID specified
+            in self.settings.ssid. If a connection is not achieved within
+            the specified timeout duration, the method raises TimeoutError.
+            
+            :param timeout: timeout to wait before raising TimeoutError
+            :type timeout: float
+        '''
         self.backend.set_interface_connected(self.settings.resource,
                                              self.settings.ssid)
-        
+
         lb.sleep(0.5)
 
         t0 = time.time()
@@ -262,8 +272,12 @@ class WLANStatus(lb.Device):
                     ret = ssid.get(name, None)
 
         return ret
-    
+
     def refresh(self):
+        ''' Update all states in self.state at the same time. This saves time
+            for callback updates to database compared to requesting them
+            one-by-one.
+        '''
         self.state.signal # A little bit silly, but this refreshes all state
 
 if __name__ == '__main__':
