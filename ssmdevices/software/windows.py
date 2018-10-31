@@ -190,6 +190,7 @@ class WLANStatus(lb.Device):
         lb.sleep(0.5)
 
         t0 = time.time()
+
         while time.time()-t0 < timeout:
             s = self.state.state
             if s == 'connected':
