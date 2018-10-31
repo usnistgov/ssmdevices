@@ -204,6 +204,15 @@ class WLANStatus(lb.Device):
             
         self.logger.debug('connected WLAN interface to {}'.format(self.settings.ssid))
 
+    def interface_reconnect(self, timeout=10):
+        try:
+            self.interface_disconnect(timeout)
+        except BaseException as e:
+            self.logger.write(str(e))
+            self.logger.write('still attempting to connect')
+            
+        self.interface_connect(timeout)
+
     @state.getter
     def __(self, trait):
         ret = lb.concurrently(self.backend.get_wlan_interfaces,
