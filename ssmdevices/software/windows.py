@@ -208,8 +208,8 @@ class WLANStatus(lb.Device):
         try:
             self.interface_disconnect(timeout)
         except BaseException as e:
-            self.logger.write(str(e))
-            self.logger.write('still attempting to connect')
+            self.logger.debug(str(e))
+            self.logger.debug('still attempting to connect')
             
         self.interface_connect(timeout)
 
