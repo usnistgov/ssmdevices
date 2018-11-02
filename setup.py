@@ -36,20 +36,20 @@ Getting started
 if __name__ == '__main__':
     from distutils.core import setup
     import setuptools,os,sys,shutil
-    from setuptools.command.easy_install import easy_install
+#    from setuptools.command.easy_install import easy_install
     
-    # Adjust easy_install to tell us where the script install directory is
-    class my_easy_install(easy_install):
-        # Match the call signature of the easy_install version.
-        def write_script(self, script_name, contents, mode="t", *ignored):
-    
-            # Run the normal version
-            easy_install.write_script(self, script_name, contents, mode, *ignored)
-    
-            # Save the script install directory in the distribution object.
-            # This is the same thing that is returned by the setup function.
-            self.distribution.script_install_dir = self.script_dir
-    
+#    # Adjust easy_install to tell us where the script install directory is
+#    class my_easy_install(easy_install):
+#        # Match the call signature of the easy_install version.
+#        def write_script(self, script_name, contents, mode="t", *ignored):
+#    
+#            # Run the normal version
+#            easy_install.write_script(self, script_name, contents, mode, *ignored)
+#    
+#            # Save the script install directory in the distribution object.
+#            # This is the same thing that is returned by the setup function.
+#            self.distribution.script_install_dir = self.script_dir
+#    
     dist = setup(name='ssmdevices',
                   version='0.5',
                   description='instrument automation drivers',
@@ -68,7 +68,7 @@ if __name__ == '__main__':
                             'notebook',
                             'sphinx',
                             ],
-                  cmdclass={'easy_install': my_easy_install},
+#                  cmdclass={'easy_install': my_easy_install},
                   zip_safe=False
                  )
 
@@ -77,12 +77,22 @@ if __name__ == '__main__':
         def isbin(p):
             return not os.path.isdir(p) and not p.lower().endswith('.py')
         
-        return [os.path.join(path, e) for e in os.listdir(path) if isbin(os.path.join(path,e))]
+        return [p for p in setuptools.findall(path) if isbin(p)]
+    
+    def find_scripts_dir():
+        candidates = [p for p in os.environ['PATH'].split(';') if p.lower().endswith('scripts')]
+        for c in candidates:
+            py_guess = os.path.join(os.path.split(c)[0], 'python.exe')
+            if os.path.exists(py_guess):
+                return c
+        raise ValueError('could not guess python distribution scripts path :(')
+        
     
     scripts = listbinaries(r'ssmdevices\lib')
     sys.stderr.write('installing to PATH:\n'+'\n'.join(scripts))
-
+    scripts_dir = find_scripts_dir()
+    
     for s in scripts:
-        to = os.path.join(dist.script_install_dir, os.path.basename(s))
+        to = os.path.join(scripts_dir, os.path.basename(s))
         print('copy {} to {}'.format(s,to))
         shutil.copyfile(s, to)
