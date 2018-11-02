@@ -35,26 +35,54 @@ Getting started
 
 if __name__ == '__main__':
     from distutils.core import setup
-    import setuptools
+    import setuptools,os,sys,shutil
+    from setuptools.command.easy_install import easy_install
     
-    setup(name='ssmdevices',
-          version='0.5',
-          description='instrument automation drivers',
-          author='Dan Kuester',
-          author_email='daniel.kuester@nist.gov',
-          url='https://gitlab.nist.gov/gitlab/ssm/ssmdevices',
-          packages=setuptools.find_packages(),
-#          package_dir={'ssmdevices': 'ssmdevices'},
-#          package_data={'ssmdevices': ['lib/*']},
-          include_package_data=True,
-          license='NIST',
-          install_requires=[
-  		    	    'labbench(>=0.19)',
-                    'pandas(>=0.19.0)',
-                    'pyserial(>3.0)',
-                    'pyvisa(>=1.8)',
-                    'ipywidgets',
-                    'notebook',
-                    'sphinx',
-                    ],
-         )
+    # Adjust easy_install to tell us where the script install directory is
+    class my_easy_install(easy_install):
+        # Match the call signature of the easy_install version.
+        def write_script(self, script_name, contents, mode="t", *ignored):
+    
+            # Run the normal version
+            easy_install.write_script(self, script_name, contents, mode, *ignored)
+    
+            # Save the script install directory in the distribution object.
+            # This is the same thing that is returned by the setup function.
+            self.distribution.script_install_dir = self.script_dir
+    
+    dist = setup(name='ssmdevices',
+                  version='0.5',
+                  description='instrument automation drivers',
+                  author='Dan Kuester',
+                  author_email='daniel.kuester@nist.gov',
+                  url='https://gitlab.nist.gov/gitlab/ssm/ssmdevices',
+                  packages=setuptools.find_packages(),
+                  include_package_data=True,
+                  license='NIST',
+                  install_requires=[
+          		    	    'labbench(>=0.19)',
+                            'pandas(>=0.19.0)',
+                            'pyserial(>3.0)',
+                            'pyvisa(>=1.8)',
+                            'ipywidgets',
+                            'notebook',
+                            'sphinx',
+                            ],
+                  cmdclass={'easy_install': my_easy_install},
+                  zip_safe=False
+                 )
+
+    # Find and install binaries
+    def listbinaries(path):
+        def isbin(p):
+            return not os.path.isdir(p) and not p.lower().endswith('.py')
+        
+        return [os.path.join(path, e) for e in os.listdir(path) if isbin(os.path.join(path,e))]
+    
+    scripts = listbinaries(r'ssmdevices\lib')
+    sys.stderr.write('installing to PATH:\n'+'\n'.join(scripts))
+
+    for s in scripts:
+        to = os.path.join(dist.script_install_dir, os.path.basename(s))
+        print('copy {} to {}'.format(s,to))
+        shutil.copyfile(s, to)
