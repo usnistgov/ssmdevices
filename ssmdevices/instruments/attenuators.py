@@ -17,8 +17,77 @@ from labbench import DotNetDevice
 import ssmdevices.lib
 import labbench as lb
 import time,random
+import platform
 
-class MiniCircuitsRCBase(DotNetDevice):
+class MiniCircuitsRCDAT(lb.Device):
+    class settings(DotNetDevice.settings):
+        resource = lb.Unicode(None, help='Serial number of the USB device. Must be defined if more than one device is connected to the computer', allow_none=True)
+        timeout = lb.Int(5, min=0.5)
+    
+    class state(DotNetDevice.state):
+        model         = lb.Unicode(read_only=True, cache=True, is_metadata=True)
+        serial_number = lb.Unicode(read_only=True, cache=True, is_metadata=True)
+        attenuation   = lb.Float(min=0, max=115, step=0.25)
+        
+    def __imports__(self):
+        global pyminicircuits
+        import pyminicircuits
+
+    def connect(self):
+        class Attenuator(pyminicircuits.Attenuator):
+            def _cmd(self, *cmd, timeout=5):
+                if len(cmd) > 64:
+                    raise ValueError('command data length is limited to 64')
+                    
+                cmd = list(cmd) + (63-len(cmd))*[0]
+                    
+                if platform.system().lower() == 'windows':
+                    self.h.write([0]+cmd[:-1])
+                else:
+                    self.h.write(cmd)
+        
+                t0 = time.time()
+                while time.time()-t0 < timeout:
+                    d = self.h.read(64)
+                    if d:
+                        break
+                else:
+                    raise TimeoutError('no response from device')
+                    
+                if d[0] != cmd[0]:
+                    raise RuntimeError("Invalid response from device: %s" % d)
+                return d
+        
+        self.backend = Attenuator(serial=self.settings.resource)
+        self.logger.debug('connected to {model}'\
+                          .format(model=self.state.model))
+
+    def disconnect(self):
+        try:
+            self.backend.h.close()
+        except:
+            pass
+
+    @state.attenuation.getter
+    def __ (self):
+        ret = self.backend.get_attenuation()
+        self.logger.debug('got attenuation {} dB'.format(ret))
+        return ret
+
+    @state.attenuation.setter
+    def __ (self, value):        
+        self.backend.set_attenuation(value)
+        self.logger.debug('attenuation set to {} dB'.format(value))
+    
+    @state.model.getter
+    def __ (self):
+        return self.backend.get_part_number()
+    
+    @state.serial_number.getter
+    def __ (self):
+        return self.backend.get_serial()
+
+class MiniCircuitsRC4DAT(DotNetDevice):
     ''' Base class for MiniCircuits USB attenuators.
     
         This implementation calls the .NET drivers provided by the
@@ -32,14 +101,31 @@ class MiniCircuitsRCBase(DotNetDevice):
     
     class settings(DotNetDevice.settings):
         resource = lb.Unicode(None, help='Serial number of the USB device. Must be defined if more than one device is connected to the computer', allow_none=True)
-    
+
     class state(DotNetDevice.state):
         model = lb.Unicode(read_only=True, cache=True, is_metadata=True)
-        serial_number = lb.Unicode(read_only=True, cache=True, is_metadata=True)
+        serial_number = lb.Unicode(read_only=True, cache=True, is_metadata=True)        
+        attenuation1 = lb.Float(min=0, max=115, step=0.25, command=1)
+        attenuation2 = lb.Float(min=0, max=115, step=0.25, command=2)
+        attenuation3 = lb.Float(min=0, max=115, step=0.25, command=3)
+        attenuation4 = lb.Float(min=0, max=115, step=0.25, command=4)
 
     def connect (self):
         ''' Open the device resource.
         '''
+        @lb.retry(ConnectionError, 10, delay=0.25)
+        def do_connect():
+            self.backend = self.dll.USB_RUDAT()
+    #        if self.settings.resource == 1
+            for retry in range(10):
+                ret = self.backend.Connect(self.settings.resource)[0]
+                if ret == 1:
+                    time.sleep(random.uniform(0,0.2))
+                    break
+            else:
+                time.sleep(0.25)
+                raise ConnectionError('Cannot connect to attenuator resource {}'.format(self.settings.resource))
+            
         if self.dll is None:
             raise Exception('Minicircuits attenuator support currently requires pythonnet and windows')
             
@@ -55,16 +141,7 @@ class MiniCircuitsRCBase(DotNetDevice):
                 raise ValueError('specified serial number {} but only found {} on USB'\
                                  .format(repr(self.settings.resource),repr(valid)))
                 
-        self.backend = self.dll.USB_RUDAT()
-#        if self.settings.resource == 1
-        for retry in range(10):
-            ret = self.backend.Connect(self.settings.resource)[0]
-            if ret == 1:
-                time.sleep(random.uniform(0,0.2))
-                break
-        else:
-            raise Exception('Cannot connect to attenuator resource {}'.format(self.settings.resource))
-        
+        do_connect()
         if self.model_includes and self.model_includes not in self.state.model:
             raise lb.DeviceException('attenuator model {model} does not include the expected {model_has} string'\
                                      .format(model=self.state.model,
@@ -80,14 +157,26 @@ class MiniCircuitsRCBase(DotNetDevice):
         self.backend.Disconnect()
 
     @classmethod
-    def list_available_devices(cls):
+    def list_available_devices(cls, inst=None):
         ''' Return a list of valid resource strings of MiniCircuitsRCDAT and
             MiniCircuitsRC4DAT devices that are found on this computer.
+            
+            If inst is not None, it should be a MiniCircuitsRCBase instance.
+            In this case its backend will be used instead of temporarily
+            making a new one.
         '''
+        lb.logger.debug('checking available devices')
         # Force the dll to import if no devices have been imported yet
-        if not hasattr(cls, '__dll__'):
-            cls()
-        count, response = cls.__dll__.USB_RUDAT().Get_Available_SN_List('')
+        if inst is None:
+            if not hasattr(cls, 'dll'):
+                cls.__imports__()
+            backend = cls.dll.USB_RUDAT()
+        else:
+            backend = inst.backend
+
+        count, response = backend.Get_Available_SN_List('')
+        
+        lb.logger.debug('response was {}'.format(response))
         if count > 0:
             return response.split(' ')
         else:
@@ -102,49 +191,10 @@ class MiniCircuitsRCBase(DotNetDevice):
     def __ (self):
         self._validate_connection()
         return self.backend.Read_SN('')[1]
-    
+
     def _validate_connection(self):
         if self.backend.GetUSBConnectionStatus() != 1:
             raise lb.DeviceStateError('USB device unexpectedly disconnected')
-
-class MiniCircuitsRCDAT(MiniCircuitsRCBase):
-    ''' A digitally-controlled single-channel solid-state attenuator.
-    '''
-
-    model_includes = 'RCDAT'
-    
-    class state(MiniCircuitsRCBase.state):
-        attenuation          = lb.Float(min=0, max=115, step=0.25)
-        
-
-    @state.attenuation.getter
-    def __ (self):
-        self._validate_connection()
-        ret = self.backend.Read_Att(0)[1]
-        self.logger.debug('got attenuation {} dB'.format(ret))
-        return ret
-
-    @state.attenuation.setter
-    def __ (self, value):
-        self._validate_connection()
-        self.logger.debug('set attenuation {} dB'.format(value))
-        self.backend.SetAttenuation(value)
-
-class MiniCircuitsRC4DAT(MiniCircuitsRCBase):
-    ''' A digitally-controlled 4-channel solid-state attenuator.
-    '''
-
-    model_includes = 'RC4DAT'
-
-    class settings(DotNetDevice.settings):
-        resource = lb.Unicode(None, help='Serial number of the USB device. Must be defined if more than one device is connected to the computer', allow_none=True)
-
-    class state(MiniCircuitsRCBase.state):
-        attenuation1 = lb.Float(min=0, max=115, step=0.25, command=1)
-        attenuation2 = lb.Float(min=0, max=115, step=0.25, command=2)
-        attenuation3 = lb.Float(min=0, max=115, step=0.25, command=3)
-        attenuation4 = lb.Float(min=0, max=115, step=0.25, command=4)
-
 
     @state.getter
     def __ (self, trait):
@@ -160,8 +210,9 @@ class MiniCircuitsRC4DAT(MiniCircuitsRCBase):
         self.backend.SetChannelAtt(trait.command, value)
 
 if __name__ == '__main__':
-    lb.show_messages('debug')
-    with MiniCircuitsRC4DAT('11711260039') as atten:
-        print(atten.state.model)
-        atten.state.attenuation1 = 28.
-        print(atten.state.attenuation1)
+#    lb.show_messages('debug')
+    for i in range(1000):
+        lb.logger.warning(str(i))
+        with MiniCircuitsRCDAT('11604210014') as atten:
+            atten.state.attenuation = 63.
+            lb.logger.info(str(atten.state.attenuation))
