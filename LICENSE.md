@@ -1,3 +1,5 @@
+### NIST License
+
 This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
 Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
 copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
@@ -15,3 +17,9 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses.
+
+### Bundled software
+These are included as part of this source distribution with changes.
+
+A modified version of [pyminicircuits](https://github.com/storborg/pyminicircuits) is included `minicircuits.py` with changes.
+It was distributed under the [MIT license](https://github.com/pyvisa/pyvisa/blob/master/LICENSE).

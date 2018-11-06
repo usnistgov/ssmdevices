@@ -17,75 +17,10 @@ from labbench import DotNetDevice
 import ssmdevices.lib
 import labbench as lb
 import time,random
-import platform
+import minicircuits
 
-class MiniCircuitsRCDAT(lb.Device):
-    class settings(DotNetDevice.settings):
-        resource = lb.Unicode(None, help='Serial number of the USB device. Must be defined if more than one device is connected to the computer', allow_none=True)
-        timeout = lb.Int(5, min=0.5)
-    
-    class state(DotNetDevice.state):
-        model         = lb.Unicode(read_only=True, cache=True, is_metadata=True)
-        serial_number = lb.Unicode(read_only=True, cache=True, is_metadata=True)
-        attenuation   = lb.Float(min=0, max=115, step=0.25)
-        
-    def __imports__(self):
-        global pyminicircuits
-        import pyminicircuits
-
-    def connect(self):
-        class Attenuator(pyminicircuits.Attenuator):
-            def _cmd(self, *cmd, timeout=5):
-                if len(cmd) > 64:
-                    raise ValueError('command data length is limited to 64')
-                    
-                cmd = list(cmd) + (63-len(cmd))*[0]
-                    
-                if platform.system().lower() == 'windows':
-                    self.h.write([0]+cmd[:-1])
-                else:
-                    self.h.write(cmd)
-        
-                t0 = time.time()
-                while time.time()-t0 < timeout:
-                    d = self.h.read(64)
-                    if d:
-                        break
-                else:
-                    raise TimeoutError('no response from device')
-                    
-                if d[0] != cmd[0]:
-                    raise RuntimeError("Invalid response from device: %s" % d)
-                return d
-        
-        self.backend = Attenuator(serial=self.settings.resource)
-        self.logger.debug('connected to {model}'\
-                          .format(model=self.state.model))
-
-    def disconnect(self):
-        try:
-            self.backend.h.close()
-        except:
-            pass
-
-    @state.attenuation.getter
-    def __ (self):
-        ret = self.backend.get_attenuation()
-        self.logger.debug('got attenuation {} dB'.format(ret))
-        return ret
-
-    @state.attenuation.setter
-    def __ (self, value):        
-        self.backend.set_attenuation(value)
-        self.logger.debug('attenuation set to {} dB'.format(value))
-    
-    @state.model.getter
-    def __ (self):
-        return self.backend.get_part_number()
-    
-    @state.serial_number.getter
-    def __ (self):
-        return self.backend.get_serial()
+class MiniCircuitsRCDAT(minicircuits.Attenuator):
+    pass
 
 class MiniCircuitsRC4DAT(DotNetDevice):
     ''' Base class for MiniCircuits USB attenuators.
@@ -213,6 +148,8 @@ if __name__ == '__main__':
 #    lb.show_messages('debug')
     for i in range(1000):
         lb.logger.warning(str(i))
-        with MiniCircuitsRCDAT('11604210014') as atten:
+        atten = MiniCircuitsRCDAT('11604210014')
+        atten2 = MiniCircuitsRCDAT('11604210008')
+        with atten,atten2:
             atten.state.attenuation = 63.
             lb.logger.info(str(atten.state.attenuation))
