@@ -4,16 +4,19 @@ import time
 import labbench as lb
 import hid, platform
 import numpy as np
+from threading import Lock
 
 class MiniCircuitsUSBDevice(lb.Device):
     VID = 0x20ce
-    
+    __find_lock = Lock()
+    __all_found = {} # keyed on serial number
+
     class settings(lb.Device.settings):
         resource = lb.Unicode(None, help='Serial number of the USB device. Must be defined if more than one device is connected to the computer', allow_none=True)        
         path = lb.Bytes(None, allow_none=True,
                         help='override `resource` to connect to a specific USB path')
-        timeout = lb.Int(5, min=0.5)
-    
+        timeout = lb.Int(1, min=0.5)
+
     class state(lb.Device.state):
         model         = lb.Unicode(read_only=True, cache=True, is_metadata=True)
         serial_number = lb.Unicode(read_only=True, cache=True, is_metadata=True)
@@ -23,16 +26,30 @@ class MiniCircuitsUSBDevice(lb.Device):
         import hid
 
     def connect(self):
-        if self.settings.path is None:
-            self.settings.path = self._find_path(self.settings.resource)
+        notify = self.settings.path is None
+        if self.settings.path is None:            
+            self.settings.path = self._find_path(self.settings.resource)            
+
+#        if not self._lock().acquire(timeout=self.settings.timeout):
+#            raise lb.ConnectionError('there is already a connection with serial number ')
 
         self.backend = hid.device()
         self.backend.open_path(self.settings.path)
-        self.backend.set_nonblocking(0)
+        self.backend.set_nonblocking(1)
+
+        MiniCircuitsUSBDevice.__all_found[self.settings.path] = self.state.serial_number
+        
+        if notify:
+            self.logger.info('connected to {} with serial {}'
+                             .format(self.state.model, self.state.serial_number))
 
     def disconnect(self):
-        if self.backend is not None:
+        if self.backend:
             self.backend.close()
+#        try:
+#            self._lock().release()
+#        except RuntimeError:
+#            pass
 
     @classmethod
     def _parse_str(cls, data):
@@ -48,7 +65,7 @@ class MiniCircuitsUSBDevice(lb.Device):
             raise ValueError('command data length is limited to 64')
             
         cmd = list(cmd) + (63-len(cmd))*[0]
-            
+
         if platform.system().lower() == 'windows':
             self.backend.write([0]+cmd[:-1])
         else:
@@ -61,11 +78,12 @@ class MiniCircuitsUSBDevice(lb.Device):
                 break
         else:
             raise TimeoutError('no response from device')
-            
-        if d[0] != cmd[0]:
-            raise RuntimeError("Invalid response from device: %s" % d)
-        return d
 
+        if d[0] != cmd[0]:
+            fmt = "device responded to command code {}, but expected {} (full response {})"
+            raise lb.DeviceException(fmt.format(d[0],cmd[0],repr(d)))
+        return d
+    
     @classmethod
     def _find_path(cls, serial):
         ''' Find a USB HID device path matching the MiniCircuits device with
@@ -73,44 +91,51 @@ class MiniCircuitsUSBDevice(lb.Device):
             exactly one MiniCircuits device is connected, and return its path.
             Raise an exception if no devices are connected.
         '''
-        ret = {}
-        
-        dev_list = hid.enumerate()
-        for dev in dev_list:
-            if (dev['vendor_id'] == cls.VID) and (dev['product_id'] == cls.PID):
-                # Note: we have to do this dance where we try to open every
-                # device, since Mini-Circuits is inconsistent about
-                # returning HID-compliant serial numbers, so we have to use
-                # the actual Mini-Circuits API for it.
-                try:
-                    inst = cls(path=dev['path'])
-                    inst.connect()
-                    ret[inst.state.serial_number] = dev['path']
-                except OSError as e:
-                    # Device already open, skipping.
-                    print(str(e))
-                    pass
-                finally:
-                    inst.disconnect()
-        
-        if len(ret) == 0:
+        found = {}
+
+        MiniCircuitsUSBDevice.__find_lock.acquire()
+
+        for dev in hid.enumerate(cls.VID, cls.PID):
+            # Check for a cached serial number first
+            try:
+                this_serial = MiniCircuitsUSBDevice.__all_found[dev['path']]
+                found[this_serial] = dev['path']
+                continue
+            except KeyError:
+                pass
+            
+            # Otherwise, connect to the device to learn its serial number
+            try:
+                with cls(path=dev['path']) as inst:
+                    this_serial = inst.state.serial_number
+                    MiniCircuitsUSBDevice.__all_found[dev['path']] = this_serial
+                    found[this_serial] = dev['path']
+            except OSError as e:
+                # Device already open, skipping.
+                print(str(e))
+                pass
+            
+        MiniCircuitsUSBDevice.__find_lock.release()
+
+        if len(found) == 0:
             raise lb.ConnectionError('found no {} connected that match vid={vid},pid={pid}'\
                                      .format(cls.__name__, cls.VID, cls.PID))
             
-        names = ', '.join([repr(k) for k in ret.keys()])
+        names = ', '.join([repr(k) for k in found.keys()])
             
         if serial is None:
-            if len(ret) == 1:
-                return next(iter(ret.values()))
+            if len(found) == 1:
+                ret = next(iter(found.values()))
             else:
                 raise lb.ConnectionError('specify one of the available {} resources: {}'\
                                          .format(cls.__name__, names))
-                
+
         try:
-            return ret[serial]
+            ret = found[serial]
         except KeyError:
             raise lb.ConnectionError('specified resource {}, but only {} are available'\
                                      .format(repr(serial), names))
+        return ret
 
 #class PowerSensor(MiniCircuitsUSBDevice):
 #    """
@@ -240,8 +265,13 @@ class Switch(SwitchAttenuatorBase):
 
 if __name__ == '__main__':
     atten = Attenuator('11604210014')
-    with atten:
+    atten2 = Attenuator('11604210008')
+#    atten.connect()
+#    atten2.connect()
+    with lb.concurrently(atten,atten2):
         print(atten.state.serial_number)
+        print(atten2.state.serial_number)
         atten.state.attenuation = 101
+        atten2.state.attenuation = 102
         print(atten.state.attenuation)
-        
+        print(atten2.state.attenuation)
