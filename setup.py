@@ -51,11 +51,6 @@ if __name__ == '__main__':
 #            self.distribution.script_install_dir = self.script_dir
 #    
     
-    import subprocess as sp
-    
-    # Until pip catches up with a version that supports serial number selection
-    sp.run(['pip','install','git+https://github.com/storborg/pyminicircuits'])
-    
     dist = setup(name='ssmdevices',
                   version='0.5',
                   description='instrument automation drivers',
@@ -66,8 +61,7 @@ if __name__ == '__main__':
                   include_package_data=True,
                   license='NIST',
                   install_requires=[
-                            'pyminicircuits',
-          		    	    'labbench(>=0.19)',
+              		    	    'labbench(>=0.19)',
                             'pandas(>=0.19.0)',
                             'pyminicircuits',
                             'pyserial(>3.0)',
