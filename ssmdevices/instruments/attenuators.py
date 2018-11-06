@@ -19,8 +19,11 @@ import labbench as lb
 import time,random
 import minicircuits
 
-class MiniCircuitsRCDAT(minicircuits.Attenuator):
+class MiniCircuitsRCDAT(minicircuits.SingleChannelAttenuator):
     pass
+
+#class MiniCircuitsRC4DAT(minicircuits.FourChannelAttenuator):
+#    pass
 
 class MiniCircuitsRC4DAT(DotNetDevice):
     ''' Base class for MiniCircuits USB attenuators.
@@ -145,7 +148,7 @@ class MiniCircuitsRC4DAT(DotNetDevice):
         self.backend.SetChannelAtt(trait.command, value)
 
 if __name__ == '__main__':
-#    lb.show_messages('debug')
+    lb.show_messages('info')
     for i in range(1000):
         lb.logger.warning(str(i))
         atten = MiniCircuitsRCDAT('11604210014')

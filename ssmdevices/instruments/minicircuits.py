@@ -213,7 +213,7 @@ class SwitchAttenuatorBase(MiniCircuitsUSBDevice):
         return self._parse_str(d)
 
 
-class Attenuator(SwitchAttenuatorBase):
+class SingleChannelAttenuator(SwitchAttenuatorBase):
     PID = 0x23
     
     CMD_GET_ATTENUATION = 18
@@ -233,7 +233,34 @@ class Attenuator(SwitchAttenuatorBase):
     def set_attenuation(self, value):
         value1 = int(value)
         value2 = int((value - value1) * 4.0)
-        self._cmd(self.CMD_SET_ATTENUATION, value1, value2)
+        self._cmd(self.CMD_SET_ATTENUATION, value1, value2, 1)
+
+
+class FourChannelAttenuator(SwitchAttenuatorBase):
+    PID = 0x23
+    
+    CMD_GET_ATTENUATION = 18
+    CMD_SET_ATTENUATION = 19
+
+    class state(SwitchAttenuatorBase.state):
+        attenuation1 = lb.Float(min=0, max=115, step=0.25, command=1)
+        attenuation2 = lb.Float(min=0, max=115, step=0.25, command=2)
+        attenuation3 = lb.Float(min=0, max=115, step=0.25, command=3)
+        attenuation4 = lb.Float(min=0, max=115, step=0.25, command=4)
+
+    @state.getter
+    def __ (self, trait):
+        d = self._cmd(self.CMD_GET_ATTENUATION)
+        offs = trait.command*2-1
+        full_part = d[offs]
+        frac_part = float(d[offs+1]) / 4.0
+        return full_part + frac_part
+
+    @state.setter
+    def __ (self, trait, value):
+        value1 = int(value)
+        value2 = int((value - value1) * 4.0)
+        self._cmd(self.CMD_SET_ATTENUATION, value1, value2, trait.command)
 
 
 class Switch(SwitchAttenuatorBase):
