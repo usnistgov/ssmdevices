@@ -310,16 +310,26 @@ class IPerfBoundPair(lb.Device):
         self.backend['iperf_server'].start()
         self.backend['iperf_client'].start()
         
-    def acquire(self, duration):        
-        # Blank any buffered output
-        self.fetch()
+    def acquire(self, duration):
+        ''' Acquire iperf output for the specified duration and return.
+            Raises a lb.DeviceConnectionLost if iperf stops before the
+            duration has finished.
+            
+            Call run before 
+        '''
+        if self.running():
+            # Blank any buffered output
+            self.fetch()
+        else:
+            # Otherwise, start
+            self.start()
         
         # Wait for the duration, checking regularly to ensure the client is running
         t0 = time.time()
         while time.time()-t0 < duration:
             time.sleep(min(0.5,duration-(time.time()-t0)))
             if not self.running():
-                raise lb.ConnectionLost('iperf stopped unexpectedly')
+                raise lb.DeviceConnectionLost('iperf stopped unexpectedly')
 
         ret = self.fetch()
         lb.logger.debug('  iperf_client and server returned {} and {} rows'\
