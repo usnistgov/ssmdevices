@@ -227,6 +227,20 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
         attenuation   = lb.Float(min=0, max=115, step=0.25)
         output_power  = lb.Float(help='output power (settings.output_power_offset - state.attenuation)')
 
+    def connect(self):
+        self.settings.observe(self.__change_offset, ['output_power_offset'])
+        self.__change_offset({'new': None})
+
+    def __change_offset(self, what):
+        power = self.state.traits()['output_power']
+        atten = self.state.traits()['attenuation']
+        if what['new'] is None:
+            power.min = None
+            power.max = None
+        else:
+            power.min = what['new'] - atten.min
+            power.max = what['new'] - atten.max
+
     @state.attenuation.getter
     def __(self):
         d = self._cmd(self.CMD_GET_ATTENUATION)
