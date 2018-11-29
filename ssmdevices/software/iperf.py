@@ -11,7 +11,7 @@ standard_library.install_aliases()
 
 from builtins import super
 from builtins import str
-__all__ = ['IPerfClient','IPerf','IPerfOnAndroid']
+__all__ = ['IPerfClient','IPerf','IPerfOnAndroid', 'IPerfBoundPair']
 
 import pandas as pd
 import labbench as lb
@@ -233,6 +233,100 @@ class IPerfClient(IPerf):
                             .format(repr(IPerf)))
         super(IPerfClient, self).__imports__(*args, **kws)
 
+
+class IPerfBoundPair(lb.Device):
+    ''' Run an iperf client and a server on the host computer at the same time. They are
+        bound to opposite interfaces to ensure data is routed between them, and not through
+        localhost or any other interface.
+    '''
+    
+    # Copy the IPerf settings. Most of these are simply passed through 
+    class settings(ssm.software.IPerf.settings):
+        resource = lb.Unicode(help='ignored - use sender and receiver instead')
+        bind = None # blanked out - determined for the client and server based on sender and receiver addresses
+        sender = lb.Unicode(help='the ip address to use for the iperf client, which must match a network interface on the host')
+        receiver = lb.Unicode(help='the ip address to use for the iperf server, which must match a network interface on the host')
+        port_max = lb.Int(6000, min=1, read_only=True,
+                          help='highest port number to use when cycling through ports')
+    
+    class state(lb.Device.state):
+        pass
+    
+    def __init__ (self, *args, **kws):
+        super().__init__(*args, **kws)
+        self.port_start = self.settings.port
+
+    def connect(self):
+        settings = dict([(k,getattr(self.settings, k)) for k,v in self.settings.traits().items() if not v.read_only])
+        
+        for k in 'resource', 'sender', 'receiver', 'bind':
+            if k in settings:
+                del settings[k]
+
+        client = ssm.software.IPerf(resource=self.settings.sender,
+                                       bind=self.settings.receiver,
+                                       **settings)
+        server = ssm.software.IPerf(bind=self.settings.sender, **settings)
+        
+        server.connect()
+        client.connect()
+        
+        self.backend = {'iperf_client': client, 'iperf_server': server}
+        
+    def disconnect(self):
+        try:
+            self.kill()
+        except TypeError as e:
+            if 'NoneType' not in str(e):
+                raise
+
+    def kill(self):
+        backend = self.backend
+        try:
+            backend['iperf_server'].kill()
+        finally:
+            backend['iperf_client'].kill()
+
+    def running(self):
+        return self.backend['iperf_client'].running()\
+               and self.backend['iperf_server'].running()
+
+    def fetch(self):
+        client = self.backend['iperf_client'].fetch()
+        server = self.backend['iperf_server'].fetch()
+        
+        return {'iperf_client': client,
+                'iperf_server': server}
+
+    def start(self):
+        # Increment the port, because binding seems to cause blockin in win32
+        self.settings.port = self.settings.port + 1
+        if self.settings.port > self.settings.port_max:
+            self.settings.port = self.port_start
+        
+        self.backend['iperf_client'].settings.port = self.settings.port
+        self.backend['iperf_server'].settings.port = self.settings.port
+        
+        self.backend['iperf_server'].start()
+        self.backend['iperf_client'].start()
+        
+    def acquire(self, duration):        
+        # Blank any buffered output
+        self.fetch()
+        
+        # Wait for the duration, checking regularly to ensure the client is running
+        t0 = time.time()
+        while time.time()-t0 < duration:
+            time.sleep(min(0.5,duration-(time.time()-t0)))
+            if not self.running():
+                raise lb.ConnectionLost('iperf stopped unexpectedly')
+
+        ret = self.fetch()
+        lb.logger.debug('  iperf_client and server returned {} and {} rows'\
+                       .format(len(ret['iperf_client']),len(ret['iperf_server'])))
+        
+        self.kill()
+        return ret
 
 if __name__ == '__main__':
     lb.show_messages('debug')
