@@ -5,6 +5,7 @@ import labbench as lb
 import hid, platform
 import numpy as np
 from threading import Lock
+from math import inf
 
 class MiniCircuitsUSBDevice(lb.Device):
     VID = 0x20ce
@@ -229,14 +230,14 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
 
     def connect(self):
         self.settings.observe(self.__change_offset, ['output_power_offset'])
-        self.__change_offset({'new': None})
+        self.__change_offset({'new': self.settings.output_power_offset})
 
     def __change_offset(self, what):
         power = self.state.traits()['output_power']
         atten = self.state.traits()['attenuation']
         if what['new'] is None:
-            power.min = None
-            power.max = None
+            power.min = -inf
+            power.max = inf
         else:
             power.min = what['new'] - atten.min
             power.max = what['new'] - atten.max
