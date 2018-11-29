@@ -17,7 +17,7 @@ from labbench import DotNetDevice
 import ssmdevices.lib
 import labbench as lb
 import time,random
-import minicircuits
+from . import minicircuits
 
 class MiniCircuitsRCDAT(minicircuits.SingleChannelAttenuator):
     pass
