@@ -239,8 +239,8 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
             power.min = -inf
             power.max = inf
         else:
-            power.min = what['new'] - atten.min
-            power.max = what['new'] - atten.max
+            power.min = what['new'] - atten.max
+            power.max = what['new'] - atten.min
 
     @state.attenuation.getter
     def __(self):
