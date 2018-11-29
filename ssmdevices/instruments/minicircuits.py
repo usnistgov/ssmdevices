@@ -219,8 +219,13 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
     CMD_GET_ATTENUATION = 18
     CMD_SET_ATTENUATION = 19
 
+    class settings(SwitchAttenuatorBase.settings):
+        output_power_offset = lb.Float(None, allow_none=True,
+                                       help='offset calibration such that state.output_power = settings.output_power_offset - state.attenuation')
+
     class state(SwitchAttenuatorBase.state):
         attenuation   = lb.Float(min=0, max=115, step=0.25)
+        output_power  = lb.Float(help='output power (settings.output_power_offset - state.attenuation)')
 
     @state.attenuation.getter
     def __(self):
@@ -235,6 +240,19 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
         value2 = int((value - value1) * 4.0)
         self._cmd(self.CMD_SET_ATTENUATION, value1, value2, 1)
 
+    @state.output_power.getter
+    def __(self):
+        offset = self.settings.output_power_offset
+        if offset is None:
+            raise ValueError('output power offset is undefined, cannot determine output power')
+        return offset - self.state.attenuation
+
+    @state.output_power.setter
+    def __(self, output_power):
+        offset = self.settings.output_power_offset
+        if offset is None:
+            raise ValueError('output power offset is undefined, cannot determine output power')
+        self.state.attenuation = offset - output_power
 
 class FourChannelAttenuator(SwitchAttenuatorBase):
     PID = 0x23
