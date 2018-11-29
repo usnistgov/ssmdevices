@@ -241,7 +241,7 @@ class IPerfBoundPair(lb.Device):
     '''
     
     # Copy the IPerf settings. Most of these are simply passed through 
-    class settings(ssm.software.IPerf.settings):
+    class settings(IPerf.settings):
         resource = lb.Unicode(help='ignored - use sender and receiver instead')
         bind = None # blanked out - determined for the client and server based on sender and receiver addresses
         sender = lb.Unicode(help='the ip address to use for the iperf client, which must match a network interface on the host')
@@ -263,10 +263,10 @@ class IPerfBoundPair(lb.Device):
             if k in settings:
                 del settings[k]
 
-        client = ssm.software.IPerf(resource=self.settings.sender,
-                                       bind=self.settings.receiver,
-                                       **settings)
-        server = ssm.software.IPerf(bind=self.settings.sender, **settings)
+        client = IPerf(resource=self.settings.sender,
+                       bind=self.settings.receiver,
+                       **settings)
+        server = IPerf(bind=self.settings.sender, **settings)
         
         server.connect()
         client.connect()
