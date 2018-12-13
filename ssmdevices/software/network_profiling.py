@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dan Kuester <daniel.kuester@nist.gov>, Michael Voecks <michael.voecks@nist.gov>
+@author: Dan Kuester <daniel.kuester@nist.gov>,
+         Michael Voecks <michael.voecks@nist.gov>
 """
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -11,11 +12,20 @@ standard_library.install_aliases()
 
 from builtins import super
 from builtins import str
-__all__ = ['IPerfClient','IPerf','IPerfOnAndroid', 'IPerfBoundPair']
 
-import pandas as pd
+__all__ = ['IPerfClient','IPerf','IPerfOnAndroid', 'IPerfBoundPair',
+           'ClosedLoopNetworkingTest']
+
+import datetime
 import labbench as lb
-import os,ssmdevices.lib,time
+import numpy as np
+import pandas as pd
+import socket
+import ssmdevices.lib
+import time
+
+from time import perf_counter
+from threading import Event
 from io import StringIO
 
 class IPerf(lb.CommandLineWrapper):
@@ -248,10 +258,10 @@ class IPerfBoundPair(lb.Device):
         receiver = lb.Unicode(help='the ip address to use for the iperf server, which must match a network interface on the host')
         port_max = lb.Int(6000, min=1, read_only=True,
                           help='highest port number to use when cycling through ports')
-    
+
     class state(lb.Device.state):
         pass
-    
+
     def __init__ (self, *args, **kws):
         super().__init__(*args, **kws)
         self.port_start = self.settings.port
@@ -338,20 +348,357 @@ class IPerfBoundPair(lb.Device):
         self.kill()
         return ret
 
+
+m1  = 0x5555555555555555
+m2  = 0x3333333333333333
+m4  = 0x0f0f0f0f0f0f0f0f
+m8  = 0x00ff00ff00ff00ff
+m16 = 0x0000ffff0000ffff
+m32 = 0x00000000ffffffff
+h01 = 0x0101010101010101
+
+def bit_errors(x):
+    ''' See: https://en.wikipedia.org/wiki/Hamming_weight
+    '''
+    if x is None:
+        return None
+#    a1 = np.frombuffer(buf1,dtype='uint64')
+    x = np.frombuffer(x[:(len(x)//8)*8],dtype='uint64').copy()
+    x -= (x >> 1) & m1;
+    x = (x & m2) + ((x >> 2) & m2);
+    x = (x + (x >> 4)) & m4;
+    return ((x * h01) >> 56).sum()
+
+class SocketWorker:
+    def __init__ (self, profiler, tx_exception, tx_ready, rx_ready):
+        self.bytes = profiler.settings.bytes
+        self.skip = profiler.settings.skip
+        self.receiver = profiler.settings.receiver
+        self.sender = profiler.settings.sender
+        self.udp = profiler.settings.udp
+        self.port = profiler.settings.port
+        self.timeout = profiler.settings.timeout
+        self.tcp_nodelay = profiler.settings.tcp_nodelay
+        self.logger = profiler.logger
+        
+        self.i = 0
+        self.sock = None
+        self.tx_exception = tx_exception
+        self.tx_ready = tx_ready
+        self.rx_ready = rx_ready
+        self.sent = {}
+        self.bad_data = []        
+        
+    def __call__ (self, count):
+        ret = {}
+        try:
+            if self.udp:
+                ret = self._udp(count)
+            else:
+                ret = self._tcp(count)
+        except lb.ThreadEndedByMaster:
+            self.logger.warning(f'{self.__class__.__name__}() ended by master thread')
+            self.tx_exception.set()
+        except socket.timeout as e:
+            self.logger.warning(f'{self.__class__.__name__} socket timeout on {self.i+1}/{count}')
+            self.tx_exception.set()
+            if self.udp:
+                print(e)
+            else:
+                raise
+        except:
+            self.tx_exception.set()
+            raise        
+        finally:
+            self.logger.debug('traffic stopped')
+            self.sock.close()
+            if self.udp and len(self.sent):
+                self.logger.warning(f'missed {count-self.i}/{count} datagrams')     
+            if self.udp and len(self.bad_data):
+                self.logger.warning(f'failed to recognize {len(self.bad_data)} datagrams')            
+
+        return ret
+
+class ReceiveWorker(SocketWorker):
+    def _open(self):
+        socket_type = socket.SOCK_DGRAM if self.udp else socket.SOCK_STREAM        
+        sock = socket.socket(socket.AF_INET, socket_type)
+        
+        # The receive buffer for this socket (under the hood in the OS)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.bytes)        
+        bufsize = sock.getsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF)
+        if bufsize < self.bytes:
+            msg = f'recv buffer size is {bufsize}, but need at least {self.bytes}'
+            raise OSError(msg)
+
+        sock.settimeout(self.timeout)
+        sock.bind((self.receiver, self.port))
+
+        if self.udp:
+            return sock
+        else:
+            # Make friends with the sender            
+            sock.listen(1)
+            conn, other_addr = sock.accept()
+            if other_addr[0] != self.sender:
+                raise ValueError(f'connection request from incorrect ip {other_addr[0]}')                    
+            return conn
+
+    def __call__ (self, count, sender_obj):
+        self.sender_obj = sender_obj
+        return super().__call__(count)        
+        
+    def _udp(self, count):       
+        self.bad_data = []
+        starts = [None]*count
+        finishes = [None]*count
+        received = [None]*count            
+        
+        with self._open() as self.sock:
+            self.logger.info('connected')
+            # Receive the data
+            for self.i in range(self.skip+count):
+                # Bail if the sender hit an exception
+                if self.tx_exception.is_set():
+                    raise lb.ThreadEndedByMaster()
+    
+                self.tx_ready.wait(timeout=self.timeout)
+                self.rx_ready.set()
+    
+                started = perf_counter()
+    
+                # UDP datagrams seem to come atomically. One simple recv.
+                data, addr = self.sock.recvfrom(self.bytes)
+                finished = perf_counter()
+    
+                if self.sender != addr[0]:
+                    raise Exception(f"udp sender is {addr[0]}, but expected {self.sender}")
+    
+                try:
+                    i_sent = self.sender_obj.sent.pop(data)
+#                    if i_sent != self.i:
+#                        print('index mismatch: ', self.i, i_sent)
+                except KeyError:
+                    self.bad_data.append(data)
+                    
+                if self.i>=self.skip:
+                    starts[i_sent-self.skip] = started
+                    finishes[i_sent-self.skip] = finished
+                    received[i_sent-self.skip] = data
+                    
+            self.logger.info('done')
+                    
+        error_count = [bit_errors(data) for data in received]
+        
+        return {'receive_start_timestamp': starts,
+                'receive_finish_timestamp': finishes,
+                'bit_error_count':  error_count}
+
+    def _tcp(self, count):        
+        buf = bytearray(self.bytes)            
+        starts = []
+        finishes = []
+        received = []
+        
+        with self._open() as self.sock:
+            # Receive the data
+            for self.i in range(self.skip+count):
+                lb.sleep(0)
+#                print('rx ', i)
+                # Bail if the sender hit an exception
+                if self.tx_exception.is_set():
+                    raise lb.ThreadEndedByMaster()
+
+                started = perf_counter()
+
+                rx_count = 0
+                while rx_count < self.bytes:
+                    rx_count += self.sock.recv_into(buf[rx_count:],
+                                               self.bytes-rx_count)
+                    if perf_counter()-started > self.timeout:
+                        raise socket.timeout
+
+                finished = perf_counter()
+                data = bytes(buf.copy())
+
+                # Throw away the first sample
+                if self.i>=self.skip:
+                    starts.append(started)
+                    finishes.append(finished)
+                    received.append(data)
+                
+        error_count = [bit_errors(data) for data in received]
+                    
+        return {'receive_start_timestamp': starts,
+                'receive_finish_timestamp': finishes,
+                'bit_error_count':  error_count}
+        
+class SendWorker(SocketWorker):
+    def _open(self):
+        socket_type = socket.SOCK_DGRAM if self.udp else socket.SOCK_STREAM        
+        sock = socket.socket(socket.AF_INET, socket_type)
+        
+        # The OS-level TCP transmit buffer size for this socket.
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF,
+                        self.bytes)
+        bytes_actual = sock.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF)
+        if bytes_actual != self.bytes:
+            msg = f'send buffer size is {bytes_actual}, but requested {self.bytes}'
+            raise OSError(msg)
+
+        if not self.udp:
+            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, self.tcp_nodelay)            
+        sock.bind((self.sender, 0))        
+        if not self.udp:
+            sock.connect((self.receiver, self.port))            
+
+        return sock
+        
+    def _tcp(self, count):
+        # TODO: configure the type of data sent?
+        timestamps = []
+        start = None
+
+        with self._open() as self.sock:
+            for self.i in range(self.skip+count):
+                data = np.random.bytes(self.bytes) # b'\x00'*size
+                
+    #                self.logger.info(f'tx {i}')
+                # Leave now if the server bailed
+                if self.tx_exception.is_set():
+                    raise lb.ThreadEndedByMaster()                
+    
+                # Throw any initial samples as configured
+                if self.i>=self.skip:
+                    if self.i==self.skip:
+                        start = datetime.datetime.now()
+                    timestamps.append(perf_counter())
+    
+                self.sock.sendall(data)
+    
+                lb.sleep(0.)        
+
+        return {'start': start,
+                'send_timestamp': timestamps,
+                'bytes': self.bytes}
+            
+    def _udp(self, count):
+        timestamps = []
+        start = None
+        
+        with self._open() as self.sock:                   
+            for self.i in range(self.skip+count):
+                # Generate the next data to send
+                data = np.random.bytes(self.bytes) # b'\x00'*size
+                self.sent[data] = self.i
+                
+                # Leave now if the server bailed
+                if self.tx_exception.is_set():
+                    raise lb.ThreadEndedByMaster()                
+    
+                # Throw any initial samples as configured
+                if self.i>=self.skip:
+                    if self.i==self.skip:
+                        start = datetime.datetime.now()
+                    timestamps.append(perf_counter())
+    
+                self.tx_ready.set()
+                self.sock.sendto(data, (self.receiver, self.port))
+                self.rx_ready.wait(timeout=self.timeout)
+                    
+                lb.sleep(0.)
+
+        return {'start': start,
+                'send_timestamp': timestamps,
+                'bytes': self.bytes}
+
+
+class ClosedLoopNetworkingTest(lb.Device):
+    ''' Profile closed-loop UDP or TCP traffic between two network interfaces
+        on the computer. Takes advantage of the shared clock to provide
+        one-way traffic delay with uncertainty on the order of the system time
+        resolution.
+        
+        WARNING: UDP does not work right yet.
+    '''
+    
+    class settings(lb.Device.settings):
+        sender = lb.Unicode(help='the ip address of the network interface to use to send data')
+        receiver = lb.Unicode(help='the ip address of the network interface to use to receive data')
+        port = lb.Int(5555, min=1, help='TCP or UDP port')
+        resource = lb.Unicode(help='skipd - use sender and receiver instead')        
+        timeout = lb.Float(1, min=1e-3, help='timeout before aborting the test')
+        bytes = lb.Int(4096, min=0, help='TCP or UDP transmit data size')
+        udp = lb.Bool(False, help='use UDP (True) or TCP (False)')
+        skip = lb.Int(1, min=0, help='extra buffers to send and not log before acquisition')
+        tcp_nodelay = lb.Bool(True, help='if True, disable Nagle\'s algorithm')
+        
+    def __repr__(self):
+        return "{name}(sender='{sender}',receiver='{receiver}')"\
+               .format(name=self.__class__.__name__,
+                       sender=self.settings.sender,
+                       receiver=self.settings.receiver)
+
+   
+#    @lb.retry(socket.timeout, 5)
+    def acquire(self, count):
+        if not self.settings.udp and self.settings.tcp_nodelay\
+           and self.settings.bytes < 1500:
+            raise ValueError('with tcp_nodelay enabled, set bytes larger than the MTU (1500)')
+
+        self.sent = {}
+        
+        # Parameters for the client and server
+        events = {'tx_exception': Event(),
+                  'rx_ready': Event(),
+                  'tx_ready': Event()}
+
+        receiver = ReceiveWorker(self, **events)
+        sender = SendWorker(self, **events)
+
+        ret = lb.concurrently(lb.Call(receiver.__call__, count, sender),
+                              lb.Call(sender.__call__, count))
+
+        start = ret.pop('start')
+        ret = pd.DataFrame(ret)
+        dt = pd.TimedeltaIndex(ret.send_timestamp, unit='s')
+        ret = pd.DataFrame({'bit_error_count': ret.bit_error_count,
+                            'bytes_sent': ret.bytes,
+                            'duration': ret.receive_finish_timestamp - ret.receive_start_timestamp,
+                            'delay': ret.receive_start_timestamp-ret.send_timestamp,
+                            'timestamp': dt+start})
+        
+        return ret.set_index('timestamp')
+
+# Examples
+# ClosedLoopNetworkingTest example
 if __name__ == '__main__':
-    lb.show_messages('debug')
-    ips = IPerf(interval=0.5, udp=True)
+    import pylab
+    
+    with ClosedLoopNetworkingTest(sender='10.0.0.2', receiver='10.0.0.3',
+                                  bytes=2*1024) as net:    
+        for j in range(1):
+            traffic = net.acquire(500)
+            pylab.figure()
+            traffic.hist(bins=51)            
+    #        traffic[['duration','delay']].plot(marker='.', lw=0)
+            traffic['rate'] = net.settings.bytes/traffic.duration
+            print('medians\n',traffic.median(axis=0))
 
-    ipc = IPerf('127.0.0.1',interval=1, time=10000, udp=True, bit_rate='1M')
-#    ipc.iperf_path = r'..\lib\iperf.exe'
-
-    with ipc,ips:
-        for i in range(1):
-            ips.start()
-            lb.sleep(1)
-            ipc.start()
-            lb.sleep(20)
-            ipc.kill()
-            ips.kill()
-            ips_result = ips.read_stdout()
-            ipc_result = ipc.read_stdout()
+#if __name__ == '__main__':
+#    lb.show_messages('debug')
+#    ips = IPerf(interval=0.5, udp=True)
+#
+#    ipc = IPerf('127.0.0.1',interval=1, time=10000, udp=True, bit_rate='1M')
+##    ipc.iperf_path = r'..\lib\iperf.exe'
+#
+#    with ipc,ips:
+#        for i in range(1):
+#            ips.start()
+#            lb.sleep(1)
+#            ipc.start()
+#            lb.sleep(20)
+#            ipc.kill()
+#            ips.kill()
+#            ips_result = ips.read_stdout()
+#            ipc_result = ipc.read_stdout()
