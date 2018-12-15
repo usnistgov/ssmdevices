@@ -5,7 +5,7 @@ import labbench as lb
 import hid, platform
 import numpy as np
 from threading import Lock
-from math import inf
+from traitlets import TraitError
 
 class MiniCircuitsUSBDevice(lb.Device):
     VID = 0x20ce
@@ -73,16 +73,21 @@ class MiniCircuitsUSBDevice(lb.Device):
             self.backend.write(cmd)
 
         t0 = time.time()
+        msg = None
         while time.time()-t0 < self.settings.timeout:
             d = self.backend.read(64)
             if d:
-                break
+                if d[0] == cmd[0]:
+                    break
+                else:
+                    msg = "device responded to command code {}, but expected {} (full response {})"\
+                          .format(d[0],cmd[0],repr(d))
         else:
-            raise TimeoutError('no response from device')
+            if msg is None:
+                raise TimeoutError('no response from device')
+            else:
+                raise lb.DeviceException(msg)
 
-        if d[0] != cmd[0]:
-            fmt = "device responded to command code {}, but expected {} (full response {})"
-            raise lb.DeviceException(fmt.format(d[0],cmd[0],repr(d)))
         return d
     
     @classmethod
@@ -226,22 +231,29 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
 
     class state(SwitchAttenuatorBase.state):
         attenuation   = lb.Float(min=0, max=115, step=0.25)
-        output_power  = lb.Float(help='output power (settings.output_power_offset - state.attenuation)')
+        output_power  = lb.Float(help='output power, in dB units the same as output_power_offset (settings.output_power_offset - state.attenuation)')
 
     def connect(self):
-        self.__change_offset({'new': self.settings.output_power_offset})        
-        self.settings.observe(self.__change_offset, ['output_power_offset'])
+        def _validate_output_power(trait, proposal):
+            # Require an offset to assign output power
+            offset = self.settings.output_power_offset
+            if offset is None:
+                raise TraitError('must set settings.output_power_offset in order to assign to state.output_power')
 
-    def __change_offset(self, what):
-        power = self.state.traits()['output_power']
-        atten = self.state.traits()['attenuation']
-        if what['new'] is None:
-            power.min = -inf
-            power.max = inf
-        else:
-            power.min = what['new'] - atten.max
-            power.max = what['new'] - atten.min
-
+            # Check bounds
+            power = proposal['value']
+            atten = self.state.traits()['attenuation']            
+            lo = offset - atten.max
+            hi = offset - atten.min
+            if power < lo or power > hi:
+                msg = f'requested input power {power} is outside of the valid range ({lo},{hi})'
+                raise TraitError(msg)
+            return power
+        
+        self.state._register_validator(_validate_output_power, ('output_power',))
+#        self.__change_offset({'new': self.settings.output_power_offset})        
+#        self.settings.observe(self.__change_offset, ['output_power_offset'])
+    
     @state.attenuation.getter
     def __(self):
         d = self._cmd(self.CMD_GET_ATTENUATION)
@@ -266,7 +278,7 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
     def __(self, output_power):
         offset = self.settings.output_power_offset
         if offset is None:
-            raise ValueError('output power offset is undefined, cannot determine output power')
+            raise ValueError('output power offset is undefined, cannot determine attenuation settings for output power')
         self.state.attenuation = offset - output_power
 
 class FourChannelAttenuator(SwitchAttenuatorBase):
