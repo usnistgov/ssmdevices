@@ -61,7 +61,7 @@ if __name__ == '__main__':
                   include_package_data=True,
                   license='NIST',
                   install_requires=[
-              		    	    'labbench(>=0.19)',
+              		    	'labbench(>=0.20)',
                             'pandas(>=0.19.0)',
                             'pyminicircuits',
                             'pyserial(>3.0)',
@@ -69,6 +69,7 @@ if __name__ == '__main__':
                             'ipywidgets',
                             'notebook',
                             'sphinx',
+                            'hidapi',
                             ],
 #                  cmdclass={'easy_install': my_easy_install},
                   zip_safe=False
