@@ -37,7 +37,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         sweep_time              = Float     (command='SWE:TIME',   label='Hz')
         sweep_time_window2      = Float     (command='SENS2:SWE:TIME',   label='Hz')
     
-        initiate_continuous     = Bool      (command='INIT:CONT', trues=['1'], falses=['0'])
+        initiate_continuous     = Bool      (command='INIT:CONT', remap={False: '0', True: '1'})
     
         reference_level         = Float     (command='DISP:TRAC1:Y:RLEV', step=1e-3,label='dB')
         reference_level_trace2  = Float     (command='DISP:TRAC2:Y:RLEV', step=1e-3,label='dB')
@@ -58,15 +58,15 @@ class RohdeSchwarzFSW26Base(VISADevice):
         output_trigger2_type    = CaselessStrEnum (command='OUTP:TRIG2:OTYP', values=['DEV', 'TARM', 'UDEF'])
         output_trigger3_type    = CaselessStrEnum(command='OUTP:TRIG3:OTYP', values=['DEV', 'TARM', 'UDEF'])
 
-        input_preamplifier_enabled = Bool      (command='INP:GAIN:STATE', trues=['1'], falses=['0'])
-        input_attenuation_auto   = Bool      (command='INP:ATT:AUTO', trues=['1'], falses=['0'])
+        input_preamplifier_enabled = Bool      (command='INP:GAIN:STATE', remap={False: '0', True: '1'})
+        input_attenuation_auto   = Bool      (command='INP:ATT:AUTO', remap={False: '0', True: '1'})
         input_attenuation        = Float     (command='INP:ATT', step=1, min=0, max=79)
         
         channel_type            = CaselessStrEnum (command='INST', values=['SAN','IQ','RTIM', default_channel_name], )
         format                  = CaselessStrEnum (command='FORM', values=['ASC,0','REAL,32','REAL,64', 'REAL,16'])
         sweep_points            = Int       (command='SWE:POIN', min=1, max=100001)
 
-        display_update          = Bool      (command='SYST:DISP:UPD', trues=['ON'], falses=['OFF'])
+        display_update          = Bool      (command='SYST:DISP:UPD', remap={False: 'OFF', True: 'ON'})
 
     class settings(VISADevice.settings):
         default_window          = lb.Unicode('',  help='data window number to use if unspecified')
@@ -688,8 +688,8 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     expected_channel_type = 'RTIM'
     
     class state(RohdeSchwarzFSW26Base.state):
-        iq_simple_enabled     = Bool      (command='CALC:IQ', trues=['ON'], falses=['OFF'])
-        iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL', trues=['ON'], falses=['OFF'])
+        iq_simple_enabled     = Bool      (command='CALC:IQ', remap={False: 'OFF', True: 'ON'})
+        iq_evaluation_enabled = Bool      (command='CALC:IQ:EVAL', remap={False: 'OFF', True: 'ON'})
         iq_mode               = CaselessStrEnum (command='CALC:IQ:MODE', values=['TDOMain','FDOMain','IQ'])
         iq_record_length      = Int       (command='TRAC:IQ:RLEN', min=1, max=461373440)
         iq_sample_rate        = Float     (command='TRAC:IQ:SRAT', min=1e-9, max=160e6)
@@ -733,7 +733,7 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         iq_sample_rate      = Float(command='TRACe:IQ:SRAT', read_only=True)
         iq_trigger_position = Float(command='TRAC:IQ:TPIS', read_only=True)
 
-        sweep_dwell_auto    = Bool(command='SWE:DTIM:AUTO', trues=['1'], falses=['0'])
+        sweep_dwell_auto    = Bool(command='SWE:DTIM:AUTO', remap={False: '0', True: '1'})
         sweep_dwell_time    = Float(command='SWE:DTIM', min=30e-3)
         sweep_window_type   = CaselessStrEnum (command='SWE:FFT:WIND:TYP',
                                                values=['BLAC','FLAT','GAUS','HAMM','HANN','KAIS','RECT'])

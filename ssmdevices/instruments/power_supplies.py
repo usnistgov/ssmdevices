@@ -5,13 +5,13 @@ __all__ = ['RigolDP800Series']
 class RigolDP800Series(lb.VISADevice):
     class state(lb.VISADevice.state):
         enable1 = lb.Bool(command=':OUTP CH1',
-                                 trues=['ON'], falses=['OFF'],
+                          remap={False: 'OFF', True: 'ON'},
                                  help='enable DC output on channel 1')
         enable2 = lb.Bool(command=':OUTP CH2',
-                                 trues=['ON'], falses=['OFF'],
+                          remap={False: 'OFF', True: 'ON'},
                                  help='enable DC output on channel 2')
         enable3 = lb.Bool(command=':OUTP CH3',
-                                 trues=['ON'], falses=['OFF'],
+                          remap={False: 'OFF', True: 'ON'},
                                  help='enable DC output on channel 3')
 
         voltage_setting1 = lb.Float(command=':SOUR1:VOLT',
