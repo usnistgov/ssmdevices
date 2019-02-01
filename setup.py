@@ -52,7 +52,7 @@ if __name__ == '__main__':
 #    
     
     dist = setup(name='ssmdevices',
-                  version='0.5',
+                  version='0.6',
                   description='instrument automation drivers',
                   author='Dan Kuester',
                   author_email='daniel.kuester@nist.gov',
