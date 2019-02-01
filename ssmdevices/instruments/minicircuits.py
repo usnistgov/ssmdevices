@@ -5,6 +5,7 @@ import labbench as lb
 import hid, platform
 import numpy as np
 from threading import Lock
+from traitlets import TraitError
 
 class MiniCircuitsUSBDevice(lb.Device):
     VID = 0x20ce
@@ -72,16 +73,21 @@ class MiniCircuitsUSBDevice(lb.Device):
             self.backend.write(cmd)
 
         t0 = time.time()
+        msg = None
         while time.time()-t0 < self.settings.timeout:
             d = self.backend.read(64)
             if d:
-                break
+                if d[0] == cmd[0]:
+                    break
+                else:
+                    msg = "device responded to command code {}, but expected {} (full response {})"\
+                          .format(d[0],cmd[0],repr(d))
         else:
-            raise TimeoutError('no response from device')
+            if msg is None:
+                raise TimeoutError('no response from device')
+            else:
+                raise lb.DeviceException(msg)
 
-        if d[0] != cmd[0]:
-            fmt = "device responded to command code {}, but expected {} (full response {})"
-            raise lb.DeviceException(fmt.format(d[0],cmd[0],repr(d)))
         return d
     
     @classmethod
@@ -213,15 +219,41 @@ class SwitchAttenuatorBase(MiniCircuitsUSBDevice):
         return self._parse_str(d)
 
 
-class Attenuator(SwitchAttenuatorBase):
+class SingleChannelAttenuator(SwitchAttenuatorBase):
     PID = 0x23
     
     CMD_GET_ATTENUATION = 18
     CMD_SET_ATTENUATION = 19
 
+    class settings(SwitchAttenuatorBase.settings):
+        output_power_offset = lb.Float(None, allow_none=True,
+                                       help='offset calibration such that state.output_power = settings.output_power_offset - state.attenuation')
+
     class state(SwitchAttenuatorBase.state):
         attenuation   = lb.Float(min=0, max=115, step=0.25)
+        output_power  = lb.Float(help='output power, in dB units the same as output_power_offset (settings.output_power_offset - state.attenuation)')
 
+    def connect(self):
+        def _validate_output_power(trait, proposal):
+            # Require an offset to assign output power
+            offset = self.settings.output_power_offset
+            if offset is None:
+                raise TraitError('must set settings.output_power_offset in order to assign to state.output_power')
+
+            # Check bounds
+            power = proposal['value']
+            atten = self.state.traits()['attenuation']            
+            lo = offset - atten.max
+            hi = offset - atten.min
+            if power < lo or power > hi:
+                msg = f'requested input power {power} is outside of the valid range ({lo},{hi})'
+                raise TraitError(msg)
+            return power
+        
+        self.state._register_validator(_validate_output_power, ('output_power',))
+#        self.__change_offset({'new': self.settings.output_power_offset})        
+#        self.settings.observe(self.__change_offset, ['output_power_offset'])
+    
     @state.attenuation.getter
     def __(self):
         d = self._cmd(self.CMD_GET_ATTENUATION)
@@ -233,7 +265,47 @@ class Attenuator(SwitchAttenuatorBase):
     def set_attenuation(self, value):
         value1 = int(value)
         value2 = int((value - value1) * 4.0)
-        self._cmd(self.CMD_SET_ATTENUATION, value1, value2)
+        self._cmd(self.CMD_SET_ATTENUATION, value1, value2, 1)
+
+    @state.output_power.getter
+    def __(self):
+        offset = self.settings.output_power_offset
+        if offset is None:
+            raise ValueError('output power offset is undefined, cannot determine output power')
+        return offset - self.state.attenuation
+
+    @state.output_power.setter
+    def __(self, output_power):
+        offset = self.settings.output_power_offset
+        if offset is None:
+            raise ValueError('output power offset is undefined, cannot determine attenuation settings for output power')
+        self.state.attenuation = offset - output_power
+
+class FourChannelAttenuator(SwitchAttenuatorBase):
+    PID = 0x23
+    
+    CMD_GET_ATTENUATION = 18
+    CMD_SET_ATTENUATION = 19
+
+    class state(SwitchAttenuatorBase.state):
+        attenuation1 = lb.Float(min=0, max=115, step=0.25, command=1)
+        attenuation2 = lb.Float(min=0, max=115, step=0.25, command=2)
+        attenuation3 = lb.Float(min=0, max=115, step=0.25, command=3)
+        attenuation4 = lb.Float(min=0, max=115, step=0.25, command=4)
+
+    @state.getter
+    def __ (self, trait):
+        d = self._cmd(self.CMD_GET_ATTENUATION)
+        offs = trait.command*2-1
+        full_part = d[offs]
+        frac_part = float(d[offs+1]) / 4.0
+        return full_part + frac_part
+
+    @state.setter
+    def __ (self, trait, value):
+        value1 = int(value)
+        value2 = int((value - value1) * 4.0)
+        self._cmd(self.CMD_SET_ATTENUATION, value1, value2, trait.command)
 
 
 class Switch(SwitchAttenuatorBase):

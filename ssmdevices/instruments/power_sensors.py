@@ -150,12 +150,12 @@ class RohdeSchwarzNRPSeries(VISADevice):
 
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
-    class state(RohdeSchwarzNRPSeries):
+    class state(RohdeSchwarzNRPSeries.state):
         frequency = lb.Float(command='SENS:FREQ', min=10e6, max=8e9, step=1e-3, label='Hz')
 
 
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
-    class state(RohdeSchwarzNRPSeries):
+    class state(RohdeSchwarzNRPSeries.state):
         frequency = lb.Float(command='SENS:FREQ', min=10e6, max=18e9, step=1e-3, label='Hz')
 
 
