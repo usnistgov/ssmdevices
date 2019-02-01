@@ -235,7 +235,7 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
                                        help='offset calibration such that state.output_power = settings.output_power_offset - state.attenuation')
 
     class state(SwitchAttenuatorBase.state):
-        attenuation   = lb.Float(min=0, max=110,
+        attenuation   = lb.Float(min=0, max=115,
                                  help='attenuation level (dB) automatically calibrated if settings.frequency is not None')
         output_power  = lb.Float(help='output power, in dB units the same as output_power_offset (settings.output_power_offset - state.attenuation)')
         attenuation_setting = lb.Float(min=0, max=115, step=0.25,
