@@ -6,6 +6,9 @@ import hid, platform
 import numpy as np
 from threading import Lock
 from traitlets import TraitError
+import ssmdevices.lib
+import pandas as pd
+from pathlib import Path
 
 class MiniCircuitsUSBDevice(lb.Device):
     VID = 0x20ce
@@ -89,7 +92,7 @@ class MiniCircuitsUSBDevice(lb.Device):
                 raise lb.DeviceException(msg)
 
         return d
-    
+
     @classmethod
     def _find_path(cls, serial):
         ''' Find a USB HID device path matching the MiniCircuits device with
@@ -226,15 +229,25 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
     CMD_SET_ATTENUATION = 19
 
     class settings(SwitchAttenuatorBase.settings):
+        frequency = lb.Float(None, allow_none=True, max=6e9,
+                             help='calibration frequency, or None to disable level calibration')
         output_power_offset = lb.Float(None, allow_none=True,
                                        help='offset calibration such that state.output_power = settings.output_power_offset - state.attenuation')
 
     class state(SwitchAttenuatorBase.state):
-        attenuation   = lb.Float(min=0, max=115, step=0.25)
+        attenuation   = lb.Float(min=0, max=110,
+                                 help='attenuation level (dB) automatically calibrated if settings.frequency is not None')
         output_power  = lb.Float(help='output power, in dB units the same as output_power_offset (settings.output_power_offset - state.attenuation)')
+        attenuation_setting = lb.Float(min=0, max=115, step=0.25,
+                                       help='attenuation setting sent to the attenuator (dB), which is different from the calibrated attenuation value an attenuation has been applied')
 
     def connect(self):
         def _validate_output_power(trait, proposal):
+            ''' Make sure that the trait knows the correct value with the
+                discretized output power, and that the output power puts the
+                attenuator in the specified range.
+            '''
+            
             # Require an offset to assign output power
             offset = self.settings.output_power_offset
             if offset is None:
@@ -250,19 +263,54 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
                 raise TraitError(msg)
             return power
         
+        def _validate_attenuation(trait, proposal):
+            ''' Nudge the trait value to the nearest attenuation level from
+                the cal data.
+            '''            
+            return self._lookup_cal(self._apply_cal(proposal['value']))
+        
         self.state._register_validator(_validate_output_power, ('output_power',))
+        self.state._register_validator(_validate_attenuation, ('attenuation',))
+        
+        cal_path = Path(ssmdevices.lib.path('cal'))
+        
+        cal_filenames = f"MiniCircuitsRCDAT_{self.settings.resource}.csv.xz",\
+                        f"MiniCircuitsRCDAT_default.csv.xz"
+        for f in cal_filenames:
+            if (cal_path/f).exists():       
+                self._cal = pd.read_csv(str(cal_path/f),
+                                              index_col='Frequency(Hz)',
+                                              dtype=float)
+                self._cal.columns = self._cal.columns.astype(float)
+                if 6e9 in self._cal.index:
+                    self._cal.drop(6e9, axis=0, inplace=True)
+#                self._cal_offset.values[:] = self._cal_offset.values-self._cal_offset.columns.values[np.newaxis,:]
+                                            
+                self.logger.debug(f'loaded calibration data from {str(cal_path/f)}')
+                break
+        else:
+            self._cal_data = None
+            self.logger.debug(f'found no calibration data in {str(cal_path)}')
 #        self.__change_offset({'new': self.settings.output_power_offset})        
 #        self.settings.observe(self.__change_offset, ['output_power_offset'])
     
     @state.attenuation.getter
+    def __(self):
+        return self._lookup_cal(self.state.attenuation_setting)
+
+    @state.attenuation.setter
+    def __(self, value):
+        self.state.attenuation_setting = self._apply_cal(value)
+    
+    @state.attenuation_setting.getter
     def __(self):
         d = self._cmd(self.CMD_GET_ATTENUATION)
         full_part = d[1]
         frac_part = float(d[2]) / 4.0
         return full_part + frac_part
 
-    @state.attenuation.setter
-    def set_attenuation(self, value):
+    @state.attenuation_setting.setter
+    def __(self, value):
         value1 = int(value)
         value2 = int((value - value1) * 4.0)
         self._cmd(self.CMD_SET_ATTENUATION, value1, value2, 1)
@@ -280,6 +328,39 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
         if offset is None:
             raise ValueError('output power offset is undefined, cannot determine attenuation settings for output power')
         self.state.attenuation = offset - output_power
+
+    def _apply_cal(self, proposed_atten):
+        ''' Find the setting that achieves the attenuation level closest to the
+            proposed level. Returns a dictionary containing this attenuation
+            setting, and the actual attenuation at this setting.
+        '''
+        if self._cal is None:
+            return proposed_atten
+        
+        if self.settings.frequency is None:
+            self.logger.warning('set an operating frequency in settings.frequency to enable calibration')
+            i = self._cal.columns.get_loc(proposed_atten, method='nearest')
+            atten = self._cal.columns[i]
+            return atten
+        
+        i_freq = self._cal.index.get_loc(self.settings.frequency,'nearest')
+        cal = self._cal.iloc[i_freq]
+        cal.name = 'cal'
+        cal = cal.reset_index().set_index('cal').sort_index()
+
+        i_atten = cal.index.get_loc(proposed_atten, method='nearest')
+
+        return cal.iloc[i_atten].values[0]
+    
+    def _lookup_cal(self, attenuation_setting):
+        if self._cal is None:
+            return attenuation_setting
+        if self.settings.frequency is None:
+            return attenuation_setting
+        
+        i_freq = self._cal.index.get_loc(self.settings.frequency,'nearest')
+        return self._cal.iloc[i_freq].loc[attenuation_setting]
+
 
 class FourChannelAttenuator(SwitchAttenuatorBase):
     PID = 0x23
@@ -336,14 +417,19 @@ class Switch(SwitchAttenuatorBase):
 
 
 if __name__ == '__main__':
-    atten = Attenuator('11604210014')
-    atten2 = Attenuator('11604210008')
-#    atten.connect()
-#    atten2.connect()
-    with lb.concurrently(atten,atten2):
-        print(atten.state.serial_number)
-        print(atten2.state.serial_number)
-        atten.state.attenuation = 101
-        atten2.state.attenuation = 102
+#    atten = SingleChannelAttenuator('11604210014')
+    def show(event):
+        print(event['name'], event['new'])
+        
+    lb.show_messages('debug')
+    atten = SingleChannelAttenuator('11604210008',
+                                    output_power_offset=0.1,
+                                    frequency=5.3e9)
+    atten.state.observe(show)
+
+    with atten:
+        print(atten.settings.frequency)
+        atten.state.attenuation=100        
+        print(atten.state.attenuation_setting)
         print(atten.state.attenuation)
-        print(atten2.state.attenuation)
+        atten.state.attenuation=80
