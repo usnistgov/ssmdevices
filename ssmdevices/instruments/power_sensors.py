@@ -55,7 +55,7 @@ class RohdeSchwarzNRPSeries(VISADevice):
         # sweep_aperture = lb.Float(command='SWE:APER', min=20e-6, max=200e-3, label='s')
 
         frequency = lb.Float(command='SENS:FREQ', min=10e6, step=1e-3, label='Hz')
-        initiate_continuous = lb.Bool(command='INIT:CONT', trues=['ON'], falses=['OFF'])
+        initiate_continuous = lb.Bool(command='INIT:CONT', remap={False: 'OFF', True: 'ON'})
         function = lb.CaselessStrEnum(command='SENS:FUNC',\
                                       values=['POW:AVG', 'POW:BURS:AVG', 'POW:TSL:AVG',
                                               'XTIM:POW', "XTIM:POWer"])
@@ -69,17 +69,17 @@ class RohdeSchwarzNRPSeries(VISADevice):
         trigger_level = lb.Float(command='TRIG:LEV', min=1e-7, max=200e-3)
 
         trace_points = lb.Int(command='SENSe:TRACe:POINTs', min=1, max=8192, write_only=True)
-        trace_realtime = lb.Bool(command='TRAC:REAL', trues=['ON'], falses=['OFF'])
+        trace_realtime = lb.Bool(command='TRAC:REAL', remap={False: 'OFF', True: 'ON'})
         trace_time = lb.Float(command='TRAC:TIME', min=10e-6, max=3)
         trace_offset_time = lb.Float(command='TRAC:OFFS:TIME', min=-0.5, max=100)
         trace_average_count = lb.Int(command='TRAC:AVER:COUN', min=1, max=65536)
         trace_average_mode = lb.CaselessStrEnum(command='TRAC:AVER:TCON', values=['MOV','REP'])
-        trace_average_enable = lb.Bool(command='TRAC:AVER', trues=['ON'], falses=['OFF'])
+        trace_average_enable = lb.Bool(command='TRAC:AVER', remap={False: 'OFF', True: 'ON'})
 
         average_count = lb.Int(command='AVER:COUN', min=1, max=65536)
-        average_auto = lb.Bool(command='AVER:COUN:AUTO', trues=['ON'], falses=['OFF'])
-        average_enable = lb.Bool(command='AVER', trues=['ON'], falses=['OFF'])
-        smoothing_enable = lb.Bool(command='SMO:STAT', trues=['ON'], falses=['OFF'], write_only=True)
+        average_auto = lb.Bool(command='AVER:COUN:AUTO', remap={False: 'OFF', True: 'ON'})
+        average_enable = lb.Bool(command='AVER', remap={False: 'OFF', True: 'ON'})
+        smoothing_enable = lb.Bool(command='SMO:STAT', remap={False: 'OFF', True: 'ON'}, write_only=True)
 
         # unit = lb.CaselessStrEnum(command='UNIT:POW', values=['DBM','W','DBUV']) # seems to fail
         # format = lb.CaselessStrEnum(command='FORMat:DATA', values=['REAL', 'ASCII']) # Seems to fail
