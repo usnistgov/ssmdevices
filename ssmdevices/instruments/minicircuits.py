@@ -242,6 +242,14 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
                                        help='attenuation setting sent to the attenuator (dB), which is different from the calibrated attenuation value an attenuation has been applied')
 
     def connect(self):
+        def _validate_attenuation(trait, proposal):
+            ''' Nudge the trait value to the nearest attenuation level from
+                the cal data.
+            '''
+            if isinstance(proposal, dict):
+                proposal = proposal['value']
+            return self._lookup_cal(self._apply_cal(proposal))
+
         def _validate_output_power(trait, proposal):
             ''' Make sure that the trait knows the correct value with the
                 discretized output power, and that the output power puts the
@@ -251,7 +259,7 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
             # Require an offset to assign output power
             offset = self.settings.output_power_offset
             if offset is None:
-                raise TraitError('must set settings.output_power_offset in order to assign to state.output_power')
+                raise TraitError('set settings.output_power_offset before assigning to state.output_power')
 
             # Check bounds
             power = proposal['value']
@@ -261,13 +269,11 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
             if power < lo or power > hi:
                 msg = f'requested input power {power} is outside of the valid range ({lo},{hi})'
                 raise TraitError(msg)
-            return power
-        
-        def _validate_attenuation(trait, proposal):
-            ''' Nudge the trait value to the nearest attenuation level from
-                the cal data.
-            '''            
-            return self._lookup_cal(self._apply_cal(proposal['value']))
+                
+            # Compute the nearest available attenuation value, and return
+            # the corresponding "true" output power value
+            atten_true = _validate_attenuation(atten, offset - proposal['value'])            
+            return offset - atten_true
         
         self.state._register_validator(_validate_output_power, ('output_power',))
         self.state._register_validator(_validate_attenuation, ('attenuation',))
