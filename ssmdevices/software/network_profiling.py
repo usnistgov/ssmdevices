@@ -573,22 +573,23 @@ class SendWorker(SocketWorker):
 
         # No point in more interesting data unless the point is to debug TCP
         data = b'\x00'*self.bytes
-        
+
         with self._open() as self.sock:
             for self.i in range(self.skip+count):
-                # Leave now if the server bailed
-                if self.except_event.is_set():
-                    raise lb.ThreadEndedByMaster()                
-    
                 # Throw any initial samples as configured
+                # Do this first to make sure there is data to return
                 if self.i>=self.skip:
                     if self.i==self.skip:
                         start = datetime.datetime.now()
                     timestamps.append(perf_counter())
+
+                # Leave now if the server bailed
+                if self.except_event.is_set():
+                    raise lb.ThreadEndedByMaster()                
     
                 self.sock.sendall(data)
     
-                lb.sleep(0.)        
+                lb.sleep(0.)
 
         return {'start': start,
                 'send_timestamp': timestamps,
@@ -651,8 +652,7 @@ class ClosedLoopNetworkingTest(lb.Device):
                        sender=self.settings.sender,
                        receiver=self.settings.receiver)
 
-   
-#    @lb.retry(socket.timeout, 5)
+    @lb.retry(ConnectionError, 3)
     def acquire(self, count):
         if not self.settings.udp and self.settings.tcp_nodelay\
            and self.settings.bytes < 1500:
@@ -671,7 +671,11 @@ class ClosedLoopNetworkingTest(lb.Device):
         ret = lb.concurrently(lb.Call(receiver.__call__, count, sender),
                               lb.Call(sender.__call__, count))
 
-        start = ret.pop('start')
+        start = ret.pop('start', None)
+        
+        if start is None:
+            raise ConnectionError('send failed')
+            
         ret = pd.DataFrame(ret)
         dt = pd.TimedeltaIndex(ret.send_timestamp, unit='s')
         ret = pd.DataFrame({'bit_error_count': ret.bit_error_count,
