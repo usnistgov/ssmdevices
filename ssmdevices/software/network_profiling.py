@@ -427,8 +427,13 @@ class ReceiveWorker(SocketWorker):
     def _open(self):
         socket_type = socket.SOCK_DGRAM if self.udp else socket.SOCK_STREAM        
         sock = socket.socket(socket.AF_INET, socket_type)
+        conn = None
 
-        try:            
+        try:
+            # Avoid some already in use errors if we try to reuse the socket
+            # soon after closing it
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            
             # The receive buffer for this socket (under the hood in the OS)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.bytes)        
             bufsize = sock.getsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF)
@@ -449,7 +454,11 @@ class ReceiveWorker(SocketWorker):
                     raise ValueError(f'connection request from incorrect ip {other_addr[0]}')                    
                 return conn
         except:
-            sock.close()
+            try:
+                if conn is not None:
+                    conn.close()
+            except:
+                sock.close()
             raise
 
     def __call__ (self, count, sender_obj):
