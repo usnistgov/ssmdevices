@@ -306,8 +306,10 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
 
     @state.attenuation.setter
     def __(self, value):
-        self.state.attenuation_setting = self._apply_cal(value)
-    
+        setting = self._apply_cal(value)
+        self.state.attenuation_setting = setting
+        self.logger.debug(f'calibrated attenuation level for {setting:0.2f} dB setting at {self.settings.frequency/1e6} MHz is {self.settings.:0.2f} dB')
+
     @state.attenuation_setting.getter
     def __(self):
         d = self._cmd(self.CMD_GET_ATTENUATION)
@@ -320,6 +322,7 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
         value1 = int(value)
         value2 = int((value - value1) * 4.0)
         self._cmd(self.CMD_SET_ATTENUATION, value1, value2, 1)
+        self.logger.debug(f'applied {value:0.2f} dB attenuation setting')
 
     @state.output_power.getter
     def __(self):
