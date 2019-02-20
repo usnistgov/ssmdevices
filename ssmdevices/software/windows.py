@@ -183,17 +183,20 @@ class WLANStatus(lb.Device):
             
             :param timeout: timeout to wait before raising TimeoutError
             :type timeout: float
+            
+            :return: time elapsed to connect
         '''
         self.backend.set_interface_connected(self.settings.resource,
                                              self.settings.ssid)
 
         lb.sleep(0.5)
 
-        t0 = time.time()
+        t0 = time.clock()
 
-        while time.time()-t0 < timeout:
+        while time.clock()-t0 < timeout:            
             s = self.state.state
             if s == 'connected':
+                time_elapsed = time.clock()-t0
                 break
             lb.sleep(.05)
         else:
@@ -203,15 +206,20 @@ class WLANStatus(lb.Device):
                                .format(repr(s)))
             
         self.logger.debug('connected WLAN interface to {}'.format(self.settings.ssid))
+        return time_elapsed
 
     def interface_reconnect(self, timeout=10):
+        ''' Reconnect to the network interface.
+        
+            :return: time elapsed to reconnect
+        '''
         try:
             self.interface_disconnect(timeout)
         except BaseException as e:
             self.logger.debug(str(e))
             self.logger.debug('still attempting to connect')
             
-        self.interface_connect(timeout)
+        return self.interface_connect(timeout)
 
     @state.getter
     def __(self, trait):

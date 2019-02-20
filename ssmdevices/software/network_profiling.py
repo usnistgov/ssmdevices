@@ -391,7 +391,7 @@ class SocketWorker:
         self.rx_ready = rx_ready
         self.sent = {}
         self.bad_data = []        
-        
+
     def __call__ (self, count):
         ret = {}
         try:
@@ -419,7 +419,7 @@ class SocketWorker:
             if self.udp and len(self.sent):
                 self.logger.warning(f'missed {count-self.i}/{count} datagrams')     
             if self.udp and len(self.bad_data):
-                self.logger.warning(f'failed to recognize {len(self.bad_data)} datagrams')            
+                self.logger.warning(f'failed to recognize {len(self.bad_data)} datagrams')
 
         return ret
 
@@ -427,6 +427,7 @@ class ReceiveWorker(SocketWorker):
     def _open(self):
         socket_type = socket.SOCK_DGRAM if self.udp else socket.SOCK_STREAM        
         sock = socket.socket(socket.AF_INET, socket_type)
+        sock.settimeout(self.timeout)
         conn = None
 
         try:
@@ -440,8 +441,7 @@ class ReceiveWorker(SocketWorker):
             if bufsize < self.bytes:
                 msg = f'recv buffer size is {bufsize}, but need at least {self.bytes}'
                 raise OSError(msg)
-    
-            sock.settimeout(self.timeout)
+                
             sock.bind((self.receiver, self.port))
     
             if self.udp:
@@ -452,6 +452,8 @@ class ReceiveWorker(SocketWorker):
                 conn, other_addr = sock.accept()
                 if other_addr[0] != self.sender:
                     raise ValueError(f'connection request from incorrect ip {other_addr[0]}')                    
+                conn.settimeout(self.timeout)
+                
                 return conn
         except:
             try:
@@ -533,7 +535,7 @@ class ReceiveWorker(SocketWorker):
                     rx_count += self.sock.recv_into(buf[rx_count:],
                                                self.bytes-rx_count)
                     if perf_counter()-started > self.timeout:
-                        raise socket.timeout
+                        raise socket.timeout()
 
                 finished = perf_counter()
                 data = bytes(buf.copy())
@@ -554,7 +556,8 @@ class SendWorker(SocketWorker):
     def _open(self):
         socket_type = socket.SOCK_DGRAM if self.udp else socket.SOCK_STREAM        
         sock = socket.socket(socket.AF_INET, socket_type)
-
+        sock.settimeout(self.timeout)
+        
         try:
             # The OS-level TCP transmit buffer size for this socket.
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF,
@@ -565,10 +568,12 @@ class SendWorker(SocketWorker):
                 raise OSError(msg)
     
             if not self.udp:
-                sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, self.tcp_nodelay)            
-            sock.bind((self.sender, 0))        
+                sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, self.tcp_nodelay)
+
+            sock.bind((self.sender, 0))
+
             if not self.udp:
-                sock.connect((self.receiver, self.port))         
+                sock.connect((self.receiver, self.port))
             
             return sock
         except:
@@ -661,7 +666,7 @@ class ClosedLoopNetworkingTest(lb.Device):
                        sender=self.settings.sender,
                        receiver=self.settings.receiver)
 
-    @lb.retry(ConnectionError, 3)
+#    @lb.retry((ConnectionError,TimeoutError), 2)
     def acquire(self, count):
         if not self.settings.udp and self.settings.tcp_nodelay\
            and self.settings.bytes < 1500:
@@ -678,7 +683,8 @@ class ClosedLoopNetworkingTest(lb.Device):
         sender = SendWorker(self, **events)
 
         ret = lb.concurrently(lb.Call(receiver.__call__, count, sender),
-                              lb.Call(sender.__call__, count))
+                              lb.Call(sender.__call__, count),
+                              traceback_delay=True)
 
         start = ret.pop('start', None)
         
