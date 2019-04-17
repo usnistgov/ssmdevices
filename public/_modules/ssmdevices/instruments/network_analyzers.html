@@ -1,0 +1,135 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ssmdevices.instruments.network_analyzers &#8212; ssmdevices 0.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>ssmdevices 0.2 documentation</span></a></h1>
+        <h2 class="heading"><span>ssmdevices.instruments.network_analyzers</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for ssmdevices.instruments.network_analyzers</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;RohdeSchwarzZMBSeries&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="RohdeSchwarzZMBSeries"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.network_analyzers.RohdeSchwarzZMBSeries">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzZMBSeries</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">VISADevice</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; A network analyzer.</span>
+<span class="sd">    </span>
+<span class="sd">        Author: Audrey Puls</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="RohdeSchwarzZMBSeries.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.network_analyzers.RohdeSchwarzZMBSeries.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">VISADevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">initiate_continuous</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;INITiate1:CONTinuous:ALL&#39;</span><span class="p">,</span>
+                                      <span class="n">remap</span><span class="o">=</span><span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;ON&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;OFF&#39;</span><span class="p">},</span>
+                                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="RohdeSchwarzZMBSeries.clear"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.network_analyzers.RohdeSchwarzZMBSeries.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;*CLS&#39;</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="RohdeSchwarzZMBSeries.save_trace_to_csv"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.network_analyzers.RohdeSchwarzZMBSeries.save_trace_to_csv">[docs]</a>    <span class="k">def</span> <span class="nf">save_trace_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Save the specified trace to a csv file on the instrument.</span>
+<span class="sd">            Block until the operation is finished.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># This with block causes the function not to return until</span>
+        <span class="c1"># the instrument is done saving data</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_and_block</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;MMEM:STOR:TRAC:CHAN </span><span class="si">{trace}</span><span class="s2">, &#39;</span><span class="si">{path}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzZMBSeries.trigger"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.network_analyzers.RohdeSchwarzZMBSeries.trigger">[docs]</a>    <span class="k">def</span> <span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Initiate a software trigger. To use this, consider setting</span>
+<span class="sd">            `state.initiate_continuous = False` so that the instrument waits</span>
+<span class="sd">            for this trigger before starting a sweep.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;:INITiate:IMMediate&#39;</span><span class="p">)</span></div></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">ssmdevices.instruments</span> <span class="k">import</span> <span class="n">MiniCircuitsRCDAT</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    
+    <span class="c1"># Example: Calibration sweep of an attenuator</span>
+    <span class="c1">#############################SETUP CONNECTIONS#####################</span>
+    <span class="n">atten</span><span class="o">=</span><span class="n">MiniCircuitsRCDAT</span><span class="p">(</span><span class="s1">&#39;11604210008&#39;</span><span class="p">)</span> <span class="c1"># Set the attenuator serial number here</span>
+    <span class="n">na</span><span class="o">=</span><span class="n">RohdeSchwarzZMBSeries</span><span class="p">(</span><span class="s1">&#39;TCPIP0::132.163.202.153::inst0::INSTR&#39;</span><span class="p">)</span>
+    
+    <span class="n">lb</span><span class="o">.</span><span class="n">show_messages</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="n">na</span><span class="p">,</span> <span class="n">atten</span><span class="p">:</span>
+        <span class="n">na</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">na</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">initiate_continuous</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="c1">####################SWEEP THROUGH ATTENUATION AND COLLECT DATA#################</span>
+        <span class="c1"># Since we want to collect cal data on (uncalibrated) attenuator settings,</span>
+        <span class="c1"># we work with atten.state.attenuation_setting instead of</span>
+        <span class="c1"># atten.state.attenuation (which tries to apply calibration data)</span>
+        <span class="k">for</span> <span class="n">atten</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation_setting</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">110</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="mi">441</span><span class="p">):</span>       
+            <span class="c1"># The name of the run, based on the attenuation setting</span>
+            <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">atten</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation_setting</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;pt&#39;</span><span class="p">)</span> 
+    
+            <span class="n">na</span><span class="o">.</span><span class="n">trigger</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="c1"># Pauses python to let the VNA finish a full sweep</span>
+            <span class="n">na</span><span class="o">.</span><span class="n">save_trace_to_csv</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;VA_</span><span class="si">{atten.settings.resource}</span><span class="s1">_</span><span class="si">{name}</span><span class="s1">.csv&#39;</span><span class="p">)</span>
+            
+        <span class="c1"># All done!</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&#39;&#39;ATTENTION USER: This program has completed. Your data is stored</span>
+<span class="s1">                  on the VNA under: C:\Users\Public\Documents\Rhode-Schwarz\VNA</span>
+<span class="s1">                  This data can be transfered to another computer via USB.</span>
+<span class="s1">               &#39;&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright  does not apply.
+
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

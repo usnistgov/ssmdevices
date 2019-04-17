@@ -9,6 +9,7 @@
     <title>ssmdevices.electronics package &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
@@ -61,29 +62,29 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>baud_rate</strong> – Int(min=1,read_only=False,write_only=False,cache=False)</li>
-<li><strong>data_format</strong> – <p>Bytes(read_only=False,write_only=False,cache=False)</p>
+<li><strong>baud_rate</strong> – Int(min=1,read_only=False,write_only=False,remap={},cache=False)</li>
+<li><strong>data_format</strong> – <p>Bytes(read_only=False,write_only=False,remap={},cache=False)</p>
 <p>Data format metadata</p>
 </li>
-<li><strong>dsrdtr</strong> – Bool(read_only=False,write_only=False,cache=False)</li>
-<li><strong>max_queue_size</strong> – <p>Int(min=1,read_only=False,write_only=False,cache=False)</p>
+<li><strong>dsrdtr</strong> – Bool(read_only=False,write_only=False,remap={},cache=False)</li>
+<li><strong>max_queue_size</strong> – <p>Int(min=1,read_only=False,write_only=False,remap={},cache=False)</p>
 <p>Number of bytes to allocate in the data retreival buffer</p>
 </li>
-<li><strong>parity</strong> – Bytes(read_only=False,write_only=False,cache=False)</li>
-<li><strong>poll_rate</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<li><strong>parity</strong> – Bytes(read_only=False,write_only=False,remap={},cache=False)</li>
+<li><strong>poll_rate</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
 <p>Data retreival rate from the device (in seconds)</p>
 </li>
-<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </li>
-<li><strong>rtscts</strong> – Bool(read_only=False,write_only=False,cache=False)</li>
-<li><strong>stop_timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<li><strong>rtscts</strong> – Bool(read_only=False,write_only=False,remap={},cache=False)</li>
+<li><strong>stop_timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
 <p>Delay after a call to <cite>stop</cite> before terminating the runloop thread</p>
 </li>
-<li><strong>stopbits</strong> – Float(min=1,max=2,step=0.5,read_only=False,write_only=False,cache=False)</li>
-<li><strong>timeout</strong> – Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</li>
-<li><strong>write_termination</strong> – Bytes(read_only=False,write_only=False,cache=False)</li>
-<li><strong>xonxoff</strong> – Bool(read_only=False,write_only=False,cache=False)</li>
+<li><strong>stopbits</strong> – Float(min=1,max=2,step=0.5,read_only=False,write_only=False,remap={},cache=False)</li>
+<li><strong>timeout</strong> – Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</li>
+<li><strong>write_termination</strong> – Bytes(read_only=False,write_only=False,remap={},cache=False)</li>
+<li><strong>xonxoff</strong> – Bool(read_only=False,write_only=False,remap={},cache=False)</li>
 </ul>
 </td>
 </tr>
@@ -154,10 +155,44 @@ like:</p>
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings">
 <em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/gps.html#SwiftNavPiksi.settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.settings</span></code></p>
+<dl class="docutils">
+<dt>Container for settings traits in a Device. These settings</dt>
+<dd><p class="first">are stored only on the host; setting or getting these values do not
+trigger live updates (or any communication) with the device. These
+define connection addressing information, communication settings,
+and options that only apply to implementing python support for the
+device.</p>
+<p>The device uses this container to define the keyword options supported
+by its __init__ function. These are applied when you instantiate the device.
+After you instantiate the device, you can change the setting with</p>
+<dl class="docutils">
+<dt><a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a>python</dt>
+<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
+</dl>
+<p class="last"><a href="#id7"><span class="problematic" id="id8">``</span></a><a href="#id9"><span class="problematic" id="id10">`</span></a></p>
+</dd>
+</dl>
+<p>trait attributes:</p>
+<ul class="simple">
+<li><cite>baud_rate</cite>: <cite>Int</cite></li>
+<li><cite>concurrency_support</cite>: <cite>Bool</cite></li>
+<li><cite>data_format</cite>: <cite>Bytes</cite></li>
+<li><cite>dsrdtr</cite>: <cite>Bool</cite></li>
+<li><cite>max_queue_size</cite>: <cite>Int</cite></li>
+<li><cite>parity</cite>: <cite>Bytes</cite></li>
+<li><cite>poll_rate</cite>: <cite>Float</cite></li>
+<li><cite>resource</cite>: <cite>Unicode</cite></li>
+<li><cite>rtscts</cite>: <cite>Bool</cite></li>
+<li><cite>stop_timeout</cite>: <cite>Float</cite></li>
+<li><cite>stopbits</cite>: <cite>Float</cite></li>
+<li><cite>timeout</cite>: <cite>Float</cite></li>
+<li><cite>write_termination</cite>: <cite>Bytes</cite></li>
+<li><cite>xonxoff</cite>: <cite>Bool</cite></li>
+</ul>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.baud_rate">
 <code class="descname">baud_rate</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.baud_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Int(min=1,read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -201,14 +236,14 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.data_format">
 <code class="descname">data_format</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.data_format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bytes(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bytes(read_only=False,write_only=False,remap={},cache=False)</p>
 <p>Data format metadata</p>
 </dd></dl>
 
@@ -218,10 +253,10 @@ to the function.</p>
 <dd><p>Return a copy of this class with default values of the traits
 redefined according to each keyword argument. For example,</p>
 <dl class="docutils">
-<dt><a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a>python</dt>
+<dt><a href="#id11"><span class="problematic" id="id12">``</span></a><a href="#id13"><span class="problematic" id="id14">`</span></a>python</dt>
 <dd>mylocaltraitcls.define(parameter=7)</dd>
 </dl>
-<p><a href="#id7"><span class="problematic" id="id8">``</span></a><a href="#id9"><span class="problematic" id="id10">`</span></a></p>
+<p><a href="#id15"><span class="problematic" id="id16">``</span></a><a href="#id17"><span class="problematic" id="id18">`</span></a></p>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
 named <cite>parameter</cite> is redefined to have default_value=7.</p>
 </dd></dl>
@@ -229,59 +264,59 @@ named <cite>parameter</cite> is redefined to have default_value=7.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.dsrdtr">
 <code class="descname">dsrdtr</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.dsrdtr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.max_queue_size">
 <code class="descname">max_queue_size</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.max_queue_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Int(min=1,read_only=False,write_only=False,remap={},cache=False)</p>
 <p>Number of bytes to allocate in the data retreival buffer</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.parity">
 <code class="descname">parity</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.parity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bytes(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bytes(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.poll_rate">
 <code class="descname">poll_rate</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.poll_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
 <p>Data retreival rate from the device (in seconds)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.rtscts">
 <code class="descname">rtscts</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.rtscts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.stop_timeout">
 <code class="descname">stop_timeout</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.stop_timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
 <p>Delay after a call to <cite>stop</cite> before terminating the runloop thread</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.stopbits">
 <code class="descname">stopbits</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.stopbits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=1,max=2,step=0.5,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Float(min=1,max=2,step=0.5,read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -299,13 +334,13 @@ the event handlers of this class will be returned instead.</dd>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.write_termination">
 <code class="descname">write_termination</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.write_termination" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bytes(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bytes(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.xonxoff">
 <code class="descname">xonxoff</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.xonxoff" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 </dd></dl>
@@ -320,9 +355,22 @@ the event handlers of this class will be returned instead.</dd>
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasStateTraits</span></code></p>
-<p>Basic remote state
-Instantiating <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> (or one of its subclasses)
-automatically instantiate this class as well.</p>
+<dl class="docutils">
+<dt>Container for state traits in a Device. Getting or setting state traits</dt>
+<dd><p class="first">triggers live updates: communication with the device to get or set the
+value on the Device. Therefore, getting or setting state traits
+needs the device to be connected.</p>
+<p>To set a
+<a href="#id19"><span class="problematic" id="id20">``</span></a><a href="#id21"><span class="problematic" id="id22">`</span></a>python</p>
+<blockquote>
+<div>device.state.parameter = value</div></blockquote>
+<p class="last"><a href="#id23"><span class="problematic" id="id24">``</span></a><a href="#id25"><span class="problematic" id="id26">`</span></a></p>
+</dd>
+</dl>
+<p>trait attributes:</p>
+<ul class="simple">
+<li><cite>connected</cite>: <cite>Bool</cite></li>
+</ul>
 <dl class="classmethod">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_trait_events">
 <em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
@@ -364,7 +412,7 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -432,14 +480,14 @@ the event handlers of this class will be returned instead.</dd>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>arguments</strong> – <p>List(read_only=False,write_only=False,cache=False)</p>
+<li><strong>arguments</strong> – <p>List(read_only=False,write_only=False,remap={},cache=False)</p>
 <p>list of command line arguments to pass into the executable</p>
 </li>
-<li><strong>binary_path</strong> – Unicode(read_only=False,write_only=False,cache=False)</li>
-<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<li><strong>binary_path</strong> – Unicode(read_only=False,write_only=False,remap={},cache=False)</li>
+<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </li>
-<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
 </li>
 </ul>
@@ -470,11 +518,11 @@ the executable continues running).</p>
 <cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id11"><span class="problematic" id="id12">``</span></a><a href="#id13"><span class="problematic" id="id14">`</span></a>python
+<p><a href="#id27"><span class="problematic" id="id28">``</span></a><a href="#id29"><span class="problematic" id="id30">`</span></a>python
 with self.no_state_arguments:</p>
 <blockquote>
 <div>self.background(…)</div></blockquote>
-<p><a href="#id15"><span class="problematic" id="id16">``</span></a><a href="#id17"><span class="problematic" id="id18">`</span></a></p>
+<p><a href="#id31"><span class="problematic" id="id32">``</span></a><a href="#id33"><span class="problematic" id="id34">`</span></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -547,11 +595,11 @@ to standard error during background execution.</p>
 <cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id19"><span class="problematic" id="id20">``</span></a><a href="#id21"><span class="problematic" id="id22">`</span></a>python
+<p><a href="#id35"><span class="problematic" id="id36">``</span></a><a href="#id37"><span class="problematic" id="id38">`</span></a>python
 with self.no_state_arguments:</p>
 <blockquote>
 <div>self.foreground(…)</div></blockquote>
-<p><a href="#id23"><span class="problematic" id="id24">``</span></a><a href="#id25"><span class="problematic" id="id26">`</span></a></p>
+<p><a href="#id39"><span class="problematic" id="id40">``</span></a><a href="#id41"><span class="problematic" id="id42">`</span></a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -646,24 +694,50 @@ should be turned off, 1 indicating it should be turned on</p>
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings">
 <em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/mobile.html#AndroidDebugBridge.settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.backends.settings</span></code></p>
+<dl class="docutils">
+<dt>Container for settings traits in a Device. These settings</dt>
+<dd><p class="first">are stored only on the host; setting or getting these values do not
+trigger live updates (or any communication) with the device. These
+define connection addressing information, communication settings,
+and options that only apply to implementing python support for the
+device.</p>
+<p>The device uses this container to define the keyword options supported
+by its __init__ function. These are applied when you instantiate the device.
+After you instantiate the device, you can change the setting with</p>
+<dl class="docutils">
+<dt><a href="#id43"><span class="problematic" id="id44">``</span></a><a href="#id45"><span class="problematic" id="id46">`</span></a>python</dt>
+<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
+</dl>
+<p class="last"><a href="#id47"><span class="problematic" id="id48">``</span></a><a href="#id49"><span class="problematic" id="id50">`</span></a></p>
+</dd>
+</dl>
+<p>trait attributes:</p>
+<ul class="simple">
+<li><cite>arguments</cite>: <cite>List</cite></li>
+<li><cite>arguments_min</cite>: <cite>Int</cite></li>
+<li><cite>binary_path</cite>: <cite>Unicode</cite></li>
+<li><cite>concurrency_support</cite>: <cite>Bool</cite></li>
+<li><cite>resource</cite>: <cite>Unicode</cite></li>
+<li><cite>timeout</cite>: <cite>Float</cite></li>
+</ul>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.arguments">
 <code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>List(read_only=False,write_only=False,cache=False)</p>
+<dd><p>List(read_only=False,write_only=False,remap={},cache=False)</p>
 <p>list of command line arguments to pass into the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,read_only=True,write_only=False,cache=False)</p>
+<dd><p>Int(min=0,read_only=True,write_only=False,remap={},cache=False)</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.binary_path">
 <code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -707,7 +781,7 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -717,10 +791,10 @@ to the function.</p>
 <dd><p>Return a copy of this class with default values of the traits
 redefined according to each keyword argument. For example,</p>
 <dl class="docutils">
-<dt><a href="#id27"><span class="problematic" id="id28">``</span></a><a href="#id29"><span class="problematic" id="id30">`</span></a>python</dt>
+<dt><a href="#id51"><span class="problematic" id="id52">``</span></a><a href="#id53"><span class="problematic" id="id54">`</span></a>python</dt>
 <dd>mylocaltraitcls.define(parameter=7)</dd>
 </dl>
-<p><a href="#id31"><span class="problematic" id="id32">``</span></a><a href="#id33"><span class="problematic" id="id34">`</span></a></p>
+<p><a href="#id55"><span class="problematic" id="id56">``</span></a><a href="#id57"><span class="problematic" id="id58">`</span></a></p>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
 named <cite>parameter</cite> is redefined to have default_value=7.</p>
 </dd></dl>
@@ -728,14 +802,14 @@ named <cite>parameter</cite> is redefined to have default_value=7.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,cache=False)</p>
+<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
 </dd></dl>
 
@@ -757,9 +831,22 @@ the event handlers of this class will be returned instead.</dd>
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasStateTraits</span></code></p>
-<p>Basic remote state
-Instantiating <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> (or one of its subclasses)
-automatically instantiate this class as well.</p>
+<dl class="docutils">
+<dt>Container for state traits in a Device. Getting or setting state traits</dt>
+<dd><p class="first">triggers live updates: communication with the device to get or set the
+value on the Device. Therefore, getting or setting state traits
+needs the device to be connected.</p>
+<p>To set a
+<a href="#id59"><span class="problematic" id="id60">``</span></a><a href="#id61"><span class="problematic" id="id62">`</span></a>python</p>
+<blockquote>
+<div>device.state.parameter = value</div></blockquote>
+<p class="last"><a href="#id63"><span class="problematic" id="id64">``</span></a><a href="#id65"><span class="problematic" id="id66">`</span></a></p>
+</dd>
+</dl>
+<p>trait attributes:</p>
+<ul class="simple">
+<li><cite>connected</cite>: <cite>Bool</cite></li>
+</ul>
 <dl class="classmethod">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_trait_events">
 <em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
@@ -801,7 +888,7 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -890,7 +977,7 @@ a connected device.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </td>
 </tr>
@@ -949,9 +1036,28 @@ ports on the hub.</li>
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings">
 <em class="property">class </em><code class="descname">settings</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.HasSettingsTraits</span></code></p>
-<p>Connection settings stored here on the host
-side. These could include resource information, data rates, ports, and
-so forth.</p>
+<dl class="docutils">
+<dt>Container for settings traits in a Device. These settings</dt>
+<dd><p class="first">are stored only on the host; setting or getting these values do not
+trigger live updates (or any communication) with the device. These
+define connection addressing information, communication settings,
+and options that only apply to implementing python support for the
+device.</p>
+<p>The device uses this container to define the keyword options supported
+by its __init__ function. These are applied when you instantiate the device.
+After you instantiate the device, you can change the setting with</p>
+<dl class="docutils">
+<dt><a href="#id67"><span class="problematic" id="id68">``</span></a><a href="#id69"><span class="problematic" id="id70">`</span></a>python</dt>
+<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
+</dl>
+<p class="last"><a href="#id71"><span class="problematic" id="id72">``</span></a><a href="#id73"><span class="problematic" id="id74">`</span></a></p>
+</dd>
+</dl>
+<p>trait attributes:</p>
+<ul class="simple">
+<li><cite>concurrency_support</cite>: <cite>Bool</cite></li>
+<li><cite>resource</cite>: <cite>Unicode</cite></li>
+</ul>
 <dl class="classmethod">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.class_own_trait_events">
 <em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
@@ -993,7 +1099,7 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -1003,10 +1109,10 @@ to the function.</p>
 <dd><p>Return a copy of this class with default values of the traits
 redefined according to each keyword argument. For example,</p>
 <dl class="docutils">
-<dt><a href="#id35"><span class="problematic" id="id36">``</span></a><a href="#id37"><span class="problematic" id="id38">`</span></a>python</dt>
+<dt><a href="#id75"><span class="problematic" id="id76">``</span></a><a href="#id77"><span class="problematic" id="id78">`</span></a>python</dt>
 <dd>mylocaltraitcls.define(parameter=7)</dd>
 </dl>
-<p><a href="#id39"><span class="problematic" id="id40">``</span></a><a href="#id41"><span class="problematic" id="id42">`</span></a></p>
+<p><a href="#id79"><span class="problematic" id="id80">``</span></a><a href="#id81"><span class="problematic" id="id82">`</span></a></p>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
 named <cite>parameter</cite> is redefined to have default_value=7.</p>
 </dd></dl>
@@ -1014,7 +1120,7 @@ named <cite>parameter</cite> is redefined to have default_value=7.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
@@ -1036,6 +1142,30 @@ the event handlers of this class will be returned instead.</dd>
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state">
 <em class="property">class </em><code class="descname">state</code><span class="sig-paren">(</span><em>device</em>, <em>*args</em>, <em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ssmdevices/electronics/usb.html#AcronameUSBHub2x4.state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">labbench.core.state</span></code></p>
+<dl class="docutils">
+<dt>Container for state traits in a Device. Getting or setting state traits</dt>
+<dd><p class="first">triggers live updates: communication with the device to get or set the
+value on the Device. Therefore, getting or setting state traits
+needs the device to be connected.</p>
+<p>To set a
+<a href="#id83"><span class="problematic" id="id84">``</span></a><a href="#id85"><span class="problematic" id="id86">`</span></a>python</p>
+<blockquote>
+<div>device.state.parameter = value</div></blockquote>
+<p class="last"><a href="#id87"><span class="problematic" id="id88">``</span></a><a href="#id89"><span class="problematic" id="id90">`</span></a></p>
+</dd>
+</dl>
+<p>trait attributes:</p>
+<ul class="simple">
+<li><cite>connected</cite>: <cite>Bool</cite></li>
+<li><cite>data0_enabled</cite>: <cite>Bool</cite></li>
+<li><cite>data1_enabled</cite>: <cite>Bool</cite></li>
+<li><cite>data2_enabled</cite>: <cite>Bool</cite></li>
+<li><cite>data3_enabled</cite>: <cite>Bool</cite></li>
+<li><cite>power0_enabled</cite>: <cite>Bool</cite></li>
+<li><cite>power1_enabled</cite>: <cite>Bool</cite></li>
+<li><cite>power2_enabled</cite>: <cite>Bool</cite></li>
+<li><cite>power3_enabled</cite>: <cite>Bool</cite></li>
+</ul>
 <dl class="classmethod">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_trait_events">
 <em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
@@ -1077,32 +1207,32 @@ to the function.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data0_enabled">
 <code class="descname">data0_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data0_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data1_enabled">
 <code class="descname">data1_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data1_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data2_enabled">
 <code class="descname">data2_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data2_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data3_enabled">
 <code class="descname">data3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.data3_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1124,25 +1254,25 @@ one.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power0_enabled">
 <code class="descname">power0_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power0_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power1_enabled">
 <code class="descname">power1_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power1_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power2_enabled">
 <code class="descname">power2_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power2_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power3_enabled">
 <code class="descname">power3_enabled</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.power3_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,cache=False)</p>
+<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1217,7 +1347,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

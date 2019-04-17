@@ -9,6 +9,7 @@
     <title>ssmdevices.instruments.attenuators &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -44,14 +45,22 @@
 
 <span class="kn">from</span> <span class="nn">future</span> <span class="k">import</span> <span class="n">standard_library</span>
 <span class="n">standard_library</span><span class="o">.</span><span class="n">install_aliases</span><span class="p">()</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MiniCircuitsRCDAT&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MiniCircuitsRCDAT&#39;</span><span class="p">,</span> <span class="s1">&#39;MiniCircuitsRC4DAT&#39;</span><span class="p">]</span>
 
 <span class="kn">from</span> <span class="nn">labbench</span> <span class="k">import</span> <span class="n">DotNetDevice</span>
 <span class="kn">import</span> <span class="nn">ssmdevices.lib</span>
 <span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span><span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">minicircuits</span>
 
-<div class="viewcode-block" id="MiniCircuitsRCDAT"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT">[docs]</a><span class="k">class</span> <span class="nc">MiniCircuitsRCDAT</span><span class="p">(</span><span class="n">DotNetDevice</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; A digitally controlled, 0 to 110 dB variable attenuator.</span>
+<div class="viewcode-block" id="MiniCircuitsRCDAT"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT">[docs]</a><span class="k">class</span> <span class="nc">MiniCircuitsRCDAT</span><span class="p">(</span><span class="n">minicircuits</span><span class="o">.</span><span class="n">SingleChannelAttenuator</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<span class="c1">#class MiniCircuitsRC4DAT(minicircuits.FourChannelAttenuator):</span>
+<span class="c1">#    pass</span>
+
+<div class="viewcode-block" id="MiniCircuitsRC4DAT"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRC4DAT">[docs]</a><span class="k">class</span> <span class="nc">MiniCircuitsRC4DAT</span><span class="p">(</span><span class="n">DotNetDevice</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Base class for MiniCircuits USB attenuators.</span>
 <span class="sd">    </span>
 <span class="sd">        This implementation calls the .NET drivers provided by the</span>
 <span class="sd">        manufacturer instead of the recommended C DLL drivers in order to</span>
@@ -60,38 +69,127 @@
     
     <span class="n">library</span>  <span class="o">=</span> <span class="n">ssmdevices</span><span class="o">.</span><span class="n">lib</span>    <span class="c1"># Must be a module</span>
     <span class="n">dll_name</span> <span class="o">=</span> <span class="s1">&#39;mcl_RUDAT64.dll&#39;</span>
+    <span class="n">model_includes</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
     
-<div class="viewcode-block" id="MiniCircuitsRCDAT.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">DotNetDevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
-        <span class="n">attenuation</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span></div>
+<div class="viewcode-block" id="MiniCircuitsRC4DAT.settings"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRC4DAT.settings">[docs]</a>    <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">DotNetDevice</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
+        <span class="n">resource</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Serial number of the USB device. Must be defined if more than one device is connected to the computer&#39;</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MiniCircuitsRCDAT.connect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MiniCircuitsRC4DAT.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRC4DAT.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">DotNetDevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">serial_number</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>        
+        <span class="n">attenuation1</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">attenuation2</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">attenuation3</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">attenuation4</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MiniCircuitsRC4DAT.connect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRC4DAT.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Open the device resource.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="nd">@lb</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="ne">ConnectionError</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">do_connect</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll</span><span class="o">.</span><span class="n">USB_RUDAT</span><span class="p">()</span>
+    <span class="c1">#        if self.settings.resource == 1</span>
+            <span class="k">for</span> <span class="n">retry</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.2</span><span class="p">))</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="s1">&#39;Cannot connect to attenuator resource </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span>
+            
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Minicircuits attenuator support currently requires pythonnet and windows&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll</span><span class="o">.</span><span class="n">USB_RUDAT</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">Connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Cannot connect to attenuator resource </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span></div>
+            
+        <span class="c1"># Validate the input resource</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_available_devices</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;no MiniCircuits attenuators were detected on USB&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;more than one MiniCircuits USB attenuators are connected, specify one of &#39;</span><span class="o">+</span><span class="nb">repr</span><span class="p">(</span><span class="n">valid</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;specified serial number </span><span class="si">{}</span><span class="s1"> but only found </span><span class="si">{}</span><span class="s1"> on USB&#39;</span>\
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">),</span><span class="nb">repr</span><span class="p">(</span><span class="n">valid</span><span class="p">)))</span>
+                
+        <span class="n">do_connect</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_includes</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_includes</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">model</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">DeviceException</span><span class="p">(</span><span class="s1">&#39;attenuator model </span><span class="si">{model}</span><span class="s1"> does not include the expected </span><span class="si">{model_has}</span><span class="s1"> string&#39;</span>\
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                                             <span class="n">model_has</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_includes</span><span class="p">))</span>
 
-<div class="viewcode-block" id="MiniCircuitsRCDAT.disconnect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRCDAT.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Connected to </span><span class="si">{model}</span><span class="s1"> attenuator, SN#</span><span class="si">{sn}</span><span class="s1">&#39;</span>\
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                                  <span class="n">sn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">serial_number</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="MiniCircuitsRC4DAT.disconnect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRC4DAT.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Release the attenuator hardware resource via the driver DLL.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">Disconnect</span><span class="p">()</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">pass</span></div>
-        
-    <span class="nd">@state</span><span class="o">.</span><span class="n">attenuation</span><span class="o">.</span><span class="n">getter</span>
-    <span class="k">def</span> <span class="nf">_</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">Read_Att</span><span class="p">(</span><span class="mi">0</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;got attenuation </span><span class="si">{}</span><span class="s1"> dB&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">ret</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">Disconnect</span><span class="p">()</span></div>
 
-    <span class="nd">@state</span><span class="o">.</span><span class="n">attenuation</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">_</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;set attenuation </span><span class="si">{}</span><span class="s1"> dB&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">SetAttenuation</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+<div class="viewcode-block" id="MiniCircuitsRC4DAT.list_available_devices"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsRC4DAT.list_available_devices">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">list_available_devices</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">inst</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Return a list of valid resource strings of MiniCircuitsRCDAT and</span>
+<span class="sd">            MiniCircuitsRC4DAT devices that are found on this computer.</span>
+<span class="sd">            </span>
+<span class="sd">            If inst is not None, it should be a MiniCircuitsRCBase instance.</span>
+<span class="sd">            In this case its backend will be used instead of temporarily</span>
+<span class="sd">            making a new one.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">lb</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;checking available devices&#39;</span><span class="p">)</span>
+        <span class="c1"># Force the dll to import if no devices have been imported yet</span>
+        <span class="k">if</span> <span class="n">inst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;dll&#39;</span><span class="p">):</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">__imports__</span><span class="p">()</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">dll</span><span class="o">.</span><span class="n">USB_RUDAT</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">backend</span>
+
+        <span class="n">count</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">Get_Available_SN_List</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        
+        <span class="n">lb</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;response was </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span></div>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_connection</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s1">&#39;MiniCircuits &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">Read_ModelName</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="nd">@state</span><span class="o">.</span><span class="n">serial_number</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_connection</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">Read_SN</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_validate_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">GetUSBConnectionStatus</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">DeviceStateError</span><span class="p">(</span><span class="s1">&#39;USB device unexpectedly disconnected&#39;</span><span class="p">)</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_connection</span><span class="p">()</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">ReadChannelAtt</span><span class="p">(</span><span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;got attenuation</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> dB&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="p">,</span><span class="n">ret</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ret</span>    
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_connection</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;set attenuation</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> dB&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="p">,</span><span class="n">value</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">SetChannelAtt</span><span class="p">(</span><span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">lb</span><span class="o">.</span><span class="n">show_messages</span><span class="p">(</span><span class="s1">&#39;info&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="n">lb</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">atten</span> <span class="o">=</span> <span class="n">MiniCircuitsRCDAT</span><span class="p">(</span><span class="s1">&#39;11604210014&#39;</span><span class="p">)</span>
+        <span class="n">atten2</span> <span class="o">=</span> <span class="n">MiniCircuitsRCDAT</span><span class="p">(</span><span class="s1">&#39;11604210008&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">atten</span><span class="p">,</span><span class="n">atten2</span><span class="p">:</span>
+            <span class="n">atten</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation</span> <span class="o">=</span> <span class="mf">63.</span>
+            <span class="n">lb</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">atten</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation</span><span class="p">))</span>
 </pre></div>
 
       </div>
@@ -123,7 +221,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

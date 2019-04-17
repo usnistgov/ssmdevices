@@ -123,11 +123,11 @@ exclude_patterns = []
 
 autodoc_default_flags = ['inherited-members']
 
-import traitlets as tl
-
 def maybe_skip_member(app, what, name, obj, skip, options):
-    ''' Skip extra cruft from Device.state objects
+    ''' Skip extra cruft from Device.state and Device.settings objects
     '''
+    import traitlets as tl
+
     if skip:
         return True
 
@@ -135,12 +135,14 @@ def maybe_skip_member(app, what, name, obj, skip, options):
 
     if name not in whitelist and hasattr(tl.HasTraits, name):
         tlobj = getattr(tl.HasTraits, name)
-        if tlobj == obj or (hasattr(tlobj,'im_func') and tlobj.__func__ == obj.__func__):
-            with open('test.txt', 'a') as f:
+        if tlobj == obj\
+           or (hasattr(tlobj,'im_func') and tlobj.__func__ == obj.__func__)\
+           or "'traitlets." in repr(obj):
+            with open('filter_debug.txt', 'a') as f:
                 f.write('skip: '+repr(what)+' with name '+name+' in '+repr(obj)+'\r\n')
             return True
         else:
-            with open('test.txt', 'a') as f:
+            with open('filter_debug.txt', 'a') as f:
                 f.write('nearly skip: '+repr(what)+' with name '+name+' in '+repr(obj)+'\r\n')
 
     return False

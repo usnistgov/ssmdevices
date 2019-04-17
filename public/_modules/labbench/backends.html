@@ -9,6 +9,7 @@
     <title>labbench.backends &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
@@ -41,13 +42,7 @@
 <span class="sd">Paul Blanchard (paul.blanchard@nist.gov)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">future</span> <span class="k">import</span> <span class="n">standard_library</span>
-<span class="n">standard_library</span><span class="o">.</span><span class="n">install_aliases</span><span class="p">()</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">core</span><span class="p">,</span><span class="n">util</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">core</span><span class="p">,</span> <span class="n">util</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">contextlib</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
@@ -77,36 +72,37 @@
     <span class="sd">&quot;&quot;&quot; Virtual device representing for interacting with a command line\</span>
 <span class="sd">        executable. It supports threaded data logging through standard</span>
 <span class="sd">        input, standard output, and standard error pipes.</span>
-<span class="sd">        </span>
+
 <span class="sd">        On connection, the `backend` attribute is None. On a</span>
 <span class="sd">        call to execute(), `backend` becomes is a subprocess instance. When</span>
 <span class="sd">        EOF is reached on the executable&#39;s stdout, the backend is assumed</span>
 <span class="sd">        terminated and is reset to None.</span>
-<span class="sd">        </span>
+
 <span class="sd">        When `execute` is called, the program runs in a subprocess.</span>
 <span class="sd">        The output piped to the command line standard output is queued in a</span>
 <span class="sd">        background thread. Call read_stdout() to retreive (and clear) this</span>
 <span class="sd">        queued stdout.</span>
-<span class="sd">        </span>
-<span class="sd">        </span>
+
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
-        <span class="n">binary_path</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Undefined</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to the file to run&#39;</span><span class="p">)</span>
+        <span class="n">binary_path</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span>
+            <span class="n">core</span><span class="o">.</span><span class="n">Undefined</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to the file to run&#39;</span><span class="p">)</span>
         <span class="n">timeout</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Timeout (sec) after disconnect is called before killing the process&#39;</span><span class="p">)</span>
-        <span class="n">arguments</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">List</span><span class="p">([],</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;list of command line arguments to pass into the executable&#39;</span><span class="p">)</span>
+                             <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Timeout (sec) after disconnect is called before killing the process&#39;</span><span class="p">)</span>
+        <span class="n">arguments</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">List</span><span class="p">(</span>
+            <span class="p">[],</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;list of command line arguments to pass into the executable&#39;</span><span class="p">)</span>
         <span class="n">arguments_min</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;minimum number of extra command line arguments to pass to the executable&#39;</span><span class="p">)</span>
+                                 <span class="n">help</span><span class="o">=</span><span class="s1">&#39;minimum number of extra command line arguments to pass to the executable&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__imports__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__imports__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">global</span> <span class="n">sp</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">subprocess32</span> <span class="k">as</span> <span class="nn">sp</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">sp</span>
 
-        
     <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The :meth:`connect` method exists to comply with the</span>
 <span class="sd">            :class:`Device` object protocol. Call the</span>
@@ -117,11 +113,12 @@
 
         <span class="k">def</span> <span class="nf">check_state_change</span><span class="p">(</span><span class="n">change</span><span class="o">=</span><span class="p">{}):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cannot change command line state traits during execution&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;cannot change command line state traits during execution&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">binary_path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s1">&#39;executable does not exist at supplied resource (path </span><span class="si">{}</span><span class="s1">)&#39;</span>
-                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">binary_path</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s1">&#39;executable does not exist at resource=r&quot;</span><span class="si">{self.settings.binary_path}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -129,7 +126,7 @@
 
         <span class="c1"># Monitor state changes</span>
         <span class="n">states</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">traits</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>\
-                 <span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">CommandLineWrapper</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">CommandLineWrapper</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">check_state_change</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">states</span><span class="p">))</span>
 
     <span class="nd">@property</span>
@@ -150,7 +147,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__contexts</span><span class="p">[</span><span class="s1">&#39;respawn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">yield</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__contexts</span><span class="p">[</span><span class="s1">&#39;respawn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-        
+
     <span class="nd">@property</span>
     <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
     <span class="k">def</span> <span class="nf">exception_on_stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -161,7 +158,7 @@
         <span class="k">yield</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__contexts</span><span class="p">[</span><span class="s1">&#39;exception_on_stderr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">foreground</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_arguments</span><span class="p">,</span> <span class="o">**</span><span class="n">flags</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_arguments</span><span class="p">,</span> <span class="o">**</span><span class="n">flags</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Blocking execution of the binary at the file location</span>
 <span class="sd">            `self.settings.binary_path`.</span>
 
@@ -170,15 +167,15 @@
 <span class="sd">            * appending pairs of [key,value] from the `flags` dictionary to the</span>
 <span class="sd">              global flags defined with command flags in local state traits in</span>
 <span class="sd">              `self.settings`</span>
-<span class="sd">              </span>
+
 <span class="sd">            Use the self.no_state_arguments context manager to skip these</span>
 <span class="sd">            global arguments like this:</span>
-<span class="sd">                </span>
+
 <span class="sd">            ```python</span>
 <span class="sd">            with self.no_state_arguments:</span>
 <span class="sd">                self.foreground(...)</span>
 <span class="sd">            ```</span>
-<span class="sd">            </span>
+
 <span class="sd">            :returns: the return code of the process after its completion</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">cmdl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__make_commandline</span><span class="p">(</span><span class="o">*</span><span class="n">extra_arguments</span><span class="p">,</span> <span class="o">**</span><span class="n">flags</span><span class="p">)</span>
@@ -186,17 +183,18 @@
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">cmdl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">cmdl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;foreground execute: </span><span class="si">{}</span><span class="s1">&#39;</span>                
-                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">path</span><span class="p">,)</span><span class="o">+</span><span class="n">cmdl</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;foreground execute &#39;</span> <span class="o">+</span>
+                          <span class="nb">repr</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">path</span><span class="p">,)</span> <span class="o">+</span> <span class="n">cmdl</span><span class="p">[</span><span class="mi">1</span><span class="p">:])))</span>
         <span class="n">cp</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmdl</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
                     <span class="n">stdout</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">stdout</span>
-        
+
         <span class="k">if</span> <span class="n">ret</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;-&gt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">decode</span><span class="p">()))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;-&gt; {ret.decode()}&#39;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;-&gt; (</span><span class="si">{}</span><span class="s1"> lines)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)))</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;-&gt; (</span><span class="si">{count}</span><span class="s2"> lines)&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 <span class="c1">#        if ret != self.settings.return_code_ok:</span>
 <span class="c1">#            raise ValueError(&#39;process returned error code {}&#39;\</span>
@@ -220,7 +218,7 @@
 
 <span class="sd">            Use the self.no_state_arguments context manager to skip these</span>
 <span class="sd">            global arguments like this:</span>
-<span class="sd">    </span>
+
 <span class="sd">            ```python</span>
 <span class="sd">            with self.no_state_arguments:</span>
 <span class="sd">                self.background(...)</span>
@@ -237,14 +235,15 @@
             <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stdout_queue</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">fd</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="kc">None</span>
-            
+
             <span class="c1"># Respawn (or don&#39;t)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__contexts</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;respawn&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__kill</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__contexts</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                    <span class="s1">&#39;respawn&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__kill</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;respawning&#39;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_kill_proc_tree</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
                 <span class="n">spawn</span><span class="p">(</span><span class="n">cmdl</span><span class="p">)</span>
@@ -258,8 +257,8 @@
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">break</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;stderr message: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">line</span><span class="p">)))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;stderr {repr(line)}&#39;</span><span class="p">)</span>
 <span class="c1">#                    raise Exception(line)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span>
@@ -267,27 +266,28 @@
         <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="n">cmdl</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot; Execute the binary in the background (nonblocking),</span>
 <span class="sd">                while funneling its standard output to a queue in a thread.</span>
-<span class="sd">    </span>
+
 <span class="sd">                :param cmd: iterable containing the binary path, then</span>
 <span class="sd">                            each argument to be passed to the binary.</span>
-<span class="sd">    </span>
+
 <span class="sd">                :returns: None</span>
-<span class="sd">            &quot;&quot;&quot;</span>               
+<span class="sd">            &quot;&quot;&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;already running&#39;</span><span class="p">)</span>
-    
+
             <span class="n">si</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">STARTUPINFO</span><span class="p">()</span>
             <span class="n">si</span><span class="o">.</span><span class="n">dwFlags</span> <span class="o">|=</span> <span class="n">sp</span><span class="o">.</span><span class="n">STARTF_USESHOWWINDOW</span>
-    
+
             <span class="n">proc</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">cmdl</span><span class="p">),</span> <span class="n">stdout</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">startupinfo</span><span class="o">=</span><span class="n">si</span><span class="p">,</span>
                             <span class="n">bufsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                             <span class="n">creationflags</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">CREATE_NEW_PROCESS_GROUP</span><span class="p">,</span>
                             <span class="n">stderr</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">proc</span>
-            <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">stdout_to_queue</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">cmdl</span><span class="p">))</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>        
+            <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">stdout_to_queue</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">cmdl</span><span class="p">))</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__contexts</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;exception_on_stderr&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-                <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">stderr_to_exception</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">cmdl</span><span class="p">))</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+                <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">stderr_to_exception</span><span class="p">(</span>
+                    <span class="n">proc</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">cmdl</span><span class="p">))</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
         <span class="c1"># Generate the commandline and spawn</span>
         <span class="n">cmdl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__make_commandline</span><span class="p">(</span><span class="o">*</span><span class="n">extra_arguments</span><span class="p">,</span> <span class="o">**</span><span class="n">flags</span><span class="p">)</span>
@@ -295,54 +295,56 @@
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">cmdl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">cmdl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;background execute: </span><span class="si">{}</span><span class="s1">&#39;</span>                         
-                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">path</span><span class="p">,)</span><span class="o">+</span><span class="n">cmdl</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;background execute: {repr(&#39; &#39;.join((path,) + cmdl[1:]))}&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__kill</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__make_commandline</span><span class="p">(</span><span class="o">*</span><span class="n">extra_arguments</span><span class="p">,</span> <span class="o">**</span><span class="n">flags</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">__make_commandline</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_arguments</span><span class="p">,</span> <span class="o">**</span><span class="n">flags</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__make_commandline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_arguments</span><span class="p">,</span> <span class="o">**</span><span class="n">flags</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Form a list of commandline argument strings for foreground</span>
 <span class="sd">            or background calls.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">flags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="nb">str</span><span class="p">)):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;command line flag keys and values must be strings&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">flags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;command line flag keys and values must be strings&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__contexts</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;use_state_arguments&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
-            <span class="n">all_flags</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">traits</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">command</span><span class="p">])</span>
+            <span class="n">all_flags</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">traits</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">command</span><span class="p">])</span>
 
             <span class="c1"># Check for invalid flags</span>
             <span class="n">bad_flags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">flags</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">all_flags</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bad_flags</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;commandline keyword arguments must correspond with defined state traits, but </span><span class="si">{}</span><span class="s1"> are not defined in </span><span class="si">{}</span><span class="s1">.state&#39;</span>\
-                       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">bad_flags</span><span class="p">)),</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bad_flags</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;commandline keyword arguments {repr(tuple(bad_flags))} not found in {repr(self)}.settings&#39;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
             <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">extra_arguments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">args</span> <span class="o">=</span> <span class="n">args</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">extra_arguments</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">arguments_min</span>\
                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">arguments_min</span><span class="p">:</span>
-                   <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> requires at least </span><span class="si">{}</span><span class="s1"> arguments; have </span><span class="si">{}</span><span class="s1">&#39;</span>\
-                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">arguments_min</span><span class="p">,</span>
-                                            <span class="nb">repr</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="n">f</span><span class="s1">&#39;{repr(self)} given {repr(args)} arguments but needs at least </span><span class="si">{self.settings.arguments_min}</span><span class="s1">&#39;</span><span class="p">)</span>
 
             <span class="c1"># Set flags according to the arguments</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">flags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">flags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">extra_arguments</span><span class="p">)</span>
             <span class="c1"># Set flags according to the arguments</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">flags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="nb">str</span><span class="p">)):</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;command line values and flags must be strings&#39;</span><span class="p">)</span>
-                <span class="n">args</span> <span class="o">+=</span> <span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">flags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;command line values and flags must be strings&#39;</span><span class="p">)</span>
+                <span class="n">args</span> <span class="o">+=</span> <span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">]</span>
 
-        <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">binary_path</span><span class="p">,)</span><span class="o">+</span><span class="nb">tuple</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">binary_path</span><span class="p">,)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
         <span class="c1"># Update state traits with the flags</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__contexts</span><span class="p">[</span><span class="s1">&#39;use_state_arguments&#39;</span><span class="p">]:</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">trait</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">traits</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">trait</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">traits</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">trait</span><span class="o">.</span><span class="n">command</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -351,35 +353,36 @@
                             <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span> <span class="o">+</span> <span class="p">(</span><span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="p">,)</span>
                     <span class="k">elif</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span> <span class="o">+</span> <span class="p">(</span><span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
-                        
+
         <span class="k">return</span> <span class="n">cmd</span>
 
     <span class="k">def</span> <span class="nf">read_stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wait_for</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return string output queued from stdout for a process running</span>
 <span class="sd">            in the background. This clears the queue.</span>
-<span class="sd">            </span>
+
 <span class="sd">            Returns an empty string if the command line program has not been</span>
 <span class="sd">            executed or is empty. Running the command line multiple times overwrites the queue.</span>
-<span class="sd">            </span>
+
 <span class="sd">            :returns: stdout</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_stdout_queue</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">result</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stdout_queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">wait_for</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stdout_queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">wait_for</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="n">line</span>
 
                 <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">result</span> <span class="o">+=</span> <span class="n">line</span>
-                
-                <span class="k">if</span> <span class="n">wait_for</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">==</span> <span class="n">wait_for</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">wait_for</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">==</span> <span class="n">wait_for</span><span class="p">:</span>
                     <span class="k">break</span>
         <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span>
             <span class="k">pass</span>
@@ -394,8 +397,9 @@
 
     <span class="k">def</span> <span class="nf">kill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__kill</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_kill_proc_tree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kill_proc_tree</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;tried kill(), but no process is running&#39;</span><span class="p">)</span>
 
@@ -404,9 +408,12 @@
 
 <span class="sd">            :returns: True if running, otherwise False</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Cache the current running one for a second in case the backend</span>
+        <span class="c1"># &quot;disconnects&quot;</span>
+        <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">connected</span> \
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="o">==</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">backend</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
+            <span class="ow">and</span> <span class="n">backend</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Clear queued standard output, discarding any contents</span>
@@ -423,15 +430,15 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">parent</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
-        
+
             <span class="c1"># Ever notice that this metaphor is very dark?</span>
             <span class="n">children</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            
+
             <span class="c1"># Get the parent first to prevent respawning</span>
             <span class="k">if</span> <span class="n">including_parent</span><span class="p">:</span>
                 <span class="n">parent</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
                 <span class="n">parent</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-    
+
             <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
                 <span class="n">CommandLineWrapper</span><span class="o">.</span><span class="n">_kill_proc_tree</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">:</span>
@@ -443,22 +450,10 @@
     <span class="n">dll_name</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_dlls</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Assign a module imported from the provided path to a dll</span>
-<span class="sd">            that contains a .NET library called `libname.`</span>
-
-<span class="sd">            :param cls.dll_name: an absolute or relative path on the filesystem, or</span>
-<span class="sd">            (if that fails) a file in the ssmdevices installed distribution.</span>
-
-<span class="sd">            :search_locations: a list where each element is a string</span>
-<span class="sd">            (indicating file system path search locations) or module</span>
-<span class="sd">            that may contain the dll name</span>
-
-<span class="sd">            :param libname: name of the .NET library to import. if None (default),</span>
-<span class="sd">            guess the library name is the same as the dll file without its extension</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="nb">super</span><span class="p">(</span><span class="n">DotNetDevice</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__imports__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="s1">&#39;__dll__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;dll&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__dll__</span>
+            <span class="k">return</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Need file name of a dll binary&#39;</span><span class="p">)</span>
@@ -469,7 +464,8 @@
             <span class="kn">import</span> <span class="nn">clr</span>
         <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;No module named clr&#39;</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;could not import pythonnet support via clr module; no support for .NET drivers&#39;</span><span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s1">&#39;could not import pythonnet support via clr module; no support for .NET drivers&#39;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">err</span>
@@ -490,7 +486,8 @@
 <span class="sd">                __loader__ to load the contents of the dll</span>
 <span class="sd">            &quot;&quot;&quot;</span>
 <span class="c1">#            relpath = module.__name__.replace(&#39;.&#39;, os.path.sep)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span><span class="p">)</span>
             <span class="n">contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">__loader__</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span><span class="p">)</span>
@@ -500,6 +497,10 @@
         <span class="n">name</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="n">Array</span><span class="p">[</span><span class="n">System</span><span class="o">.</span><span class="n">Byte</span><span class="p">](</span><span class="n">contents</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dlls</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dll_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Assembly</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dll</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">libname</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__dll__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dll</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># Race condition =/</span>
+            <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; DotNetDevice loads the DLL; importing in the</span>
@@ -534,10 +535,10 @@
     <span class="n">delay</span> <span class="o">=</span> <span class="mi">1</span>     <span class="c1"># time to wait after each state write or query</span>
     <span class="n">timeout</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">rx_buffer_size</span> <span class="o">=</span> <span class="mi">1024</span>
-    
+
     <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
         <span class="k">pass</span>
-    
+
     <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
         <span class="k">pass</span>
 
@@ -554,13 +555,13 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">sock</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SHUT_RDWR</span><span class="p">)</span>
                 <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;could not close socket &#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">sock</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Send a string over the tx socket.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;write </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">msg</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;write {repr(msg)}&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">[</span><span class="s1">&#39;tx&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sendto</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tx_port</span><span class="p">))</span>
         <span class="n">util</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay</span><span class="p">)</span>
 
@@ -568,7 +569,7 @@
     <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Send a formatted command string to implement state control.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{command}</span><span class="s1"> </span><span class="si">{value}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{trait.command}</span><span class="s1"> </span><span class="si">{value}</span><span class="s1"> &#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">convert_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Receive from the rx socket until `self.rx_buffer_size` samples</span>
@@ -581,7 +582,7 @@
         <span class="k">if</span> <span class="n">addr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;received no data&#39;</span><span class="p">)</span>
         <span class="n">rx_disp</span> <span class="o">=</span> <span class="n">rx</span><span class="p">[:</span><span class="nb">min</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rx</span><span class="p">))]</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;...&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">80</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;read </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rx_disp</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;read {repr(rx_disp)}&#39;</span><span class="p">)</span>
 
         <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">rx</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
@@ -599,7 +600,7 @@
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">inputready</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">s</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
                     <span class="k">continue</span>
 
 
@@ -644,14 +645,15 @@
         <span class="n">keys</span> <span class="o">=</span> <span class="s1">&#39;timeout&#39;</span><span class="p">,</span> <span class="s1">&#39;parity&#39;</span><span class="p">,</span> <span class="s1">&#39;stopbits&#39;</span><span class="p">,</span>\
                <span class="s1">&#39;xonxoff&#39;</span><span class="p">,</span> <span class="s1">&#39;rtscts&#39;</span><span class="p">,</span> <span class="s1">&#39;dsrdtr&#39;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">Serial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">baud_rate</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> connected&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">Serial</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">baud_rate</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{repr(self)} connected&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Disconnect the serial instrument</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> disconnected&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{repr(self)} disconnected&#39;</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_hwid</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">hwid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">connection_params</span><span class="p">):</span>
@@ -664,8 +666,7 @@
 
         <span class="n">usb_map</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_map_serial_hwid_to_port</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">hwid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">usb_map</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s1">&#39;Cannot find serial port with hwid &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hwid</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Cannot find serial port with hwid {repr(hwid)}&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">usb_map</span><span class="p">[</span><span class="n">hwid</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">connection_params</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
@@ -694,7 +695,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">serial.tools</span> <span class="k">import</span> <span class="n">list_ports</span>
 
-        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">port</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">port</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">()])</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">port</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">port</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">()])</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_map_serial_hwid_to_port</span><span class="p">():</span>
@@ -704,7 +706,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">serial.tools</span> <span class="k">import</span> <span class="n">list_ports</span>
 
-        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">port</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">port</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">()])</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">port</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">port</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                            <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">()])</span>
 
 
 <span class="k">class</span> <span class="nc">SerialLoggingDevice</span><span class="p">(</span><span class="n">SerialDevice</span><span class="p">):</span>
@@ -720,17 +723,17 @@
 
     <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">SerialDevice</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
         <span class="n">poll_rate</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Data retreival rate from the device (in seconds)&#39;</span><span class="p">)</span>
+                               <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Data retreival rate from the device (in seconds)&#39;</span><span class="p">)</span>
         <span class="n">data_format</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Bytes</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Data format metadata&#39;</span><span class="p">)</span>
+                                 <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Data format metadata&#39;</span><span class="p">)</span>
         <span class="n">stop_timeout</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                       <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Delay after a call to `stop` before terminating the runloop thread&#39;</span><span class="p">)</span>
+                                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Delay after a call to `stop` before terminating the runloop thread&#39;</span><span class="p">)</span>
         <span class="n">max_queue_size</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                       <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of bytes to allocate in the data retreival buffer&#39;</span><span class="p">)</span>
+                                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of bytes to allocate in the data retreival buffer&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: no device-specific configuration implemented&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="n">f</span><span class="s1">&#39;{repr(self)}: no device-specific configuration implemented&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Start a background thread that acquires log data into a queue.</span>
@@ -741,21 +744,22 @@
             <span class="n">timeout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="mi">0</span>
             <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span>
             <span class="n">stop_event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: configuring log acquisition&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{repr(self)}: configuring log acquisition&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: starting log acquisition&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{repr(self)}: starting log acquisition&#39;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">while</span> <span class="n">stop_event</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">poll_rate</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">baud_rate</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">poll_rate</span><span class="p">))</span>
+                    <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+                        <span class="mi">10</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">baud_rate</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">poll_rate</span><span class="p">))</span>
             <span class="k">except</span> <span class="n">SerialException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
                 <span class="k">raise</span> <span class="n">e</span>
             <span class="k">finally</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> ending log acquisition&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{repr(self)} ending log acquisition&#39;</span><span class="p">)</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
                     <span class="k">pass</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">():</span>
@@ -768,7 +772,7 @@
     <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
             <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -852,31 +856,32 @@
 
 <span class="sd">        Use of `inst.state` makes it possible to add callbacks to support</span>
 <span class="sd">        automatic state logging, or to build a UI.</span>
-
-<span class="sd">        :param str resource: VISA resource string</span>
-<span class="sd">        :param str read_termination: End-of-line character for query responses</span>
-<span class="sd">        :param str write_termination: End-of-line character for writes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; These states are common to modern VXI11 devices in</span>
-<span class="sd">            general.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">identity</span>          <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*IDN&#39;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">options</span>           <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*OPT&#39;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">status_byte</span>       <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*STB&#39;</span><span class="p">)</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*IDN&#39;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                <span class="n">help</span><span class="o">=</span><span class="s1">&#39;identity string reported by the instrument&#39;</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*OPT&#39;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">help</span><span class="o">=</span><span class="s1">&#39;options reported by the instrument&#39;</span><span class="p">)</span>
+        <span class="n">status_byte</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;*STB&#39;</span><span class="p">,</span>
+                                <span class="n">help</span><span class="o">=</span><span class="s1">&#39;VISA status byte reported by the instrument&#39;</span><span class="p">)</span>
 
     <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
-        <span class="n">read_termination</span>  <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="s1">&#39;connected&#39;</span><span class="p">)</span>
-        <span class="n">write_termination</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="s1">&#39;connected&#39;</span><span class="p">)</span>
+        <span class="n">read_termination</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="s1">&#39;connected&#39;</span><span class="p">,</span>
+                                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;termination character to indicate end of message on receive from the instrument&#39;</span><span class="p">)</span>
+        <span class="n">write_termination</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="s1">&#39;connected&#39;</span><span class="p">,</span>
+                                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;termination character to indicate end of message in messages sent to the instrument&#39;</span><span class="p">)</span>
 
     <span class="n">__opc</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Whether or not to append ;*OPC to each call to write()</span>
     <span class="n">_rm</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">__imports__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__imports__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">global</span> <span class="n">pyvisa</span>
         <span class="kn">import</span> <span class="nn">pyvisa</span>
         <span class="kn">import</span> <span class="nn">pyvisa.constants</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_rm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">set_backend</span><span class="p">(</span><span class="s1">&#39;@ni&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__release_remote_control</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Found this in a mixture of R&amp;S documentation and goofle-fu on pyvisa</span>
@@ -911,8 +916,8 @@
                 <span class="n">VISADevice</span><span class="o">.</span><span class="n">_rm</span> <span class="o">=</span> <span class="n">pyvisa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">(</span><span class="s1">&#39;@ni&#39;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">+</span> \
-                     <span class="p">(</span>
-                     <span class="s1">&#39;labbench VISA support requires NI VISA; is it installed?</span><span class="se">\n</span><span class="s1">http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe&#39;</span><span class="p">,)</span>
+                <span class="p">(</span>
+                    <span class="s1">&#39;labbench VISA support requires NI VISA; is it installed?</span><span class="se">\n</span><span class="s1">http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe&#39;</span><span class="p">,)</span>
             <span class="k">raise</span> <span class="n">e</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">VISADevice</span><span class="o">.</span><span class="n">_rm</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">,</span>
@@ -931,8 +936,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">__release_remote_control</span><span class="p">()</span>
             <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="n">pyvisa</span><span class="o">.</span><span class="n">Error</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;unexpected error on disconnect: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;unhandled disconnect error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
@@ -947,6 +952,7 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">list_resources</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__imports__</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_rm</span><span class="o">.</span><span class="n">list_resources</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
@@ -961,8 +967,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__opc</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span> <span class="o">+</span> <span class="s1">&#39;;*OPC&#39;</span>
-        <span class="n">msg_out</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1024</span> <span class="k">else</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> bytes)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;write </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg_out</span><span class="p">))</span>
+        <span class="n">msg_out</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1024</span> <span class="k">else</span> <span class="n">f</span><span class="s1">&#39;({len(msg)} bytes)&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;write {repr(msg_out)}&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -978,15 +984,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">_to</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="n">timeout</span>
-        <span class="n">msg_out</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">80</span> <span class="k">else</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> bytes)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;query </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg_out</span><span class="p">))</span>
+        <span class="n">msg_out</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">80</span> <span class="k">else</span> <span class="n">f</span><span class="s1">&#39;({len(msg)} bytes)&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;query {repr(msg_out)}&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">_to</span>
-        <span class="n">msg_out</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">80</span> <span class="k">else</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> bytes)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;      -&gt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg_out</span><span class="p">))</span>
+        <span class="n">msg_out</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">80</span> <span class="k">else</span> <span class="n">f</span><span class="s1">&#39;({len(msg)} bytes)&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;      -&gt; </span><span class="si">{msg_out}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="nd">@state</span><span class="o">.</span><span class="n">getter</span>
@@ -1064,18 +1070,18 @@
 
         <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exctype</span><span class="p">,</span> <span class="n">excinst</span><span class="p">,</span> <span class="n">exctb</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">exctype</span> <span class="o">==</span> <span class="n">pyvisa</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">VisaIOError</span> \
-                   <span class="ow">and</span> <span class="n">excinst</span><span class="o">.</span><span class="n">error_code</span> <span class="o">==</span> <span class="n">pyvisa</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">error_timeout</span>
+                <span class="ow">and</span> <span class="n">excinst</span><span class="o">.</span><span class="n">error_code</span> <span class="o">==</span> <span class="n">pyvisa</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">error_timeout</span>
 
     <span class="nd">@state</span><span class="o">.</span><span class="n">status_byte</span><span class="o">.</span><span class="n">getter</span>
     <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">code</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;*STB?&#39;</span><span class="p">))</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;error queue not empty&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00000100</span><span class="p">),</span>
-                <span class="s1">&#39;questionable state&#39;</span><span class="p">:</span>    <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00001000</span><span class="p">),</span>
-                <span class="s1">&#39;message available&#39;</span><span class="p">:</span>     <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00010000</span><span class="p">),</span>
-                <span class="s1">&#39;event status flag&#39;</span><span class="p">:</span>     <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00100000</span><span class="p">),</span>
-                <span class="s1">&#39;service request&#39;</span><span class="p">:</span>       <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b01000000</span><span class="p">),</span>
+                <span class="s1">&#39;questionable state&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00001000</span><span class="p">),</span>
+                <span class="s1">&#39;message available&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00010000</span><span class="p">),</span>
+                <span class="s1">&#39;event status flag&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b00100000</span><span class="p">),</span>
+                <span class="s1">&#39;service request&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b01000000</span><span class="p">),</span>
                 <span class="s1">&#39;master status summary&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b01000000</span><span class="p">),</span>
-                <span class="s1">&#39;operating&#39;</span><span class="p">:</span>             <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b10000000</span><span class="p">),</span>
+                <span class="s1">&#39;operating&#39;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">code</span> <span class="o">&amp;</span> <span class="mb">0b10000000</span><span class="p">),</span>
                 <span class="p">}</span>
 
 
@@ -1088,11 +1094,12 @@
                   <span class="n">core</span><span class="o">.</span><span class="n">Float</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">trait</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">trait</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">trait</span><span class="o">.</span><span class="n">max</span><span class="p">)),</span> <span class="p">}</span>
 
     <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">VISADevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
-<span class="c1">#        # Spoof the remote responses for some built-in VISA items        </span>
-        <span class="k">pass</span>
+        <span class="c1">#        # Spoof the remote responses for some built-in VISA items</span>
         <span class="n">status_byte</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">identity</span>    <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s1">&#39;Emulated VISA Device&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">options</span>     <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="s1">&#39;Terrific Options&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s1">&#39;Emulated VISA Device&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s1">&#39;Terrific Options&#39;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Overload methods as needed to implement RemoteDevice</span>
     <span class="nd">@classmethod</span>
@@ -1101,15 +1108,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators</span>
 
-    <span class="k">def</span> <span class="nf">disconnect</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
     <span class="nd">@state</span><span class="o">.</span><span class="n">getter</span>
     <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait</span><span class="p">):</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">trait</span><span class="p">,</span><span class="n">trait</span><span class="o">.</span><span class="n">default_value</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">trait</span><span class="p">)](</span><span class="n">trait</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">[</span><span class="n">trait</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span>
         <span class="k">return</span> <span class="n">ret</span>
 
@@ -1134,11 +1141,12 @@
     <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
         <span class="n">com_object</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Must be a module</span>
         <span class="n">concurrency_support</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">Bool</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                             <span class="n">help</span><span class="o">=</span><span class="s1">&#39;whether this :class:`Device` implementation supports threading&#39;</span><span class="p">)</span>
+                                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;whether this :class:`Device` implementation supports threading&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__imports__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__imports__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">global</span> <span class="n">win32com</span>
-        <span class="kn">import</span> <span class="nn">win32com</span><span class="o">,</span> <span class="nn">win32com.client</span>
+        <span class="kn">import</span> <span class="nn">win32com</span>
+        <span class="kn">import</span> <span class="nn">win32com.client</span>
 
     <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Connect to the win32 com object</span>
@@ -1200,7 +1208,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

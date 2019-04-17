@@ -1,0 +1,514 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ssmdevices.instruments.minicircuits &#8212; ssmdevices 0.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../../../index.html">
+          <span>ssmdevices 0.2 documentation</span></a></h1>
+        <h2 class="heading"><span>ssmdevices.instruments.minicircuits</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for ssmdevices.instruments.minicircuits</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Lock</span>
+<span class="kn">from</span> <span class="nn">traitlets</span> <span class="k">import</span> <span class="n">TraitError</span>
+<span class="kn">import</span> <span class="nn">ssmdevices.lib</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsUSBDevice">[docs]</a><span class="k">class</span> <span class="nc">MiniCircuitsUSBDevice</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Device</span><span class="p">):</span>
+    <span class="n">VID</span> <span class="o">=</span> <span class="mh">0x20ce</span>
+    <span class="n">__find_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+    <span class="n">__all_found</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># keyed on serial number</span>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice.settings"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsUSBDevice.settings">[docs]</a>    <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
+        <span class="n">resource</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Serial number of the USB device. Must be defined if more than one device is connected to the computer&#39;</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>        
+        <span class="n">path</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bytes</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;override `resource` to connect to a specific USB path&#39;</span><span class="p">)</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsUSBDevice.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Device</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">model</span>         <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">serial_number</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Unicode</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__imports__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">hid</span>
+        <span class="kn">import</span> <span class="nn">hid</span>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice.connect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsUSBDevice.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">notify</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>            
+            <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>            
+
+<span class="c1">#        if not self._lock().acquire(timeout=self.settings.timeout):</span>
+<span class="c1">#            raise lb.ConnectionError(&#39;there is already a connection with serial number &#39;)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">hid</span><span class="o">.</span><span class="n">device</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">open_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">set_nonblocking</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">MiniCircuitsUSBDevice</span><span class="o">.</span><span class="n">__all_found</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">serial_number</span>
+        
+        <span class="k">if</span> <span class="n">notify</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;connected to </span><span class="si">{}</span><span class="s1"> with serial </span><span class="si">{}</span><span class="s1">&#39;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">serial_number</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice.disconnect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.MiniCircuitsUSBDevice.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+<span class="c1">#        try:</span>
+<span class="c1">#            self._lock().release()</span>
+<span class="c1">#        except RuntimeError:</span>
+<span class="c1">#            pass</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_parse_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Convert a command response to a string.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;uint8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">cmd</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Send up to 64 1-byte unsigned integers and return the response.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">64</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;command data length is limited to 64&#39;</span><span class="p">)</span>
+            
+        <span class="n">cmd</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">63</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span><span class="o">*</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;windows&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">write</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">cmd</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">d</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;device responded to command code </span><span class="si">{}</span><span class="s2">, but expected </span><span class="si">{}</span><span class="s2"> (full response </span><span class="si">{}</span><span class="s2">)&quot;</span>\
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">repr</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;no response from device&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">DeviceException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">d</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_find_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">serial</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Find a USB HID device path matching the MiniCircuits device with</span>
+<span class="sd">            the specified serial number. If serial is None, then check that</span>
+<span class="sd">            exactly one MiniCircuits device is connected, and return its path.</span>
+<span class="sd">            Raise an exception if no devices are connected.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">MiniCircuitsUSBDevice</span><span class="o">.</span><span class="n">__find_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">dev</span> <span class="ow">in</span> <span class="n">hid</span><span class="o">.</span><span class="n">enumerate</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">VID</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PID</span><span class="p">):</span>
+            <span class="c1"># Check for a cached serial number first</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">this_serial</span> <span class="o">=</span> <span class="n">MiniCircuitsUSBDevice</span><span class="o">.</span><span class="n">__all_found</span><span class="p">[</span><span class="n">dev</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]]</span>
+                <span class="n">found</span><span class="p">[</span><span class="n">this_serial</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
+                <span class="k">continue</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            
+            <span class="c1"># Otherwise, connect to the device to learn its serial number</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="bp">cls</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">dev</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span> <span class="k">as</span> <span class="n">inst</span><span class="p">:</span>
+                    <span class="n">this_serial</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">serial_number</span>
+                    <span class="n">MiniCircuitsUSBDevice</span><span class="o">.</span><span class="n">__all_found</span><span class="p">[</span><span class="n">dev</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">this_serial</span>
+                    <span class="n">found</span><span class="p">[</span><span class="n">this_serial</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="c1"># Device already open, skipping.</span>
+                <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="k">pass</span>
+            
+        <span class="n">MiniCircuitsUSBDevice</span><span class="o">.</span><span class="n">__find_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">(</span><span class="s1">&#39;found no </span><span class="si">{}</span><span class="s1"> connected that match vid=</span><span class="si">{vid}</span><span class="s1">,pid=</span><span class="si">{pid}</span><span class="s1">&#39;</span>\
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">VID</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PID</span><span class="p">))</span>
+            
+        <span class="n">names</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">found</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+            
+        <span class="k">if</span> <span class="n">serial</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">found</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">(</span><span class="s1">&#39;specify one of the available </span><span class="si">{}</span><span class="s1"> resources: </span><span class="si">{}</span><span class="s1">&#39;</span>\
+                                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">names</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">found</span><span class="p">[</span><span class="n">serial</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">(</span><span class="s1">&#39;specified resource </span><span class="si">{}</span><span class="s1">, but only </span><span class="si">{}</span><span class="s1"> are available&#39;</span>\
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">serial</span><span class="p">),</span> <span class="n">names</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+<span class="c1">#class PowerSensor(MiniCircuitsUSBDevice):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    Class for interfacing with Mini-Circuits USB Power Sensors.</span>
+<span class="c1">#    Verified working:</span>
+<span class="c1">#        - PWR-6GHS</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#    # Mini-Circuits PWR-6GHS USB Power Sensor</span>
+<span class="c1">#    PID = 0x11</span>
+<span class="c1">#</span>
+<span class="c1">#    # Not sure if any of these command codes are also shared.</span>
+<span class="c1">#    CMD_GET_MODEL_NAME = 104</span>
+<span class="c1">#    CMD_GET_SERIAL = 105</span>
+<span class="c1">#    CMD_SET_MEASUREMENT_MODE = 15</span>
+<span class="c1">#    CMD_READ_POWER = 102</span>
+<span class="c1">#    CMD_GET_TEMPERATURE = 103</span>
+<span class="c1">#    CMD_GET_FIRMWARE_VERSION = 99</span>
+<span class="c1">#</span>
+<span class="c1">#    def get_model_name(self):</span>
+<span class="c1">#        d = self._cmd(self.CMD_GET_MODEL_NAME)</span>
+<span class="c1">#        return self._parse_str(d)</span>
+<span class="c1">#</span>
+<span class="c1">#    def get_serial(self):</span>
+<span class="c1">#        d = self._cmd(self.CMD_GET_SERIAL)</span>
+<span class="c1">#        return self._parse_str(d)</span>
+<span class="c1">#</span>
+<span class="c1">#    def set_measurement_mode(self, mode=&#39;low-noise&#39;):</span>
+<span class="c1">#        mode_num = {</span>
+<span class="c1">#            &#39;low-noise&#39;: 0,</span>
+<span class="c1">#            &#39;fast-sampling&#39;: 1,</span>
+<span class="c1">#            &#39;fastest-sampling&#39;: 2,</span>
+<span class="c1">#        }[mode]</span>
+<span class="c1">#        self._cmd(self.CMD_SET_MEASUREMENT_MODE, mode_num)</span>
+<span class="c1">#</span>
+<span class="c1">#    def get_power(self, freq):</span>
+<span class="c1">#        if freq &gt; 65.535e6:</span>
+<span class="c1">#            scale = 1e6</span>
+<span class="c1">#            units = &#39;M&#39;</span>
+<span class="c1">#        else:</span>
+<span class="c1">#            scale = 1e3</span>
+<span class="c1">#            units = &#39;k&#39;</span>
+<span class="c1">#        freq = int(round(freq / scale))</span>
+<span class="c1">#        freq1 = freq &gt;&gt; 8</span>
+<span class="c1">#        freq2 = freq - (freq1 &lt;&lt; 8)</span>
+<span class="c1">#        d = self._cmd(self.CMD_READ_POWER, freq1, freq2, ord(units))</span>
+<span class="c1">#        s = &#39;&#39;.join(chr(c) for c in d[1:7])</span>
+<span class="c1">#        return float(s)</span>
+<span class="c1">#</span>
+<span class="c1">#    def get_temperature(self):</span>
+<span class="c1">#        d = self._cmd(self.CMD_GET_TEMPERATURE)</span>
+<span class="c1">#        s = &#39;&#39;.join(chr(c) for c in d[1:7])</span>
+<span class="c1">#        return float(s)</span>
+<span class="c1">#</span>
+<span class="c1">#    def get_firmware_version(self):</span>
+<span class="c1">#        d = self._cmd(self.CMD_GET_FIRMWARE_VERSION)</span>
+<span class="c1">#        return chr(d[5]) + chr(d[6])</span>
+
+
+<div class="viewcode-block" id="SwitchAttenuatorBase"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.SwitchAttenuatorBase">[docs]</a><span class="k">class</span> <span class="nc">SwitchAttenuatorBase</span><span class="p">(</span><span class="n">MiniCircuitsUSBDevice</span><span class="p">):</span>    
+    <span class="n">CMD_GET_PART_NUMBER</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="n">CMD_GET_SERIAL_NUMBER</span> <span class="o">=</span> <span class="mi">41</span>
+
+<div class="viewcode-block" id="SwitchAttenuatorBase.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.SwitchAttenuatorBase.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">MiniCircuitsUSBDevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CMD_GET_PART_NUMBER</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">serial_number</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CMD_GET_SERIAL_NUMBER</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SingleChannelAttenuator"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.SingleChannelAttenuator">[docs]</a><span class="k">class</span> <span class="nc">SingleChannelAttenuator</span><span class="p">(</span><span class="n">SwitchAttenuatorBase</span><span class="p">):</span>
+    <span class="n">PID</span> <span class="o">=</span> <span class="mh">0x23</span>
+    
+    <span class="n">CMD_GET_ATTENUATION</span> <span class="o">=</span> <span class="mi">18</span>
+    <span class="n">CMD_SET_ATTENUATION</span> <span class="o">=</span> <span class="mi">19</span>
+
+<div class="viewcode-block" id="SingleChannelAttenuator.settings"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.SingleChannelAttenuator.settings">[docs]</a>    <span class="k">class</span> <span class="nc">settings</span><span class="p">(</span><span class="n">SwitchAttenuatorBase</span><span class="o">.</span><span class="n">settings</span><span class="p">):</span>
+        <span class="n">frequency</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">6e9</span><span class="p">,</span>
+                             <span class="n">help</span><span class="o">=</span><span class="s1">&#39;calibration frequency, or None to disable level calibration&#39;</span><span class="p">)</span>
+        <span class="n">output_power_offset</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                       <span class="n">help</span><span class="o">=</span><span class="s1">&#39;offset calibration such that state.output_power = settings.output_power_offset - state.attenuation&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SingleChannelAttenuator.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.SingleChannelAttenuator.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">SwitchAttenuatorBase</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">attenuation</span>   <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span>
+                                 <span class="n">help</span><span class="o">=</span><span class="s1">&#39;attenuation level (dB) automatically calibrated if settings.frequency is not None&#39;</span><span class="p">)</span>
+        <span class="n">output_power</span>  <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;output power, in dB units the same as output_power_offset (settings.output_power_offset - state.attenuation)&#39;</span><span class="p">)</span>
+        <span class="n">attenuation_setting</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+                                       <span class="n">help</span><span class="o">=</span><span class="s1">&#39;attenuation setting sent to the attenuator (dB), which is different from the calibrated attenuation value an attenuation has been applied&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SingleChannelAttenuator.connect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.SingleChannelAttenuator.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_validate_attenuation</span><span class="p">(</span><span class="n">trait</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+            <span class="sd">&#39;&#39;&#39; Nudge the trait value to the nearest attenuation level from</span>
+<span class="sd">                the cal data.</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proposal</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">proposal</span> <span class="o">=</span> <span class="n">proposal</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup_cal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apply_cal</span><span class="p">(</span><span class="n">proposal</span><span class="p">))</span>
+
+        <span class="k">def</span> <span class="nf">_validate_output_power</span><span class="p">(</span><span class="n">trait</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+            <span class="sd">&#39;&#39;&#39; Make sure that the trait knows the correct value with the</span>
+<span class="sd">                discretized output power, and that the output power puts the</span>
+<span class="sd">                attenuator in the specified range.</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+            
+            <span class="c1"># Require an offset to assign output power</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">output_power_offset</span>
+            <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">TraitError</span><span class="p">(</span><span class="s1">&#39;set settings.output_power_offset before assigning to state.output_power&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Check bounds</span>
+            <span class="n">power</span> <span class="o">=</span> <span class="n">proposal</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+            <span class="n">atten</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">traits</span><span class="p">()[</span><span class="s1">&#39;attenuation&#39;</span><span class="p">]</span>            
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">-</span> <span class="n">atten</span><span class="o">.</span><span class="n">max</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">-</span> <span class="n">atten</span><span class="o">.</span><span class="n">min</span>
+            <span class="k">if</span> <span class="n">power</span> <span class="o">&lt;</span> <span class="n">lo</span> <span class="ow">or</span> <span class="n">power</span> <span class="o">&gt;</span> <span class="n">hi</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;requested input power </span><span class="si">{power}</span><span class="s1"> is outside of the valid range (</span><span class="si">{lo}</span><span class="s1">,</span><span class="si">{hi}</span><span class="s1">)&#39;</span>
+                <span class="k">raise</span> <span class="n">TraitError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                
+            <span class="c1"># Compute the nearest available attenuation value, and return</span>
+            <span class="c1"># the corresponding &quot;true&quot; output power value</span>
+            <span class="n">atten_true</span> <span class="o">=</span> <span class="n">_validate_attenuation</span><span class="p">(</span><span class="n">atten</span><span class="p">,</span> <span class="n">offset</span> <span class="o">-</span> <span class="n">proposal</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>            
+            <span class="k">return</span> <span class="n">offset</span> <span class="o">-</span> <span class="n">atten_true</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">_register_validator</span><span class="p">(</span><span class="n">_validate_output_power</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;output_power&#39;</span><span class="p">,))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">_register_validator</span><span class="p">(</span><span class="n">_validate_attenuation</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;attenuation&#39;</span><span class="p">,))</span>
+        
+        <span class="n">cal_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">ssmdevices</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s1">&#39;cal&#39;</span><span class="p">))</span>
+        
+        <span class="n">cal_filenames</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;MiniCircuitsRCDAT_</span><span class="si">{self.settings.resource}</span><span class="s2">.csv.xz&quot;</span><span class="p">,</span>\
+                        <span class="n">f</span><span class="s2">&quot;MiniCircuitsRCDAT_default.csv.xz&quot;</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">cal_filenames</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">cal_path</span><span class="o">/</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>       
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cal_path</span><span class="o">/</span><span class="n">f</span><span class="p">),</span>
+                                              <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;Frequency(Hz)&#39;</span><span class="p">,</span>
+                                              <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                <span class="k">if</span> <span class="mf">6e9</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="mf">6e9</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#                self._cal_offset.values[:] = self._cal_offset.values-self._cal_offset.columns.values[np.newaxis,:]</span>
+                                            
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;loaded calibration data from {str(cal_path/f)}&#39;</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cal_data</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;found no calibration data in {str(cal_path)}&#39;</span><span class="p">)</span></div>
+<span class="c1">#        self.__change_offset({&#39;new&#39;: self.settings.output_power_offset})        </span>
+<span class="c1">#        self.settings.observe(self.__change_offset, [&#39;output_power_offset&#39;])</span>
+    
+    <span class="nd">@state</span><span class="o">.</span><span class="n">attenuation</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup_cal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation_setting</span><span class="p">)</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">attenuation</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">setting</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_cal</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation_setting</span> <span class="o">=</span> <span class="n">setting</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">frequency</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;calibrated attenuation level nearest </span><span class="si">{value:0.2f}</span><span class="s1"> dB at {self.settings.frequency/1e6} MHz -&gt; </span><span class="si">{setting:0.2f}</span><span class="s1"> dB setting&#39;</span><span class="p">)</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">attenuation_setting</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CMD_GET_ATTENUATION</span><span class="p">)</span>
+        <span class="n">full_part</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">frac_part</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mf">4.0</span>
+        <span class="k">return</span> <span class="n">full_part</span> <span class="o">+</span> <span class="n">frac_part</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">attenuation_setting</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">value2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">value</span> <span class="o">-</span> <span class="n">value1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">4.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CMD_SET_ATTENUATION</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;applied </span><span class="si">{value:0.2f}</span><span class="s1"> dB attenuation setting&#39;</span><span class="p">)</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">output_power</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">output_power_offset</span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;output power offset is undefined, cannot determine output power&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">offset</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">output_power</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_power</span><span class="p">):</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">output_power_offset</span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;output power offset is undefined, cannot determine attenuation settings for output power&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">-</span> <span class="n">output_power</span>
+
+    <span class="k">def</span> <span class="nf">_apply_cal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposed_atten</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Find the setting that achieves the attenuation level closest to the</span>
+<span class="sd">            proposed level. Returns a dictionary containing this attenuation</span>
+<span class="sd">            setting, and the actual attenuation at this setting.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">proposed_atten</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">frequency</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;set an operating frequency in settings.frequency to enable calibration&#39;</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">proposed_atten</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+            <span class="n">atten</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">atten</span>
+        
+        <span class="n">i_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">frequency</span><span class="p">,</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+        <span class="n">cal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i_freq</span><span class="p">]</span>
+        <span class="n">cal</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;cal&#39;</span>
+        <span class="n">cal</span> <span class="o">=</span> <span class="n">cal</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;cal&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+
+        <span class="n">i_atten</span> <span class="o">=</span> <span class="n">cal</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">proposed_atten</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">cal</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i_atten</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">_lookup_cal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attenuation_setting</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">attenuation_setting</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">frequency</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">attenuation_setting</span>
+        
+        <span class="n">i_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">frequency</span><span class="p">,</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i_freq</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">attenuation_setting</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="FourChannelAttenuator"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.FourChannelAttenuator">[docs]</a><span class="k">class</span> <span class="nc">FourChannelAttenuator</span><span class="p">(</span><span class="n">SwitchAttenuatorBase</span><span class="p">):</span>
+    <span class="n">PID</span> <span class="o">=</span> <span class="mh">0x23</span>
+    
+    <span class="n">CMD_GET_ATTENUATION</span> <span class="o">=</span> <span class="mi">18</span>
+    <span class="n">CMD_SET_ATTENUATION</span> <span class="o">=</span> <span class="mi">19</span>
+
+<div class="viewcode-block" id="FourChannelAttenuator.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.FourChannelAttenuator.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">SwitchAttenuatorBase</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">attenuation1</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">attenuation2</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">attenuation3</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">attenuation4</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">115</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CMD_GET_ATTENUATION</span><span class="p">)</span>
+        <span class="n">offs</span> <span class="o">=</span> <span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="o">*</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span>
+        <span class="n">full_part</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">offs</span><span class="p">]</span>
+        <span class="n">frac_part</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">offs</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mf">4.0</span>
+        <span class="k">return</span> <span class="n">full_part</span> <span class="o">+</span> <span class="n">frac_part</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">value2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">value</span> <span class="o">-</span> <span class="n">value1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">4.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CMD_SET_ATTENUATION</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="n">trait</span><span class="o">.</span><span class="n">command</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Switch"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.Switch">[docs]</a><span class="k">class</span> <span class="nc">Switch</span><span class="p">(</span><span class="n">SwitchAttenuatorBase</span><span class="p">):</span>
+    <span class="c1"># Mini-Circuits USB-SP4T-63</span>
+    <span class="n">PID</span> <span class="o">=</span> <span class="mh">0x22</span>
+    <span class="n">CMD_GET_SWITCH_PORT</span> <span class="o">=</span> <span class="mi">15</span>
+    
+<div class="viewcode-block" id="Switch.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.attenuators.Switch.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">SwitchAttenuatorBase</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">port</span>   <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set which port is connected to the COM port: 1-indexed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">port</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid switch port: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+
+    <span class="nd">@state</span><span class="o">.</span><span class="n">port</span><span class="o">.</span><span class="n">getter</span>
+    <span class="k">def</span> <span class="nf">__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return which port is connected to the COM port: 1-indexed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CMD_GET_SWITCH_PORT</span><span class="p">)</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">port</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="c1">#    atten = SingleChannelAttenuator(&#39;11604210014&#39;)</span>
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="s1">&#39;new&#39;</span><span class="p">])</span>
+        
+    <span class="n">lb</span><span class="o">.</span><span class="n">show_messages</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+    <span class="n">atten</span> <span class="o">=</span> <span class="n">SingleChannelAttenuator</span><span class="p">(</span><span class="s1">&#39;11604210008&#39;</span><span class="p">,</span>
+                                    <span class="n">output_power_offset</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                                    <span class="n">frequency</span><span class="o">=</span><span class="mf">5.3e9</span><span class="p">)</span>
+    <span class="n">atten</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">show</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">atten</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">atten</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span>
+        <span class="n">atten</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation</span><span class="o">=</span><span class="mi">100</span>        
+        <span class="nb">print</span><span class="p">(</span><span class="n">atten</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation_setting</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">atten</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation</span><span class="p">)</span>
+        <span class="n">atten</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">attenuation</span><span class="o">=</span><span class="mi">80</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../../../ssmdevices.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright  does not apply.
+
+This software was developed by employees of the National Institute of Standards and Technology (NIST), an agency of the
+Federal Government. Pursuant to title 17 United States Code Section 105, works of NIST employees are not subject to
+copyright protection in the United States and are considered to be in the public domain. Permission to freely use, copy,
+modify, and distribute this software and its documentation without fee is hereby granted, provided that this notice and
+disclaimer of warranty appears in all copies.
+
+THE SOFTWARE IS PROVIDED &#39;AS IS&#39; WITHOUT ANY WARRANTY OF ANY KIND, EITHER EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING,
+BUT NOT LIMITED TO, ANY WARRANTY THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM INFRINGEMENT, AND ANY WARRANTY THAT THE
+DOCUMENTATION WILL CONFORM TO THE SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE. IN NO EVENT SHALL
+NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES,
+ARISING OUT OF, RESULTING FROM, OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR PROPERTY OR OTHERWISE, AND WHETHER
+OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+
+Distributions of NIST software should also include copyright and licensing statements of any third-party software
+that are legally bundled with the code in compliance with the conditions of those licenses..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

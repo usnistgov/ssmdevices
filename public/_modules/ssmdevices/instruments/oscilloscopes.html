@@ -9,6 +9,7 @@
     <title>ssmdevices.instruments.oscilloscopes &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -50,7 +51,6 @@
         <span class="n">time_scale</span>         <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span> <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;:TIM:SCAL&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="RigolOscilloscope.connect"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">horizontal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RigolOscilloscope</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;:WAVeform:FORMat ASCii&#39;</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="RigolOscilloscope.fetch"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.oscilloscopes.RigolOscilloscope.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -89,7 +89,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

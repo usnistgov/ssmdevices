@@ -9,6 +9,7 @@
     <title>ssmdevices.instruments.signal_generators &#8212; ssmdevices 0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/haiku.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
@@ -53,9 +54,9 @@
 <div class="viewcode-block" id="RohdeSchwarzSMW200A"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzSMW200A</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">VISADevice</span><span class="p">):</span>
 <div class="viewcode-block" id="RohdeSchwarzSMW200A.state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.state">[docs]</a>    <span class="k">class</span> <span class="nc">state</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">VISADevice</span><span class="o">.</span><span class="n">state</span><span class="p">):</span>
 <span class="c1">#        frequency = FLoat </span>
-        <span class="n">frequency_baseband</span>        <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;:freq&#39;</span><span class="p">,</span>  <span class="nb">min</span><span class="o">=</span><span class="mf">2e3</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">26.5e9</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
-        <span class="n">power_out</span>                 <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;:pow&#39;</span><span class="p">,</span>  <span class="nb">min</span><span class="o">=-</span><span class="mi">145</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;dBm&#39;</span><span class="p">)</span>
-        <span class="n">rf_enable</span>                 <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span> <span class="o">=</span><span class="s1">&#39;OUTP&#39;</span><span class="p">)</span></div>
+        <span class="n">frequency_center</span>        <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;:freq&#39;</span><span class="p">,</span>  <span class="nb">min</span><span class="o">=</span><span class="mf">2e3</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">26.5e9</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hz&#39;</span><span class="p">)</span>
+        <span class="n">rf_output_power</span>         <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Float</span>     <span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;:pow&#39;</span><span class="p">,</span>  <span class="nb">min</span><span class="o">=-</span><span class="mi">145</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;dBm&#39;</span><span class="p">)</span>
+        <span class="n">rf_output_enable</span>        <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">Bool</span>      <span class="p">(</span><span class="n">command</span> <span class="o">=</span><span class="s1">&#39;OUTP&#39;</span><span class="p">)</span></div>
         
 
 <div class="viewcode-block" id="RohdeSchwarzSMW200A.save_state"><a class="viewcode-back" href="../../../ssmdevices.instruments.html#ssmdevices.instruments.signal_generators.RohdeSchwarzSMW200A.save_state">[docs]</a>    <span class="k">def</span> <span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FileName</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="s2">&quot;4&quot;</span><span class="p">):</span>
@@ -81,65 +82,14 @@
 <span class="sd">            :param num: state number in the saved filename</span>
 <span class="sd">            :type num: int</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-<span class="c1">#        print &quot;Loading state&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;MMEM:LOAD:STAT </span><span class="si">{}</span><span class="s2">,&#39;</span><span class="si">{}</span><span class="s2">.savrcltxt&#39;;*RCL </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="n">FileName</span><span class="p">,</span><span class="n">num</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">opc</span><span class="o">=</span><span class="n">opc</span><span class="p">)</span></div>
-
-<span class="c1">#        # Activates the memory state</span>
-<span class="c1">#        self.write(&quot;*RCL {}&quot;.format(num))</span>
-<span class="c1">#        print &quot;Complete&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">rf_output_enable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Get or set RF enable state getter</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inst</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;OUTP?&#39;</span><span class="p">)))</span>
-    
-    <span class="nd">@rf_output_enable</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">rf_output_enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Enables or disables RF output of device</span>
-<span class="sd">            Options are &quot;ON&quot;, &quot;1&quot;, &#39;true&#39;, True, or a non-zero number to enable.</span>
-<span class="sd">            Any other value will disable.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">valid_on_strings</span> <span class="o">=</span> <span class="s1">&#39;on&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span>
-        
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">valid_on_strings</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">inst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;OUTP </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state</span><span class="p">))</span></div>
-    
-<span class="c1">#    # Hmm... these should probably be deprecated? They</span>
-<span class="c1">#    # duplicate the functionality in state</span>
-<span class="c1">#    @property</span>
-<span class="c1">#    def rf_output_power (self):</span>
-<span class="c1">#        &#39;&#39;&#39; Get or set RF output power level</span>
-<span class="c1">#        &#39;&#39;&#39;</span>
-<span class="c1">##        return float(self.inst.query(&#39;:pow?&#39;,timeout=5))</span>
-<span class="c1">#        return float(self.query(&#39;:pow?&#39;,timeout=5))</span>
-<span class="c1">#        </span>
-<span class="c1">#    @rf_output_power.setter</span>
-<span class="c1">#    def rf_output_power (self, level_dBm):</span>
-<span class="c1">#        self.inst.write(&#39;:pow {}&#39;.format(level_dBm))</span>
-<span class="c1">#    </span>
-<span class="c1">#    @property</span>
-<span class="c1">#    def rf_output_freq (self):</span>
-<span class="c1">#        &quot;&quot;&quot; Get or set RF LO frequency</span>
-<span class="c1">#        &quot;&quot;&quot;</span>
-<span class="c1">#        return float(self.query(&#39;:freq?&#39;,timeout=5))</span>
-<span class="c1">#</span>
-<span class="c1">#    @rf_output_freq.setter</span>
-<span class="c1">#    def rf_output_freq (self, freq_Hz):</span>
-<span class="c1">#        self.inst.write(&#39;:freq {}&#39;.format(freq_Hz))</span>
-        
-        
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">opc</span><span class="o">=</span><span class="n">opc</span><span class="p">)</span></div></div>
 
 <span class="c1"># Example code works nicely in this if statement, which only runs if we&#39;re</span>
 <span class="c1"># running this file (not if it&#39;s being imported by another file :))</span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="k">with</span> <span class="n">RohdeSchwarzSMW200A</span><span class="p">(</span><span class="s2">&quot;USB::2733::146::102240::0::INSTR&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">siggen</span><span class="p">:</span>
-        <span class="n">siggen</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">rf_enable</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">siggen</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">rf_output_enable</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 
       </div>
@@ -171,7 +121,7 @@ OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT OF THE RESULTS OF, OR USE OF, THE S
 
 Distributions of NIST software should also include copyright and licensing statements of any third-party software
 that are legally bundled with the code in compliance with the conditions of those licenses..
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

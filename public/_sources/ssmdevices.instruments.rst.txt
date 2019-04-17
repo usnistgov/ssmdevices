@@ -12,14 +12,6 @@ ssmdevices.instruments.attenuators module
     :undoc-members:
     :show-inheritance:
 
-ssmdevices.instruments.attenuators2 module
-------------------------------------------
-
-.. automodule:: ssmdevices.instruments.attenuators2
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 ssmdevices.instruments.gps\_simulator module
 --------------------------------------------
 
@@ -28,10 +20,26 @@ ssmdevices.instruments.gps\_simulator module
     :undoc-members:
     :show-inheritance:
 
+ssmdevices.instruments.minicircuits module
+------------------------------------------
+
+.. automodule:: ssmdevices.instruments.minicircuits
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ssmdevices.instruments.motors module
 ------------------------------------
 
 .. automodule:: ssmdevices.instruments.motors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices.instruments.network\_analyzers module
+------------------------------------------------
+
+.. automodule:: ssmdevices.instruments.network_analyzers
     :members:
     :undoc-members:
     :show-inheritance:
@@ -56,6 +64,14 @@ ssmdevices.instruments.power\_sensors module
 --------------------------------------------
 
 .. automodule:: ssmdevices.instruments.power_sensors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ssmdevices.instruments.power\_supplies module
+---------------------------------------------
+
+.. automodule:: ssmdevices.instruments.power_supplies
     :members:
     :undoc-members:
     :show-inheritance:
