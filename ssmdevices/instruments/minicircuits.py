@@ -2,7 +2,7 @@
 
 import time
 import labbench as lb
-import hid, platform
+import platform
 import numpy as np
 from threading import Lock
 from traitlets import TraitError
