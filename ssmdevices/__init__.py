@@ -13,4 +13,4 @@ from future import standard_library
 standard_library.install_aliases()
 from . import instruments,software,electronics
 
-__version__ = '0.2'
+__version__ = '0.6'
