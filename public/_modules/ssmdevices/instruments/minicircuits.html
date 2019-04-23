@@ -327,6 +327,10 @@
 <span class="c1">#                self._cal_offset.values[:] = self._cal_offset.values-self._cal_offset.columns.values[np.newaxis,:]</span>
                                             
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;loaded calibration data from {str(cal_path/f)}&#39;</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">frequency</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;set an operating frequency in settings.frequency to enable calibration&#39;</span><span class="p">)</span>
+                    
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cal_data</span> <span class="o">=</span> <span class="kc">None</span>
@@ -382,7 +386,6 @@
             <span class="k">return</span> <span class="n">proposed_atten</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">frequency</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;set an operating frequency in settings.frequency to enable calibration&#39;</span><span class="p">)</span>
             <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">proposed_atten</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
             <span class="n">atten</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cal</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">atten</span>

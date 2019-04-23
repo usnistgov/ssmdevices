@@ -169,12 +169,10 @@
 <span class="sd">              `self.settings`</span>
 
 <span class="sd">            Use the self.no_state_arguments context manager to skip these</span>
-<span class="sd">            global arguments like this:</span>
+<span class="sd">            global arguments like this::</span>
 
-<span class="sd">            ```python</span>
-<span class="sd">            with self.no_state_arguments:</span>
-<span class="sd">                self.foreground(...)</span>
-<span class="sd">            ```</span>
+<span class="sd">                with self.no_state_arguments:</span>
+<span class="sd">                    self.foreground(...)</span>
 
 <span class="sd">            :returns: the return code of the process after its completion</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -217,12 +215,10 @@
 <span class="sd">              `self.settings`</span>
 
 <span class="sd">            Use the self.no_state_arguments context manager to skip these</span>
-<span class="sd">            global arguments like this:</span>
+<span class="sd">            global arguments like this::</span>
 
-<span class="sd">            ```python</span>
-<span class="sd">            with self.no_state_arguments:</span>
-<span class="sd">                self.background(...)</span>
-<span class="sd">            ```</span>
+<span class="sd">                with self.no_state_arguments:</span>
+<span class="sd">                    self.background(...)</span>
 
 <span class="sd">            :returns: None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -1058,7 +1054,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;*OPC?&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
 
     <span class="k">class</span> <span class="nc">suppress_timeout</span><span class="p">(</span><span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Context manager to suppress timeout exceptions. It can be used like this:</span>
+        <span class="sd">&quot;&quot;&quot; Context manager to suppress timeout exceptions.</span>
+<span class="sd">        </span>
+<span class="sd">            Example::</span>
+<span class="sd">                </span>
 <span class="sd">                with inst.suppress_timeout():</span>
 <span class="sd">                    inst.write(&#39;long running command 1&#39;)</span>
 <span class="sd">                    inst.write(&#39;long running command 2&#39;)</span>

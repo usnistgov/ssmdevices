@@ -55,41 +55,19 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>arguments</strong> – List(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>bidirectional</strong> – <p>Bool(command=’-d’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Send and receive simultaneously</p>
-</li>
-<li><strong>binary_path</strong> – Unicode(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>bind</strong> – <p>Unicode(command=’-B’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>bind connection to specified IP</p>
-</li>
-<li><strong>bit_rate</strong> – <p>Unicode(command=’-b’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Maximum bit rate (append unit for size, e.g. 10K)</p>
-</li>
-<li><strong>buffer_size</strong> – <p>Int(min=1,command=’-l’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Size of data buffer that generates traffic (bytes)</p>
-</li>
-<li><strong>interval</strong> – <p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Interval between throughput reports (s)</p>
-</li>
-<li><strong>port</strong> – <p>Int(min=1,command=’-p’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>connection port</p>
-</li>
-<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
-</li>
-<li><strong>tcp_window_size</strong> – <p>Int(min=1,command=’-w’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>(bytes)</p>
-</li>
-<li><strong>time</strong> – <p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>time in seconds to transmit before quitting (default 10s)</p>
-</li>
-<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>wait time for traffic results before throwing a timeout exception (s)</p>
-</li>
-<li><strong>udp</strong> – <p>Bool(command=’-u’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>use UDP instead of the default, TCP</p>
-</li>
+<li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – </li>
+<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>command='-d'</em><em>)</em>) – Send and receive simultaneously</li>
+<li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
+<li><strong>bind</strong> (<em>Unicode</em><em>(</em><em>command='-B'</em><em>)</em>) – bind connection to specified IP</li>
+<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>command='-b'</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
+<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-l'</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
+<li><strong>interval</strong> (<em>Float</em><em>(</em><em>min=0.01</em><em>,</em><em>max=inf</em><em>,</em><em>command='-i'</em><em>)</em>) – Interval between throughput reports (s)</li>
+<li><strong>port</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-p'</em><em>)</em>) – connection port</li>
+<li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
+<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-w'</em><em>)</em>) – (bytes)</li>
+<li><strong>time</strong> (<em>Int</em><em>(</em><em>max=16535</em><em>,</em><em>command='-t'</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
+<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>command='-u'</em><em>)</em>) – use UDP instead of the default, TCP</li>
 </ul>
 </td>
 </tr>
@@ -118,11 +96,10 @@ the executable continues running).</p>
 <cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
-with self.no_state_arguments:</p>
-<blockquote>
-<div>self.background(…)</div></blockquote>
-<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_state_arguments</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -182,11 +159,10 @@ a pandas DataFrame.</p>
 <cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>python
-with self.no_state_arguments:</p>
-<blockquote>
-<div>self.foreground(…)</div></blockquote>
-<p><a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_state_arguments</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">foreground</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -259,12 +235,10 @@ and options that only apply to implementing python support for the
 device.</p>
 <p>The device uses this container to define the keyword options supported
 by its __init__ function. These are applied when you instantiate the device.
-After you instantiate the device, you can change the setting with</p>
-<dl class="docutils">
-<dt><a href="#id17"><span class="problematic" id="id18">``</span></a><a href="#id19"><span class="problematic" id="id20">`</span></a>python</dt>
-<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
-</dl>
-<p class="last"><a href="#id21"><span class="problematic" id="id22">``</span></a><a href="#id23"><span class="problematic" id="id24">`</span></a></p>
+After you instantiate the device, you can still change the setting with:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="s1">&#39;insert-your-address-string-here&#39;</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
@@ -288,92 +262,54 @@ After you instantiate the device, you can change the setting with</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.arguments">
 <code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>List(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>List()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(read_only=True)</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-d’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(command=’-d’)</p>
 <p>Send and receive simultaneously</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.binary_path">
 <code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.bind">
 <code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-B’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’-B’)</p>
 <p>bind connection to specified IP</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-b’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’-b’)</p>
 <p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-l’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-l’)</p>
 <p>Size of data buffer that generates traffic (bytes)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfClient.settings.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfClient.settings.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfClient.settings.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfClient.settings.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -381,74 +317,60 @@ to the function.</p>
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.define">
 <em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.define" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of this class with default values of the traits
-redefined according to each keyword argument. For example,</p>
-<dl class="docutils">
-<dt><a href="#id25"><span class="problematic" id="id26">``</span></a><a href="#id27"><span class="problematic" id="id28">`</span></a>python</dt>
-<dd>mylocaltraitcls.define(parameter=7)</dd>
-</dl>
-<p><a href="#id29"><span class="problematic" id="id30">``</span></a><a href="#id31"><span class="problematic" id="id32">`</span></a></p>
+redefined according to each keyword argument. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mylocaltraitcls</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
-named <cite>parameter</cite> is redefined to have default_value=7.</p>
+named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(min=0.01,max=inf,command=’-i’)</p>
 <p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-p’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-p’)</p>
 <p>connection port</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-w’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-w’)</p>
 <p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(max=16535,command=’-t’)</p>
 <p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(max=inf)</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfClient.settings.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-u’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(command=’-u’)</p>
 <p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
@@ -468,59 +390,24 @@ the event handlers of this class will be returned instead.</dd>
 <dd><p class="first">triggers live updates: communication with the device to get or set the
 value on the Device. Therefore, getting or setting state traits
 needs the device to be connected.</p>
-<p>To set a
-<a href="#id33"><span class="problematic" id="id34">``</span></a><a href="#id35"><span class="problematic" id="id36">`</span></a>python</p>
-<blockquote>
-<div>device.state.parameter = value</div></blockquote>
-<p class="last"><a href="#id37"><span class="problematic" id="id38">``</span></a><a href="#id39"><span class="problematic" id="id40">`</span></a></p>
+<p>To set a state value inside the device, use normal python assigment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>To get a state value from the device, you can also use it as a normal python variable:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">variable</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
 <ul class="simple">
 <li><cite>connected</cite>: <cite>Bool</cite></li>
 </ul>
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfClient.state.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfClient.state.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfClient.state.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfClient.state.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -554,18 +441,6 @@ trait.command.</p>
 one.</p>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfClient.state.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="method">
@@ -587,41 +462,19 @@ The default value is the path that installs with 64-bit cygwin.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>arguments</strong> – List(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>bidirectional</strong> – <p>Bool(command=’-d’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Send and receive simultaneously</p>
-</li>
-<li><strong>binary_path</strong> – Unicode(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>bind</strong> – <p>Unicode(command=’-B’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>bind connection to specified IP</p>
-</li>
-<li><strong>bit_rate</strong> – <p>Unicode(command=’-b’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Maximum bit rate (append unit for size, e.g. 10K)</p>
-</li>
-<li><strong>buffer_size</strong> – <p>Int(min=1,command=’-l’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Size of data buffer that generates traffic (bytes)</p>
-</li>
-<li><strong>interval</strong> – <p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Interval between throughput reports (s)</p>
-</li>
-<li><strong>port</strong> – <p>Int(min=1,command=’-p’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>connection port</p>
-</li>
-<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
-</li>
-<li><strong>tcp_window_size</strong> – <p>Int(min=1,command=’-w’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>(bytes)</p>
-</li>
-<li><strong>time</strong> – <p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>time in seconds to transmit before quitting (default 10s)</p>
-</li>
-<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>wait time for traffic results before throwing a timeout exception (s)</p>
-</li>
-<li><strong>udp</strong> – <p>Bool(command=’-u’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>use UDP instead of the default, TCP</p>
-</li>
+<li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – </li>
+<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>command='-d'</em><em>)</em>) – Send and receive simultaneously</li>
+<li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
+<li><strong>bind</strong> (<em>Unicode</em><em>(</em><em>command='-B'</em><em>)</em>) – bind connection to specified IP</li>
+<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>command='-b'</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
+<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-l'</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
+<li><strong>interval</strong> (<em>Float</em><em>(</em><em>min=0.01</em><em>,</em><em>max=inf</em><em>,</em><em>command='-i'</em><em>)</em>) – Interval between throughput reports (s)</li>
+<li><strong>port</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-p'</em><em>)</em>) – connection port</li>
+<li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
+<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-w'</em><em>)</em>) – (bytes)</li>
+<li><strong>time</strong> (<em>Int</em><em>(</em><em>max=16535</em><em>,</em><em>command='-t'</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
+<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>command='-u'</em><em>)</em>) – use UDP instead of the default, TCP</li>
 </ul>
 </td>
 </tr>
@@ -650,11 +503,10 @@ the executable continues running).</p>
 <cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id41"><span class="problematic" id="id42">``</span></a><a href="#id43"><span class="problematic" id="id44">`</span></a>python
-with self.no_state_arguments:</p>
-<blockquote>
-<div>self.background(…)</div></blockquote>
-<p><a href="#id45"><span class="problematic" id="id46">``</span></a><a href="#id47"><span class="problematic" id="id48">`</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_state_arguments</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -714,11 +566,10 @@ a pandas DataFrame.</p>
 <cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id49"><span class="problematic" id="id50">``</span></a><a href="#id51"><span class="problematic" id="id52">`</span></a>python
-with self.no_state_arguments:</p>
-<blockquote>
-<div>self.foreground(…)</div></blockquote>
-<p><a href="#id53"><span class="problematic" id="id54">``</span></a><a href="#id55"><span class="problematic" id="id56">`</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_state_arguments</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">foreground</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -791,12 +642,10 @@ and options that only apply to implementing python support for the
 device.</p>
 <p>The device uses this container to define the keyword options supported
 by its __init__ function. These are applied when you instantiate the device.
-After you instantiate the device, you can change the setting with</p>
-<dl class="docutils">
-<dt><a href="#id57"><span class="problematic" id="id58">``</span></a><a href="#id59"><span class="problematic" id="id60">`</span></a>python</dt>
-<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
-</dl>
-<p class="last"><a href="#id61"><span class="problematic" id="id62">``</span></a><a href="#id63"><span class="problematic" id="id64">`</span></a></p>
+After you instantiate the device, you can still change the setting with:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="s1">&#39;insert-your-address-string-here&#39;</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
@@ -820,92 +669,54 @@ After you instantiate the device, you can change the setting with</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.arguments">
 <code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>List(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>List()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(read_only=True)</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-d’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(command=’-d’)</p>
 <p>Send and receive simultaneously</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.binary_path">
 <code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.bind">
 <code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-B’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’-B’)</p>
 <p>bind connection to specified IP</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-b’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’-b’)</p>
 <p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-l’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-l’)</p>
 <p>Size of data buffer that generates traffic (bytes)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerf.settings.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerf.settings.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerf.settings.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerf.settings.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -913,74 +724,60 @@ to the function.</p>
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.define">
 <em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.define" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of this class with default values of the traits
-redefined according to each keyword argument. For example,</p>
-<dl class="docutils">
-<dt><a href="#id65"><span class="problematic" id="id66">``</span></a><a href="#id67"><span class="problematic" id="id68">`</span></a>python</dt>
-<dd>mylocaltraitcls.define(parameter=7)</dd>
-</dl>
-<p><a href="#id69"><span class="problematic" id="id70">``</span></a><a href="#id71"><span class="problematic" id="id72">`</span></a></p>
+redefined according to each keyword argument. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mylocaltraitcls</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
-named <cite>parameter</cite> is redefined to have default_value=7.</p>
+named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(min=0.01,max=inf,command=’-i’)</p>
 <p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-p’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-p’)</p>
 <p>connection port</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-w’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-w’)</p>
 <p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(max=16535,command=’-t’)</p>
 <p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(max=inf)</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerf.settings.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-u’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(command=’-u’)</p>
 <p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
@@ -1000,59 +797,24 @@ the event handlers of this class will be returned instead.</dd>
 <dd><p class="first">triggers live updates: communication with the device to get or set the
 value on the Device. Therefore, getting or setting state traits
 needs the device to be connected.</p>
-<p>To set a
-<a href="#id73"><span class="problematic" id="id74">``</span></a><a href="#id75"><span class="problematic" id="id76">`</span></a>python</p>
-<blockquote>
-<div>device.state.parameter = value</div></blockquote>
-<p class="last"><a href="#id77"><span class="problematic" id="id78">``</span></a><a href="#id79"><span class="problematic" id="id80">`</span></a></p>
+<p>To set a state value inside the device, use normal python assigment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>To get a state value from the device, you can also use it as a normal python variable:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">variable</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
 <ul class="simple">
 <li><cite>connected</cite>: <cite>Bool</cite></li>
 </ul>
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerf.state.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerf.state.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerf.state.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerf.state.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -1086,18 +848,6 @@ trait.command.</p>
 one.</p>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerf.state.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="method">
@@ -1116,42 +866,20 @@ the event handlers of this class will be returned instead.</dd>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>arguments</strong> – List(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>bidirectional</strong> – <p>Bool(command=’-d’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Send and receive simultaneously</p>
-</li>
-<li><strong>binary_path</strong> – Unicode(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>bind</strong> – <p>Unicode(command=’-B’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>bind connection to specified IP</p>
-</li>
-<li><strong>bit_rate</strong> – <p>Unicode(command=’-b’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Maximum bit rate (append unit for size, e.g. 10K)</p>
-</li>
-<li><strong>buffer_size</strong> – <p>Int(min=1,command=’-l’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Size of data buffer that generates traffic (bytes)</p>
-</li>
-<li><strong>interval</strong> – <p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Interval between throughput reports (s)</p>
-</li>
-<li><strong>port</strong> – <p>Int(min=1,command=’-p’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>connection port</p>
-</li>
-<li><strong>remote_binary_path</strong> – Unicode(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
-</li>
-<li><strong>tcp_window_size</strong> – <p>Int(min=1,command=’-w’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>(bytes)</p>
-</li>
-<li><strong>time</strong> – <p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>time in seconds to transmit before quitting (default 10s)</p>
-</li>
-<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>wait time for traffic results before throwing a timeout exception (s)</p>
-</li>
-<li><strong>udp</strong> – <p>Bool(command=’-u’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>use UDP instead of the default, TCP</p>
-</li>
+<li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – </li>
+<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>command='-d'</em><em>)</em>) – Send and receive simultaneously</li>
+<li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
+<li><strong>bind</strong> (<em>Unicode</em><em>(</em><em>command='-B'</em><em>)</em>) – bind connection to specified IP</li>
+<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>command='-b'</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
+<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-l'</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
+<li><strong>interval</strong> (<em>Float</em><em>(</em><em>min=0.01</em><em>,</em><em>max=inf</em><em>,</em><em>command='-i'</em><em>)</em>) – Interval between throughput reports (s)</li>
+<li><strong>port</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-p'</em><em>)</em>) – connection port</li>
+<li><strong>remote_binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
+<li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
+<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-w'</em><em>)</em>) – (bytes)</li>
+<li><strong>time</strong> (<em>Int</em><em>(</em><em>max=16535</em><em>,</em><em>command='-t'</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
+<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>command='-u'</em><em>)</em>) – use UDP instead of the default, TCP</li>
 </ul>
 </td>
 </tr>
@@ -1180,11 +908,10 @@ the executable continues running).</p>
 <cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id81"><span class="problematic" id="id82">``</span></a><a href="#id83"><span class="problematic" id="id84">`</span></a>python
-with self.no_state_arguments:</p>
-<blockquote>
-<div>self.background(…)</div></blockquote>
-<p><a href="#id85"><span class="problematic" id="id86">``</span></a><a href="#id87"><span class="problematic" id="id88">`</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_state_arguments</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1244,11 +971,10 @@ a pandas DataFrame.</p>
 <cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id89"><span class="problematic" id="id90">``</span></a><a href="#id91"><span class="problematic" id="id92">`</span></a>python
-with self.no_state_arguments:</p>
-<blockquote>
-<div>self.foreground(…)</div></blockquote>
-<p><a href="#id93"><span class="problematic" id="id94">``</span></a><a href="#id95"><span class="problematic" id="id96">`</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_state_arguments</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">foreground</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1333,12 +1059,10 @@ and options that only apply to implementing python support for the
 device.</p>
 <p>The device uses this container to define the keyword options supported
 by its __init__ function. These are applied when you instantiate the device.
-After you instantiate the device, you can change the setting with</p>
-<dl class="docutils">
-<dt><a href="#id97"><span class="problematic" id="id98">``</span></a><a href="#id99"><span class="problematic" id="id100">`</span></a>python</dt>
-<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
-</dl>
-<p class="last"><a href="#id101"><span class="problematic" id="id102">``</span></a><a href="#id103"><span class="problematic" id="id104">`</span></a></p>
+After you instantiate the device, you can still change the setting with:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="s1">&#39;insert-your-address-string-here&#39;</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
@@ -1363,92 +1087,54 @@ After you instantiate the device, you can change the setting with</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.arguments">
 <code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>List(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>List()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(read_only=True)</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-d’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(command=’-d’)</p>
 <p>Send and receive simultaneously</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.binary_path">
 <code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bind">
 <code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-B’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’-B’)</p>
 <p>bind connection to specified IP</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-b’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’-b’)</p>
 <p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-l’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-l’)</p>
 <p>Size of data buffer that generates traffic (bytes)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -1456,80 +1142,66 @@ to the function.</p>
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.define">
 <em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.define" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of this class with default values of the traits
-redefined according to each keyword argument. For example,</p>
-<dl class="docutils">
-<dt><a href="#id105"><span class="problematic" id="id106">``</span></a><a href="#id107"><span class="problematic" id="id108">`</span></a>python</dt>
-<dd>mylocaltraitcls.define(parameter=7)</dd>
-</dl>
-<p><a href="#id109"><span class="problematic" id="id110">``</span></a><a href="#id111"><span class="problematic" id="id112">`</span></a></p>
+redefined according to each keyword argument. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mylocaltraitcls</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
-named <cite>parameter</cite> is redefined to have default_value=7.</p>
+named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(min=0.01,max=inf,command=’-i’)</p>
 <p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-p’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-p’)</p>
 <p>connection port</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.remote_binary_path">
 <code class="descname">remote_binary_path</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.remote_binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-w’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-w’)</p>
 <p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(max=16535,command=’-t’)</p>
 <p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(max=inf)</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-u’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(command=’-u’)</p>
 <p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
@@ -1549,59 +1221,24 @@ the event handlers of this class will be returned instead.</dd>
 <dd><p class="first">triggers live updates: communication with the device to get or set the
 value on the Device. Therefore, getting or setting state traits
 needs the device to be connected.</p>
-<p>To set a
-<a href="#id113"><span class="problematic" id="id114">``</span></a><a href="#id115"><span class="problematic" id="id116">`</span></a>python</p>
-<blockquote>
-<div>device.state.parameter = value</div></blockquote>
-<p class="last"><a href="#id117"><span class="problematic" id="id118">``</span></a><a href="#id119"><span class="problematic" id="id120">`</span></a></p>
+<p>To set a state value inside the device, use normal python assigment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>To get a state value from the device, you can also use it as a normal python variable:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">variable</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
 <ul class="simple">
 <li><cite>connected</cite>: <cite>Bool</cite></li>
 </ul>
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.state.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.state.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.state.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.state.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -1633,18 +1270,6 @@ trait.command.</p>
 <p>Any return value from the function is ignored.</p>
 <p>A trait that has its own setter defined will ignore this
 one.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.state.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1698,44 +1323,20 @@ localhost or any other interface.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>arguments</strong> – List(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>bidirectional</strong> – <p>Bool(command=’-d’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Send and receive simultaneously</p>
-</li>
-<li><strong>binary_path</strong> – Unicode(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>bit_rate</strong> – <p>Unicode(command=’-b’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Maximum bit rate (append unit for size, e.g. 10K)</p>
-</li>
-<li><strong>buffer_size</strong> – <p>Int(min=1,command=’-l’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Size of data buffer that generates traffic (bytes)</p>
-</li>
-<li><strong>interval</strong> – <p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Interval between throughput reports (s)</p>
-</li>
-<li><strong>port</strong> – <p>Int(min=1,command=’-p’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>connection port</p>
-</li>
-<li><strong>receiver</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>the ip address to use for the iperf server, which must match a network interface on the host</p>
-</li>
-<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>ignored - use sender and receiver instead</p>
-</li>
-<li><strong>sender</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>the ip address to use for the iperf client, which must match a network interface on the host</p>
-</li>
-<li><strong>tcp_window_size</strong> – <p>Int(min=1,command=’-w’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>(bytes)</p>
-</li>
-<li><strong>time</strong> – <p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>time in seconds to transmit before quitting (default 10s)</p>
-</li>
-<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>wait time for traffic results before throwing a timeout exception (s)</p>
-</li>
-<li><strong>udp</strong> – <p>Bool(command=’-u’,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>use UDP instead of the default, TCP</p>
-</li>
+<li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – </li>
+<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>command='-d'</em><em>)</em>) – Send and receive simultaneously</li>
+<li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
+<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>command='-b'</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
+<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-l'</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
+<li><strong>interval</strong> (<em>Float</em><em>(</em><em>min=0.01</em><em>,</em><em>max=inf</em><em>,</em><em>command='-i'</em><em>)</em>) – Interval between throughput reports (s)</li>
+<li><strong>port</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-p'</em><em>)</em>) – connection port</li>
+<li><strong>receiver</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the ip address to use for the iperf server, which must match a network interface on the host</li>
+<li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – ignored - use sender and receiver instead</li>
+<li><strong>sender</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the ip address to use for the iperf client, which must match a network interface on the host</li>
+<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-w'</em><em>)</em>) – (bytes)</li>
+<li><strong>time</strong> (<em>Int</em><em>(</em><em>max=16535</em><em>,</em><em>command='-t'</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
+<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>command='-u'</em><em>)</em>) – use UDP instead of the default, TCP</li>
 </ul>
 </td>
 </tr>
@@ -1797,12 +1398,10 @@ and options that only apply to implementing python support for the
 device.</p>
 <p>The device uses this container to define the keyword options supported
 by its __init__ function. These are applied when you instantiate the device.
-After you instantiate the device, you can change the setting with</p>
-<dl class="docutils">
-<dt><a href="#id121"><span class="problematic" id="id122">``</span></a><a href="#id123"><span class="problematic" id="id124">`</span></a>python</dt>
-<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
-</dl>
-<p class="last"><a href="#id125"><span class="problematic" id="id126">``</span></a><a href="#id127"><span class="problematic" id="id128">`</span></a></p>
+After you instantiate the device, you can still change the setting with:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="s1">&#39;insert-your-address-string-here&#39;</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
@@ -1828,27 +1427,27 @@ After you instantiate the device, you can change the setting with</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.arguments">
 <code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>List(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>List()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(read_only=True)</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-d’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(command=’-d’)</p>
 <p>Send and receive simultaneously</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.binary_path">
 <code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1859,59 +1458,21 @@ After you instantiate the device, you can change the setting with</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-b’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’-b’)</p>
 <p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-l’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-l’)</p>
 <p>Size of data buffer that generates traffic (bytes)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -1919,95 +1480,81 @@ to the function.</p>
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.define">
 <em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.define" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of this class with default values of the traits
-redefined according to each keyword argument. For example,</p>
-<dl class="docutils">
-<dt><a href="#id129"><span class="problematic" id="id130">``</span></a><a href="#id131"><span class="problematic" id="id132">`</span></a>python</dt>
-<dd>mylocaltraitcls.define(parameter=7)</dd>
-</dl>
-<p><a href="#id133"><span class="problematic" id="id134">``</span></a><a href="#id135"><span class="problematic" id="id136">`</span></a></p>
+redefined according to each keyword argument. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mylocaltraitcls</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
-named <cite>parameter</cite> is redefined to have default_value=7.</p>
+named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.01,max=inf,command=’-i’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(min=0.01,max=inf,command=’-i’)</p>
 <p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-p’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-p’)</p>
 <p>connection port</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.port_max">
 <code class="descname">port_max</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.port_max" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,read_only=True)</p>
 <p>highest port number to use when cycling through ports</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.receiver">
 <code class="descname">receiver</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.receiver" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>the ip address to use for the iperf server, which must match a network interface on the host</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>ignored - use sender and receiver instead</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.sender">
 <code class="descname">sender</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.sender" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>the ip address to use for the iperf client, which must match a network interface on the host</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-w’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1,command=’-w’)</p>
 <p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,max=16535,command=’-t’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(max=16535,command=’-t’)</p>
 <p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(max=inf)</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-u’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(command=’-u’)</p>
 <p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
@@ -2027,59 +1574,24 @@ the event handlers of this class will be returned instead.</dd>
 <dd><p class="first">triggers live updates: communication with the device to get or set the
 value on the Device. Therefore, getting or setting state traits
 needs the device to be connected.</p>
-<p>To set a
-<a href="#id137"><span class="problematic" id="id138">``</span></a><a href="#id139"><span class="problematic" id="id140">`</span></a>python</p>
-<blockquote>
-<div>device.state.parameter = value</div></blockquote>
-<p class="last"><a href="#id141"><span class="problematic" id="id142">``</span></a><a href="#id143"><span class="problematic" id="id144">`</span></a></p>
+<p>To set a state value inside the device, use normal python assigment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>To get a state value from the device, you can also use it as a normal python variable:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">variable</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
 <ul class="simple">
 <li><cite>connected</cite>: <cite>Bool</cite></li>
 </ul>
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfBoundPair.state.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfBoundPair.state.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfBoundPair.state.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfBoundPair.state.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -2113,18 +1625,6 @@ trait.command.</p>
 one.</p>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.IPerfBoundPair.state.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
-</dd></dl>
-
 </dd></dl>
 
 </dd></dl>
@@ -2143,33 +1643,15 @@ resolution.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>bytes</strong> – <p>Int(min=0,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>TCP or UDP transmit data size</p>
-</li>
-<li><strong>port</strong> – <p>Int(min=1,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>TCP or UDP port</p>
-</li>
-<li><strong>receiver</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>the ip address of the network interface to use to receive data</p>
-</li>
-<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>skipd - use sender and receiver instead</p>
-</li>
-<li><strong>sender</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>the ip address of the network interface to use to send data</p>
-</li>
-<li><strong>skip</strong> – <p>Int(min=0,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>extra buffers to send and not log before acquisition</p>
-</li>
-<li><strong>tcp_nodelay</strong> – <p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>if True, disable Nagle’s algorithm</p>
-</li>
-<li><strong>timeout</strong> – <p>Float(min=0.001,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>timeout before aborting the test</p>
-</li>
-<li><strong>udp</strong> – <p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>use UDP (True) or TCP (False)</p>
-</li>
+<li><strong>bytes</strong> (<em>Int</em><em>(</em><em>)</em>) – TCP or UDP transmit data size</li>
+<li><strong>port</strong> (<em>Int</em><em>(</em><em>min=1</em><em>)</em>) – TCP or UDP port</li>
+<li><strong>receiver</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the ip address of the network interface to use to receive data</li>
+<li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – skipd - use sender and receiver instead</li>
+<li><strong>sender</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the ip address of the network interface to use to send data</li>
+<li><strong>skip</strong> (<em>Int</em><em>(</em><em>)</em>) – extra buffers to send and not log before acquisition</li>
+<li><strong>tcp_nodelay</strong> (<em>Bool</em><em>(</em><em>)</em>) – if True, disable Nagle’s algorithm</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>min=0.001</em><em>,</em><em>max=inf</em><em>)</em>) – timeout before aborting the test</li>
+<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>)</em>) – use UDP (True) or TCP (False)</li>
 </ul>
 </td>
 </tr>
@@ -2212,12 +1694,10 @@ and options that only apply to implementing python support for the
 device.</p>
 <p>The device uses this container to define the keyword options supported
 by its __init__ function. These are applied when you instantiate the device.
-After you instantiate the device, you can change the setting with</p>
-<dl class="docutils">
-<dt><a href="#id145"><span class="problematic" id="id146">``</span></a><a href="#id147"><span class="problematic" id="id148">`</span></a>python</dt>
-<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
-</dl>
-<p class="last"><a href="#id149"><span class="problematic" id="id150">``</span></a><a href="#id151"><span class="problematic" id="id152">`</span></a></p>
+After you instantiate the device, you can still change the setting with:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="s1">&#39;insert-your-address-string-here&#39;</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
@@ -2236,52 +1716,14 @@ After you instantiate the device, you can change the setting with</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.bytes">
 <code class="descname">bytes</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.bytes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int()</p>
 <p>TCP or UDP transmit data size</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -2289,81 +1731,67 @@ to the function.</p>
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.define">
 <em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.define" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of this class with default values of the traits
-redefined according to each keyword argument. For example,</p>
-<dl class="docutils">
-<dt><a href="#id153"><span class="problematic" id="id154">``</span></a><a href="#id155"><span class="problematic" id="id156">`</span></a>python</dt>
-<dd>mylocaltraitcls.define(parameter=7)</dd>
-</dl>
-<p><a href="#id157"><span class="problematic" id="id158">``</span></a><a href="#id159"><span class="problematic" id="id160">`</span></a></p>
+redefined according to each keyword argument. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mylocaltraitcls</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
-named <cite>parameter</cite> is redefined to have default_value=7.</p>
+named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(min=1)</p>
 <p>TCP or UDP port</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.receiver">
 <code class="descname">receiver</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.receiver" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>the ip address of the network interface to use to receive data</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>skipd - use sender and receiver instead</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.sender">
 <code class="descname">sender</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.sender" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>the ip address of the network interface to use to send data</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.skip">
 <code class="descname">skip</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.skip" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Int()</p>
 <p>extra buffers to send and not log before acquisition</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.tcp_nodelay">
 <code class="descname">tcp_nodelay</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.tcp_nodelay" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool()</p>
 <p>if True, disable Nagle’s algorithm</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.001,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(min=0.001,max=inf)</p>
 <p>timeout before aborting the test</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool()</p>
 <p>use UDP (True) or TCP (False)</p>
 </dd></dl>
 
@@ -2378,59 +1806,24 @@ the event handlers of this class will be returned instead.</dd>
 <dd><p class="first">triggers live updates: communication with the device to get or set the
 value on the Device. Therefore, getting or setting state traits
 needs the device to be connected.</p>
-<p>To set a
-<a href="#id161"><span class="problematic" id="id162">``</span></a><a href="#id163"><span class="problematic" id="id164">`</span></a>python</p>
-<blockquote>
-<div>device.state.parameter = value</div></blockquote>
-<p class="last"><a href="#id165"><span class="problematic" id="id166">``</span></a><a href="#id167"><span class="problematic" id="id168">`</span></a></p>
+<p>To set a state value inside the device, use normal python assigment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>To get a state value from the device, you can also use it as a normal python variable:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">variable</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
 <ul class="simple">
 <li><cite>connected</cite>: <cite>Bool</cite></li>
 </ul>
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -2464,18 +1857,6 @@ trait.command.</p>
 one.</p>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
-</dd></dl>
-
 </dd></dl>
 
 </dd></dl>
@@ -2501,19 +1882,11 @@ config_path str;</dd>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>cache_path</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>folder path to contain auto-saved isf file(s)</p>
-</li>
-<li><strong>com_object</strong> – Unicode(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>concurrency_support</strong> – <p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
-</li>
-<li><strong>connection_timeout</strong> – <p>Float(min=0.5,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>connection timeout in seconds</p>
-</li>
-<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
-</li>
+<li><strong>cache_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – folder path to contain auto-saved isf file(s)</li>
+<li><strong>com_object</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
+<li><strong>concurrency_support</strong> (<em>Bool</em><em>(</em><em>)</em>) – whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</li>
+<li><strong>connection_timeout</strong> (<em>Float</em><em>(</em><em>min=0.5</em><em>,</em><em>max=inf</em><em>)</em>) – connection timeout in seconds</li>
+<li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
 </ul>
 </td>
 </tr>
@@ -2581,12 +1954,10 @@ and options that only apply to implementing python support for the
 device.</p>
 <p>The device uses this container to define the keyword options supported
 by its __init__ function. These are applied when you instantiate the device.
-After you instantiate the device, you can change the setting with</p>
-<dl class="docutils">
-<dt><a href="#id169"><span class="problematic" id="id170">``</span></a><a href="#id171"><span class="problematic" id="id172">`</span></a>python</dt>
-<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
-</dl>
-<p class="last"><a href="#id173"><span class="problematic" id="id174">``</span></a><a href="#id175"><span class="problematic" id="id176">`</span></a></p>
+After you instantiate the device, you can still change the setting with:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="s1">&#39;insert-your-address-string-here&#39;</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
@@ -2600,65 +1971,27 @@ After you instantiate the device, you can change the setting with</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.cache_path">
 <code class="descname">cache_path</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.cache_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>folder path to contain auto-saved isf file(s)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.qxdm.QXDM.settings.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.qxdm.QXDM.settings.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.qxdm.QXDM.settings.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.qxdm.QXDM.settings.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.com_object">
 <code class="descname">com_object</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.com_object" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.connection_timeout">
 <code class="descname">connection_timeout</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.connection_timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.5,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(min=0.5,max=inf)</p>
 <p>connection timeout in seconds</p>
 </dd></dl>
 
@@ -2666,33 +1999,19 @@ to the function.</p>
 <dt id="ssmdevices.software.qxdm.QXDM.settings.define">
 <em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.define" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of this class with default values of the traits
-redefined according to each keyword argument. For example,</p>
-<dl class="docutils">
-<dt><a href="#id177"><span class="problematic" id="id178">``</span></a><a href="#id179"><span class="problematic" id="id180">`</span></a>python</dt>
-<dd>mylocaltraitcls.define(parameter=7)</dd>
-</dl>
-<p><a href="#id181"><span class="problematic" id="id182">``</span></a><a href="#id183"><span class="problematic" id="id184">`</span></a></p>
+redefined according to each keyword argument. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mylocaltraitcls</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
-named <cite>parameter</cite> is redefined to have default_value=7.</p>
+named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.qxdm.QXDM.settings.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2713,11 +2032,14 @@ new data enters the QXDM item store.</p>
 <dd><p class="first">triggers live updates: communication with the device to get or set the
 value on the Device. Therefore, getting or setting state traits
 needs the device to be connected.</p>
-<p>To set a
-<a href="#id185"><span class="problematic" id="id186">``</span></a><a href="#id187"><span class="problematic" id="id188">`</span></a>python</p>
-<blockquote>
-<div>device.state.parameter = value</div></blockquote>
-<p class="last"><a href="#id189"><span class="problematic" id="id190">``</span></a><a href="#id191"><span class="problematic" id="id192">`</span></a></p>
+<p>To set a state value inside the device, use normal python assigment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>To get a state value from the device, you can also use it as a normal python variable:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">variable</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
@@ -2730,48 +2052,10 @@ needs the device to be connected.</p>
 <li><cite>ue_model_number</cite>: <cite>Unicode</cite></li>
 <li><cite>version</cite>: <cite>Unicode</cite></li>
 </ul>
-<dl class="classmethod">
-<dt id="ssmdevices.software.qxdm.QXDM.state.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.qxdm.QXDM.state.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.qxdm.QXDM.state.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.qxdm.QXDM.state.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -2805,57 +2089,45 @@ trait.command.</p>
 one.</p>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="ssmdevices.software.qxdm.QXDM.state.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_build_id">
 <code class="descname">ue_build_id</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_build_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ue_build_id’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ue_build_id’)</p>
 <p>Build ID of software on the phone</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_esn">
 <code class="descname">ue_esn</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_esn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ue_esn’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ue_esn’)</p>
 <p>Phone ESN</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_imei">
 <code class="descname">ue_imei</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_imei" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ue_imei’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ue_imei’)</p>
 <p>Phone IMEI</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_mode">
 <code class="descname">ue_mode</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ue_mode’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ue_mode’)</p>
 <p>current state of the phone</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_model_number">
 <code class="descname">ue_model_number</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_model_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ue_model_number’,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ue_model_number’)</p>
 <p>model number code</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.version">
 <code class="descname">version</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.version" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=True,write_only=False,remap={},cache=True)</p>
+<dd><p>Unicode(read_only=True,cache=True)</p>
 <p>QXDM application version</p>
 </dd></dl>
 
@@ -2877,18 +2149,10 @@ points.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>arguments</strong> – <p>List(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>list of command line arguments to pass into the executable</p>
-</li>
-<li><strong>binary_path</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>path to the file to run</p>
-</li>
-<li><strong>resource</strong> – <p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-<p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
-</li>
-<li><strong>timeout</strong> – <p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
-<p>Timeout (sec) after disconnect is called before killing the process</p>
-</li>
+<li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – list of command line arguments to pass into the executable</li>
+<li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – path to the file to run</li>
+<li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – Timeout (sec) after disconnect is called before killing the process</li>
 </ul>
 </td>
 </tr>
@@ -2917,11 +2181,10 @@ the executable continues running).</p>
 <cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id193"><span class="problematic" id="id194">``</span></a><a href="#id195"><span class="problematic" id="id196">`</span></a>python
-with self.no_state_arguments:</p>
-<blockquote>
-<div>self.background(…)</div></blockquote>
-<p><a href="#id197"><span class="problematic" id="id198">``</span></a><a href="#id199"><span class="problematic" id="id200">`</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_state_arguments</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -2974,11 +2237,10 @@ to standard error during background execution.</p>
 <cite>self.settings</cite></div></blockquote>
 <p>Use the self.no_state_arguments context manager to skip these
 global arguments like this:</p>
-<p><a href="#id201"><span class="problematic" id="id202">``</span></a><a href="#id203"><span class="problematic" id="id204">`</span></a>python
-with self.no_state_arguments:</p>
-<blockquote>
-<div>self.foreground(…)</div></blockquote>
-<p><a href="#id205"><span class="problematic" id="id206">``</span></a><a href="#id207"><span class="problematic" id="id208">`</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_state_arguments</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">foreground</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -3071,12 +2333,10 @@ and options that only apply to implementing python support for the
 device.</p>
 <p>The device uses this container to define the keyword options supported
 by its __init__ function. These are applied when you instantiate the device.
-After you instantiate the device, you can change the setting with</p>
-<dl class="docutils">
-<dt><a href="#id209"><span class="problematic" id="id210">``</span></a><a href="#id211"><span class="problematic" id="id212">`</span></a>python</dt>
-<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
-</dl>
-<p class="last"><a href="#id213"><span class="problematic" id="id214">``</span></a><a href="#id215"><span class="problematic" id="id216">`</span></a></p>
+After you instantiate the device, you can still change the setting with:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="s1">&#39;insert-your-address-string-here&#39;</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
@@ -3091,28 +2351,28 @@ After you instantiate the device, you can change the setting with</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.arguments">
 <code class="descname">arguments</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>List(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>List()</p>
 <p>list of command line arguments to pass into the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(read_only=True)</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.binary_path">
 <code class="descname">binary_path</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.binary_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>path to the file to run</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -3120,27 +2380,25 @@ After you instantiate the device, you can change the setting with</p>
 <dt id="ssmdevices.software.windows.Netsh.settings.define">
 <em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.define" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of this class with default values of the traits
-redefined according to each keyword argument. For example,</p>
-<dl class="docutils">
-<dt><a href="#id217"><span class="problematic" id="id218">``</span></a><a href="#id219"><span class="problematic" id="id220">`</span></a>python</dt>
-<dd>mylocaltraitcls.define(parameter=7)</dd>
-</dl>
-<p><a href="#id221"><span class="problematic" id="id222">``</span></a><a href="#id223"><span class="problematic" id="id224">`</span></a></p>
+redefined according to each keyword argument. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mylocaltraitcls</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
-named <cite>parameter</cite> is redefined to have default_value=7.</p>
+named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 <p>the data needed to make a connection to a device. its type and format are determined by the subclass implementation</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0,max=inf,read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Float(max=inf)</p>
 <p>Timeout (sec) after disconnect is called before killing the process</p>
 </dd></dl>
 
@@ -3155,59 +2413,24 @@ named <cite>parameter</cite> is redefined to have default_value=7.</p>
 <dd><p class="first">triggers live updates: communication with the device to get or set the
 value on the Device. Therefore, getting or setting state traits
 needs the device to be connected.</p>
-<p>To set a
-<a href="#id225"><span class="problematic" id="id226">``</span></a><a href="#id227"><span class="problematic" id="id228">`</span></a>python</p>
-<blockquote>
-<div>device.state.parameter = value</div></blockquote>
-<p class="last"><a href="#id229"><span class="problematic" id="id230">``</span></a><a href="#id231"><span class="problematic" id="id232">`</span></a></p>
+<p>To set a state value inside the device, use normal python assigment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>To get a state value from the device, you can also use it as a normal python variable:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">variable</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
 <ul class="simple">
 <li><cite>connected</cite>: <cite>Bool</cite></li>
 </ul>
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.Netsh.state.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.Netsh.state.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.Netsh.state.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.Netsh.state.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -3241,18 +2464,6 @@ trait.command.</p>
 one.</p>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.Netsh.state.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="method">
@@ -3276,8 +2487,8 @@ the event handlers of this class will be returned instead.</dd>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>resource</strong> – Unicode(read_only=False,write_only=False,remap={},cache=False)</li>
-<li><strong>ssid</strong> – Unicode(read_only=False,write_only=False,remap={},cache=False)</li>
+<li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
+<li><strong>ssid</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
 </ul>
 </td>
 </tr>
@@ -3370,12 +2581,10 @@ and options that only apply to implementing python support for the
 device.</p>
 <p>The device uses this container to define the keyword options supported
 by its __init__ function. These are applied when you instantiate the device.
-After you instantiate the device, you can change the setting with</p>
-<dl class="docutils">
-<dt><a href="#id233"><span class="problematic" id="id234">``</span></a><a href="#id235"><span class="problematic" id="id236">`</span></a>python</dt>
-<dd>Device.settings.resource = ‘insert-your-address-string-here’</dd>
-</dl>
-<p class="last"><a href="#id237"><span class="problematic" id="id238">``</span></a><a href="#id239"><span class="problematic" id="id240">`</span></a></p>
+After you instantiate the device, you can still change the setting with:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Device</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">resource</span> <span class="o">=</span> <span class="s1">&#39;insert-your-address-string-here&#39;</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
@@ -3384,48 +2593,10 @@ After you instantiate the device, you can change the setting with</p>
 <li><cite>resource</cite>: <cite>Unicode</cite></li>
 <li><cite>ssid</cite>: <cite>Unicode</cite></li>
 </ul>
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.WLANStatus.settings.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.WLANStatus.settings.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.WLANStatus.settings.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.WLANStatus.settings.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -3433,38 +2604,24 @@ to the function.</p>
 <dt id="ssmdevices.software.windows.WLANStatus.settings.define">
 <em class="property">classmethod </em><code class="descname">define</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.define" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of this class with default values of the traits
-redefined according to each keyword argument. For example,</p>
-<dl class="docutils">
-<dt><a href="#id241"><span class="problematic" id="id242">``</span></a><a href="#id243"><span class="problematic" id="id244">`</span></a>python</dt>
-<dd>mylocaltraitcls.define(parameter=7)</dd>
-</dl>
-<p><a href="#id245"><span class="problematic" id="id246">``</span></a><a href="#id247"><span class="problematic" id="id248">`</span></a></p>
+redefined according to each keyword argument. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mylocaltraitcls</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>will return a deep copy of <cite>mylocaltraitcls</cite> where its trait
-named <cite>parameter</cite> is redefined to have default_value=7.</p>
+named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.settings.resource">
 <code class="descname">resource</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.resource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.settings.ssid">
 <code class="descname">ssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.ssid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=False,write_only=False,remap={},cache=False)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.WLANStatus.settings.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 </dd></dl>
@@ -3478,11 +2635,14 @@ the event handlers of this class will be returned instead.</dd>
 <dd><p class="first">triggers live updates: communication with the device to get or set the
 value on the Device. Therefore, getting or setting state traits
 needs the device to be connected.</p>
-<p>To set a
-<a href="#id249"><span class="problematic" id="id250">``</span></a><a href="#id251"><span class="problematic" id="id252">`</span></a>python</p>
-<blockquote>
-<div>device.state.parameter = value</div></blockquote>
-<p class="last"><a href="#id253"><span class="problematic" id="id254">``</span></a><a href="#id255"><span class="problematic" id="id256">`</span></a></p>
+<p>To set a state value inside the device, use normal python assigment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>To get a state value from the device, you can also use it as a normal python variable:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">variable</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">parameter</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <p>trait attributes:</p>
@@ -3506,94 +2666,56 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid">
 <code class="descname">bssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid_1">
 <code class="descname">bssid_1</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid_1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid_2">
 <code class="descname">bssid_2</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid_2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid_3">
 <code class="descname">bssid_3</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid_3" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid_4">
 <code class="descname">bssid_4</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid_4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.channel">
 <code class="descname">channel</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.channel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.WLANStatus.state.class_own_trait_events">
-<em class="property">classmethod </em><code class="descname">class_own_trait_events</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_own_trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all event handlers defined on this class, not a parent.</p>
-<p>Works like <code class="docutils literal notranslate"><span class="pre">event_handlers</span></code>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.WLANStatus.state.class_own_traits">
-<em class="property">classmethod </em><code class="descname">class_own_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_own_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dict of all the traitlets defined on this class, not a parent.</p>
-<p>Works like <cite>class_traits</cite>, except for excluding traits from parents.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.WLANStatus.state.class_trait_names">
-<em class="property">classmethod </em><code class="descname">class_trait_names</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_trait_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a list of all the names of this class’ traits.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trait_names()</span></code> method,
-but is unbound.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.WLANStatus.state.class_traits">
-<em class="property">classmethod </em><code class="descname">class_traits</code><span class="sig-paren">(</span><em>**metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.class_traits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the traits of this class.  The dictionary
-is keyed on the name and the values are the TraitType objects.</p>
-<p>This method is just like the <code class="xref py py-meth docutils literal notranslate"><span class="pre">traits()</span></code> method, but is unbound.</p>
-<p>The TraitTypes returned don’t know anything about the values
-that the various HasTrait’s instances are holding.</p>
-<p>The metadata kwargs allow functions to be passed in which
-filter traits based on metadata values.  The functions should
-take a single value as an argument and return a boolean.  If
-any function returns False, then the trait is not included in
-the output.  If a metadata key doesn’t exist, None will be passed
-to the function.</p>
+<dd><p>Int(command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Bool(read_only=True)</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.description">
 <code class="descname">description</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.description" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’interface’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’interface’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.encryption">
 <code class="descname">encryption</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.encryption" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -3615,13 +2737,13 @@ one.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.radio_status">
 <code class="descname">radio_status</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.radio_status" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’interface’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’interface’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.radio_type">
 <code class="descname">radio_type</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.radio_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -3641,37 +2763,25 @@ one.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.signal">
 <code class="descname">signal</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.signal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,max=100,command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(max=100,command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.ssid">
 <code class="descname">ssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.ssid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Unicode(command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.state">
 <code class="descname">state</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’interface’,read_only=True,write_only=False,remap={},cache=False)</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="ssmdevices.software.windows.WLANStatus.state.trait_events">
-<em class="property">classmethod </em><code class="descname">trait_events</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.trait_events" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of all the event handlers of this class.</p>
-<dl class="docutils">
-<dt>name: str (default: None)</dt>
-<dd>The name of a trait of this class. If name is <code class="docutils literal notranslate"><span class="pre">None</span></code> then all
-the event handlers of this class will be returned instead.</dd>
-</dl>
-<p>The event handlers associated with a trait name, or all event handlers.</p>
+<dd><p>Unicode(command=’interface’,read_only=True)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.transmit_rate_mbps">
 <code class="descname">transmit_rate_mbps</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.transmit_rate_mbps" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=0,command=’ssid’,read_only=True,write_only=False,remap={},cache=False)</p>
+<dd><p>Int(command=’ssid’,read_only=True)</p>
 </dd></dl>
 
 </dd></dl>
