@@ -293,6 +293,10 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
 #                self._cal_offset.values[:] = self._cal_offset.values-self._cal_offset.columns.values[np.newaxis,:]
                                             
                 self.logger.debug(f'loaded calibration data from {str(cal_path/f)}')
+                
+                if self.settings.frequency is None:
+                    self.logger.warning('set an operating frequency in settings.frequency to enable calibration')
+                    
                 break
         else:
             self._cal_data = None
@@ -348,7 +352,6 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
             return proposed_atten
         
         if self.settings.frequency is None:
-            self.logger.warning('set an operating frequency in settings.frequency to enable calibration')
             i = self._cal.columns.get_loc(proposed_atten, method='nearest')
             atten = self._cal.columns[i]
             return atten
