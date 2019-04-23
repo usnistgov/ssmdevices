@@ -56,18 +56,18 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – </li>
-<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>command='-d'</em><em>)</em>) – Send and receive simultaneously</li>
+<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>)</em>) – Send and receive simultaneously</li>
 <li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
-<li><strong>bind</strong> (<em>Unicode</em><em>(</em><em>command='-B'</em><em>)</em>) – bind connection to specified IP</li>
-<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>command='-b'</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
-<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-l'</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
-<li><strong>interval</strong> (<em>Float</em><em>(</em><em>min=0.01</em><em>,</em><em>max=inf</em><em>,</em><em>command='-i'</em><em>)</em>) – Interval between throughput reports (s)</li>
-<li><strong>port</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-p'</em><em>)</em>) – connection port</li>
+<li><strong>bind</strong> (<em>Unicode</em><em>(</em><em>)</em>) – bind connection to specified IP</li>
+<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
+<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
+<li><strong>interval</strong> (<em>Float</em><em>(</em><em>)</em>) – Interval between throughput reports (s)</li>
+<li><strong>port</strong> (<em>Int</em><em>(</em><em>)</em>) – connection port</li>
 <li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
-<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-w'</em><em>)</em>) – (bytes)</li>
-<li><strong>time</strong> (<em>Int</em><em>(</em><em>max=16535</em><em>,</em><em>command='-t'</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
-<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
-<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>command='-u'</em><em>)</em>) – use UDP instead of the default, TCP</li>
+<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>)</em>) – (bytes)</li>
+<li><strong>time</strong> (<em>Int</em><em>(</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
+<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>)</em>) – use UDP instead of the default, TCP</li>
 </ul>
 </td>
 </tr>
@@ -268,14 +268,14 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(read_only=True)</p>
+<dd><p>Int()</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-d’)</p>
+<dd><p>Bool()</p>
 <p>Send and receive simultaneously</p>
 </dd></dl>
 
@@ -288,28 +288,28 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.bind">
 <code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-B’)</p>
+<dd><p>Unicode()</p>
 <p>bind connection to specified IP</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-b’)</p>
+<dd><p>Unicode()</p>
 <p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-l’)</p>
+<dd><p>Int()</p>
 <p>Size of data buffer that generates traffic (bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -328,14 +328,14 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.01,max=inf,command=’-i’)</p>
+<dd><p>Float()</p>
 <p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-p’)</p>
+<dd><p>Int()</p>
 <p>connection port</p>
 </dd></dl>
 
@@ -349,28 +349,28 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-w’)</p>
+<dd><p>Int()</p>
 <p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(max=16535,command=’-t’)</p>
+<dd><p>Int()</p>
 <p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(max=inf)</p>
+<dd><p>Float()</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-u’)</p>
+<dd><p>Bool()</p>
 <p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
@@ -407,7 +407,7 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfClient.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfClient.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -463,18 +463,18 @@ The default value is the path that installs with 64-bit cygwin.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – </li>
-<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>command='-d'</em><em>)</em>) – Send and receive simultaneously</li>
+<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>)</em>) – Send and receive simultaneously</li>
 <li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
-<li><strong>bind</strong> (<em>Unicode</em><em>(</em><em>command='-B'</em><em>)</em>) – bind connection to specified IP</li>
-<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>command='-b'</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
-<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-l'</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
-<li><strong>interval</strong> (<em>Float</em><em>(</em><em>min=0.01</em><em>,</em><em>max=inf</em><em>,</em><em>command='-i'</em><em>)</em>) – Interval between throughput reports (s)</li>
-<li><strong>port</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-p'</em><em>)</em>) – connection port</li>
+<li><strong>bind</strong> (<em>Unicode</em><em>(</em><em>)</em>) – bind connection to specified IP</li>
+<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
+<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
+<li><strong>interval</strong> (<em>Float</em><em>(</em><em>)</em>) – Interval between throughput reports (s)</li>
+<li><strong>port</strong> (<em>Int</em><em>(</em><em>)</em>) – connection port</li>
 <li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
-<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-w'</em><em>)</em>) – (bytes)</li>
-<li><strong>time</strong> (<em>Int</em><em>(</em><em>max=16535</em><em>,</em><em>command='-t'</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
-<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
-<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>command='-u'</em><em>)</em>) – use UDP instead of the default, TCP</li>
+<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>)</em>) – (bytes)</li>
+<li><strong>time</strong> (<em>Int</em><em>(</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
+<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>)</em>) – use UDP instead of the default, TCP</li>
 </ul>
 </td>
 </tr>
@@ -675,14 +675,14 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(read_only=True)</p>
+<dd><p>Int()</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-d’)</p>
+<dd><p>Bool()</p>
 <p>Send and receive simultaneously</p>
 </dd></dl>
 
@@ -695,28 +695,28 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.bind">
 <code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-B’)</p>
+<dd><p>Unicode()</p>
 <p>bind connection to specified IP</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-b’)</p>
+<dd><p>Unicode()</p>
 <p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-l’)</p>
+<dd><p>Int()</p>
 <p>Size of data buffer that generates traffic (bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -735,14 +735,14 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.01,max=inf,command=’-i’)</p>
+<dd><p>Float()</p>
 <p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-p’)</p>
+<dd><p>Int()</p>
 <p>connection port</p>
 </dd></dl>
 
@@ -756,28 +756,28 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-w’)</p>
+<dd><p>Int()</p>
 <p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(max=16535,command=’-t’)</p>
+<dd><p>Int()</p>
 <p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(max=inf)</p>
+<dd><p>Float()</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-u’)</p>
+<dd><p>Bool()</p>
 <p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
@@ -814,7 +814,7 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerf.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -867,19 +867,19 @@ one.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – </li>
-<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>command='-d'</em><em>)</em>) – Send and receive simultaneously</li>
+<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>)</em>) – Send and receive simultaneously</li>
 <li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
-<li><strong>bind</strong> (<em>Unicode</em><em>(</em><em>command='-B'</em><em>)</em>) – bind connection to specified IP</li>
-<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>command='-b'</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
-<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-l'</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
-<li><strong>interval</strong> (<em>Float</em><em>(</em><em>min=0.01</em><em>,</em><em>max=inf</em><em>,</em><em>command='-i'</em><em>)</em>) – Interval between throughput reports (s)</li>
-<li><strong>port</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-p'</em><em>)</em>) – connection port</li>
+<li><strong>bind</strong> (<em>Unicode</em><em>(</em><em>)</em>) – bind connection to specified IP</li>
+<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
+<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
+<li><strong>interval</strong> (<em>Float</em><em>(</em><em>)</em>) – Interval between throughput reports (s)</li>
+<li><strong>port</strong> (<em>Int</em><em>(</em><em>)</em>) – connection port</li>
 <li><strong>remote_binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
 <li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
-<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-w'</em><em>)</em>) – (bytes)</li>
-<li><strong>time</strong> (<em>Int</em><em>(</em><em>max=16535</em><em>,</em><em>command='-t'</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
-<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
-<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>command='-u'</em><em>)</em>) – use UDP instead of the default, TCP</li>
+<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>)</em>) – (bytes)</li>
+<li><strong>time</strong> (<em>Int</em><em>(</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
+<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>)</em>) – use UDP instead of the default, TCP</li>
 </ul>
 </td>
 </tr>
@@ -1093,14 +1093,14 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(read_only=True)</p>
+<dd><p>Int()</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-d’)</p>
+<dd><p>Bool()</p>
 <p>Send and receive simultaneously</p>
 </dd></dl>
 
@@ -1113,28 +1113,28 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bind">
 <code class="descname">bind</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-B’)</p>
+<dd><p>Unicode()</p>
 <p>bind connection to specified IP</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-b’)</p>
+<dd><p>Unicode()</p>
 <p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-l’)</p>
+<dd><p>Int()</p>
 <p>Size of data buffer that generates traffic (bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -1153,14 +1153,14 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.01,max=inf,command=’-i’)</p>
+<dd><p>Float()</p>
 <p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-p’)</p>
+<dd><p>Int()</p>
 <p>connection port</p>
 </dd></dl>
 
@@ -1180,28 +1180,28 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-w’)</p>
+<dd><p>Int()</p>
 <p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(max=16535,command=’-t’)</p>
+<dd><p>Int()</p>
 <p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(max=inf)</p>
+<dd><p>Float()</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-u’)</p>
+<dd><p>Bool()</p>
 <p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
@@ -1238,7 +1238,7 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfOnAndroid.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfOnAndroid.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -1324,19 +1324,19 @@ localhost or any other interface.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – </li>
-<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>command='-d'</em><em>)</em>) – Send and receive simultaneously</li>
+<li><strong>bidirectional</strong> (<em>Bool</em><em>(</em><em>)</em>) – Send and receive simultaneously</li>
 <li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
-<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>command='-b'</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
-<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-l'</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
-<li><strong>interval</strong> (<em>Float</em><em>(</em><em>min=0.01</em><em>,</em><em>max=inf</em><em>,</em><em>command='-i'</em><em>)</em>) – Interval between throughput reports (s)</li>
-<li><strong>port</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-p'</em><em>)</em>) – connection port</li>
+<li><strong>bit_rate</strong> (<em>Unicode</em><em>(</em><em>)</em>) – Maximum bit rate (append unit for size, e.g. 10K)</li>
+<li><strong>buffer_size</strong> (<em>Int</em><em>(</em><em>)</em>) – Size of data buffer that generates traffic (bytes)</li>
+<li><strong>interval</strong> (<em>Float</em><em>(</em><em>)</em>) – Interval between throughput reports (s)</li>
+<li><strong>port</strong> (<em>Int</em><em>(</em><em>)</em>) – connection port</li>
 <li><strong>receiver</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the ip address to use for the iperf server, which must match a network interface on the host</li>
 <li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – ignored - use sender and receiver instead</li>
 <li><strong>sender</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the ip address to use for the iperf client, which must match a network interface on the host</li>
-<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>,</em><em>command='-w'</em><em>)</em>) – (bytes)</li>
-<li><strong>time</strong> (<em>Int</em><em>(</em><em>max=16535</em><em>,</em><em>command='-t'</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
-<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
-<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>command='-u'</em><em>)</em>) – use UDP instead of the default, TCP</li>
+<li><strong>tcp_window_size</strong> (<em>Int</em><em>(</em><em>)</em>) – (bytes)</li>
+<li><strong>time</strong> (<em>Int</em><em>(</em><em>)</em>) – time in seconds to transmit before quitting (default 10s)</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
+<li><strong>udp</strong> (<em>Bool</em><em>(</em><em>)</em>) – use UDP instead of the default, TCP</li>
 </ul>
 </td>
 </tr>
@@ -1433,14 +1433,14 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(read_only=True)</p>
+<dd><p>Int()</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.bidirectional">
 <code class="descname">bidirectional</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.bidirectional" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-d’)</p>
+<dd><p>Bool()</p>
 <p>Send and receive simultaneously</p>
 </dd></dl>
 
@@ -1458,21 +1458,21 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.bit_rate">
 <code class="descname">bit_rate</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.bit_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’-b’)</p>
+<dd><p>Unicode()</p>
 <p>Maximum bit rate (append unit for size, e.g. 10K)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.buffer_size">
 <code class="descname">buffer_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.buffer_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-l’)</p>
+<dd><p>Int()</p>
 <p>Size of data buffer that generates traffic (bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -1491,21 +1491,21 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.interval">
 <code class="descname">interval</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.interval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.01,max=inf,command=’-i’)</p>
+<dd><p>Float()</p>
 <p>Interval between throughput reports (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-p’)</p>
+<dd><p>Int()</p>
 <p>connection port</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.port_max">
 <code class="descname">port_max</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.port_max" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,read_only=True)</p>
+<dd><p>Int()</p>
 <p>highest port number to use when cycling through ports</p>
 </dd></dl>
 
@@ -1533,28 +1533,28 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.tcp_window_size">
 <code class="descname">tcp_window_size</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.tcp_window_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1,command=’-w’)</p>
+<dd><p>Int()</p>
 <p>(bytes)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.time">
 <code class="descname">time</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(max=16535,command=’-t’)</p>
+<dd><p>Int()</p>
 <p>time in seconds to transmit before quitting (default 10s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(max=inf)</p>
+<dd><p>Float()</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.settings.udp">
 <code class="descname">udp</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.settings.udp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(command=’-u’)</p>
+<dd><p>Bool()</p>
 <p>use UDP instead of the default, TCP</p>
 </dd></dl>
 
@@ -1591,7 +1591,7 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.IPerfBoundPair.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerfBoundPair.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -1644,13 +1644,13 @@ resolution.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>bytes</strong> (<em>Int</em><em>(</em><em>)</em>) – TCP or UDP transmit data size</li>
-<li><strong>port</strong> (<em>Int</em><em>(</em><em>min=1</em><em>)</em>) – TCP or UDP port</li>
+<li><strong>port</strong> (<em>Int</em><em>(</em><em>)</em>) – TCP or UDP port</li>
 <li><strong>receiver</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the ip address of the network interface to use to receive data</li>
 <li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – skipd - use sender and receiver instead</li>
 <li><strong>sender</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the ip address of the network interface to use to send data</li>
 <li><strong>skip</strong> (<em>Int</em><em>(</em><em>)</em>) – extra buffers to send and not log before acquisition</li>
 <li><strong>tcp_nodelay</strong> (<em>Bool</em><em>(</em><em>)</em>) – if True, disable Nagle’s algorithm</li>
-<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>min=0.001</em><em>,</em><em>max=inf</em><em>)</em>) – timeout before aborting the test</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>)</em>) – timeout before aborting the test</li>
 <li><strong>udp</strong> (<em>Bool</em><em>(</em><em>)</em>) – use UDP (True) or TCP (False)</li>
 </ul>
 </td>
@@ -1723,7 +1723,7 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -1742,7 +1742,7 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.port">
 <code class="descname">port</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1)</p>
+<dd><p>Int()</p>
 <p>TCP or UDP port</p>
 </dd></dl>
 
@@ -1784,7 +1784,7 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.001,max=inf)</p>
+<dd><p>Float()</p>
 <p>timeout before aborting the test</p>
 </dd></dl>
 
@@ -1823,7 +1823,7 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.network_profiling.ClosedLoopNetworkingTest.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -1885,7 +1885,7 @@ config_path str;</dd>
 <li><strong>cache_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – folder path to contain auto-saved isf file(s)</li>
 <li><strong>com_object</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
 <li><strong>concurrency_support</strong> (<em>Bool</em><em>(</em><em>)</em>) – whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</li>
-<li><strong>connection_timeout</strong> (<em>Float</em><em>(</em><em>min=0.5</em><em>,</em><em>max=inf</em><em>)</em>) – connection timeout in seconds</li>
+<li><strong>connection_timeout</strong> (<em>Float</em><em>(</em><em>)</em>) – connection timeout in seconds</li>
 <li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
 </ul>
 </td>
@@ -1991,7 +1991,7 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.settings.connection_timeout">
 <code class="descname">connection_timeout</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.settings.connection_timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=0.5,max=inf)</p>
+<dd><p>Float()</p>
 <p>connection timeout in seconds</p>
 </dd></dl>
 
@@ -2055,7 +2055,7 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -2092,42 +2092,42 @@ one.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_build_id">
 <code class="descname">ue_build_id</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_build_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ue_build_id’)</p>
+<dd><p>Unicode()</p>
 <p>Build ID of software on the phone</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_esn">
 <code class="descname">ue_esn</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_esn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ue_esn’)</p>
+<dd><p>Unicode()</p>
 <p>Phone ESN</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_imei">
 <code class="descname">ue_imei</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_imei" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ue_imei’)</p>
+<dd><p>Unicode()</p>
 <p>Phone IMEI</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_mode">
 <code class="descname">ue_mode</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ue_mode’)</p>
+<dd><p>Unicode()</p>
 <p>current state of the phone</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.ue_model_number">
 <code class="descname">ue_model_number</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.ue_model_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ue_model_number’)</p>
+<dd><p>Unicode()</p>
 <p>model number code</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.qxdm.QXDM.state.version">
 <code class="descname">version</code><a class="headerlink" href="#ssmdevices.software.qxdm.QXDM.state.version" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(read_only=True,cache=True)</p>
+<dd><p>Unicode()</p>
 <p>QXDM application version</p>
 </dd></dl>
 
@@ -2152,7 +2152,7 @@ points.</p>
 <li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – list of command line arguments to pass into the executable</li>
 <li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – path to the file to run</li>
 <li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
-<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – Timeout (sec) after disconnect is called before killing the process</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>)</em>) – Timeout (sec) after disconnect is called before killing the process</li>
 </ul>
 </td>
 </tr>
@@ -2358,7 +2358,7 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(read_only=True)</p>
+<dd><p>Int()</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
@@ -2372,7 +2372,7 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -2398,7 +2398,7 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(max=inf)</p>
+<dd><p>Float()</p>
 <p>Timeout (sec) after disconnect is called before killing the process</p>
 </dd></dl>
 
@@ -2430,7 +2430,7 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.Netsh.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.Netsh.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -2596,7 +2596,7 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -2666,56 +2666,56 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid">
 <code class="descname">bssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid_1">
 <code class="descname">bssid_1</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid_1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid_2">
 <code class="descname">bssid_2</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid_2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid_3">
 <code class="descname">bssid_3</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid_3" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.bssid_4">
 <code class="descname">bssid_4</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.bssid_4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.channel">
 <code class="descname">channel</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.channel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(command=’ssid’,read_only=True)</p>
+<dd><p>Int()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.description">
 <code class="descname">description</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.description" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’interface’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.encryption">
 <code class="descname">encryption</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.encryption" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2737,13 +2737,13 @@ one.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.radio_status">
 <code class="descname">radio_status</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.radio_status" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’interface’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.radio_type">
 <code class="descname">radio_type</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.radio_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2763,25 +2763,25 @@ one.</p>
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.signal">
 <code class="descname">signal</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.signal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(max=100,command=’ssid’,read_only=True)</p>
+<dd><p>Int()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.ssid">
 <code class="descname">ssid</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.ssid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’ssid’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.state">
 <code class="descname">state</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unicode(command=’interface’,read_only=True)</p>
+<dd><p>Unicode()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.software.windows.WLANStatus.state.transmit_rate_mbps">
 <code class="descname">transmit_rate_mbps</code><a class="headerlink" href="#ssmdevices.software.windows.WLANStatus.state.transmit_rate_mbps" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(command=’ssid’,read_only=True)</p>
+<dd><p>Int()</p>
 </dd></dl>
 
 </dd></dl>

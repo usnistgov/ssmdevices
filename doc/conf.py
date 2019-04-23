@@ -124,26 +124,54 @@ exclude_patterns = []
 autodoc_default_flags = ['inherited-members']
 
 def maybe_skip_member(app, what, name, obj, skip, options):
-    ''' Skip extra cruft from Device.state and Device.settings objects
+    ''' Skip extra cruft from Device.state objects
     '''
-    import traitlets as tl
-
     if skip:
         return True
-
+    from traitlets import TraitType
+    import traitlets as tl
+    import labbench as lb
+    TraitMixIn = lb.Bool.__mro__[1]
     whitelist = []
 
     if name not in whitelist and hasattr(tl.HasTraits, name):
         tlobj = getattr(tl.HasTraits, name)
-        if tlobj == obj\
-           or (hasattr(tlobj,'im_func') and tlobj.__func__ == obj.__func__)\
-           or "'traitlets." in repr(obj):
-            with open('filter_debug.txt', 'a') as f:
-                f.write('skip: '+repr(what)+' with name '+name+' in '+repr(obj)+'\r\n')
+        
+        if (tlobj is obj or (hasattr(tlobj, 'im_func')
+                             and tlobj.__func__ is obj.__func__))\
+            or (name.startswith('class') or name == 'trait_events'):
+            with open('test.txt', 'a') as f:
+                f.write('skip: ' + repr(what) + ' with name ' +
+                        name + ' in ' + repr(obj) + '\r\n')
             return True
         else:
-            with open('filter_debug.txt', 'a') as f:
-                f.write('nearly skip: '+repr(what)+' with name '+name+' in '+repr(obj)+'\r\n')
+            with open('test.txt', 'a') as f:
+                f.write('nearly skip: ' + repr(what) + ' with name ' +
+                        name + ' in ' + repr(obj) + '\r\n')
+
+    # Skip any type definition attribute that's already in TraitType
+    if name not in whitelist and hasattr(TraitType, name):
+        if getattr(TraitType, name) is obj:
+            with open('test.txt', 'a') as f:
+                f.write('skip: ' + repr(what) + ' with name ' +
+                        name + ' in ' + repr(obj) + '\r\n')
+            return True
+        else:
+            with open('test.txt', 'a') as f:
+                f.write('nearly skip: ' + repr(what) + ' with name ' +
+                        name + ' in ' + repr(obj) + '\r\n')
+
+    # Skip any type definition attribute that's already in TraitMixIn
+    if name not in whitelist and hasattr(TraitMixIn, name):
+        if getattr(TraitMixIn, name) is obj:
+            with open('test.txt', 'a') as f:
+                f.write('skip: ' + repr(what) + ' with name ' +
+                        name + ' in ' + repr(obj) + '\r\n')
+            return True
+        else:
+            with open('test.txt', 'a') as f:
+                f.write('nearly skip: ' + repr(what) + ' with name ' +
+                        name + ' in ' + repr(obj) + '\r\n')
 
     return False
 

@@ -62,17 +62,17 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>baud_rate</strong> (<em>Int</em><em>(</em><em>min=1</em><em>)</em>) – </li>
+<li><strong>baud_rate</strong> (<em>Int</em><em>(</em><em>)</em>) – </li>
 <li><strong>data_format</strong> (<em>Bytes</em><em>(</em><em>)</em>) – Data format metadata</li>
 <li><strong>dsrdtr</strong> (<em>Bool</em><em>(</em><em>)</em>) – </li>
-<li><strong>max_queue_size</strong> (<em>Int</em><em>(</em><em>min=1</em><em>)</em>) – Number of bytes to allocate in the data retreival buffer</li>
+<li><strong>max_queue_size</strong> (<em>Int</em><em>(</em><em>)</em>) – Number of bytes to allocate in the data retreival buffer</li>
 <li><strong>parity</strong> (<em>Bytes</em><em>(</em><em>)</em>) – </li>
-<li><strong>poll_rate</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – Data retreival rate from the device (in seconds)</li>
+<li><strong>poll_rate</strong> (<em>Float</em><em>(</em><em>)</em>) – Data retreival rate from the device (in seconds)</li>
 <li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
 <li><strong>rtscts</strong> (<em>Bool</em><em>(</em><em>)</em>) – </li>
-<li><strong>stop_timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – Delay after a call to <cite>stop</cite> before terminating the runloop thread</li>
-<li><strong>stopbits</strong> (<em>Float</em><em>(</em><em>min=1</em><em>,</em><em>max=2</em><em>,</em><em>step=0.5</em><em>)</em>) – </li>
-<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – </li>
+<li><strong>stop_timeout</strong> (<em>Float</em><em>(</em><em>)</em>) – Delay after a call to <cite>stop</cite> before terminating the runloop thread</li>
+<li><strong>stopbits</strong> (<em>Float</em><em>(</em><em>)</em>) – </li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>)</em>) – </li>
 <li><strong>write_termination</strong> (<em>Bytes</em><em>(</em><em>)</em>) – </li>
 <li><strong>xonxoff</strong> (<em>Bool</em><em>(</em><em>)</em>) – </li>
 </ul>
@@ -180,13 +180,13 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.baud_rate">
 <code class="descname">baud_rate</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.baud_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1)</p>
+<dd><p>Int()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -218,7 +218,7 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.max_queue_size">
 <code class="descname">max_queue_size</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.max_queue_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(min=1)</p>
+<dd><p>Int()</p>
 <p>Number of bytes to allocate in the data retreival buffer</p>
 </dd></dl>
 
@@ -231,7 +231,7 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.poll_rate">
 <code class="descname">poll_rate</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.poll_rate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(max=inf)</p>
+<dd><p>Float()</p>
 <p>Data retreival rate from the device (in seconds)</p>
 </dd></dl>
 
@@ -251,20 +251,20 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.stop_timeout">
 <code class="descname">stop_timeout</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.stop_timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(max=inf)</p>
+<dd><p>Float()</p>
 <p>Delay after a call to <cite>stop</cite> before terminating the runloop thread</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.stopbits">
 <code class="descname">stopbits</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.stopbits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(min=1,max=2,step=0.5)</p>
+<dd><p>Float()</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(max=inf)</p>
+<dd><p>Float()</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -313,7 +313,7 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.gps.SwiftNavPiksi.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.gps.SwiftNavPiksi.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -372,7 +372,7 @@ one.</p>
 <li><strong>arguments</strong> (<em>List</em><em>(</em><em>)</em>) – list of command line arguments to pass into the executable</li>
 <li><strong>binary_path</strong> (<em>Unicode</em><em>(</em><em>)</em>) – </li>
 <li><strong>resource</strong> (<em>Unicode</em><em>(</em><em>)</em>) – the data needed to make a connection to a device. its type and format are determined by the subclass implementation</li>
-<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>max=inf</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
+<li><strong>timeout</strong> (<em>Float</em><em>(</em><em>)</em>) – wait time for traffic results before throwing a timeout exception (s)</li>
 </ul>
 </td>
 </tr>
@@ -609,7 +609,7 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.arguments_min">
 <code class="descname">arguments_min</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.arguments_min" title="Permalink to this definition">¶</a></dt>
-<dd><p>Int(read_only=True)</p>
+<dd><p>Int()</p>
 <p>minimum number of extra command line arguments to pass to the executable</p>
 </dd></dl>
 
@@ -622,7 +622,7 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -648,7 +648,7 @@ named <cite>parameter</cite> is redefined to have <cite>default_value=7</cite>.<
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.settings.timeout">
 <code class="descname">timeout</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.settings.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Float(max=inf)</p>
+<dd><p>Float()</p>
 <p>wait time for traffic results before throwing a timeout exception (s)</p>
 </dd></dl>
 
@@ -680,7 +680,7 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.mobile.AndroidDebugBridge.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.mobile.AndroidDebugBridge.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
@@ -837,7 +837,7 @@ After you instantiate the device, you can still change the setting with:</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.concurrency_support">
 <code class="descname">concurrency_support</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.settings.concurrency_support" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether this <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> implementation supports threading</p>
 </dd></dl>
 
@@ -896,7 +896,7 @@ needs the device to be connected.</p>
 <dl class="attribute">
 <dt id="ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected">
 <code class="descname">connected</code><a class="headerlink" href="#ssmdevices.electronics.usb.AcronameUSBHub2x4.state.connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bool(read_only=True)</p>
+<dd><p>Bool()</p>
 <p>whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> instance is connected</p>
 </dd></dl>
 
