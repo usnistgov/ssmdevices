@@ -291,6 +291,7 @@ class WLANStatus(lb.Device):
 
         return ret
 
+    @lb.retry(OSError, 5, delay=0.25)
     def refresh(self):
         ''' Update all states in self.state at the same time. This saves time
             for callback updates to database compared to requesting them
