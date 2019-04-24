@@ -150,28 +150,18 @@ def maybe_skip_member(app, what, name, obj, skip, options):
                         name + ' in ' + repr(obj) + '\r\n')
 
     # Skip any type definition attribute that's already in TraitType
-    if name not in whitelist and hasattr(TraitType, name):
-        if getattr(TraitType, name) is obj:
-            with open('test.txt', 'a') as f:
-                f.write('skip: ' + repr(what) + ' with name ' +
-                        name + ' in ' + repr(obj) + '\r\n')
-            return True
-        else:
-            with open('test.txt', 'a') as f:
-                f.write('nearly skip: ' + repr(what) + ' with name ' +
-                        name + ' in ' + repr(obj) + '\r\n')
-
-    # Skip any type definition attribute that's already in TraitMixIn
-    if name not in whitelist and hasattr(TraitMixIn, name):
-        if getattr(TraitMixIn, name) is obj:
-            with open('test.txt', 'a') as f:
-                f.write('skip: ' + repr(what) + ' with name ' +
-                        name + ' in ' + repr(obj) + '\r\n')
-            return True
-        else:
-            with open('test.txt', 'a') as f:
-                f.write('nearly skip: ' + repr(what) + ' with name ' +
-                        name + ' in ' + repr(obj) + '\r\n')
+    # or TraitMixIn
+    for cls in (TraitType, TraitMixIn):
+        if name not in whitelist and hasattr(cls, name):
+            if getattr(cls, name) is obj:
+                with open('test.txt', 'a') as f:
+                    f.write('skip: ' + repr(what) + ' with name ' +
+                            name + ' in ' + repr(obj) + '\r\n')
+                return True
+            else:
+                with open('test.txt', 'a') as f:
+                    f.write('nearly skip: ' + repr(what) + ' with name ' +
+                            name + ' in ' + repr(obj) + '\r\n')
 
     return False
 
