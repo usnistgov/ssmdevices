@@ -1,5 +1,20 @@
-# DGK 2019-02-01
+'''
+Set p as the path of the directory containing the .csv files output from the acquisition
+script. The calibration table output will be in a file with the same name plus '.csv.xz'.
 
+To make this calibration data part of ssmdevices
+1. Check out a copy of the ssmdevices source
+2. Copy the calibration table output file into:
+    ssmdevices/lib/cal/MiniCircuitsRCDAT_<device serial number>.csv.xz
+   inside the repository.
+3. Add this file to the git repository, commit, push
+
+On reinstall of ssmdevices this calibration should apply automatically whenever you
+connect to this device and specify a frequency. You can verify this by checking debug output,
+which should let you know where it found calibration data.
+
+Dan K 2019-02-01
+'''
 import numpy as np
 import pandas as pd
 from pathlib import Path
