@@ -3,6 +3,7 @@
 from .attenuators import *
 from .gps_simulator import *
 from .networking import *
+from .network_analyzers import *
 from .oscilloscopes import *
 from .power_sensors import *
 from .power_supplies import *
