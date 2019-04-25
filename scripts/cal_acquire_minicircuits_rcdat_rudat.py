@@ -28,8 +28,8 @@ with na, atten:
     # Since we want to collect cal data on (uncalibrated) attenuator settings,
     # we work with atten.state.attenuation_setting instead of
     # atten.state.attenuation (which tries to apply calibration data)
-#    for atten.state.attenuation_setting in np.linspace(0,110,num=441):    
-    for atten.state.attenuation in np.arange(0,101,0.25):
+    for atten.state.attenuation_setting in np.linspace(0,110,num=441):    
+#    for atten.state.attenuation in np.arange(0,101,0.25):
         # The name of the run, based on the attenuation setting
         name=f'{atten.state.attenuation:0.2f}'.replace('.','pt') 
 
