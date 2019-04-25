@@ -6,37 +6,10 @@
 '''
     
 
-from ssmdevices.instruments import MiniCircuitsRCDAT
+from ssmdevices.instruments import MiniCircuitsRCDAT, RohdeSchwarzZMB
 import labbench as lb
 import numpy as np 
 import time
-
-class RohdeSchwarzZMB(lb.VISADevice):
-    ''' A Rohde and Schwarz ZMB network analyzer.
-    '''
-    class state(lb.VISADevice.state):
-        initiate_continuous = lb.Bool(command='INITiate1:CONTinuous:ALL',
-                                      remap={True: 'ON', False: 'OFF'},
-                                      help='')
-        
-    def clear(self):
-        self.write('*CLS')
-        
-    def save_trace_to_csv(self, path, trace=1):
-        ''' Save the specified trace to a csv file on the instrument.
-            Block until the operation is finished.
-        '''
-        # This with block causes the function not to return until
-        # the instrument is done saving data
-        with self.overlap_and_block(timeout=3):
-            self.write(f"MMEM:STOR:TRAC:CHAN {trace}, '{path}'")
-
-    def trigger(self):
-        ''' Initiate a software trigger. To use this, consider setting
-            `state.initiate_continuous = False` so that the instrument waits
-            for this trigger before starting a sweep.
-        '''
-        self.write(':INITiate:IMMediate')
 
 #############################SETUP CONNECTIONS#####################
 atten=MiniCircuitsRCDAT('11604210008', frequency=5.3e9) # Set the attenuator serial number here
