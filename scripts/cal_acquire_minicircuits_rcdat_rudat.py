@@ -1,5 +1,8 @@
 ''' Use a network analyzer to collect calibration data of a MiniCircuits
     attenuator.
+
+    To generate calibration tables for ssmdevices, the results are on the network analyzer and need to be copied into a local folder
+    (by USB stick?).
     
     By Audrey Puls, May 2018
     Updates by Dan K, Feb 2019
@@ -26,7 +29,7 @@ with na, atten:
     # we work with atten.state.attenuation_setting instead of
     # atten.state.attenuation (which tries to apply calibration data)
 #    for atten.state.attenuation_setting in np.linspace(0,110,num=441):    
-    for atten.state.attenuation in np.arange(0,101,5):
+    for atten.state.attenuation in np.arange(0,101,0.25):
         # The name of the run, based on the attenuation setting
         name=f'{atten.state.attenuation:0.2f}'.replace('.','pt') 
 
