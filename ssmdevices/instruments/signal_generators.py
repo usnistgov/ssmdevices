@@ -22,7 +22,7 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
 #        frequency = FLoat 
         frequency_center        = lb.Float     (command=':freq',  min=2e3, max=26.5e9, step=1e3, label='Hz')
         rf_output_power         = lb.Float     (command=':pow',  min=-145, max=20, step=1e-2, label='dBm')
-        rf_output_enable        = lb.Bool      (command ='OUTP')
+        rf_output_enable        = lb.Bool      (command ='OUTP', remap={False: '0', True: '1'})
         
 
     def save_state(self, FileName, num="4"):
