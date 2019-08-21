@@ -539,7 +539,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
         '''
 
         :param port: Trigger port number
-        :param duration: "On" time duration of pulse(in s)
+
         :return: None
         '''
         self.write('OUTPUT:TRIGGER{port}:PULS:IMM'.format(port=port))
