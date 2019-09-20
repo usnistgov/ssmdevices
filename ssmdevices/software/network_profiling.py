@@ -3,12 +3,6 @@
 @author: Dan Kuester <daniel.kuester@nist.gov>,
          Michael Voecks <michael.voecks@nist.gov>
 """
-from future import standard_library
-standard_library.install_aliases()
-
-from builtins import super
-from builtins import str
-
 __all__ = ['IPerfClient','IPerf','IPerfOnAndroid', 'IPerfBoundPair',
            'ClosedLoopTCPBenchmark']
 
@@ -489,13 +483,16 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 sock.send(b'')
 
             with suppress(OSError):
-                while True:
+                t0 = perf_counter()
+                while perf_counter()-t0 < 5:
                     try:
                         buf = sock.recv(bytes_)
                     except socket.timeout:
                         break
                     if len(buf) == 0:
                         break
+                else:
+                    self.logger.warning('failed to flush socket before closing')
             
             with suppress_matching_arg0(OSError, arg0=10057),\
                  suppress_matching_arg0(OSError, arg0='timed out'):
@@ -778,6 +775,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     starts.append(t0)
                     finishes.append(t1)
 
+                
                 self.logger.debug(f'tested {count} x {bytes_} byte buffers')
             except lb.ThreadEndedByMaster:
                 self.logger.debug(f'{self.__class__.__name__}() ended by master thread')
@@ -785,10 +783,10 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             except BaseException:
                 except_event.set()
                 raise
-    
+
             return {'t_rx_start': starts,
                     't_rx_end': finishes}
-            
+
         def sender():
             ''' This runs in the receive thread, with the socket connected.
             '''
@@ -839,6 +837,9 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     t1 = perf_counter()
                     if ex is not None:
                         raise ex
+                    
+                    if i%20 == 0:
+                        lb.logger.debug(f'tx {i}')
 
                     start_timestamps.append(t0)
                     finish_timestamps.append(t1)
