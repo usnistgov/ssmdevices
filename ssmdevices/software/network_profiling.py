@@ -3,6 +3,11 @@
 @author: Dan Kuester <daniel.kuester@nist.gov>,
          Michael Voecks <michael.voecks@nist.gov>
 """
+from future import standard_library
+standard_library.install_aliases()
+
+from builtins import super
+from builtins import str
 
 __all__ = ['IPerfClient','IPerf','IPerfOnAndroid', 'IPerfBoundPair',
            'ClosedLoopTCPBenchmark']
@@ -482,8 +487,8 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             
             with suppress_matching_arg0(OSError, arg0=10057):
                 sock.send(b'')
-            
-            with suppress_matching_arg0(OSError, arg0=10057):
+
+            with suppress(OSError):
                 while True:
                     try:
                         buf = sock.recv(bytes_)
@@ -502,6 +507,12 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
     def _open_sockets(self):
         ''' Connect the supplied client socket to the server.
         '''
+        if self.settings.tcp_nodelay and self.settings.bytes < self.mss():
+            raise ValueError(f'with tcp_nodelay enabled, set bytes at least as large as the MSS ({self.mss()})')
+
+        if self.settings.receiver not in (self.settings.server, self.settings.client):
+            raise ValueError(f'the receiver setting must match the client or server interface name')
+        
         global _tcp_port_offset
         
         server_ip = get_ipv4_address(self.settings.server)
@@ -564,34 +575,40 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
                 # Do the connect                
                 sock.connect((server_ip, port))
+            
+            # This exception needs to come first, because it is a subclass
+            # of OSError (at least on windows)
+            except socket.timeout:
+                if sock is not None:
+                    self._close_sockets(sock, bytes_=bytes_)
+                msg = f'client socket timed out in connection attempt to the server at {server_ip}:{port}'
+                raise ConnectionRefusedError(msg)                
+                
+            # Certain "port busy" errors are raised as OSError. Check whether
+            # they match a whitelist of known port errors to map into port busy
             except OSError as e:
                 # Windows-specific errors
                 if hasattr(e, 'winerror') and e.winerror in self.port_winerrs:
                     self.logger.debug(f'port {port} is inaccessible')
                     raise PortBusyError
                 else:
-                    raise                
-            except socket.timeout:
-                if sock is not None:
-                    self._close_sockets(sock, bytes_=bytes_)
-                msg = f'client socket timed out in connection attempt to the server at {server_ip}:{port}'
-                raise ConnectionRefusedError(msg)
+                    raise
+
+            # For everything else, we still need to clean up
             except BaseException:
                 if sock is not None:
                     self._close_sockets(sock, bytes_=bytes_)
                 raise
 
             client_done.set()
-            try:
-                server_done.wait(timeout)
-            except:
+            if not server_done.wait(timeout):
                 self._close_sockets(sock, bytes_=bytes_)
-                raise
 
             return sock
 
         def server(listen_sock):
             conn = None
+            ex = None
             # Try to get a connection
             t0 = perf_counter()
 #            ex = TimeoutError('received no attempted client connections')
@@ -624,30 +641,38 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                             conn = None
                 else:
                     raise TimeoutError('no connection attempt seen from the expected client')
-            except BaseException as e:
-                self.logger.debug(f'server exception: {e}')
+            except BaseException as e:                
+                listen_sock.settimeout(timeout)
+                ex = e
+            else:
                 listen_sock.settimeout(timeout)
                 
-                return
+                # Basic flags
+                conn.settimeout(timeout)            
+    #            conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, tcp_nodelay)        
+               
+                # Set and verify the send buffer size
+                conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, bytes_)
+                bytes_actual = conn.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF)
+                if bytes_actual != bytes_:
+                    msg = f'server buffer size is {bytes_actual}, but requested {self.bytes}'
+                    raise OSError(msg)
 
-            listen_sock.settimeout(timeout)
-            # Basic flags
-            conn.settimeout(timeout)            
-#            conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, tcp_nodelay)        
-           
-            # Set and verify the send buffer size
-            conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, bytes_)
-            bytes_actual = conn.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF)
-            if bytes_actual != bytes_:
-                msg = f'server buffer size is {bytes_actual}, but requested {self.bytes}'
-                raise OSError(msg)
-
-            try:
-                client_done.wait(timeout)
-            except:
-                raise
+            
+            if not client_done.wait(timeout):
+                # Suppress the server exception if the client is already
+                # raising one
+                if ex is not None:
+                    self.logger.debug(f'server connection exception: {repr(ex)} (suppressed by client exception)')                
+                    ex = None
+                if conn is not None:
+                    self._close_sockets(conn, bytes_=bytes_)                
+                    
             server_done.set()
+
+            if ex is not None:
+                raise ex
 
             return conn
 
@@ -832,14 +857,9 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         return lb.concurrently(sender, receiver, traceback_delay=True)
             
     def acquire(self, count):
-        if self.settings.tcp_nodelay and self.settings.bytes < self.mss():
-            raise ValueError(f'with tcp_nodelay enabled, set bytes at least as large as the MSS ({self.mss()})')
-
-        if self.settings.receiver not in (self.settings.server, self.settings.client):
-            raise ValueError(f'the receiver setting must match the client or server interface name')
-
         t0 = perf_counter()
-        # Make sure everything is started and connected        
+        
+        # Connect all the sockets   
         server_sock, client_sock, listener = self._open_sockets()
 
         try:
@@ -879,31 +899,16 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
     
     def mtu(self):
         return psutil.net_if_stats()[self.settings.receiver].mtu
-    
-    def wait_for_connection(self, timeout):
-        if self.settings.tcp_nodelay and self.settings.bytes < self.mss():
-            raise ValueError(f'with tcp_nodelay enabled, set bytes at least as large as the MSS ({self.mss()})')
 
-        if self.settings.receiver not in (self.settings.server, self.settings.client):
-            raise ValueError(f'the receiver setting must match the client or server interface name')
-
-        server_ip = get_ipv4_address(self.settings.server)
-        client_ip = get_ipv4_address(self.settings.client)
-        port = self.settings.port
-
-        # Make sure everything is started and connected
-        self._start_server(server_ip, port)
+    def wait_for_interfaces(self, timeout):
+        errors = (TimeoutError,ConnectionRefusedError)
         
         t0 = time.perf_counter()
-        while time.perf_counter()-t0 <= timeout:
-            try:
-                s1, s2 = self._open_sockets(server_ip, client_ip, port)          
-            except (TimeoutError, ConnectionError):
-                continue
-            else:
-                break             
-        else:
-            raise TimeoutError('timeout before successful connection')
+        socks = lb.until_timeout(errors, timeout)(self._open_sockets)()
+        self._close_sockets(*socks)
+        elapsed = perf_counter()-t0
+        self.logger.debug(f'interfaces ready after {elapsed:0.2f}s')
+        return elapsed
 
 #class ReceiveUDPWorker(ReceiveWorker):   
 #    def open(self):
