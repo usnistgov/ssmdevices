@@ -3,11 +3,6 @@
 @author: Dan Kuester <daniel.kuester@nist.gov>,
          Michael Voecks <michael.voecks@nist.gov>
 """
-from future import standard_library
-standard_library.install_aliases()
-
-from builtins import super
-from builtins import str
 
 __all__ = ['IPerfClient','IPerf','IPerfOnAndroid', 'IPerfBoundPair',
            'ClosedLoopTCPBenchmark']
@@ -381,7 +376,7 @@ def get_ipv4_address(iface):
         If the interface does not exist, the medium is disconnected, or there
         is no IP address associated with the interface, raise `ConnectionError`.
     '''
-    addrs = psutil.net_if_addrs()    
+    addrs = psutil.net_if_addrs()
     
     # Check whether the interface exists
     if iface not in addrs:
@@ -411,9 +406,9 @@ class ClosedLoopBenchmark(lb.Device):
         server = lb.Unicode(help='the name of the network interface that will send data')
         client = lb.Unicode(help='the name of the network interface that will receive data')
         receiver = lb.Unicode(help='the name of the network interface that will send data')
-        port = lb.Int(5555,
-                      min=1,
-                      help='TCP or UDP port')
+        port = lb.Int(0,
+                      min=0,
+                      help='TCP or UDP port for networking, or 0 to let the operating system choose')
         resource = lb.Unicode(help='skipd - use sender and receiver instead')        
         timeout = lb.Float(2,
                            min=1e-3,
@@ -511,7 +506,6 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         
         server_ip = get_ipv4_address(self.settings.server)
         client_ip = get_ipv4_address(self.settings.client)        
-        port = self.settings.port + _tcp_port_offset       
         listen_sock = None
         
         timeout = self.settings.timeout
@@ -521,13 +515,14 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         client_done = Event()
         server_done = Event()
 
-        def listener():
+        def listener(port):
             ''' Run a listener at the socket
             '''
+            
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(timeout)
-#                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         
                 # Set the size of the buffer for this socket
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, bytes_)
@@ -536,7 +531,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     msg = f'recv buffer size is {bufsize}, but need at least {self.settings.bytes}'
                     raise OSError(msg)       
                 sock.bind((server_ip, port))
-        
+
                 # start listening
                 sock.listen(5)
             except OSError as e:
@@ -545,18 +540,18 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 else:
                     raise
 
-#            self.logger.debug(f'listening on port {port}')
             return sock
 
-        def client():  
-            sock = None            
+        def client(listen_sock):
+            port = listen_sock.getsockname()[1]
+            sock = None
 
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(timeout)
 
                 # Basic flags
-#                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, tcp_nodelay)        
                
                 # Set and verify the send buffer size
@@ -595,9 +590,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
             return sock
 
-        def server():
-            global listen_sock
-
+        def server(listen_sock):
             conn = None
             # Try to get a connection
             t0 = perf_counter()
@@ -605,7 +598,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             try:
                 while perf_counter()-t0 < timeout:
                     try:
-                        listen_sock.settimeout(timeout-(perf_counter()-t0))
+                        listen_sock.settimeout(0.01+timeout-(perf_counter()-t0))
                         conn, (other_ip, _) = listen_sock.accept()
                     except socket.timeout:
                         continue
@@ -651,37 +644,47 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 raise OSError(msg)
 
             try:
-                client_done.wait(timeout)                
+                client_done.wait(timeout)
             except:
                 raise
             server_done.set()
 
             return conn
 
-        retries=100
-        @lb.retry(PortBusyError, retries)
-        def connect_with_retries():
-            global _tcp_port_offset, port, listen_sock
+        def connect():
+            global _tcp_port_offset, listen_sock
 
-            port = self.settings.port + _tcp_port_offset            
-            listen_sock = listener()
+            if self.settings.port != 0:
+                port = self.settings.port + _tcp_port_offset
+            else:
+                port = 0
+
+            listen_sock = listener(port)
 
             # Keep trying on many ports
             try:
-                ret = lb.concurrently(server, client)
+                ret = lb.concurrently(lb.Call(server, listen_sock=listen_sock),
+                                      lb.Call(client, listen_sock=listen_sock))
             except:
                 self._close_sockets(listen_sock)
                 raise
             finally:
-                _tcp_port_offset = (_tcp_port_offset+1)%5000
+                if self.settings.port != 0:
+                    _tcp_port_offset = (_tcp_port_offset+1)%5000
+
             ret['listener'] = listen_sock
             return ret
 
         try:
             t0 = perf_counter()
-            ret = connect_with_retries()
-            self.logger.debug(f'server {server_ip}:{port} and client {client_ip}:{port} connected in {perf_counter()-t0:02f}s')
-            port = self.settings.port + _tcp_port_offset
+            
+            if self.settings.port == 0:
+                ret = connect()
+            else:
+                # Allow chances to try other ports
+                ret = lb.retry(PortBusyError, 100)(connect)()
+            p = ret['client'].getsockname()[1]
+            self.logger.debug(f'server {server_ip}:{p} connected to client {client_ip}:{p} in {perf_counter()-t0:02f}s')
         except PortBusyError:
             raise ConnectionError(r'failed to connect on {retries} ports')
 
@@ -828,13 +831,12 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
         return lb.concurrently(sender, receiver, traceback_delay=True)
             
-    def acquire(self, count, mss=1500-40):
-        if self.settings.tcp_nodelay and self.settings.bytes < mss:
-            raise ValueError(f'with tcp_nodelay enabled, set bytes at least as large as the MSS ({mss})')
+    def acquire(self, count):
+        if self.settings.tcp_nodelay and self.settings.bytes < self.mss():
+            raise ValueError(f'with tcp_nodelay enabled, set bytes at least as large as the MSS ({self.mss()})')
 
         if self.settings.receiver not in (self.settings.server, self.settings.client):
             raise ValueError(f'the receiver setting must match the client or server interface name')
-
 
         t0 = perf_counter()
         # Make sure everything is started and connected        
@@ -871,10 +873,16 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                             'timestamp': timestamp[1:-1]})
 
         return ret.set_index('timestamp')
-
+    
+    def mss(self):
+        return self.mtu()-40
+    
+    def mtu(self):
+        return psutil.net_if_stats()[self.settings.receiver].mtu
+    
     def wait_for_connection(self, timeout):
-        if self.settings.tcp_nodelay and self.settings.bytes < mss:
-            raise ValueError(f'with tcp_nodelay enabled, set bytes at least as large as the MSS ({mss})')
+        if self.settings.tcp_nodelay and self.settings.bytes < self.mss():
+            raise ValueError(f'with tcp_nodelay enabled, set bytes at least as large as the MSS ({self.mss()})')
 
         if self.settings.receiver not in (self.settings.server, self.settings.client):
             raise ValueError(f'the receiver setting must match the client or server interface name')
@@ -1082,7 +1090,7 @@ if __name__ == '__main__':
     net = ClosedLoopTCPBenchmark(server='WLAN_AP_DUT',
                                  client='WLAN_Client_DUT',
                                  receiver='WLAN_Client_DUT',
-                                 port=5555,
+                                 port=0,
                                  bytes=4096*4,#1460*10,
                                  tcp_nodelay=True)
 
