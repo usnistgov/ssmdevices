@@ -887,7 +887,8 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         duration = ret.t_rx_end.iloc[1:-1]-ret.t_rx_start.iloc[1:-1]
         ret = pd.DataFrame({'bits_per_second': 8*self.settings.bytes/duration,
                             'duration': duration,
-                            'start_offset': ret.t_rx_start.iloc[1:-1]-ret.t_tx_start.iloc[1:-1],
+                            'delay': ret.t_rx_start.iloc[1:-1]-ret.t_tx_start.iloc[1:-1],
+                            'queuing_duration': ret.t_tx_end.iloc[1:-1]-ret.t_tx_start.iloc[1:-1],
                             'timestamp': timestamp[1:-1]})
 
         return ret.set_index('timestamp')
