@@ -5,6 +5,7 @@ import labbench as lb
 import re,time
 import subprocess as sp
 import psutil
+import logging
 
 class WLANException(lb.DeviceException):
     pass
@@ -135,6 +136,9 @@ class WLANStatus(lb.Device):
         except ImportError:
             raise ImportError('install pywifi to use WLANStatus: pip install pywifi')
         
+        logger = logging.getLogger('pywifi')
+        logger.propagate = False
+
         # Reset the level that has been changed by pywifi
         lb.logger.setLevel(level)
         
@@ -243,21 +247,25 @@ class WLANStatus(lb.Device):
     
     @state.signal.getter
     def __(self):
-        self.backend.scan()
-
-        t0 = time.perf_counter()
-        while time.perf_counter()-t0 < 1.:
-            if self.state.state != 'scanning':
-                break
-            lb.sleep(.02)
-        else:
-            raise TimeoutError('timeout while scanning for ssid signal strength')
-        
-        for result in self.backend.scan_results():
-            if result.ssid == self.settings.ssid:
-                return float(result.signal)
-        else:
-            return None
+        def attempt():
+            self.backend.scan()
+    
+            t0 = time.perf_counter()
+            while time.perf_counter()-t0 < 1.:
+                if self.state.state != 'scanning':
+                    break
+                lb.sleep(.02)
+            else:
+                raise TimeoutError('timeout while scanning for ssid signal strength')
+            
+            for result in self.backend.scan_results():
+                if result.ssid == self.settings.ssid:
+                    return float(result.signal)
+            else:
+                lb.sleep(.02)
+                raise TimeoutError('interface reported no signal strength')
+                
+        return lb.until_timeout(TimeoutError, self.settings.timeout)(attempt)()
 
     @state.description.getter
     def __(self):
@@ -265,21 +273,25 @@ class WLANStatus(lb.Device):
         
     @state.channel.getter
     def __(self):
-        self.backend.scan()
-
-        t0 = time.perf_counter()
-        while time.perf_counter()-t0 < 1.:
-            if self.state.state != 'scanning':
-                break
-            lb.sleep(.02)
-        else:
-            raise TimeoutError('timeout while scanning for ssid signal strength')
-        
-        for result in self.backend.scan_results():
-            if result.ssid == self.settings.ssid:
-                return float(result.freq)*1000
-        else:
-            return None        
+        def attempt():
+            self.backend.scan()
+    
+            t0 = time.perf_counter()
+            while time.perf_counter()-t0 < 1.:
+                if self.state.state != 'scanning':
+                    break
+                lb.sleep(.02)
+            else:
+                raise TimeoutError('timeout while scanning for ssid signal strength')
+            
+            for result in self.backend.scan_results():
+                if result.ssid == self.settings.ssid:
+                    return float(result.freq)*1000
+            else:
+                lb.sleep(.02)
+                raise TimeoutError('interface reported no channel frequency')
+                
+        return lb.until_timeout(TimeoutError, self.settings.timeout)(attempt)()
 
     def refresh(self):
         for attr in self.state.traits().keys():
