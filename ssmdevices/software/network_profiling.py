@@ -838,9 +838,6 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     if ex is not None:
                         raise ex
                     
-                    if i%20 == 0:
-                        lb.logger.debug(f'tx {i}')
-
                     start_timestamps.append(t0)
                     finish_timestamps.append(t1)
 
