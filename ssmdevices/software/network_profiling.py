@@ -415,10 +415,8 @@ class ClosedLoopBenchmark(lb.Device):
         timeout = lb.Float(2,
                            min=1e-3,
                            help='timeout before aborting the test')
-        skip = lb.Int(2, min=0,
-                      help='extra buffers to send and not log before acquisition')
         tcp_nodelay = lb.Bool(True,
-                              help='if True, disable Nagle\'s algorithm')
+                              help='set True to disable Nagle\'s algorithm')
         sync_each = lb.Bool(False,
                               help='synchronize the start times of the send and receive threads for each buffer at the cost of throughput')
 
@@ -768,7 +766,6 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         # Pull some parameters and thread sync objects into the namespace
         timeout = self.settings.timeout
         bytes_ = buffer_size
-        skip = self.settings.skip
         sync = self.settings.sync_each
         rx_ready = Event()
         tx_ready = Event()
@@ -1017,183 +1014,6 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         elapsed = perf_counter()-t0
         self.logger.debug(f'interfaces ready after {elapsed:0.2f}s')
         return elapsed
-
-#class ReceiveUDPWorker(ReceiveWorker):   
-#    def open(self):
-#        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#        sock.settimeout(self.timeout)
-#        conn = None
-#
-#        try:
-#            # Avoid some already in use errors if we try to reuse the socket
-#            # soon after closing it
-#            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-#            
-#            # The receive buffer for this socket (under the hood in the OS)
-#            sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.bytes)
-#            bufsize = sock.getsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF)
-#            if bufsize < self.bytes:
-#                msg = f'recv buffer size is {bufsize}, but need at least {self.bytes}'
-#                raise OSError(msg)
-#
-#            sock.bind((self.receiver, self.port))
-#
-#            return sock
-#        except:
-#            try:
-#                if conn is not None:
-#                    conn.close()
-#            except:
-#                sock.close()
-#            raise
-#        
-#    def run(self, count):
-#        self.bad_data = []
-#        starts = [None]*count
-#        finishes = [None]*count
-#        received = [None]*count            
-#        
-#        with self.open() as self.sock:
-#            self.logger.info('connected')
-#            # Receive the data
-#            for self.i in range(self.skip+count):
-#                # Bail if the sender hit an exception
-#                if self.except_event.is_set():
-#                    raise lb.ThreadEndedByMaster()
-#
-#                if self.sync:
-#                    self.trigger.wait()
-#    
-#                started = perf_counter()
-#    
-#                # UDP datagrams seem to come atomically. One simple recv.
-#                data, addr = self.sock.recvfrom(self.bytes)
-#                finished = perf_counter()
-#    
-#                if self.sender != addr[0]:
-#                    raise Exception(f"udp sender is {addr[0]}, but expected {self.sender}")
-#    
-#                try:
-#                    i_sent = self.sender_obj.sent.pop(data)
-#                except KeyError:
-#                    self.bad_data.append(data)
-#
-#                if self.i>=self.skip:
-#                    starts[i_sent-self.skip] = started
-#                    finishes[i_sent-self.skip] = finished
-#                    received[i_sent-self.skip] = data
-#
-#            self.logger.info('done')
-#                    
-#        error_count = [bit_errors(data) for data in received]
-#
-#        return {'t_rx_start': starts,
-#                't_rx_end': finishes,
-#                'bit_error_count':  error_count}
-#
-#
-#class SendUDPWorker(SocketWorker):    
-#    def open(self):
-#        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#        sock.settimeout(self.timeout)
-#        
-#        try:
-#            # The OS-level transmit buffer size for this socket.
-#            sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF,
-#                            self.bytes)
-#            bytes_actual = sock.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF)
-#            if bytes_actual != self.bytes:
-#                msg = f'send buffer size is {bytes_actual}, but requested {self.bytes}'
-#                raise OSError(msg)
-#
-#            sock.bind((self.sender, 0))
-#
-#            return sock
-#        except:
-#            sock.close()
-#            raise
-#
-#    def run(self, count):
-#        timestamps = []
-#        start = None
-#
-#        with self.open() as self.sock:             
-#            for self.i in range(self.skip+count):
-#                # Generate the next data to send
-#                data = np.random.bytes(self.bytes) # b'\x00'*size
-#                self.sent[data] = self.i
-#                
-#                # Leave now if the server bailed
-#                if self.except_event.is_set():
-#                    raise lb.ThreadEndedByMaster()                
-#    
-#                # Throw any initial samples as configured
-#                if self.i>=self.skip:
-#                    if self.i==self.skip:
-#                        start = datetime.datetime.now()
-#                    timestamps.append(perf_counter())
-#    
-#                if self.sync:
-#                    self.trigger.wait()
-#                self.sock.sendto(data, (self.receiver, self.port))
-#                    
-#                lb.sleep(0.)
-#
-#        return {'start': start,
-#                't_tx_start': timestamps,
-#                'bytes': self.bytes}
-#
-#
-#class ClosedLoopUDPBenchmark(ClosedLoopBenchmark):
-#    ''' Profile closed-loop UDP or TCP traffic between two network interfaces
-#        on the computer. Takes advantage of the shared clock to provide
-#        one-way traffic delay with uncertainty on the order of the system time
-#        resolution.
-#        
-#        WARNING: This does not work right yet.
-#    '''
-#
-##    @lb.retry((ConnectionError,TimeoutError), 2)
-#    def acquire(self, count, mss=1500-40):
-#        self.sent = {}
-#        
-##        if self.settings.sync:
-##            trigger = 
-##        else:
-##            trigger = None
-#
-#        # Parameters for the client and server
-#        events = {'except_event': Event(),
-#                  'rx_ready': Event(),
-#                  'tx_ready': Event(),
-#                  'sync': self.settings.sync_each}
-#
-#        receiver = ReceiveTCPWorker(self, suppress=True, **events)
-#        sender = SendTCPWorker(self, **events)
-#
-#        ret = lb.concurrently(lb.Call(sender, count),
-#                              lb.Call(receiver, count, sender),
-#                              traceback_delay=True)
-#
-#        start = ret.pop('start', None)
-#
-#        if start is None:
-#            raise ConnectionError('send failed')
-#
-#        ret = pd.DataFrame(ret)
-#        dt = pd.TimedeltaIndex(ret.t_tx_start, unit='s')
-#
-#
-#        ret = pd.DataFrame({'bytes_sent': ret.bytes,
-#                            'duration': ret.t_rx_end - ret.t_rx_start,
-##                            'send_duration': send_duration,
-##                            'receive_duration': receive_duration,
-##                            'delay': delay,
-#                            'start_offset': ret.t_rx_start-ret.t_tx_start,
-##                            'finish_delay': ret.t_rx_end-ret.t_tx_end,
-#                            'timestamp': dt+start})
-#
-#        return ret.set_index('timestamp')
 
 # Examples
 # ClosedLoopNetworkingTest example
