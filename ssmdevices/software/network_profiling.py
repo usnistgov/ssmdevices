@@ -426,6 +426,10 @@ class ClosedLoopBenchmark(lb.Device):
                        server=self.settings.server,
                        client=self.settings.client)
                
+    def disconnect(self):
+        if self.is_running():
+            self.stop_traffic()
+               
     def start_traffic(self, buffer_size, count=None, duration=None):
         ''' Start a background thread that runs a one-way traffic test.
         
@@ -462,6 +466,7 @@ class ClosedLoopBenchmark(lb.Device):
             ret = self._background_queue.get(timeout=self.settings.timeout)
         except Empty:
             raise TimeoutError('no response from traffic threads')
+        self.logger.debug('background traffic stopped')
         
         if isinstance(ret, BaseException):
             raise ret
@@ -514,6 +519,7 @@ class PortBusyError(ConnectionError):
 class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
     _server = None
     port_winerrs = (10013, 10048)
+    conn_winerrs = (10051,)
     
     def _close_sockets(self, *sockets, bytes_=0):           
         for sock in sockets:
@@ -621,12 +627,17 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             # Certain "port busy" errors are raised as OSError. Check whether
             # they match a whitelist of known port errors to map into port busy
             except OSError as e:
+                msg = f'connection failed between server {server_ip} and client {client_ip}'
                 # Windows-specific errors
                 if hasattr(e, 'winerror') and e.winerror in self.port_winerrs:
-                    self.logger.debug(f'port {port} is inaccessible')
-                    raise PortBusyError
+                    self.logger.debug(msg)
+                    raise PortBusyError(msg)
+                elif hasattr(e, 'winerror') and e.winerror in self.conn_winerrs:
+                    self.logger.debug(msg)
+                    raise ConnectionError(msg)
                 else:
                     raise
+                
 
             # For everything else, we still need to clean up
             except BaseException:
