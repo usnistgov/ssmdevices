@@ -419,6 +419,8 @@ class ClosedLoopBenchmark(lb.Device):
                               help='set True to disable Nagle\'s algorithm')
         sync_each = lb.Bool(False,
                               help='synchronize the start times of the send and receive threads for each buffer at the cost of throughput')
+        
+        delay = lb.Float(0, min=0, help='wait time between sending buffers')
 
     def __repr__(self):
         return "{name}(server='{server}',client='{client}')"\
@@ -519,32 +521,33 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
     _server = None
     port_winerrs = (10013, 10048)
     conn_winerrs = (10051,)
-    
+
     def _close_sockets(self, *sockets, bytes_=0):           
         for sock in sockets:
-            sock.settimeout(0.1)
-            
-            with suppress_matching_arg0(OSError, arg0=10057):
-                sock.send(b'')
-
-            with suppress(OSError):
-                t0 = perf_counter()
-                while perf_counter()-t0 < 5:
-                    try:
-                        buf = sock.recv(bytes_)
-                    except socket.timeout:
-                        break
-                    if len(buf) == 0:
-                        break
-                else:
-                    self.logger.warning('failed to flush socket before closing')
-            
-            with suppress_matching_arg0(OSError, arg0=10057),\
-                 suppress_matching_arg0(OSError, arg0='timed out'):
-                sock.shutdown(socket.SHUT_RDWR)
-            
-            with suppress_matching_arg0(OSError, arg0=10057):
-                sock.close()
+            with suppress_matching_arg0(OSError, arg0=10038):
+                sock.settimeout(0.1)
+                
+                with suppress_matching_arg0(OSError, arg0=10057):
+                    sock.send(b'')
+    
+                with suppress(OSError):
+                    t0 = perf_counter()
+                    while perf_counter()-t0 < 5:
+                        try:
+                            buf = sock.recv(bytes_)
+                        except socket.timeout:
+                            break
+                        if len(buf) == 0:
+                            break
+                    else:
+                        self.logger.warning('failed to flush socket before closing')
+                
+                with suppress_matching_arg0(OSError, arg0=10057),\
+                     suppress_matching_arg0(OSError, arg0='timed out'):
+                    sock.shutdown(socket.SHUT_RDWR)
+                
+                with suppress_matching_arg0(OSError, arg0=10057):
+                    sock.close()
 
     def _open_sockets(self, buffer_size):
         ''' Connect the supplied client socket to the server.
@@ -777,6 +780,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         timeout = self.settings.timeout
         bytes_ = buffer_size
         sync = self.settings.sync_each
+        delay = self.settings.delay
         rx_ready = Event()
         tx_ready = Event()
         
@@ -831,7 +835,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     try:
                         remaining -= recv_sock.recv_into(buf[-remaining:], remaining)
                     except socket.timeout as e:
-                        raise TimeoutError(' '.join(e.args))
+                        raise TimeoutError(' '.join(e.args))            
                 return t0, t1
 
             try:
@@ -887,12 +891,14 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 check_status()
                 try:                    
                     send_sock.sendall(data)
+                    if delay > 0:
+                        time.sleep(delay)                    
                     t1 = perf_counter()
                 except socket.timeout:
                     ex = IOError('timed out attempting to send data')
                 else:
                     ex = None
-                    
+
                 return t0,t1,ex
 
             try:
@@ -940,8 +946,9 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             try:
                 self._background_queue.put(lb.concurrently(sender, receiver, traceback_delay=True))
             except BaseException as e:
-                self.logger.warning(f'background thread exception - traceback: {traceback.format_exc()}')
-                self._background_queue.put(e)
+                if self._background_event.is_set():
+                    self.logger.warning(f'background thread exception - traceback: {traceback.format_exc()}')
+                    self._background_queue.put(e)
                 self._close_sockets(send_sock, recv_sock, listen_sock, bytes_=buffer_size)
             finally:
                 self.logger.debug('background thread finished')
