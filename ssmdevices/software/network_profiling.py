@@ -466,7 +466,6 @@ class ClosedLoopBenchmark(lb.Device):
             ret = self._background_queue.get(timeout=self.settings.timeout)
         except Empty:
             raise TimeoutError('no response from traffic threads')
-        self.logger.debug('background traffic stopped')
         
         if isinstance(ret, BaseException):
             raise ret
@@ -883,6 +882,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             def single():
                 do_sync()
                 t0 = perf_counter()
+                t1 = t0
                 data = np.random.bytes(bytes_)
                 check_status()
                 try:                    
@@ -943,8 +943,8 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 self.logger.warning(f'background thread exception - traceback: {traceback.format_exc()}')
                 self._background_queue.put(e)
                 self._close_sockets(send_sock, recv_sock, listen_sock, bytes_=buffer_size)
-            else:
-                self.logger.warning('background thread ended successfully')
+            finally:
+                self.logger.debug('background thread finished')
 
         if background:
             thread = Thread(target=background_thread)
