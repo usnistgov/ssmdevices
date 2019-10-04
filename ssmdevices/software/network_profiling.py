@@ -431,7 +431,7 @@ class ClosedLoopBenchmark(lb.Device):
     def disconnect(self):
         if self.is_running():
             self.stop_traffic()
-               
+
     def start_traffic(self, buffer_size, count=None, duration=None):
         ''' Start a background thread that runs a one-way traffic test.
         
@@ -524,30 +524,32 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
     def _close_sockets(self, *sockets, bytes_=0):           
         for sock in sockets:
-            with suppress_matching_arg0(OSError, arg0=10038):
+            try:
                 sock.settimeout(0.1)
+            except OSError:
+                continue
                 
-                with suppress_matching_arg0(OSError, arg0=10057):
-                    sock.send(b'')
-    
-                with suppress(OSError):
-                    t0 = perf_counter()
-                    while perf_counter()-t0 < 5:
-                        try:
-                            buf = sock.recv(bytes_)
-                        except socket.timeout:
-                            break
-                        if len(buf) == 0:
-                            break
-                    else:
-                        self.logger.warning('failed to flush socket before closing')
-                
-                with suppress_matching_arg0(OSError, arg0=10057),\
-                     suppress_matching_arg0(OSError, arg0='timed out'):
-                    sock.shutdown(socket.SHUT_RDWR)
-                
-                with suppress_matching_arg0(OSError, arg0=10057):
-                    sock.close()
+            with suppress_matching_arg0(OSError, arg0=10057):
+                sock.send(b'')
+
+            with suppress(OSError):
+                t0 = perf_counter()
+                while perf_counter()-t0 < 5:
+                    try:
+                        buf = sock.recv(bytes_)
+                    except socket.timeout:
+                        break
+                    if len(buf) == 0:
+                        break
+                else:
+                    self.logger.warning('failed to flush socket before closing')
+            
+            with suppress_matching_arg0(OSError, arg0=10057),\
+                 suppress_matching_arg0(OSError, arg0='timed out'):
+                sock.shutdown(socket.SHUT_RDWR)
+            
+            with suppress_matching_arg0(OSError, arg0=10057):
+                sock.close()
 
     def _open_sockets(self, buffer_size):
         ''' Connect the supplied client socket to the server.
@@ -763,6 +765,9 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
     def _run(self, client_sock, server_sock, buffer_size,
              duration=None, count=None, end_event=None):
+        if duration is count is end_event is None:
+            raise ValueError('must pass at least one of duration, count, and end_event to specify end condition')
+        
         if self.settings.tcp_nodelay and buffer_size < self.mss():
             raise ValueError(f'with tcp_nodelay enabled, set buffer_size at least as large as the MSS ({self.mss()})')
 
@@ -783,7 +788,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         delay = self.settings.delay
         rx_ready = Event()
         tx_ready = Event()
-        
+
         if end_event is None:
             end_event = Event()
 
@@ -798,11 +803,11 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 raise lb.ThreadEndedByMaster()
                 
         def traffic_done(i):
-            if end_event is not None and end_event.is_set():
+            if background and end_event.is_set():
                 return True
-            elif count is not None and i >= count:
+            elif (count is not None) and i >= count:
                 return True
-            elif duration is not None and perf_counter() - t_start >= duration:
+            elif (duration is not None) and perf_counter() - t_start >= duration:
                 return True
             else:
                 return False
@@ -811,46 +816,54 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             buf = bytearray(bytes_)
             starts = []
             finishes = []
+            splits = []
 
             def do_sync():
                 check_status()                
                 if sync:
+                    t_sync = perf_counter()                    
                     rx_ready.set()
                     while not tx_ready.is_set():
-                        pass
+                        if perf_counter()-t_sync > timeout:
+                            except_event.set()
+                            raise TimeoutError('timeout waiting for sender sync')
                     tx_ready.clear()
 
             def single():
                 ''' Read a single buffer full of data
                 '''
-                check_status()
-                do_sync()
                 remaining = int(bytes_)
-                t0 = perf_counter()
+                do_sync()
+                t0 = t1 = perf_counter()
+                i = 0
                 while remaining > 0:
-                    t1 = perf_counter()
                     if t1-t0 > timeout:
                         msg = f'timeout while waiting to receive {remaining} of {bytes_} bytes'
                         raise TimeoutError(msg)
                     try:
                         remaining -= recv_sock.recv_into(buf[-remaining:], remaining)
+                        t1 = perf_counter()
+                        i += 1
                     except socket.timeout as e:
-                        raise TimeoutError(' '.join(e.args))            
-                return t0, t1
+                        raise TimeoutError(' '.join(e.args))
+
+                return t0, t1, i
 
             try:
                 do_sync()
                 
                 # One to the wind
+                rx_ready.set()
                 single()
                 rx_ready.set()
 
                 i = 0
                 # Receive the test data
                 while not traffic_done(i):                                        
-                    t0, t1 = single()        
+                    t0, t1, split = single()        
                     starts.append(t0)
                     finishes.append(t1)
+                    splits.append(split)
 
                     i += 1
 
@@ -862,11 +875,13 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 self.logger.debug(f'{self.__class__.__name__}() ended by master thread')
                 except_event.set()                
             except BaseException:
-                except_event.set()
-                raise
+                if not (end_event is not None and end_event.is_set()):
+                    except_event.set()
+                    raise
 
             return {'t_rx_start': starts,
-                    't_rx_end': finishes}
+                    't_rx_end': finishes,
+                    'rx_buffer_split': splits}
 
         def sender():
             ''' This runs in the receive thread, with the socket connected.
@@ -878,22 +893,23 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             def do_sync():
                 check_status()
                 if sync:
+                    t_sync = perf_counter()
                     while not rx_ready.is_set():
-                        pass        
+                        if perf_counter()-t_sync > timeout:
+                            except_event.set()
+                            raise TimeoutError('timeout waiting for receive sync')
                     rx_ready.clear()
                     tx_ready.set()
 
             def single():
+                data = np.random.bytes(bytes_)               
                 do_sync()
-                t0 = perf_counter()
-                t1 = t0
-                data = np.random.bytes(bytes_)
-                check_status()
+                t0 = t1 = perf_counter()
                 try:                    
                     send_sock.sendall(data)
+                    t1 = perf_counter()                    
                     if delay > 0:
                         time.sleep(delay)                    
-                    t1 = perf_counter()
                 except socket.timeout:
                     ex = IOError('timed out attempting to send data')
                 else:
@@ -905,16 +921,12 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 do_sync()               
         
                 # Throwaway buffer
+                tx_ready.set()
                 single()
                 tx_ready.set()                
         
                 i = 0
                 while not traffic_done(i):                            
-                    check_status()
-        
-                    # (Approximately) synchronize the transmit and receive timing
-                    if sync:
-                        do_sync()
                     if i == 0:
                         start = datetime.datetime.now()
 
@@ -934,8 +946,9 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 self.logger.debug(f'{self.__class__.__name__}() ended by master thread')
                 except_event.set()
             except BaseException as e:
-                self.logger.debug(f'suppressed exception in sender: {e}')
-                except_event.set()
+                if not (end_event is not None and end_event.is_set()):                
+                    self.logger.debug(f'suppressed exception in sender: {e}')
+                    except_event.set()
 
             return {'start': start,
                     'bytes': bytes_,
@@ -944,9 +957,10 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
         def background_thread():
             try:
-                self._background_queue.put(lb.concurrently(sender, receiver, traceback_delay=True))
+                ret = lb.concurrently(sender, receiver, traceback_delay=True)
+                self._background_queue.put(ret)
             except BaseException as e:
-                if self._background_event.is_set():
+                if not self._background_event.is_set():
                     self.logger.warning(f'background thread exception - traceback: {traceback.format_exc()}')
                     self._background_queue.put(e)
                 self._close_sockets(send_sock, recv_sock, listen_sock, bytes_=buffer_size)
@@ -982,7 +996,8 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             ret = self._run(client_sock=client_sock,
                             server_sock=server_sock,
                             count=count,
-                            buffer_size=buffer_size)
+                            buffer_size=buffer_size,
+                            duration=duration)
         finally:
             self._close_sockets(client_sock, server_sock, listener)
 
@@ -1013,6 +1028,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                             'duration': duration,
                             'delay': ret.t_rx_start-ret.t_tx_start,
                             'queuing_duration': ret.t_tx_end-ret.t_tx_start,
+                            'receive_buffer_splits': ret.rx_buffer_split,
                             'timestamp': timestamp})
 
         return ret.set_index('timestamp')
