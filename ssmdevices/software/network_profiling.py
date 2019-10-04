@@ -1028,7 +1028,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                             'duration': duration,
                             'delay': ret.t_rx_start-ret.t_tx_start,
                             'queuing_duration': ret.t_tx_end-ret.t_tx_start,
-                            'receive_buffer_splits': ret.rx_buffer_split,
+                            'receive_buffer_count': ret.rx_buffer_split,
                             'timestamp': timestamp})
 
         return ret.set_index('timestamp')
