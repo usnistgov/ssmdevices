@@ -163,7 +163,7 @@ class WLANStatus(lb.Device):
                 break
             lb.sleep(.02)
         else:
-            raise TimeoutError('tried to connect but interface did not go up')
+            raise TimeoutError(f'tried to connect but interface {repr(self)} did not go up')
 
         t1 = time.perf_counter()
         while time.perf_counter()-t1 < self.settings.timeout:
@@ -187,6 +187,9 @@ class WLANStatus(lb.Device):
             
         time_elapsed = time.perf_counter()-t0
         self.logger.debug('connected WLAN interface to {}'.format(self.settings.ssid))
+        
+        self.backend.scan()
+
         return time_elapsed
 
     def interface_disconnect(self):
@@ -247,25 +250,23 @@ class WLANStatus(lb.Device):
     
     @state.signal.getter
     def __(self):
-        def attempt():
-            self.backend.scan()
-    
-            t0 = time.perf_counter()
-            while time.perf_counter()-t0 < 1.:
-                if self.state.state != 'scanning':
-                    break
-                lb.sleep(.02)
-            else:
-                raise TimeoutError('timeout while scanning for ssid signal strength')
-            
+        def attempt():            
             for result in self.backend.scan_results():
                 if result.ssid == self.settings.ssid:
                     return float(result.signal)
             else:
-                lb.sleep(.02)
+                lb.sleep(.2)
                 raise TimeoutError('interface reported no signal strength')
+
+        t0 = time.perf_counter()
+        while time.perf_counter()-t0 < 1.:
+            if self.state.state != 'scanning':
+                break
+            lb.sleep(.02)
+        else:
+            raise TimeoutError('timeout while scanning for ssid signal strength')
                 
-        return lb.until_timeout(TimeoutError, self.settings.timeout)(attempt)()
+        return lb.until_timeout(TimeoutError, 2*self.settings.timeout)(attempt)()
 
     @state.description.getter
     def __(self):
@@ -273,25 +274,23 @@ class WLANStatus(lb.Device):
         
     @state.channel.getter
     def __(self):
-        def attempt():
-            self.backend.scan()
-    
-            t0 = time.perf_counter()
-            while time.perf_counter()-t0 < 1.:
-                if self.state.state != 'scanning':
-                    break
-                lb.sleep(.02)
-            else:
-                raise TimeoutError('timeout while scanning for ssid signal strength')
-            
+        def attempt(): 
             for result in self.backend.scan_results():
                 if result.ssid == self.settings.ssid:
                     return float(result.freq)*1000
             else:
-                lb.sleep(.02)
+                lb.sleep(0.2)
                 raise TimeoutError('interface reported no channel frequency')
+
+        t0 = time.perf_counter()
+        while time.perf_counter()-t0 < 1.:
+            if self.state.state != 'scanning':
+                break
+            lb.sleep(.02)
+        else:
+            raise TimeoutError('timeout while scanning for ssid signal strength')
                 
-        return lb.until_timeout(TimeoutError, self.settings.timeout)(attempt)()
+        return lb.until_timeout(TimeoutError, 2*self.settings.timeout)(attempt)()
 
     def refresh(self):
         for attr in self.state.traits().keys():

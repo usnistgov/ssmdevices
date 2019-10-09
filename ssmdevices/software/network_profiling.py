@@ -1003,7 +1003,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
         self.logger.debug(f'benchmark test finished in {perf_counter()-t0:0.2f}s')
 
-        return self._make_dataframe(ret)
+        return ret#self._make_dataframe(ret)
 
     def _make_dataframe(self, worker_data):
         start = worker_data.pop('start', None)
