@@ -163,7 +163,9 @@ class WLANStatus(lb.Device):
                 break
             lb.sleep(.02)
         else:
-            raise TimeoutError(f'tried to connect but interface {repr(self)} did not go up')
+            msg = f'client interface {repr(self)} tried connecting to '\
+                  f'SSID {repr(self.settings.ssid)}, but is still down'
+            raise TimeoutError(msg)
 
         t1 = time.perf_counter()
         while time.perf_counter()-t1 < self.settings.timeout:
@@ -172,8 +174,7 @@ class WLANStatus(lb.Device):
                 break
             lb.sleep(.05)
         else:
-            self.logger.debug('failed to reconnect to WLAN AP with SSID {}'\
-                              .format(self.settings.ssid))
+            self.logger.debug(f'failed to connect to AP with SSID {repr(self.settings.ssid)}')
             raise TimeoutError('tried to connect but only achieved the {} state '\
                                .format(repr(s)))
 
