@@ -5,8 +5,8 @@ It is separate from the `labbench` library to simplify future release of the `la
 access based on export control law.
 
 ## Installation
-1. Install a 64-bit python 3.6 distribution. This process has been tested only with anaconda; support for python 2.7 is deprecated
-2. If you installed python a while ago, make sure your distribution includes pandas 0.19.0 or newer.
+1. Install a 64-bit distribution of python 3.7 (or newer). This process has been tested only with anaconda; support for python 2.7 is deprecated
+2. If you installed python a while ago, make sure your distribution includes pandas 0.21.0 or newer.
 4. In an anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
 5. If you need support for VISA instruments, install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
 That's it.
