@@ -9,11 +9,8 @@ __all__ = ['RohdeSchwarzFSW26Base',
 
 import labbench as lb
 from labbench import Bool, Int, Unicode, Float, VISADevice
-import pandas as pd
-from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
 
 default_channel_name = 'remote'
-
 
 class RohdeSchwarzFSW26Base(VISADevice):
     default_window: lb.Unicode('', help='data window number to use if unspecified')
@@ -68,7 +65,13 @@ class RohdeSchwarzFSW26Base(VISADevice):
             self.logger.warning('expected {} mode, but got {}' \
                                 .format(self.expected_channel_type, self.channel_type))
 
-    def connect(self):
+    @classmethod
+    def __imports__(cls):
+        global pd
+        import pandas as pd
+        super().__imports__()
+
+    def open(self):
         # self.verify_channel_type()
         self.format = 'REAL,32'
 
@@ -108,7 +111,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
                 'sa_spectrogram_acquisition_time': time.time() - t0,
                 'sa_spectrogram_active_time': active_time}
 
-    def disconnect(self):
+    def close(self):
         try:
             self.abort()
         except:
@@ -628,8 +631,8 @@ class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
         response = self.query('CONF:LTE:DL:BW?')
         return float(response[2:].replace('_', '.')) * 1e6
 
-    def connect(self):
-        VISADevice.connect(self)
+    def open(self):
+        VISADevice.open(self)
         # self.verify_channel_type()
         self.format = 'REAL'
 

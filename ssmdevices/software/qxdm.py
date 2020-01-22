@@ -24,13 +24,13 @@ from xml.etree import ElementTree as ET
 class QPST(lb.Win32ComDevice):
     com_object: lb.Unicode('QPSTAtmnServer.Application', )
 
-    def connect(self):
+    def open(self):
         self.backend._FlagAsMethod('AddPort')
         self.backend._FlagAsMethod('RemovePort')
         self.backend._FlagAsMethod('GetPort')
         self.backend.HideWindow()
 
-    def disconnect(self):
+    def close(self):
         self.backend.Quit()
 
     def add_port(self, port):
@@ -116,7 +116,7 @@ class QXDM(lb.Win32ComDevice):
     cache_path: lb.Unicode("temp", help='folder path to contain auto-saved isf file(s)')
     connection_timeout: lb.Float(2, min=0.5, help='connection timeout in seconds')
 
-    def connect(self):
+    def open(self):
         for pid in psutil.pids():
             try:
                 proc = psutil.Process(pid)
@@ -129,7 +129,7 @@ class QXDM(lb.Win32ComDevice):
 
         self.__connection_info = {}
         self._qpst = QPST()
-        self._qpst.connect()
+        self._qpst.open()
         self.__connection_info = self._qpst.add_port(self.settings.resource)
 
         self.__start_time = None
@@ -159,7 +159,7 @@ class QXDM(lb.Win32ComDevice):
         except KeyError:
             raise lb.DeviceStateError('no state {} in {}'.format(command, repr(self)))
 
-    def disconnect(self):
+    def close(self):
         try:
             f1 = self._qpst.disconnect
         except AttributeError:
@@ -340,8 +340,8 @@ class QXDM(lb.Win32ComDevice):
 
     def reconnect(self):
         self.logger.info('reinitializing')
-        self.disconnect()
-        self.connect()
+        self.close()
+        self.open()
 
     def _clear(self, timeout=20):
         ''' Clear the buffer of data.

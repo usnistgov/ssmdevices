@@ -86,7 +86,7 @@ class WLANStatus(lb.Device):
     ssid               : lb.Unicode(allow_none=True)
     timeout            : lb.Float(10, min=0)
 
-    def connect (self):
+    def open (self):
         # Use netsh to identify the device guid from the network interface name
         with Netsh() as netsh:
             # Check that this interface exists

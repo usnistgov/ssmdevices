@@ -40,7 +40,7 @@ class MiniCircuitsRC4DAT(DotNetDevice):
     resource: lb.Unicode(None,
                          help='Serial number of the USB device. Must be defined if more than one device is connected to the computer', allow_none=True)
 
-    def connect (self):
+    def open (self):
         ''' Open the device resource.
         '''
         @lb.retry(ConnectionError, 10, delay=0.25)
@@ -85,7 +85,7 @@ class MiniCircuitsRC4DAT(DotNetDevice):
         if self.backend.GetUSBConnectionStatus() != 1:
             raise lb.DeviceStateError('USB device unexpectedly disconnected')
 
-    def disconnect(self):
+    def close(self):
         ''' Release the attenuator hardware resource via the driver DLL.
         '''
         self.backend.Disconnect()

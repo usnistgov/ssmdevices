@@ -26,7 +26,7 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
     library  = ssmdevices.lib    # Must be a module
     dll_name = 'mcl_SolidStateSwitch64.dll'
 
-    def connect (self):
+    def open (self):
         ''' Open the device resource.
         '''
         if self.dll is None:
@@ -36,7 +36,7 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
         if self.backend.Connect(self.settings.resource)[0] != 1:
             raise Exception('Cannot connect to USB switch resource {}'.format(self.settings.resource))
 
-    def disconnect(self):
+    def close(self):
         ''' Release the attenuator hardware resource via the driver DLL.
         '''
         try:

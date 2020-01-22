@@ -4,7 +4,7 @@ __all__ = ['KeysightU2000XSeries', 'RohdeSchwarzNRP8s', 'RohdeSchwarzNRP18s', 'R
 
 import labbench as lb
 from labbench import VISADevice
-import pandas as pd
+
 
 class KeysightU2000XSeries(VISADevice):
     ''' This is my cool driver for Keysight U2040 X-Series power sensors
@@ -30,6 +30,12 @@ class KeysightU2000XSeries(VISADevice):
             return float(response[0])
         else:
             return pd.to_numeric(pd.Series(response))
+
+    @classmethod
+    def __imports__ (cls):
+        global pd
+        import pandas as pd
+        super().__imports__()
 
 
 class RohdeSchwarzNRPSeries(VISADevice):
@@ -126,6 +132,12 @@ class RohdeSchwarzNRPSeries(VISADevice):
         self.trigger_source = trigger_source  # 'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
         self.initiate_continuous = False
         self.wait()
+
+    @classmethod
+    def __imports__(cls):
+        global pd
+        import pandas as pd
+        super().__imports__()
 
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):

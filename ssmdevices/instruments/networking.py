@@ -130,11 +130,11 @@ class AeroflexTM500(lb.TelnetDevice):
         ''' Reboot the TMA and TM500 hardware.
         '''
         self._send('RBOT')
-        lb.TelnetDevice.disconnect(self)
+        lb.TelnetDevice.close(self)
         t0 = time.time()
         while time.time()-t0 < timeout:
             try:
-                lb.TelnetDevice.connect(self)
+                lb.TelnetDevice.open(self)
                 break
             except TimeoutError:
                 lb.sleep(1)
@@ -226,7 +226,7 @@ class AeroflexTM500(lb.TelnetDevice):
         with open(os.path.splitext(path)[0]+'.conf', 'wb') as f:
             f.write(b'\r\n'.join(commands))
 
-    def disconnect(self):
+    def close(self):
         try:
             if self.__latest.get('scenario_name') is not None:
                 self.stop(convert=False)
@@ -239,7 +239,7 @@ class AeroflexTM500(lb.TelnetDevice):
             except:
                 pass
 
-    def connect(self):
+    def open(self):
         self.__latest = {}
 
         # Invalidate any incomplete previous commands in the remote telnet buffer
@@ -417,7 +417,7 @@ if __name__ == '__main__':
 #    lb.show_messages('debug')
 #    tm500 = AeroflexTM500('10.133.0.202')
 #    with tm500:
-##    tm500.connect()
+##    tm500.open()
 #        t0 = time.time()
 #        tm500.configure(path)
 #        print(time.time()-t0)

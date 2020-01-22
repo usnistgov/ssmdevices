@@ -43,7 +43,7 @@ class AcronameUSBHub2x4(lb.Device):
         global brainstem
         import brainstem
 
-    def connect (self):
+    def open (self):
         specs = self._bs.discover.findAllModules(brainstem.link.Spec.USB)
 
         specs = [s for s in specs if s.model == self.model]        
@@ -61,7 +61,7 @@ class AcronameUSBHub2x4(lb.Device):
         self.backend = brainstem.stem.USBHub2x4()
         self.backend.connectFromSpec(specs[0])
         
-    def disconnect (self):
+    def close (self):
         ''' Release control over the device.
         '''
         self.backend.disconnect()

@@ -9,7 +9,6 @@ __all__ = ['IPerfClient', 'IPerf', 'IPerfOnAndroid', 'IPerfBoundPair',
 import datetime
 import labbench as lb
 import numpy as np
-import pandas as pd
 import socket
 import ssmdevices.lib
 import sys
@@ -110,6 +109,12 @@ class IPerf(lb.CommandLineWrapper):
     def start(self):
         self.background()
 
+    @classmethod
+    def __imports__(cls):
+        global pd
+        import pandas as pd
+        super().__imports__()
+
 
 import subprocess as sp
 
@@ -123,7 +128,7 @@ class IPerfOnAndroid(IPerf):
                         # '-y', 'C'
                         ])
 
-    def connect(self):
+    def open(self):
         with self.no_state_arguments:
             #            self.logger.warning('TODO: need to fix setup for android iperf, but ok for now')
             #            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
@@ -276,7 +281,7 @@ class IPerfBoundPair(lb.Device):
         super().__init__(*args, **kws)
         self.port_start = self.settings.port
 
-    def connect(self):
+    def open(self):
         settings = dict([(k, getattr(self.settings, k)) for k, v in self.settings.traits().items() if v.settable])
 
         for k in 'resource', 'sender', 'receiver', 'bind':
@@ -288,12 +293,12 @@ class IPerfBoundPair(lb.Device):
                        **settings)
         server = IPerf(bind=self.settings.sender, **settings)
 
-        server.connect()
-        client.connect()
+        server.open()
+        client.open()
 
         self.backend = {'iperf_client': client, 'iperf_server': server}
 
-    def disconnect(self):
+    def close(self):
         try:
             self.kill()
         except TypeError as e:
@@ -441,7 +446,7 @@ class ClosedLoopBenchmark(lb.Device):
                     server=self.settings.server,
                     client=self.settings.client)
 
-    def disconnect(self):
+    def close(self):
         if self.is_running():
             self.stop_traffic()
 
@@ -748,7 +753,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
             return conn
 
-        def connect():
+        def open():
             global _tcp_port_offset, listen_sock
 
             if self.settings.port != 0:

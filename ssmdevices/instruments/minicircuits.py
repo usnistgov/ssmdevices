@@ -7,7 +7,6 @@ import numpy as np
 from threading import Lock
 from traitlets import TraitError
 import ssmdevices.lib
-import pandas as pd
 from pathlib import Path
 
 
@@ -27,11 +26,14 @@ class MiniCircuitsUSBDevice(lb.Device):
     model = lb.Unicode(settable=False, cache=True)
     serial_number = lb.Unicode(settable=False, cache=True)
 
-    def __imports__(self):
-        global hid
+    @classmethod
+    def __imports__(cls):
+        global hid,pd
         import hid
+        import pandas as pd
+        super().__imports__()
 
-    def connect(self):
+    def open(self):
         notify = self.settings.path is None
         if self.settings.path is None:
             self.settings.path = self._find_path(self.settings.resource)
@@ -49,7 +51,7 @@ class MiniCircuitsUSBDevice(lb.Device):
             self.logger.info('connected to {} with serial {}'
                              .format(self.model, self.serial_number))
 
-    def disconnect(self):
+    def close(self):
         if self.backend:
             self.backend.close()
 
@@ -234,7 +236,7 @@ class SingleChannelAttenuator(SwitchAttenuatorBase):
     output_power_offset: lb.Float(None, allow_none=True,
                                   help='offset calibration such that state.output_power = settings.output_power_offset - state.attenuation')
 
-    def connect(self):
+    def open(self):
         def _validate_attenuation(trait, proposal):
             ''' Nudge the trait value to the nearest attenuation level from
                 the cal data.

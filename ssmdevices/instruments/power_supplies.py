@@ -33,7 +33,7 @@ class RigolDP800Series(lb.VISADevice):
                         help='current draw measured on channel 3')
 
     @lb.retry(Exception, 3)
-    def connect(self):
+    def open(self):
         ''' Do a dummy read on *IDN until the instrument responds.
             Sometimes it needs an extra poke before it responds.
         '''
