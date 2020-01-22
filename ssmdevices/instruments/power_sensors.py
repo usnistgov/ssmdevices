@@ -1,17 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Feb 10 13:35:02 2017
 
-@author: dkuester
-"""
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-from __future__ import absolute_import
-from builtins import str
-from future import standard_library
-standard_library.install_aliases()
-__all__ = ['KeysightU2000XSeries','RohdeSchwarzNRP8s','RohdeSchwarzNRP18s','RohdeSchwarzNRPSeries']
+__all__ = ['KeysightU2000XSeries', 'RohdeSchwarzNRP8s', 'RohdeSchwarzNRP18s', 'RohdeSchwarzNRPSeries']
 
 import labbench as lb
 from labbench import VISADevice
@@ -21,22 +10,23 @@ class KeysightU2000XSeries(VISADevice):
     ''' This is my cool driver for Keysight U2040 X-Series power sensors
     '''
 
-    initiate_continuous = lb.Bool      (command='INIT:CONT')
-    output_trigger      = lb.Bool      (command='OUTP:TRIG')
-    trigger_source      = lb.CaselessStrEnum (command='TRIG:SOUR', values=['IMM','INT','EXT','BUS','INT1'])
-    trigger_count       = lb.Int       (command='TRIG:COUN', min=1,max=200,step=1)
-    measurement_rate    = lb.CaselessStrEnum (command='SENS:MRAT', values=['NORM','DOUB','FAST'])
-    sweep_aperture      = lb.Float     (command='SWE:APER',  min=20e-6, max=200e-3,help='time (in s)')
-    frequency           = lb.Float     (command='SENS:FREQ', min=10e6, max=18e9,step=1e-3,help='input signal center frequency (in Hz)')
+    initiate_continuous = lb.Bool(command='INIT:CONT')
+    output_trigger = lb.Bool(command='OUTP:TRIG')
+    trigger_source = lb.Unicode(command='TRIG:SOUR', only=('IMM', 'INT', 'EXT', 'BUS', 'INT1'), case=False)
+    trigger_count = lb.Int(command='TRIG:COUN', min=1, max=200)
+    measurement_rate = lb.Unicode(command='SENS:MRAT', only=('NORM', 'DOUB', 'FAST'), case=False)
+    sweep_aperture = lb.Float(command='SWE:APER', min=20e-6, max=200e-3, help='time (in s)')
+    frequency = lb.Float(command='SENS:FREQ', min=10e6, max=18e9, step=1e-3,
+                         help='input signal center frequency (in Hz)')
 
-    def preset (self):
+    def preset(self):
         self.write('SYST:PRES')
 
-    def fetch (self):
+    def fetch(self):
         ''' Return a single number or pandas Series containing the power readings
         '''
         response = self.query('FETC?').split(',')
-        if len(response)==1:
+        if len(response) == 1:
             return float(response[0])
         else:
             return pd.to_numeric(pd.Series(response))
@@ -50,49 +40,47 @@ class RohdeSchwarzNRPSeries(VISADevice):
     # Instrument state traits (pass command arguments and/or implement setter/getter)
     frequency = lb.Float(command='SENS:FREQ', min=10e6, step=1e-3, label='Hz')
     initiate_continuous = lb.Bool(command='INIT:CONT', remap={False: 'OFF', True: 'ON'})
-    function = lb.CaselessStrEnum(command='SENS:FUNC',\
-                                  values=['POW:AVG', 'POW:BURS:AVG', 'POW:TSL:AVG',
-                                          'XTIM:POW', "XTIM:POWer"])
-    @function.setter
-    def __ (self, value):
-        # Special case - this message requires quotes around the argument
-        self.write('SENSe:FUNCtion "{}"'.format(value))    
 
-    trigger_source = lb.CaselessStrEnum(command='TRIG:SOUR', \
-                                  values=['HOLD', 'IMM', 'INT', 'EXT', 'EXT1', 'EXT2', 'BUS', 'INT1'],
-                                  help='HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm')
-    @trigger_source.getter
-    def __ (self):
+    @lb.Unicode(command='SENS:FUNC', case=False,
+                only=('POW:AVG', 'POW:BURS:AVG', 'POW:TSL:AVG', 'XTIM:POW', "XTIM:POWer"))
+    def function(self, value):
+        # Special case - this message requires quotes around the argument
+        self.write('SENSe:FUNCtion "{}"'.format(value))
+
+    @lb.Unicode(command='TRIG:SOUR', case=False,
+                only=('HOLD', 'IMM', 'INT', 'EXT', 'EXT1', 'EXT2', 'BUS', 'INT1'))
+    def trigger_source(self):
+        ''''HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm'''
         # Special case - the instrument returns '2' instead of 'EXT2'
         remap = {'2': 'EXT2'}
         source = self.query('TRIG:SOUR?')
         return remap.get(source, default=source)
 
     trigger_delay = lb.Float(command='TRIG:DELAY', min=-5, max=10)
-    trigger_count = lb.Int(command='TRIG:COUN', min=1, max=8192, step=1, help="help me")
+    trigger_count = lb.Int(command='TRIG:COUN', min=1, max=8192, help="help me")
     trigger_holdoff = lb.Float(command='TRIG:HOLD', min=0, max=10)
     trigger_level = lb.Float(command='TRIG:LEV', min=1e-7, max=200e-3)
 
-    trace_points = lb.Int(command='SENSe:TRACe:POINTs', min=1, max=8192, write_only=True)
+    trace_points = lb.Int(command='SENSe:TRACe:POINTs', min=1, max=8192, gettable=False)
     trace_realtime = lb.Bool(command='TRAC:REAL', remap={False: 'OFF', True: 'ON'})
     trace_time = lb.Float(command='TRAC:TIME', min=10e-6, max=3)
     trace_offset_time = lb.Float(command='TRAC:OFFS:TIME', min=-0.5, max=100)
     trace_average_count = lb.Int(command='TRAC:AVER:COUN', min=1, max=65536)
-    trace_average_mode = lb.CaselessStrEnum(command='TRAC:AVER:TCON', values=['MOV','REP'])
+    trace_average_mode = lb.Unicode(command='TRAC:AVER:TCON', only=('MOV', 'REP'), case=False)
     trace_average_enable = lb.Bool(command='TRAC:AVER', remap={False: 'OFF', True: 'ON'})
 
     average_count = lb.Int(command='AVER:COUN', min=1, max=65536)
     average_auto = lb.Bool(command='AVER:COUN:AUTO', remap={False: 'OFF', True: 'ON'})
     average_enable = lb.Bool(command='AVER', remap={False: 'OFF', True: 'ON'})
-    smoothing_enable = lb.Bool(command='SMO:STAT', remap={False: 'OFF', True: 'ON'}, write_only=True)
+    smoothing_enable = lb.Bool(command='SMO:STAT', remap={False: 'OFF', True: 'ON'}, gettable=False)
 
     # Local settings traits (leave command unset, and do not implement setter/getter)
-    read_termination = lb.Unicode('', read_only='connected') # Set to empty string
+    read_termination = lb.Unicode()
 
     def preset(self):
         self.write('*PRE')
 
-    def trigger_single (self):
+    def trigger_single(self):
         self.write('INIT')
 
     def fetch(self):
@@ -102,8 +90,8 @@ class RohdeSchwarzNRPSeries(VISADevice):
         if len(response) == 1:
             return float(response[0])
         else:
-            index = np.arange(len(response))*(self.state.trace_time/float(self.state.trace_points))
-            return pd.to_numeric(pd.Series(response,index=index))
+            index = np.arange(len(response)) * (self.trace_time / float(self.trace_points))
+            return pd.to_numeric(pd.Series(response, index=index))
 
     def fetch_buffer(self):
         ''' Return a single number or pandas Series containing the power readings
@@ -112,8 +100,8 @@ class RohdeSchwarzNRPSeries(VISADevice):
         if len(response) == 1:
             return float(response[0])
         else:
-            index = None#np.arange(len(response))*(self.state.trace_time/float(self.state.trace_points))
-            return pd.to_numeric(pd.Series(response,index=index))
+            index = None  # np.arange(len(response))*(self.trace_time/float(self.trace_points))
+            return pd.to_numeric(pd.Series(response, index=index))
 
     def setup_trace(self, frequency, trace_points, sample_period, trigger_level,
                     trigger_delay, trigger_source):
@@ -128,15 +116,15 @@ class RohdeSchwarzNRPSeries(VISADevice):
         :return: None
         '''
         self.write('*RST')
-        self.state.frequency = frequency
-        self.state.function = 'XTIM:POW'
-        self.state.trace_points = trace_points
-        self.state.trace_time = trace_points * sample_period
-        self.state.trigger_level = 10**(trigger_level / 10.)
-        self.state.trigger_delay = trigger_delay#self.Ts / 2
-        self.state.trace_realtime = True
-        self.state.trigger_source = trigger_source#'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
-        self.state.initiate_continuous = False
+        self.frequency = frequency
+        self.function = 'XTIM:POW'
+        self.trace_points = trace_points
+        self.trace_time = trace_points * sample_period
+        self.trigger_level = 10 ** (trigger_level / 10.)
+        self.trigger_delay = trigger_delay  # self.Ts / 2
+        self.trace_realtime = True
+        self.trigger_source = trigger_source  # 'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
+        self.initiate_continuous = False
         self.wait()
 
 
@@ -158,16 +146,16 @@ if __name__ == '__main__':
     # log_to_screen()
 
     with KeysightU2040XSeries('USB0::0x2A8D::0x1E01::SG56360004::INSTR') as sensor:
-        print('Connected to ', sensor.state.identity)
+        print('Connected to ', sensor.identity)
 
         # Configure
         sensor.preset()
-        sensor.state.frequency = 1e9
-        sensor.state.measurement_rate = 'FAST'
-        sensor.state.trigger_count = 200
-        sensor.state.sweep_aperture = 20e-6
-        sensor.state.trigger_source = 'IMM'
-        sensor.state.initiate_continuous = True
+        sensor.frequency = 1e9
+        sensor.measurement_rate = 'FAST'
+        sensor.trigger_count = 200
+        sensor.sweep_aperture = 20e-6
+        sensor.trigger_source = 'IMM'
+        sensor.initiate_continuous = True
 
         power = sensor.fetch()
 

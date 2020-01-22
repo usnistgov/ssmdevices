@@ -3,7 +3,7 @@
 @author: Dan Kuester <daniel.kuester@nist.gov>,
          Michael Voecks <michael.voecks@nist.gov>
 """
-__all__ = ['IPerfClient','IPerf','IPerfOnAndroid', 'IPerfBoundPair',
+__all__ = ['IPerfClient', 'IPerf', 'IPerfOnAndroid', 'IPerfBoundPair',
            'ClosedLoopTCPBenchmark']
 
 import datetime
@@ -28,38 +28,50 @@ if '_tcp_port_offset' not in dir():
 # Make sure the performance counter is initialized
 perf_counter()
 
+
 class IPerf(lb.CommandLineWrapper):
     ''' Run an instance of iperf, collecting output data in a background thread.
         When running as an iperf client (server=False), 
         The default value is the path that installs with 64-bit cygwin.
     '''
-    
-    class settings(lb.CommandLineWrapper.settings):
-        binary_path   = lb.Unicode(ssmdevices.lib.path('iperf.exe'))
-        timeout       = lb.Float(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
-        port          = lb.Int(5001, command='-p', min=1, help='connection port')
-        bind          = lb.Unicode(None, command='-B', allow_none=True, help='bind connection to specified IP')
-        tcp_window_size = lb.Int(None, command='-w', min=1, help='(bytes)', allow_none=True)
-        buffer_size   = lb.Int(None, command='-l', min=1, allow_none=True,
-                               help='Size of data buffer that generates traffic (bytes)')
-        interval      = lb.Float(0.25, command='-i', min=0.01, help='Interval between throughput reports (s)')
-        bidirectional = lb.Bool(False, command='-d', help='Send and receive simultaneously')
-        udp           = lb.Bool(False, command='-u', help='use UDP instead of the default, TCP')
-        bit_rate      = lb.Unicode(None, allow_none=True, command='-b',
-                                   help='Maximum bit rate (append unit for size, e.g. 10K)')
-        time          = lb.Int(None, min=0, max=16535, command='-t', allow_none=True,
-                               help='time in seconds to transmit before quitting (default 10s)')
-        arguments     = lb.List(['-n','-1','-y','C'], allow_none=True)
 
-    def fetch (self):
+    binary_path: lb.Unicode \
+        (ssmdevices.lib.path('iperf.exe'))
+    timeout: lb.Float \
+        (default=6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
+    port: lb.Int \
+        (default=5001, min=1, help='connection port').tag(flag='-p')
+    bind: lb.Unicode \
+        (default=None, allow_none=True, help='bind connection to specified IP').tag(flag='-B')
+    tcp_window_size: lb.Int \
+        (default=None, min=1, help='(bytes)', allow_none=True).tag(flag='-w')
+    buffer_size: lb.Int \
+        (default=None, min=1, allow_none=True,
+         help='Size of data buffer that generates traffic (bytes)').tag(flag='-l')
+    interval: lb.Float \
+        (default=0.25, min=0.01, help='Interval between throughput reports (s)').tag(flag='-i')
+    bidirectional: lb.Bool \
+        (default=False, help='Send and receive simultaneously').tag(flag='-d')
+    udp: lb.Bool \
+        (default=False, help='use UDP instead of the default, TCP').tag(flag='-u')
+    bit_rate: lb.Unicode \
+        (default=None, allow_none=True,
+         help='Maximum bit rate (append unit for size, e.g. 10K)').tag(flag='-b')
+    time: lb.Int \
+        (default=None, min=0, max=16535, allow_none=True,
+         help='time in seconds to transmit before quitting (default 10s)').tag(flag='-t')
+    arguments: lb.List \
+        (default=['-n', '-1', '-y', 'C'], allow_none=True)
+
+    def fetch(self):
         ''' Retreive csv-formatted text from standard output and parse into
             a pandas DataFrame.
         '''
         result = self.read_stdout()
 
-        columns = 'timestamp','source_address',\
-                  'source_port','destination_address','destination_port',\
-                  'test_id','interval','transferred_bytes','bits_per_second'
+        columns = 'timestamp', 'source_address', \
+                  'source_port', 'destination_address', 'destination_port', \
+                  'test_id', 'interval', 'transferred_bytes', 'bits_per_second'
 
         if self.settings.udp:
             columns = columns + ('jitter_milliseconds',
@@ -68,28 +80,28 @@ class IPerf(lb.CommandLineWrapper):
                                  'datagrams_loss_percentage',
                                  'datagrams_out_of_order')
 
-        columns = ['iperf_'+c for c in columns]
-        
-        data = pd.read_csv(StringIO(result), header=None,index_col=False,
+        columns = ['iperf_' + c for c in columns]
+
+        data = pd.read_csv(StringIO(result), header=None, index_col=False,
                            names=columns)
-        
+
         # throw out the last row (potantially a summary of the previous rows)
-        if len(data)==0:
+        if len(data) == 0:
             data = data.append([None])
-        data.drop(['iperf_interval','iperf_transferred_bytes','iperf_test_id'],inplace=True,axis=1)
+        data.drop(['iperf_interval', 'iperf_transferred_bytes', 'iperf_test_id'], inplace=True, axis=1)
         data['iperf_timestamp'] = pd.to_datetime(data['iperf_timestamp'], format='%Y%m%d%H%M%S')
-        data['iperf_timestamp'] = data['iperf_timestamp']+\
-                                  pd.TimedeltaIndex((data.index*self.settings.interval)%1,'s')
+        data['iperf_timestamp'] = data['iperf_timestamp'] + \
+                                  pd.TimedeltaIndex((data.index * self.settings.interval) % 1, 's')
 
         return data
 
-    def background (self, *extra_args, **flags):
+    def background(self, *extra_args, **flags):
         if self.settings.udp and self.settings.buffer_size is not None:
             self.logger.warning('iperf might not behave nicely setting udp=True with buffer_size')
         if not self.settings.udp and self.settings.bit_rate is not None:
             raise ValueError('iperf does not support setting bit_rate in TCP')
 
-        with self.respawn:#, self.exception_on_stderr:
+        with self.respawn:  # , self.exception_on_stderr:
             if self.settings.resource:
                 super(IPerf, self).background('-c', str(self.settings.resource), *extra_args, **flags)
             else:
@@ -98,59 +110,59 @@ class IPerf(lb.CommandLineWrapper):
     def start(self):
         self.background()
 
+
 import subprocess as sp
+
 
 class IPerfOnAndroid(IPerf):
     remote_binary_path = '/data/local/tmp/iperf'
 
-    class settings(IPerf.settings):
-        binary_path        = lb.Unicode(ssmdevices.lib.path('adb.exe'))
-        remote_binary_path = lb.Unicode('/data/local/tmp/iperf',
-                                             )
-        arguments          = lb.List(['shell', remote_binary_path.default_value,
-                                     # '-y', 'C'
-                                          ])
+    binary_path: lb.Unicode(ssmdevices.lib.path('adb.exe'))
+    remote_binary_path: lb.Unicode(remote_binary_path)
+    arguments: lb.List(['shell', remote_binary_path,
+                        # '-y', 'C'
+                        ])
 
     def connect(self):
         with self.no_state_arguments:
-#            self.logger.warning('TODO: need to fix setup for android iperf, but ok for now')
-#            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
-#            if len(devices) == 0:
-#                raise Exception('adb lists no devices. is the UE connected?')
+            #            self.logger.warning('TODO: need to fix setup for android iperf, but ok for now')
+            #            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
+            #            if len(devices) == 0:
+            #                raise Exception('adb lists no devices. is the UE connected?')
             self.logger.debug('waiting for USB connection to phone')
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True,
                    timeout=30)
 
             lb.sleep(.1)
             self.logger.debug('copying iperf onto phone')
-            sp.run([self.settings.binary_path, "push", ssmdevices.lib.path('android','iperf'),
-                   self.settings.remote_binary_path], check=True, timeout=2)
+            sp.run([self.settings.binary_path, "push", ssmdevices.lib.path('android', 'iperf'),
+                    self.settings.remote_binary_path], check=True, timeout=2)
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
             sp.run([self.settings.binary_path, "shell", 'chmod', '777',
                     self.settings.remote_binary_path], timeout=2)
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
-    
-#            # Check that it's executable
+
+            #            # Check that it's executable
             self.logger.debug('verifying iperf execution on phone')
             cp = sp.run([self.settings.binary_path, 'shell',
                          self.settings.remote_binary_path, '--help'],
-                         timeout=2, stdout=sp.PIPE)
+                        timeout=2, stdout=sp.PIPE)
             if cp.stdout.startswith(b'/system/bin/sh'):
                 raise Exception('could not execute!!! ', cp.stdout)
             self.logger.debug('phone is ready to execute iperf')
 
-    def start (self):
-        super(IPerfOnAndroid,self).start()
-        test = self.read_stdout(1)        
+    def start(self):
+        super(IPerfOnAndroid, self).start()
+        test = self.read_stdout(1)
         if 'network' in test:
             self.logger.warning('no network connectivity in UE')
 
-    def kill (self, wait_time=3):
+    def kill(self, wait_time=3):
         ''' Kill the local process and the iperf process on the UE.
         '''
 
         # Kill the local adb process as normal
-        super(IPerfOnAndroid,self).kill()
+        super(IPerfOnAndroid, self).kill()
 
         # Now's where the fun really starts
         with self.no_state_arguments:
@@ -160,12 +172,12 @@ class IPerfOnAndroid(IPerf):
                 line = line.decode(errors='replace')
                 if self.settings.remote_binary_path in line.lower():
                     pid = line.split()[1]
-                    self.logger.debug('killing zombie iperf. stdout: {}'\
+                    self.logger.debug('killing zombie iperf. stdout: {}' \
                                       .format(self.foreground('shell', 'kill', '-9', pid)))
             lb.sleep(.1)
             # Wait for any iperf zombie processes to die
             t0 = time.time()
-            while time.time()-t0 < wait_time and wait_time != 0:
+            while time.time() - t0 < wait_time and wait_time != 0:
                 out = self.foreground('shell', 'ps').lower()
                 if b'iperf' not in out:
                     break
@@ -185,7 +197,7 @@ class IPerfOnAndroid(IPerf):
             else:
                 self.logger.warning('stdout: {}'.format(repr(l)))
         return '\n'.join(out)
-    
+
     def fetch(self):
         return self.read_stdout()
 
@@ -197,7 +209,7 @@ class IPerfOnAndroid(IPerf):
         '''
         import subprocess as sp
         import re
-        
+
         self.logger.debug('waiting for cellular data connection')
         t0 = time.time()
         out = ''
@@ -237,9 +249,9 @@ class IPerfOnAndroid(IPerf):
 class IPerfClient(IPerf):
     ''' This class is deprected. Use IPerf instead
     '''
-    
-    def __imports__ (self, *args, **kws):
-        self.logger.warning('this class is deprecated! use {} instead'\
+
+    def __imports__(self, *args, **kws):
+        self.logger.warning('this class is deprecated! use {} instead' \
                             .format(repr(IPerf)))
         super(IPerfClient, self).__imports__(*args, **kws)
 
@@ -249,26 +261,24 @@ class IPerfBoundPair(lb.Device):
         bound to opposite interfaces to ensure data is routed between them, and not through
         localhost or any other interface.
     '''
-    
+
     # Copy the IPerf settings. Most of these are simply passed through 
-    class settings(IPerf.settings):
-        resource = lb.Unicode(help='ignored - use sender and receiver instead')
-        bind = None # blanked out - determined for the client and server based on sender and receiver addresses
-        sender = lb.Unicode(help='the ip address to use for the iperf client, which must match a network interface on the host')
-        receiver = lb.Unicode(help='the ip address to use for the iperf server, which must match a network interface on the host')
-        port_max = lb.Int(6000, min=1, read_only=True,
-                          help='highest port number to use when cycling through ports')
+    resource: lb.Unicode(help='ignored - use sender and receiver instead')
+    bind = None  # blanked out - determined for the client and server based on sender and receiver addresses
+    sender: lb.Unicode(
+        help='the ip address to use for the iperf client, which must match a network interface on the host')
+    receiver: lb.Unicode(
+        help='the ip address to use for the iperf server, which must match a network interface on the host')
+    port_max: lb.Int(6000, min=1, settable=False,
+                     help='highest port number to use when cycling through ports')
 
-    class state(lb.Device.state):
-        pass
-
-    def __init__ (self, *args, **kws):
+    def __init__(self, *args, **kws):
         super().__init__(*args, **kws)
         self.port_start = self.settings.port
 
     def connect(self):
-        settings = dict([(k,getattr(self.settings, k)) for k,v in self.settings.traits().items() if not v.read_only])
-        
+        settings = dict([(k, getattr(self.settings, k)) for k, v in self.settings.traits().items() if v.settable])
+
         for k in 'resource', 'sender', 'receiver', 'bind':
             if k in settings:
                 del settings[k]
@@ -277,12 +287,12 @@ class IPerfBoundPair(lb.Device):
                        bind=self.settings.receiver,
                        **settings)
         server = IPerf(bind=self.settings.sender, **settings)
-        
+
         server.connect()
         client.connect()
-        
+
         self.backend = {'iperf_client': client, 'iperf_server': server}
-        
+
     def disconnect(self):
         try:
             self.kill()
@@ -298,13 +308,13 @@ class IPerfBoundPair(lb.Device):
             backend['iperf_client'].kill()
 
     def running(self):
-        return self.backend['iperf_client'].running()\
+        return self.backend['iperf_client'].running() \
                and self.backend['iperf_server'].running()
 
     def fetch(self):
         client = self.backend['iperf_client'].fetch()
         server = self.backend['iperf_server'].fetch()
-        
+
         return {'iperf_client': client,
                 'iperf_server': server}
 
@@ -313,13 +323,13 @@ class IPerfBoundPair(lb.Device):
         self.settings.port = self.settings.port + 1
         if self.settings.port > self.settings.port_max:
             self.settings.port = self.port_start
-        
+
         self.backend['iperf_client'].settings.port = self.settings.port
         self.backend['iperf_server'].settings.port = self.settings.port
-        
+
         self.backend['iperf_server'].start()
         self.backend['iperf_client'].start()
-        
+
     def acquire(self, duration):
         ''' Acquire iperf output for the specified duration and return.
             Raises a lb.DeviceConnectionLost if iperf stops before the
@@ -333,43 +343,46 @@ class IPerfBoundPair(lb.Device):
         else:
             # Otherwise, start
             self.start()
-        
+
         # Wait for the duration, checking regularly to ensure the client is running
         t0 = time.time()
-        while time.time()-t0 < duration:
-            time.sleep(min(0.5,duration-(time.time()-t0)))
+        while time.time() - t0 < duration:
+            time.sleep(min(0.5, duration - (time.time() - t0)))
             if not self.running():
                 raise lb.DeviceConnectionLost('iperf stopped unexpectedly')
 
         ret = self.fetch()
-        lb.logger.debug('  iperf_client and server returned {} and {} rows'\
-                       .format(len(ret['iperf_client']),len(ret['iperf_server'])))
-        
+        lb.logger.debug('  iperf_client and server returned {} and {} rows' \
+                        .format(len(ret['iperf_client']), len(ret['iperf_server'])))
+
         self.kill()
         return ret
 
 
-m1  = 0x5555555555555555
-m2  = 0x3333333333333333
-m4  = 0x0f0f0f0f0f0f0f0f
-m8  = 0x00ff00ff00ff00ff
+m1 = 0x5555555555555555
+m2 = 0x3333333333333333
+m4 = 0x0f0f0f0f0f0f0f0f
+m8 = 0x00ff00ff00ff00ff
 m16 = 0x0000ffff0000ffff
 m32 = 0x00000000ffffffff
 h01 = 0x0101010101010101
+
 
 def bit_errors(x):
     ''' See: https://en.wikipedia.org/wiki/Hamming_weight
     '''
     if x is None:
         return None
-#    a1 = np.frombuffer(buf1,dtype='uint64')
-    x = np.frombuffer(x[:(len(x)//8)*8],dtype='uint64').copy()
+    #    a1 = np.frombuffer(buf1,dtype='uint64')
+    x = np.frombuffer(x[:(len(x) // 8) * 8], dtype='uint64').copy()
     x -= (x >> 1) & m1;
     x = (x & m2) + ((x >> 2) & m2);
     x = (x + (x >> 4)) & m4;
     return ((x * h01) >> 56).sum()
 
+
 from contextlib import suppress, AbstractContextManager
+
 
 def get_ipv4_address(iface):
     ''' Try to look up the IP address corresponding to the network interface
@@ -379,23 +392,24 @@ def get_ipv4_address(iface):
         is no IP address associated with the interface, raise `ConnectionError`.
     '''
     addrs = psutil.net_if_addrs()
-    
+
     # Check whether the interface exists
     if iface not in addrs:
         available = ', '.join(addrs.keys())
         msg = f'specified receiver interface {iface} but only ({available}) are available'
-        raise ConnectionError(msg)            
-    
-    # Check whether it's up
+        raise ConnectionError(msg)
+
+        # Check whether it's up
     if not psutil.net_if_stats()[iface].isup:
         raise ConnectionError(f'the {iface} network interface is disabled or disconnected')
-        
+
     # Lookup and return the address
     for addr_struct in addrs[iface]:
         if 'AF_INET' in str(addr_struct.family):
             return addr_struct.address
     else:
         raise ConnectionError(f'no ipv4 address associated with interface "{iface}"')
+
 
 class ClosedLoopBenchmark(lb.Device):
     ''' Profile closed-loop traffic between two network interfaces
@@ -404,29 +418,28 @@ class ClosedLoopBenchmark(lb.Device):
         equal to the system time resolution.
     '''
 
-    class settings(lb.Device.settings):
-        server = lb.Unicode(help='the name of the network interface that will send data')
-        client = lb.Unicode(help='the name of the network interface that will receive data')
-        receiver = lb.Unicode(help='the name of the network interface that will send data')
-        port = lb.Int(0,
-                      min=0,
-                      help='TCP or UDP port for networking, or 0 to let the operating system choose')
-        resource = lb.Unicode(help='skipd - use sender and receiver instead')        
-        timeout = lb.Float(2,
-                           min=1e-3,
-                           help='timeout before aborting the test')
-        tcp_nodelay = lb.Bool(True,
-                              help='set True to disable Nagle\'s algorithm')
-        sync_each = lb.Bool(False,
-                              help='synchronize the start times of the send and receive threads for each buffer at the cost of throughput')
-        
-        delay = lb.Float(0, min=0, help='wait time between sending buffers')
+    server: lb.Unicode(help='the name of the network interface that will send data')
+    client: lb.Unicode(help='the name of the network interface that will receive data')
+    receiver: lb.Unicode(help='the name of the network interface that will send data')
+    port: lb.Int(0,
+                 min=0,
+                 help='TCP or UDP port for networking, or 0 to let the operating system choose')
+    resource: lb.Unicode(help='skipd - use sender and receiver instead')
+    timeout: lb.Float(2,
+                      min=1e-3,
+                      help='timeout before aborting the test')
+    tcp_nodelay: lb.Bool(True,
+                         help='set True to disable Nagle\'s algorithm')
+    sync_each: lb.Bool(False,
+                       help='synchronize the start times of the send and receive threads for each buffer at the cost of throughput')
+
+    delay: lb.Float(0, min=0, help='wait time between sending buffers')
 
     def __repr__(self):
-        return "{name}(server='{server}',client='{client}')"\
-               .format(name=self.__class__.__name__,
-                       server=self.settings.server,
-                       client=self.settings.client)
+        return "{name}(server='{server}',client='{client}')" \
+            .format(name=self.__class__.__name__,
+                    server=self.settings.server,
+                    client=self.settings.client)
 
     def disconnect(self):
         if self.is_running():
@@ -441,29 +454,29 @@ class ClosedLoopBenchmark(lb.Device):
         '''
         self._background_event = Event()
         self._background_queue = Queue()
-        
+
         server_sock, client_sock, listener = self._open_sockets(buffer_size)
-        
+
         try:
             self._run(client_sock=client_sock,
                       server_sock=server_sock,
                       buffer_size=buffer_size,
-                      end_event = self._background_event,
-                      count = count,
-                      duration = duration)            
+                      end_event=self._background_event,
+                      count=count,
+                      duration=duration)
         except:
             self._close_sockets(client_sock, server_sock, listener)
             raise
 
     def is_running(self):
-        return hasattr(self, '_background_event')\
+        return hasattr(self, '_background_event') \
                and not self._background_event.is_set()
 
     def get(self):
         if not hasattr(self, '_background_queue'):
             raise ChildProcessError('no traffic history, start a run first')
-            
-        try:            
+
+        try:
             ret = self._background_queue.get(timeout=self.settings.timeout)
         except Empty:
             ret = {}
@@ -476,12 +489,13 @@ class ClosedLoopBenchmark(lb.Device):
     def stop(self):
         if not hasattr(self, '_background_queue'):
             raise ChildProcessError('no traffic running, start a run first')
-            
+
         self._background_event.set()
         return self.get()
 
     def _make_dataframe(self, data):
-        raise NotImplementedError               
+        raise NotImplementedError
+
 
 class suppress_matching_arg0(AbstractContextManager):
     """ Context manager to suppress specified exceptions that must also match
@@ -505,7 +519,7 @@ class suppress_matching_arg0(AbstractContextManager):
     def __exit__(self, exctype, excinst, exctb):
         if exctype is None:
             return False
-        
+
         if not issubclass(exctype, self._exceptions):
             return True
 
@@ -513,34 +527,38 @@ class suppress_matching_arg0(AbstractContextManager):
             return False
         else:
             return True
-           
+
+
 class ServerConnectionError(ConnectionError):
     pass
+
 
 class ClientConnectionError(ConnectionError):
     pass
 
+
 class PortBusyError(ConnectionError):
     pass
+
 
 class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
     _server = None
     port_winerrs = (10013, 10048)
     conn_winerrs = (10051,)
 
-    def _close_sockets(self, *sockets, bytes_=0):           
+    def _close_sockets(self, *sockets, bytes_=0):
         for sock in sockets:
             try:
                 sock.settimeout(0.1)
             except OSError:
                 continue
-            
+
             with suppress_matching_arg0(OSError, arg0=10057):
                 sock.send(b'')
 
             with suppress(OSError):
                 t0 = perf_counter()
-                while perf_counter()-t0 < 1:
+                while perf_counter() - t0 < 1:
                     try:
                         buf = sock.recv(bytes_)
                     except socket.timeout:
@@ -549,11 +567,11 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                         break
                 else:
                     self.logger.warning('failed to flush socket before closing')
-            
-            with suppress_matching_arg0(OSError, arg0=10057),\
+
+            with suppress_matching_arg0(OSError, arg0=10057), \
                  suppress_matching_arg0(OSError, arg0='timed out'):
                 sock.shutdown(socket.SHUT_RDWR)
-            
+
             with suppress_matching_arg0(OSError, arg0=10057):
                 sock.close()
 
@@ -562,35 +580,35 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         '''
         if self.settings.receiver not in (self.settings.server, self.settings.client):
             raise ValueError(f'the receiver setting must match the client or server interface name')
-        
+
         global _tcp_port_offset
-        
+
         server_ip = get_ipv4_address(self.settings.server)
-        client_ip = get_ipv4_address(self.settings.client)        
+        client_ip = get_ipv4_address(self.settings.client)
         listen_sock = None
-        
+
         timeout = self.settings.timeout
         bytes_ = buffer_size
         tcp_nodelay = self.settings.tcp_nodelay
-        
+
         client_done = Event()
         server_done = Event()
 
         def listener(port):
             ''' Run a listener at the socket
             '''
-            
+
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(timeout)
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        
+
                 # Set the size of the buffer for this socket
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, bytes_)
                 bufsize = sock.getsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF)
                 if bufsize < bytes_:
                     msg = f'recv buffer size is {bufsize}, but need at least {self.settings.bytes}'
-                    raise OSError(msg)       
+                    raise OSError(msg)
                 sock.bind((server_ip, port))
 
                 # start listening
@@ -613,8 +631,8 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
                 # Basic flags
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, tcp_nodelay)        
-               
+                sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, tcp_nodelay)
+
                 # Set and verify the send buffer size
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, bytes_)
                 bytes_actual = sock.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF)
@@ -625,16 +643,16 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
                 # Do the connect                
                 sock.connect((server_ip, port))
-            
+
             # This exception needs to come first, because it is a subclass
             # of OSError (at least on windows)
             except socket.timeout:
                 if sock is not None:
                     self._close_sockets(sock, bytes_=bytes_)
                 msg = f'client socket timed out in connection attempt to the server at {server_ip}:{port}'
-                raise ConnectionRefusedError(msg)                
-                
-            # Certain "port busy" errors are raised as OSError. Check whether
+                raise ConnectionRefusedError(msg)
+
+                # Certain "port busy" errors are raised as OSError. Check whether
             # they match a whitelist of known port errors to map into port busy
             except OSError as e:
                 msg = f'connection failed between server {server_ip} and client {client_ip}'
@@ -647,7 +665,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     raise ConnectionError(msg)
                 else:
                     raise
-                
+
 
             # For everything else, we still need to clean up
             except BaseException:
@@ -666,27 +684,27 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             ex = None
             # Try to get a connection
             t0 = perf_counter()
-#            ex = TimeoutError('received no attempted client connections')
+            #            ex = TimeoutError('received no attempted client connections')
             try:
-                while perf_counter()-t0 < timeout:
+                while perf_counter() - t0 < timeout:
                     try:
-                        listen_sock.settimeout(0.01+timeout-(perf_counter()-t0))
+                        listen_sock.settimeout(0.01 + timeout - (perf_counter() - t0))
                         conn, (other_ip, _) = listen_sock.accept()
                     except socket.timeout:
                         continue
-#                    except OSError as e:
-#                        # Windows-specific errors
-#                        if hasattr(e, 'winerror') and e.winerror in self.port_winerrs:
-#                            self.logger.debug(f'port {port} is inaccessible')
-#                            raise PortBusyError
-#                        else:
-#                            raise
-#                    except AttributeError:
-#                        if listen_sock is None:
-#                            raise ConnectionError('no listener to provide server connection socket')
-#                        else:
-#                            raise
-                    
+                    #                    except OSError as e:
+                    #                        # Windows-specific errors
+                    #                        if hasattr(e, 'winerror') and e.winerror in self.port_winerrs:
+                    #                            self.logger.debug(f'port {port} is inaccessible')
+                    #                            raise PortBusyError
+                    #                        else:
+                    #                            raise
+                    #                    except AttributeError:
+                    #                        if listen_sock is None:
+                    #                            raise ConnectionError('no listener to provide server connection socket')
+                    #                        else:
+                    #                            raise
+
                     if other_ip == client_ip:
                         break
                     else:
@@ -696,17 +714,17 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                             conn = None
                 else:
                     raise TimeoutError('no connection attempt seen from the expected client')
-            except BaseException as e:                
+            except BaseException as e:
                 listen_sock.settimeout(timeout)
                 ex = e
             else:
                 listen_sock.settimeout(timeout)
-                
+
                 # Basic flags
-                conn.settimeout(timeout)            
-    #            conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, tcp_nodelay)        
-               
+                conn.settimeout(timeout)
+                #            conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, tcp_nodelay)
+
                 # Set and verify the send buffer size
                 conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, bytes_)
                 bytes_actual = conn.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF)
@@ -721,8 +739,8 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     self.logger.debug(f'server connection exception: {repr(ex)} (superceded by client exception)')
                     ex = None
                 if conn is not None:
-                    self._close_sockets(conn, bytes_=bytes_)                
-                    
+                    self._close_sockets(conn, bytes_=bytes_)
+
             server_done.set()
 
             if ex is not None:
@@ -749,21 +767,22 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 raise
             finally:
                 if self.settings.port != 0:
-                    _tcp_port_offset = (_tcp_port_offset+1)%5000
+                    _tcp_port_offset = (_tcp_port_offset + 1) % 5000
 
             ret['listener'] = listen_sock
             return ret
 
         try:
             t0 = perf_counter()
-            
+
             if self.settings.port == 0:
                 ret = connect()
             else:
                 # Allow chances to try other ports
                 ret = lb.retry(PortBusyError, 100)(connect)()
             p = ret['client'].getsockname()[1]
-            self.logger.debug(f'server {server_ip}:{p} connected to client {client_ip}:{p} in {perf_counter()-t0:0.3f}s')
+            self.logger.debug(
+                f'server {server_ip}:{p} connected to client {client_ip}:{p} in {perf_counter() - t0:0.3f}s')
         except PortBusyError:
             raise ConnectionError(r'failed to connect on {retries} ports')
 
@@ -773,7 +792,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
              duration=None, count=None, end_event=None):
         if duration is count is end_event is None:
             raise ValueError('must pass at least one of duration, count, and end_event to specify end condition')
-        
+
         if self.settings.tcp_nodelay and buffer_size < self.mss():
             raise ValueError(f'with tcp_nodelay enabled, set buffer_size at least as large as the MSS ({self.mss()})')
 
@@ -781,12 +800,12 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             send_sock, recv_sock = client_sock, server_sock
         else:
             send_sock, recv_sock = server_sock, client_sock
-            
-        t_start = perf_counter()            
+
+        t_start = perf_counter()
 
         # Are we running in the background?
         background = end_event is not None
-        
+
         if background:
             count = 1
 
@@ -802,11 +821,10 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             end_event = Event()
 
         except_event = Event()
-        
 
         def check_status():
             lb.sleep(0)
-    
+
             # Bail if the sender hit an exception
             if except_event.is_set():
                 raise lb.ThreadEndedByMaster()
@@ -830,12 +848,12 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             rx_buffers = []
 
             def do_sync():
-                check_status()                
+                check_status()
                 if sync:
-                    t_sync = perf_counter()                    
+                    t_sync = perf_counter()
                     rx_ready.set()
                     while not tx_ready.is_set():
-                        if perf_counter()-t_sync > timeout:
+                        if perf_counter() - t_sync > timeout:
                             except_event.set()
                             raise TimeoutError('timeout waiting for sender sync')
                     tx_ready.clear()
@@ -847,17 +865,17 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 do_sync()
                 t0 = t1 = t2 = perf_counter()
                 i = 0
-                
+
                 # Receive rx_buffers until we receive the full send buffer
                 while bytes_left > 0:
-                    if t2-t0 > timeout:
+                    if t2 - t0 > timeout:
                         msg = f'timeout while waiting to receive {bytes_left} of {bytes_} bytes'
                         raise TimeoutError(msg)
                     try:
                         bytes_left -= recv_sock.recv_into(buf[-bytes_left:],
                                                           bytes_left)
                         if i == 0:
-                            rx_buffer0_size = int(bytes_)-bytes_left
+                            rx_buffer0_size = int(bytes_) - bytes_left
                             t1 = t2 = perf_counter()
                         else:
                             t2 = perf_counter()
@@ -869,29 +887,29 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
             try:
                 do_sync()
-                
+
                 # One to the wind
                 single()
                 rx_ready.set()
 
                 i = 0
                 # Receive the test data
-                while not traffic_done(i):                                        
+                while not traffic_done(i):
                     t0, t1, t2, rx_buffer0_size, rx_buffer_count = single()
                     starts.append(t0)
                     rx_buffer0_finishes.append(t1)
-                    finishes.append(t2)                    
+                    finishes.append(t2)
                     rx_buffer_sizes.append(rx_buffer0_size)
                     rx_buffers.append(rx_buffer_count)
 
                     i += 1
 
                 # One to the wind
-#                single()
+            #                single()
 
             except lb.ThreadEndedByMaster:
                 self.logger.debug(f'{self.__class__.__name__}() ended by master thread')
-                except_event.set()                
+                except_event.set()
             except BaseException:
                 if not (end_event is not None and end_event.is_set()):
                     except_event.set()
@@ -915,41 +933,41 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 if sync:
                     t_sync = perf_counter()
                     while not rx_ready.is_set():
-                        if perf_counter()-t_sync > timeout:
+                        if perf_counter() - t_sync > timeout:
                             except_event.set()
                             raise TimeoutError('timeout waiting for receive sync')
                     rx_ready.clear()
                     tx_ready.set()
 
             def single():
-                data = np.random.bytes(bytes_)               
+                data = np.random.bytes(bytes_)
                 do_sync()
                 t0 = t1 = perf_counter()
-                try:                    
+                try:
                     send_sock.sendall(data)
                     t1 = perf_counter()
                     if delay > 0:
-                        time.sleep(delay)                    
+                        time.sleep(delay)
                 except socket.timeout:
                     ex = IOError('timed out attempting to send data')
                 else:
                     ex = None
 
-                return t0,t1,ex
+                return t0, t1, ex
 
             try:
-                do_sync()               
-        
+                do_sync()
+
                 # Throwaway buffer
                 single()
-                tx_ready.set()                
-        
+                tx_ready.set()
+
                 i = 0
-                while not traffic_done(i):                            
+                while not traffic_done(i):
                     if i == 0:
                         start = datetime.datetime.now()
 
-                    t0,t1,ex = single()
+                    t0, t1, ex = single()
                     if ex is not None:
                         raise ex
 
@@ -959,13 +977,13 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     i += 1
 
                 # Throwaway buffer
-#                single()
+            #                single()
 
             except lb.ThreadEndedByMaster:
                 self.logger.debug(f'{self.__class__.__name__}() ended by master thread')
                 except_event.set()
             except BaseException as e:
-                if not (end_event is not None and end_event.is_set()):                
+                if not (end_event is not None and end_event.is_set()):
                     self.logger.debug(f'suppressed exception in sender: {e}')
                     except_event.set()
 
@@ -996,7 +1014,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             thread.start()
             tx_ready.wait(timeout=self.settings.timeout)
             rx_ready.wait(timeout=self.settings.timeout)
-            self.logger.debug(f'first buffer sent after {perf_counter()-t_start:0.3f}s')
+            self.logger.debug(f'first buffer sent after {perf_counter() - t_start:0.3f}s')
         else:
             ret = lb.concurrently(sender, receiver, traceback_delay=True)
             i = len(ret["t_tx_start"])
@@ -1014,8 +1032,8 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
             :returns: a DataFrame indexed on PC time containing columns 'bits_per_second', 'duration', 'delay', 'queuing_duration'
         '''
-#        t0 = perf_counter()
-        
+        #        t0 = perf_counter()
+
         # Connect all the sockets   
         server_sock, client_sock, listener = self._open_sockets(buffer_size)
 
@@ -1025,10 +1043,10 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                             count=count,
                             buffer_size=buffer_size,
                             duration=duration)
-            
+
         finally:
             self._close_sockets(client_sock, server_sock, listener)
-        
+
         return self._make_dataframe(ret)
 
     def _make_dataframe(self, worker_data):
@@ -1036,54 +1054,55 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         start = worker_data.pop('start', None)
         if start is None:
             raise IOError('the run did not return data')
-            
-        buffer_size  = worker_data.pop('bytes')
-        
+
+        buffer_size = worker_data.pop('bytes')
+
         # Race condition may make the lengths different by 1
-        count = min(len(worker_data['t_tx_start']),len(worker_data['t_rx_start']))
+        count = min(len(worker_data['t_tx_start']), len(worker_data['t_rx_start']))
 
         for k in worker_data.keys():
             worker_data[k] = worker_data[k][:count]
 
         # Compute elapsed timings, shift timestamps, etc.
         ret = pd.DataFrame(worker_data)
-        
-        timestamp = pd.TimedeltaIndex(ret.t_tx_start, unit='s')+start
 
-        duration = ret.t_rx_end-ret.t_rx_start
-        
+        timestamp = pd.TimedeltaIndex(ret.t_tx_start, unit='s') + start
+
+        duration = ret.t_rx_end - ret.t_rx_start
+
         # The average data rate after the first partial receive buffer
-        late_rate = (buffer_size-ret.rx_buffer0_size)/(ret.t_rx_end-ret.t_rx_end_buffer0)
-        
+        late_rate = (buffer_size - ret.rx_buffer0_size) / (ret.t_rx_end - ret.t_rx_end_buffer0)
+
         # Estimate the clock value immediately before the data arrived at the 
         # receive socket based on the remainder of the data
-        est_rx_buffer0_start = ret.t_rx_end_buffer0 - ret.rx_buffer0_size/late_rate
+        est_rx_buffer0_start = ret.t_rx_end_buffer0 - ret.rx_buffer0_size / late_rate
 
-        ret = pd.DataFrame({'bits_per_second': 8*buffer_size/duration,
+        ret = pd.DataFrame({'bits_per_second': 8 * buffer_size / duration,
                             'duration': duration,
-                            'delay': est_rx_buffer0_start-ret.t_tx_start,#ret.t_rx_start-ret.t_tx_start,
-                            'queuing_duration': ret.t_tx_end-ret.t_tx_start,
+                            'delay': est_rx_buffer0_start - ret.t_tx_start,  # ret.t_rx_start-ret.t_tx_start,
+                            'queuing_duration': ret.t_tx_end - ret.t_tx_start,
                             'rx_buffer_count': ret.rx_buffer_count,
                             't_rx_end_buffer0': ret.t_rx_end_buffer0,
                             'timestamp': timestamp})
 
         return ret.set_index('timestamp')
-    
+
     def mss(self):
-        return self.mtu()-40
+        return self.mtu() - 40
 
     def mtu(self):
         return psutil.net_if_stats()[self.settings.receiver].mtu
 
     def wait_for_interfaces(self, timeout):
-        errors = (TimeoutError,ConnectionRefusedError)
-        
+        errors = (TimeoutError, ConnectionRefusedError)
+
         t0 = time.perf_counter()
         socks = lb.until_timeout(errors, timeout)(self._open_sockets)()
         self._close_sockets(*socks)
-        elapsed = perf_counter()-t0
+        elapsed = perf_counter() - t0
         self.logger.debug(f'interfaces ready after {elapsed:0.2f}s')
         return elapsed
+
 
 # Examples
 # ClosedLoopNetworkingTest example
@@ -1098,9 +1117,9 @@ if __name__ == '__main__':
 
     mss_mults = []
     binary_mults = []
-    with net:        
+    with net:
         for j in range(1):
-            net.start_traffic(1460*10)
+            net.start_traffic(1460 * 10)
             print(net.is_running())
             lb.sleep(3)
             print(net.is_running())
@@ -1119,7 +1138,7 @@ if __name__ == '__main__':
 #            print(f'{traffic.rate.median()} +/- {2*traffic.rate.std()} Mbps')
 ##            print('medians\n',traffic.median(axis=0))
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    lb.show_messages('debug')
 #    ips = IPerf(interval=0.5, udp=True)
 #

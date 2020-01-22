@@ -29,16 +29,15 @@ class AcronameUSBHub2x4(lb.Device):
     model = 17
     resource = None
 
-    class state (lb.Device.state):
-        data0_enabled  = lb.Bool()
-        data1_enabled  = lb.Bool()
-        data2_enabled  = lb.Bool()
-        data3_enabled  = lb.Bool()
+    data0_enabled  = lb.Bool()
+    data1_enabled  = lb.Bool()
+    data2_enabled  = lb.Bool()
+    data3_enabled  = lb.Bool()
 
-        power0_enabled = lb.Bool()
-        power1_enabled = lb.Bool()
-        power2_enabled = lb.Bool()
-        power3_enabled = lb.Bool()
+    power0_enabled = lb.Bool()
+    power1_enabled = lb.Bool()
+    power2_enabled = lb.Bool()
+    power3_enabled = lb.Bool()
     
     def __import__ (self):
         global brainstem
@@ -67,13 +66,12 @@ class AcronameUSBHub2x4(lb.Device):
         '''
         self.backend.disconnect()
 
-    # @state.setter
-    # def __ (self, trait, value):
-    #     ''' Apply an instrument setting to the instrument. The value ``value''
-    #         will be applied to the trait attriute ``attr'' in type(self).
-    #     '''
-    #     raise NotImplementedError('state "{attr}" is defined but not implemented! implement {cls}.command_get, or implement a getter for {cls}.state.{attr}'\
-    #                               .format(cls=type(self).__name__, trait=trait))
+    def __set_state__ (self, command, value):
+        ''' Apply an instrument setting to the instrument. The value ``value''
+            will be applied to the trait attriute ``attr'' in type(self).
+        '''
+        raise NotImplementedError('state "{attr}" is defined but not implemented! implement {cls}.command_get, or implement a getter for {cls}.{attr}'\
+                                  .format(cls=type(self).__name__, trait=trait))
         
     def enable (self, data = True, power = True, channel= "all"):
         ''' Enable or disable of USB port features at one or all hub ports.

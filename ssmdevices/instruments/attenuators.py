@@ -37,16 +37,8 @@ class MiniCircuitsRC4DAT(DotNetDevice):
     dll_name = 'mcl_RUDAT64.dll'
     model_includes = ''
     
-    class settings(DotNetDevice.settings):
-        resource = lb.Unicode(None, help='Serial number of the USB device. Must be defined if more than one device is connected to the computer', allow_none=True)
-
-    class state(DotNetDevice.state):
-        model = lb.Unicode(read_only=True, cache=True, is_metadata=True)
-        serial_number = lb.Unicode(read_only=True, cache=True, is_metadata=True)        
-        attenuation1 = lb.Float(min=0, max=115, step=0.25, command=1)
-        attenuation2 = lb.Float(min=0, max=115, step=0.25, command=2)
-        attenuation3 = lb.Float(min=0, max=115, step=0.25, command=3)
-        attenuation4 = lb.Float(min=0, max=115, step=0.25, command=4)
+    resource: lb.Unicode(None,
+                         help='Serial number of the USB device. Must be defined if more than one device is connected to the computer', allow_none=True)
 
     def connect (self):
         ''' Open the device resource.
@@ -80,14 +72,18 @@ class MiniCircuitsRC4DAT(DotNetDevice):
                                  .format(repr(self.settings.resource),repr(valid)))
                 
         do_connect()
-        if self.model_includes and self.model_includes not in self.state.model:
+        if self.model_includes and self.model_includes not in self.model:
             raise lb.DeviceException('attenuator model {model} does not include the expected {model_has} string'\
-                                     .format(model=self.state.model,
+                                     .format(model=self.model,
                                              model_has=self.model_includes))
 
         self.logger.debug('Connected to {model} attenuator, SN#{sn}'\
-                          .format(model=self.state.model,
-                                  sn=self.state.serial_number))
+                          .format(model=self.model,
+                                  sn=self.serial_number))
+
+    def _validate_connection(self):
+        if self.backend.GetUSBConnectionStatus() != 1:
+            raise lb.DeviceStateError('USB device unexpectedly disconnected')
 
     def disconnect(self):
         ''' Release the attenuator hardware resource via the driver DLL.
@@ -120,32 +116,31 @@ class MiniCircuitsRC4DAT(DotNetDevice):
         else:
             return []
 
-    @state.model.getter
-    def __ (self):
+    @lb.Unicode(settable=False, cache=True)
+    def model(self):
         self._validate_connection()
         return 'MiniCircuits ' + self.backend.Read_ModelName('')[1]
     
-    @state.serial_number.getter
-    def __ (self):
+    @lb.Unicode(settable=False, cache=True)
+    def serial_number(self):
         self._validate_connection()
         return self.backend.Read_SN('')[1]
 
-    def _validate_connection(self):
-        if self.backend.GetUSBConnectionStatus() != 1:
-            raise lb.DeviceStateError('USB device unexpectedly disconnected')
+    attenuation1 = lb.Float(min=0, max=115, step=0.25, command=1)
+    attenuation2 = lb.Float(min=0, max=115, step=0.25, command=2)
+    attenuation3 = lb.Float(min=0, max=115, step=0.25, command=3)
+    attenuation4 = lb.Float(min=0, max=115, step=0.25, command=4)
 
-    @state.getter
-    def __ (self, trait):
+    def __get_state__ (self, command):
         self._validate_connection()
-        ret = self.backend.ReadChannelAtt(trait.command)
-        self.logger.debug('got attenuation{} {} dB'.format(trait.command,ret))
+        ret = self.backend.ReadChannelAtt(command)
+        self.logger.debug(f'got attenuation{command} {ret} dB')
         return ret    
 
-    @state.setter
-    def __ (self, trait, value):
+    def __set_state_(self, command, value):
         self._validate_connection()
-        self.logger.debug('set attenuation{} {} dB'.format(trait.command,value))
-        self.backend.SetChannelAtt(trait.command, value)
+        self.logger.debug(f'set attenuation{command} {value} dB')
+        self.backend.SetChannelAtt(command, value)
 
 if __name__ == '__main__':
     lb.show_messages('info')
@@ -154,5 +149,5 @@ if __name__ == '__main__':
         atten = MiniCircuitsRCDAT('11604210014')
         atten2 = MiniCircuitsRCDAT('11604210008')
         with atten,atten2:
-            atten.state.attenuation = 63.
-            lb.logger.info(str(atten.state.attenuation))
+            atten.attenuation = 63.
+            lb.logger.info(str(atten.attenuation))

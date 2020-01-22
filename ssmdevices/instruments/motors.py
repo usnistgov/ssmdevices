@@ -6,50 +6,23 @@ Created on Wed Feb  7 10:05:35 2018
 @author: aec
 
 This is where we drive things that move: 
-    for now this is just the ETS-Lindgrem model 2005 Azimuth Positioner
+    for now this is just the ETS-Lindgren model 2005 Azimuth Positioner
 """
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-#from builtins import super
-from future import standard_library
-standard_library.install_aliases()
 
-import time
 import labbench as lb
-#import pandas as pd
 
 __all__=['ETSLindgrenAzi2005']
 
-class ETSLindgrenAzi2005(lb.VISADevice):    
-
-    class state(lb.VISADevice.state):
-        '''This does not quality as a "modern" VX11 device, so the core functions are of limited use here
-        I may end up writing this using self.query
-        '''
-        
-        speed = lb.Int(command='S', min=0, max=3, help='speed')
-        cwlimit = lb.Float(command='UL', min=000.0, max=999.9, step=0.1, help='cwlimit')
-        cclimit = lb.Int(command='LL',  min=000.0, max=999.9, step=0.1, help='cclimit')
-        define_position = lb.Float(command='CP', min=0, max=360, step=0.1, help='rotation (degrees)')
-        position = lb.Float(command='SK', min=0, max=360, help='rotation (degrees)', write_only=True)
-        
-
-    class settings(lb.VISADevice.settings):
-        timeout = lb.Float(20, min=0, )
-        baud_rate = lb.Int(9600, min=1, )
-        parity = lb.Bytes(b'N', )
-        stopbits = lb.Float(1, min=1, max=2, step=0.5, )
-        xonxoff = lb.Bool(False, )
-        rtscts = lb.Bool(False, )
-        dsrdtr = lb.Bool(False, )
-        read_termination  = lb.Unicode('\n', read_only='connected') #this is an acknowledge byte
-        write_termination = lb.Unicode('\r', read_only='connected') #this is a carriage return
-
-    @state.setter
-    def __(self, trait, value):
-        self.write(trait.command + str(value))
+class ETSLindgrenAzi2005(lb.VISADevice):
+    timeout: lb.Float(20, min=0, )
+    baud_rate: lb.Int(9600, min=1, )
+    parity: lb.Bytes(b'N', )
+    stopbits: lb.Float(1, min=1, max=2, step=0.5, )
+    xonxoff: lb.Bool(False, )
+    rtscts: lb.Bool(False, )
+    dsrdtr: lb.Bool(False, )
+    read_termination: lb.Unicode('\n')  # this is an acknowledge byte
+    write_termination: lb.Unicode('\r')  # this is a carriage return
 
     def config(self, mode):
         if mode is 'CR' or 'NCR':
@@ -65,7 +38,7 @@ class ETSLindgrenAzi2005(lb.VISADevice):
         
     def set_speed(self, value):
         self.write('S'+value)
-       # return self.state.query_speed
+       # return self.query_speed
     
     def set_limits(self, side, value):
         '''Probably should put some error checking in here to make sure value is a float
@@ -95,6 +68,16 @@ class ETSLindgrenAzi2005(lb.VISADevice):
         #    print('yay we stopped!')
         #else:
         #   print('oops still moving!')
+
+    # A bunch of command-keyed states
+    speed = lb.Int(command='S', min=0, max=3, help='speed')
+    cwlimit = lb.Float(command='UL', min=000.0, max=999.9, step=0.1, help='cwlimit')
+    cclimit = lb.Float(command='LL',  min=000.0, max=999.9, step=0.1, help='cclimit')
+    define_position = lb.Float(command='CP', min=0, max=360, step=0.1, help='rotation (degrees)')
+    position = lb.Float(command='SK', min=0, max=360, help='rotation (degrees)', gettable=False)
+
+    def __set_state__(self, command, value):
+        self.write(command + str(value))
      
 if __name__ == '__main__':
     from pylab import *
@@ -114,8 +97,8 @@ if __name__ == '__main__':
         motor.set_position('30')
         print(repr(motor.whereami()))
         # Configure
-#        print(motor.state.define_position)
-#        motor.state.position = 30
+#        print(motor.define_position)
+#        motor.position = 30
 #        motor.write('*WAI')
-#        print(motor.state.define_position)
-        #print(motor.state.position)
+#        print(motor.define_position)
+        #print(motor.position)

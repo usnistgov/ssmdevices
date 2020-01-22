@@ -7,11 +7,10 @@ class RohdeSchwarzZMBSeries(lb.VISADevice):
     
         Author: Audrey Puls
     '''
-    class state(lb.VISADevice.state):
-        initiate_continuous = lb.Bool(command='INITiate1:CONTinuous:ALL',
-                                      remap={True: 'ON', False: 'OFF'},
-                                      help='')
-        
+    initiate_continuous = lb.Bool(command='INITiate1:CONTinuous:ALL',
+                                  remap={True: 'ON', False: 'OFF'},
+                                  help='')
+
     def clear(self):
         self.write('*CLS')
         
@@ -45,15 +44,15 @@ if __name__ == '__main__':
     
     with na, atten:
         na.clear()
-        na.state.initiate_continuous = False
+        na.initiate_continuous = False
         
         ####################SWEEP THROUGH ATTENUATION AND COLLECT DATA#################
         # Since we want to collect cal data on (uncalibrated) attenuator settings,
-        # we work with atten.state.attenuation_setting instead of
-        # atten.state.attenuation (which tries to apply calibration data)
-        for atten.state.attenuation_setting in np.linspace(0,110,num=441):       
+        # we work with atten.attenuation_setting instead of
+        # atten.attenuation (which tries to apply calibration data)
+        for atten.attenuation_setting in np.linspace(0,110,num=441):
             # The name of the run, based on the attenuation setting
-            name=str(atten.state.attenuation_setting).replace('.','pt') 
+            name=str(atten.attenuation_setting).replace('.','pt')
     
             na.trigger()
             time.sleep(20) # Pauses python to let the VNA finish a full sweep

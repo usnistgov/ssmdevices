@@ -3,11 +3,6 @@
 """ Network test instruments
 """
 
-from __future__ import unicode_literals
-from __future__ import absolute_import
-from future import standard_library
-standard_library.install_aliases()
-
 import labbench as lb
 import time, os
 import numbers
@@ -37,18 +32,16 @@ class AeroflexTM500(lb.TelnetDevice):
         from a file that could be treated as a config file.
     '''
 
-    class settings(lb.TelnetDevice.settings):
-        timeout = lb.Float(1, min=0, help='leave the timeout small to allow keyboard interrupts')
-        ack_timeout = lb.Float(30, min=0.1, help='how long to wait for a command acknowledgment from the TM500 (s)')
-        busy_retries = lb.Int(20, min=0)
-        remote_ip = lb.Unicode('10.133.0.203', help='ip address of TM500 backend')
-        remote_ports = lb.Unicode('5001 5002 5003', help='port of TM500 backend')
-        min_acquisition_time = lb.Int(30, min=0, help='minimum time to spend acquiring logs (s)')
-        port = lb.Int(5003, min=1)
-        config_root  = lb.Unicode('.', help='path to the command scripts directory')
-        data_root  = lb.Unicode('.', help='remote save root directory')
-        convert_files = lb.List([], help='text to match in the filename of data output files to convert')
-
+    timeout: lb.Float(1, min=0, help='leave the timeout small to allow keyboard interrupts')
+    ack_timeout: lb.Float(30, min=0.1, help='how long to wait for a command acknowledgment from the TM500 (s)')
+    busy_retries: lb.Int(20, min=0)
+    remote_ip: lb.Unicode('10.133.0.203', help='ip address of TM500 backend')
+    remote_ports: lb.Unicode('5001 5002 5003', help='port of TM500 backend')
+    min_acquisition_time: lb.Int(30, min=0, help='minimum time to spend acquiring logs (s)')
+    port: lb.Int(5003, min=1)
+    config_root : lb.Unicode('.', help='path to the command scripts directory')
+    data_root : lb.Unicode('.', help='remote save root directory')
+    convert_files: lb.List([], help='text to match in the filename of data output files to convert')
 
     def arm(self, scenario_name):
         ''' Load the scenario from the command listing in a local TM500

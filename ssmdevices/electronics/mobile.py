@@ -7,9 +7,8 @@ import ssmdevices.lib
 
 class AndroidDebugBridge(lb.CommandLineWrapper):
 
-    class settings(lb.CommandLineWrapper.settings):
-        binary_path   = lb.Unicode(ssmdevices.lib.path('adb.exe'))
-        timeout       = lb.Float(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
+    binary_path: lb.Unicode(ssmdevices.lib.path('adb.exe'))
+    timeout: lb.Float(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
 
     def devices(self):
         ''' This function checks ADB to see if any devices are connected, if

@@ -26,9 +26,6 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
     library  = ssmdevices.lib    # Must be a module
     dll_name = 'mcl_SolidStateSwitch64.dll'
 
-    class state(DotNetDevice.state):
-        port = lb.Int(min=1)
-
     def connect (self):
         ''' Open the device resource.
         '''
@@ -47,13 +44,12 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
         except:
             pass
 
-    @state.port.getter
-    def _ (self):
+    @lb.Int(min=1)
+    def port(self):
         ret = self.backend.Get_SP4T_State()
         self.logger.debug('got switch state {}'.format(repr(ret)))
         return ret
-
-    @state.port.setter
-    def _ (self, value):
+    @port
+    def port(self, value):
         self.logger.debug('set switch state {}'.format(repr(value)))
         self.backend.Set_SP4T_COM_To(value)
