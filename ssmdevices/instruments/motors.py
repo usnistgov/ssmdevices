@@ -70,14 +70,14 @@ class ETSLindgrenAzi2005(lb.VISADevice):
         #   print('oops still moving!')
 
     # A bunch of command-keyed states
-    speed = lb.Int(command='S', min=0, max=3, help='speed')
-    cwlimit = lb.Float(command='UL', min=000.0, max=999.9, step=0.1, help='cwlimit')
-    cclimit = lb.Float(command='LL',  min=000.0, max=999.9, step=0.1, help='cclimit')
-    define_position = lb.Float(command='CP', min=0, max=360, step=0.1, help='rotation (degrees)')
-    position = lb.Float(command='SK', min=0, max=360, help='rotation (degrees)', gettable=False)
+    speed = lb.Int(key='S', min=0, max=3, help='speed')
+    cwlimit = lb.Float(key='UL', min=000.0, max=999.9, step=0.1, help='cwlimit')
+    cclimit = lb.Float(key='LL',  min=000.0, max=999.9, step=0.1, help='cclimit')
+    define_position = lb.Float(key='CP', min=0, max=360, step=0.1, help='rotation (degrees)')
+    position = lb.Float(key='SK', min=0, max=360, help='rotation (degrees)', gettable=False)
 
-    def __set_state__(self, command, value):
-        self.write(command + str(value))
+    def __set_by_key__(self, key, name, value):
+        self.write(key + str(value))
      
 if __name__ == '__main__':
     from pylab import *

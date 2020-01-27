@@ -7,7 +7,7 @@ class RohdeSchwarzZMBSeries(lb.VISADevice):
     
         Author: Audrey Puls
     '''
-    initiate_continuous = lb.Bool(command='INITiate1:CONTinuous:ALL',
+    initiate_continuous = lb.Bool(key='INITiate1:CONTinuous:ALL',
                                   remap={True: 'ON', False: 'OFF'},
                                   help='')
 

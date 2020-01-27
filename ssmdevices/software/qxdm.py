@@ -6,14 +6,6 @@ Author: Paul Blanchard (paul.blanchard@nist.gov)
 Edits by Dan Kuester (dkuester@nist.gov)
 """
 
-from __future__ import print_function
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import absolute_import
-
-from future import standard_library
-
-standard_library.install_aliases()
 __all__ = ['QXDM']
 
 import labbench as lb
@@ -146,18 +138,18 @@ class QXDM(lb.Win32ComDevice):
         except TimeoutError:
             raise Exception('could not disable UE; does QXDM work if you start it manually?')
 
-    # Traits keyed on command
-    ue_model_number = lb.Unicode(help='model number code', command='ue_model_number')
-    ue_mode = lb.Unicode(help='current state of the phone', command='ue_mode')
-    ue_imei = lb.Unicode(help='Phone IMEI', command='ue_imei')
-    ue_esn = lb.Unicode(help='Phone ESN', command='ue_esn')
-    ue_build_id = lb.Unicode(help='Build ID of software on the phone', command='ue_build_id')
+    # State traits implemented by command key
+    ue_model_number = lb.Unicode(help='model number code', key='ue_model_number')
+    ue_mode = lb.Unicode(help='current state of the phone', key='ue_mode')
+    ue_imei = lb.Unicode(help='Phone IMEI', key='ue_imei')
+    ue_esn = lb.Unicode(help='Phone ESN', key='ue_esn')
+    ue_build_id = lb.Unicode(help='Build ID of software on the phone', key='ue_build_id')
 
-    def __get_state__(self, trait):
+    def __get_by_key__(self, key, name):
         try:
-            return self.__connection_info[trait.command]
+            return self.__connection_info[key]
         except KeyError:
-            raise lb.DeviceStateError('no state {} in {}'.format(command, repr(self)))
+            raise lb.DeviceStateError(f"no state information for key '{key}' in {repr(self)}.{name}")
 
     def close(self):
         try:
@@ -424,7 +416,7 @@ class QXDM(lb.Win32ComDevice):
 #    lb.show_messages('debug')
 #
 #    # Connect to application
-#    with QXDM(8, cache_path=r'C:\Python Code\potato', concurrency_support=False) as qxdm:
+#    with QXDM(8, cache_path=r'C:\Python Code\potato', concurrency=False) as qxdm:
 ##        mod = inspect.getmodule(qxdm.backend._FlagAsMethod).__name__
 #        print(repr(qxdm.backend),dir(qxdm.backend))
 #        qxdm.configure(r'C:\Python Code\potato\180201_QXDMConfig.dmc')

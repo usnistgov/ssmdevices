@@ -71,7 +71,7 @@ class MiniCircuitsUSBDevice(lb.Device):
         ''' Send up to 64 1-byte unsigned integers and return the response.
         '''
         if len(cmd) > 64:
-            raise ValueError('command data length is limited to 64')
+            raise ValueError('command key data length is limited to 64')
 
         cmd = list(cmd) + (63 - len(cmd)) * [0]
 
@@ -378,22 +378,22 @@ class FourChannelAttenuator(SwitchAttenuatorBase):
     CMD_GET_ATTENUATION = 18
     CMD_SET_ATTENUATION = 19
 
-    attenuation1 = lb.Float(min=0, max=115, step=0.25, command=1)
-    attenuation2 = lb.Float(min=0, max=115, step=0.25, command=2)
-    attenuation3 = lb.Float(min=0, max=115, step=0.25, command=3)
-    attenuation4 = lb.Float(min=0, max=115, step=0.25, command=4)
+    attenuation1 = lb.Float(min=0, max=115, step=0.25, key=1)
+    attenuation2 = lb.Float(min=0, max=115, step=0.25, key=2)
+    attenuation3 = lb.Float(min=0, max=115, step=0.25, key=3)
+    attenuation4 = lb.Float(min=0, max=115, step=0.25, key=4)
 
-    def __get_state__(self, trait):
+    def __get_by_key__(self, key, name):
         d = self._cmd(self.CMD_GET_ATTENUATION)
-        offs = trait.command * 2 - 1
+        offs = key * 2 - 1
         full_part = d[offs]
         frac_part = float(d[offs + 1]) / 4.0
         return full_part + frac_part
 
-    def __set_state__(self, trait, value):
+    def __set_by_key__(self, key, name, value):
         value1 = int(value)
         value2 = int((value - value1) * 4.0)
-        self._cmd(self.CMD_SET_ATTENUATION, value1, value2, trait.command)
+        self._cmd(self.CMD_SET_ATTENUATION, value1, value2, key)
 
 
 class Switch(SwitchAttenuatorBase):

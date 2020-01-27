@@ -411,7 +411,9 @@ class AeroflexTM500(lb.TelnetDevice):
         return ret
 
 if __name__ == '__main__':
-    AeroflexTM500.command_log_to_script(r'C:\Users\dkuester\Desktop\TM500_2Sec_8UEs_withTime.txt')
+    import labbench as lb
+
+    # AeroflexTM500.key_log_to_script(r'C:\Users\dkuester\Desktop\TM500_2Sec_8UEs_withTime.txt')
     
 #    path = r'e:\TM500ScriptForPaulDebug'
 #    lb.show_messages('debug')

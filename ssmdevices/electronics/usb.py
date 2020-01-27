@@ -3,15 +3,6 @@ Drivers for USB peripherals
 
 :author: Dan Kuester <daniel.kuester@nist.gov>, Andre Rosete <andre.rosete@nist.gov>
 '''
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from builtins import super
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import range
 import labbench as lb
 
 class AcronameUSBHub2x4(lb.Device):
@@ -66,12 +57,13 @@ class AcronameUSBHub2x4(lb.Device):
         '''
         self.backend.disconnect()
 
-    def __set_state__ (self, command, value):
+    def __set_by_key__ (self, key, name, value):
         ''' Apply an instrument setting to the instrument. The value ``value''
             will be applied to the trait attriute ``attr'' in type(self).
         '''
-        raise NotImplementedError('state "{attr}" is defined but not implemented! implement {cls}.command_get, or implement a getter for {cls}.{attr}'\
-                                  .format(cls=type(self).__name__, trait=trait))
+        cls=type(self).__name__
+        raise NotImplementedError(f'state trait "{name}" is defined but not implemented! implement '\
+                                  f'{cls}.__get_by_key__, or a getter for {cls}.{name}')
         
     def enable (self, data = True, power = True, channel= "all"):
         ''' Enable or disable of USB port features at one or all hub ports.

@@ -34,30 +34,23 @@ Getting started
 """
 
 if __name__ == '__main__':
+    import sys
+
+    if '..' not in sys.path:
+        sys.path.insert(0, '..')
+    from glob import glob
+
     from distutils.core import setup
     import setuptools,os,sys,shutil
-#    from setuptools.command.easy_install import easy_install
-    
-#    # Adjust easy_install to tell us where the script install directory is
-#    class my_easy_install(easy_install):
-#        # Match the call signature of the easy_install version.
-#        def write_script(self, script_name, contents, mode="t", *ignored):
-#    
-#            # Run the normal version
-#            easy_install.write_script(self, script_name, contents, mode, *ignored)
-#    
-#            # Save the script install directory in the distribution object.
-#            # This is the same thing that is returned by the setup function.
-#            self.distribution.script_install_dir = self.script_dir
-#    
-    
+
     dist = setup(name='ssmdevices',
-                  version='0.6',
+                  version='0.7',
                   description='instrument automation drivers',
                   author='Dan Kuester',
                   author_email='daniel.kuester@nist.gov',
                   url='https://gitlab.nist.gov/gitlab/ssm/ssmdevices',
                   packages=setuptools.find_packages(),
+                  package_data={'ssmdevices': ['*.pyi', '*/*.pyi', '*/*/*.pyi']},
                   include_package_data=True,
                   license='NIST',
                   install_requires=[
@@ -71,8 +64,7 @@ if __name__ == '__main__':
                             'sphinx',
                             'hidapi',
                             ],
-#                  cmdclass={'easy_install': my_easy_install},
-                  zip_safe=False
+                  zip_safe=False,
                  )
 
     # Find and install binaries

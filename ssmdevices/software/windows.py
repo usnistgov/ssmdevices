@@ -221,7 +221,7 @@ class WLANStatus(lb.Device):
         self.interface_disconnect()            
         return self.interface_connect()
 
-    @lb.Unicode(settable=False,command='interface')
+    @lb.Unicode(settable=False,key='interface')
     def state(self):
         ''' `True` if psutil reports that the interface is up '''
         return self._status_lookup[self.backend.status()]
@@ -231,12 +231,12 @@ class WLANStatus(lb.Device):
         ''' `True` if psutil reports that the interface is up '''
         return stats[self.settings.resource].isup
     
-    @lb.Int(settable=False,allow_none=True,command='ssid')
+    @lb.Int(settable=False,allow_none=True,key='ssid')
     def transmit_rate_mbps(self):
         stats = psutil.net_if_stats()
         return stats[self.settings.resource].speed
     
-    @lb.Int(allow_none=True,max=100,settable=False,command='ssid')
+    @lb.Int(allow_none=True,max=100,settable=False,key='ssid')
     def signal(self):
         def attempt():            
             for result in self.backend.scan_results():
@@ -256,11 +256,11 @@ class WLANStatus(lb.Device):
                 
         return lb.until_timeout(TimeoutError, 2*self.settings.timeout)(attempt)()
 
-    @lb.Unicode(settable=False,command='interface')
+    @lb.Unicode(settable=False,key='interface')
     def description(self):
         return self.backend.name()
         
-    @lb.Int(allow_none=True,settable=False,command='ssid')
+    @lb.Int(allow_none=True,settable=False,key='ssid')
     def channel(self):
         def attempt(): 
             for result in self.backend.scan_results():

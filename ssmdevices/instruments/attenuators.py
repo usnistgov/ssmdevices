@@ -1,16 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Mar 07 14:38:10 2017
 
-@author: dkuester
-"""
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-
-from future import standard_library
-standard_library.install_aliases()
 __all__ = ['MiniCircuitsRCDAT', 'MiniCircuitsRC4DAT']
 
 from labbench import DotNetDevice
@@ -126,21 +115,21 @@ class MiniCircuitsRC4DAT(DotNetDevice):
         self._validate_connection()
         return self.backend.Read_SN('')[1]
 
-    attenuation1 = lb.Float(min=0, max=115, step=0.25, command=1)
-    attenuation2 = lb.Float(min=0, max=115, step=0.25, command=2)
-    attenuation3 = lb.Float(min=0, max=115, step=0.25, command=3)
-    attenuation4 = lb.Float(min=0, max=115, step=0.25, command=4)
+    attenuation1 = lb.Float(min=0, max=115, step=0.25, key=1)
+    attenuation2 = lb.Float(min=0, max=115, step=0.25, key=2)
+    attenuation3 = lb.Float(min=0, max=115, step=0.25, key=3)
+    attenuation4 = lb.Float(min=0, max=115, step=0.25, key=4)
 
-    def __get_state__ (self, command):
+    def __get_by_key__ (self, key, name):
         self._validate_connection()
-        ret = self.backend.ReadChannelAtt(command)
-        self.logger.debug(f'got attenuation{command} {ret} dB')
+        ret = self.backend.ReadChannelAtt(key)
+        self.logger.debug(f'got attenuation {key} {ret} dB')
         return ret    
 
-    def __set_state_(self, command, value):
+    def __set_state_(self, key, name, value):
         self._validate_connection()
-        self.logger.debug(f'set attenuation{command} {value} dB')
-        self.backend.SetChannelAtt(command, value)
+        self.logger.debug(f'set attenuation {key} {value} dB')
+        self.backend.SetChannelAtt(key, value)
 
 if __name__ == '__main__':
     lb.show_messages('info')

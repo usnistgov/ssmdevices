@@ -10,13 +10,13 @@ class KeysightU2000XSeries(VISADevice):
     ''' This is my cool driver for Keysight U2040 X-Series power sensors
     '''
 
-    initiate_continuous = lb.Bool(command='INIT:CONT')
-    output_trigger = lb.Bool(command='OUTP:TRIG')
-    trigger_source = lb.Unicode(command='TRIG:SOUR', only=('IMM', 'INT', 'EXT', 'BUS', 'INT1'), case=False)
-    trigger_count = lb.Int(command='TRIG:COUN', min=1, max=200)
-    measurement_rate = lb.Unicode(command='SENS:MRAT', only=('NORM', 'DOUB', 'FAST'), case=False)
-    sweep_aperture = lb.Float(command='SWE:APER', min=20e-6, max=200e-3, help='time (in s)')
-    frequency = lb.Float(command='SENS:FREQ', min=10e6, max=18e9, step=1e-3,
+    initiate_continuous = lb.Bool(key='INIT:CONT')
+    output_trigger = lb.Bool(key='OUTP:TRIG')
+    trigger_source = lb.Unicode(key='TRIG:SOUR', only=('IMM', 'INT', 'EXT', 'BUS', 'INT1'), case=False)
+    trigger_count = lb.Int(key='TRIG:COUN', min=1, max=200)
+    measurement_rate = lb.Unicode(key='SENS:MRAT', only=('NORM', 'DOUB', 'FAST'), case=False)
+    sweep_aperture = lb.Float(key='SWE:APER', min=20e-6, max=200e-3, help='time (in s)')
+    frequency = lb.Float(key='SENS:FREQ', min=10e6, max=18e9, step=1e-3,
                          help='input signal center frequency (in Hz)')
 
     def preset(self):
@@ -44,16 +44,16 @@ class RohdeSchwarzNRPSeries(VISADevice):
     '''
 
     # Instrument state traits (pass command arguments and/or implement setter/getter)
-    frequency = lb.Float(command='SENS:FREQ', min=10e6, step=1e-3, label='Hz')
-    initiate_continuous = lb.Bool(command='INIT:CONT', remap={False: 'OFF', True: 'ON'})
+    frequency = lb.Float(key='SENS:FREQ', min=10e6, step=1e-3, label='Hz')
+    initiate_continuous = lb.Bool(key='INIT:CONT', remap={False: 'OFF', True: 'ON'})
 
-    @lb.Unicode(command='SENS:FUNC', case=False,
+    @lb.Unicode(key='SENS:FUNC', case=False,
                 only=('POW:AVG', 'POW:BURS:AVG', 'POW:TSL:AVG', 'XTIM:POW', "XTIM:POWer"))
     def function(self, value):
         # Special case - this message requires quotes around the argument
         self.write('SENSe:FUNCtion "{}"'.format(value))
 
-    @lb.Unicode(command='TRIG:SOUR', case=False,
+    @lb.Unicode(key='TRIG:SOUR', case=False,
                 only=('HOLD', 'IMM', 'INT', 'EXT', 'EXT1', 'EXT2', 'BUS', 'INT1'))
     def trigger_source(self):
         ''''HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm'''
@@ -62,23 +62,23 @@ class RohdeSchwarzNRPSeries(VISADevice):
         source = self.query('TRIG:SOUR?')
         return remap.get(source, default=source)
 
-    trigger_delay = lb.Float(command='TRIG:DELAY', min=-5, max=10)
-    trigger_count = lb.Int(command='TRIG:COUN', min=1, max=8192, help="help me")
-    trigger_holdoff = lb.Float(command='TRIG:HOLD', min=0, max=10)
-    trigger_level = lb.Float(command='TRIG:LEV', min=1e-7, max=200e-3)
+    trigger_delay = lb.Float(key='TRIG:DELAY', min=-5, max=10)
+    trigger_count = lb.Int(key='TRIG:COUN', min=1, max=8192, help="help me")
+    trigger_holdoff = lb.Float(key='TRIG:HOLD', min=0, max=10)
+    trigger_level = lb.Float(key='TRIG:LEV', min=1e-7, max=200e-3)
 
-    trace_points = lb.Int(command='SENSe:TRACe:POINTs', min=1, max=8192, gettable=False)
-    trace_realtime = lb.Bool(command='TRAC:REAL', remap={False: 'OFF', True: 'ON'})
-    trace_time = lb.Float(command='TRAC:TIME', min=10e-6, max=3)
-    trace_offset_time = lb.Float(command='TRAC:OFFS:TIME', min=-0.5, max=100)
-    trace_average_count = lb.Int(command='TRAC:AVER:COUN', min=1, max=65536)
-    trace_average_mode = lb.Unicode(command='TRAC:AVER:TCON', only=('MOV', 'REP'), case=False)
-    trace_average_enable = lb.Bool(command='TRAC:AVER', remap={False: 'OFF', True: 'ON'})
+    trace_points = lb.Int(key='SENSe:TRACe:POINTs', min=1, max=8192, gettable=False)
+    trace_realtime = lb.Bool(key='TRAC:REAL', remap={False: 'OFF', True: 'ON'})
+    trace_time = lb.Float(key='TRAC:TIME', min=10e-6, max=3)
+    trace_offset_time = lb.Float(key='TRAC:OFFS:TIME', min=-0.5, max=100)
+    trace_average_count = lb.Int(key='TRAC:AVER:COUN', min=1, max=65536)
+    trace_average_mode = lb.Unicode(key='TRAC:AVER:TCON', only=('MOV', 'REP'), case=False)
+    trace_average_enable = lb.Bool(key='TRAC:AVER', remap={False: 'OFF', True: 'ON'})
 
-    average_count = lb.Int(command='AVER:COUN', min=1, max=65536)
-    average_auto = lb.Bool(command='AVER:COUN:AUTO', remap={False: 'OFF', True: 'ON'})
-    average_enable = lb.Bool(command='AVER', remap={False: 'OFF', True: 'ON'})
-    smoothing_enable = lb.Bool(command='SMO:STAT', remap={False: 'OFF', True: 'ON'}, gettable=False)
+    average_count = lb.Int(key='AVER:COUN', min=1, max=65536)
+    average_auto = lb.Bool(key='AVER:COUN:AUTO', remap={False: 'OFF', True: 'ON'})
+    average_enable = lb.Bool(key='AVER', remap={False: 'OFF', True: 'ON'})
+    smoothing_enable = lb.Bool(key='SMO:STAT', remap={False: 'OFF', True: 'ON'}, gettable=False)
 
     # Local settings traits (leave command unset, and do not implement setter/getter)
     read_termination = lb.Unicode()
@@ -141,11 +141,11 @@ class RohdeSchwarzNRPSeries(VISADevice):
 
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
-    frequency = lb.Float(command='SENS:FREQ', min=10e6, max=8e9, step=1e-3, label='Hz')
+    frequency = lb.Float(key='SENS:FREQ', min=10e6, max=8e9, step=1e-3, label='Hz')
 
 
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
-    frequency = lb.Float(command='SENS:FREQ', min=10e6, max=18e9, step=1e-3, label='Hz')
+    frequency = lb.Float(key='SENS:FREQ', min=10e6, max=18e9, step=1e-3, label='Hz')
 
 
 if __name__ == '__main__':

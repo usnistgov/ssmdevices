@@ -16,45 +16,45 @@ class RohdeSchwarzFSW26Base(VISADevice):
     default_window: lb.Unicode('', help='data window number to use if unspecified')
     default_trace: lb.Unicode('', help='data trace number to use if unspecified')
 
-    frequency_center = Float(command='FREQ:CENT', min=2, max=26.5e9, step=1e-9, label='Hz')
-    frequency_span = Float(command='FREQ:SPAN', min=2, max=26.5e9, step=1e-9, label='Hz')
-    frequency_start = Float(command='FREQ:START', min=2, max=26.5e9, step=1e-9, label='Hz')
-    frequency_stop = Float(command='FREQ:STOP', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_center = Float(key='FREQ:CENT', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_span = Float(key='FREQ:SPAN', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_start = Float(key='FREQ:START', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_stop = Float(key='FREQ:STOP', min=2, max=26.5e9, step=1e-9, label='Hz')
 
-    resolution_bandwidth = Float(command='BAND', min=45e3, max=5.76e6, label='Hz')
-    sweep_time = Float(command='SWE:TIME', label='Hz')
-    sweep_time_window2 = Float(command='SENS2:SWE:TIME', label='Hz')
+    resolution_bandwidth = Float(key='BAND', min=45e3, max=5.76e6, label='Hz')
+    sweep_time = Float(key='SWE:TIME', label='Hz')
+    sweep_time_window2 = Float(key='SENS2:SWE:TIME', label='Hz')
 
-    initiate_continuous = Bool(command='INIT:CONT', remap={False: '0', True: '1'})
+    initiate_continuous = Bool(key='INIT:CONT', remap={False: '0', True: '1'})
 
-    reference_level = Float(command='DISP:TRAC1:Y:RLEV', step=1e-3, label='dB')
-    reference_level_trace2 = Float(command='DISP:TRAC2:Y:RLEV', step=1e-3, label='dB')
-    reference_level_trace3 = Float(command='DISP:TRAC3:Y:RLEV', step=1e-3, label='dB')
-    reference_level_trace4 = Float(command='DISP:TRAC4:Y:RLEV', step=1e-3, label='dB')
-    reference_level_trace5 = Float(command='DISP:TRAC5:Y:RLEV', step=1e-3, label='dB')
-    reference_level_trace6 = Float(command='DISP:TRAC6:Y:RLEV', step=1e-3, label='dB')
+    reference_level = Float(key='DISP:TRAC1:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace2 = Float(key='DISP:TRAC2:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace3 = Float(key='DISP:TRAC3:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace4 = Float(key='DISP:TRAC4:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace5 = Float(key='DISP:TRAC5:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace6 = Float(key='DISP:TRAC6:Y:RLEV', step=1e-3, label='dB')
 
-    amplitude_offset = Float(command='DISP:TRAC1:Y:RLEV:OFFS', step=1e-3, label='dB')
-    amplitude_offset_trace2 = Float(command='DISP:TRAC2:Y:RLEV:OFFS', step=1e-3, label='dB')
-    amplitude_offset_trace3 = Float(command='DISP:TRAC3:Y:RLEV:OFFS', step=1e-3, label='dB')
-    amplitude_offset_trace4 = Float(command='DISP:TRAC4:Y:RLEV:OFFS', step=1e-3, label='dB')
-    amplitude_offset_trace5 = Float(command='DISP:TRAC5:Y:RLEV:OFFS', step=1e-3, label='dB')
-    amplitude_offset_trace6 = Float(command='DISP:TRAC6:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset = Float(key='DISP:TRAC1:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset_trace2 = Float(key='DISP:TRAC2:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset_trace3 = Float(key='DISP:TRAC3:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset_trace4 = Float(key='DISP:TRAC4:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset_trace5 = Float(key='DISP:TRAC5:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset_trace6 = Float(key='DISP:TRAC6:Y:RLEV:OFFS', step=1e-3, label='dB')
 
-    output_trigger2_direction = Unicode(command='OUTP:TRIG2:DIR', only=('INP', 'OUTP'), case=False)
-    output_trigger3_direction = Unicode(command='OUTP:TRIG3:DIR', only=('INP', 'OUTP'), case=False)
-    output_trigger2_type = Unicode(command='OUTP:TRIG2:OTYP', only=('DEV', 'TARM', 'UDEF'), case=False)
-    output_trigger3_type = Unicode(command='OUTP:TRIG3:OTYP', only=('DEV', 'TARM', 'UDEF'), case=False)
+    output_trigger2_direction = Unicode(key='OUTP:TRIG2:DIR', only=('INP', 'OUTP'), case=False)
+    output_trigger3_direction = Unicode(key='OUTP:TRIG3:DIR', only=('INP', 'OUTP'), case=False)
+    output_trigger2_type = Unicode(key='OUTP:TRIG2:OTYP', only=('DEV', 'TARM', 'UDEF'), case=False)
+    output_trigger3_type = Unicode(key='OUTP:TRIG3:OTYP', only=('DEV', 'TARM', 'UDEF'), case=False)
 
-    input_preamplifier_enabled = Bool(command='INP:GAIN:STATE', remap={False: '0', True: '1'})
-    input_attenuation_auto = Bool(command='INP:ATT:AUTO', remap={False: '0', True: '1'})
-    input_attenuation = Float(command='INP:ATT', step=1, min=0, max=79)
+    input_preamplifier_enabled = Bool(key='INP:GAIN:STATE', remap={False: '0', True: '1'})
+    input_attenuation_auto = Bool(key='INP:ATT:AUTO', remap={False: '0', True: '1'})
+    input_attenuation = Float(key='INP:ATT', step=1, min=0, max=79)
 
-    channel_type = Unicode(command='INST', only=('SAN', 'IQ', 'RTIM', default_channel_name), case=False)
-    format = Unicode(command='FORM', only=('ASC,0', 'REAL,32', 'REAL,64', 'REAL,16'), case=False)
-    sweep_points = Int(command='SWE:POIN', min=1, max=100001)
+    channel_type = Unicode(key='INST', only=('SAN', 'IQ', 'RTIM', default_channel_name), case=False)
+    format = Unicode(key='FORM', only=('ASC,0', 'REAL,32', 'REAL,64', 'REAL,16'), case=False)
+    sweep_points = Int(key='SWE:POIN', min=1, max=100001)
 
-    display_update = Bool(command='SYST:DISP:UPD', remap={False: 'OFF', True: 'ON'})
+    display_update = Bool(key='SYST:DISP:UPD', remap={False: 'OFF', True: 'ON'})
 
     expected_channel_type = None
     cache_dir = r'c:\temp\remote-cache'
@@ -619,7 +619,7 @@ e
 
 
 class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
-    format = Unicode(command='FORM', only=('REAL', 'ASCII'), case=False)
+    format = Unicode(key='FORM', only=('REAL', 'ASCII'), case=False)
 
     @Float(min=0)
     def uplink_sample_rate(self):
@@ -676,13 +676,13 @@ class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
 class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     expected_channel_type = 'RTIM'
 
-    iq_simple_enabled = Bool(command='CALC:IQ', remap={False: 'OFF', True: 'ON'})
-    iq_evaluation_enabled = Bool(command='CALC:IQ:EVAL', remap={False: 'OFF', True: 'ON'})
-    iq_mode = Unicode(command='CALC:IQ:MODE', only=('TDOMain', 'FDOMain', 'IQ'), case=False)
-    iq_record_length = Int(command='TRAC:IQ:RLEN', min=1, max=461373440)
-    iq_sample_rate = Float(command='TRAC:IQ:SRAT', min=1e-9, max=160e6)
-    iq_format = Unicode(command='CALC:FORM', only=('FREQ', 'MAGN', 'MTAB', 'PEAK', 'RIM', 'VECT'), case=False)
-    iq_format_window2 = Unicode(command='CALC2:FORM', case=False,
+    iq_simple_enabled = Bool(key='CALC:IQ', remap={False: 'OFF', True: 'ON'})
+    iq_evaluation_enabled = Bool(key='CALC:IQ:EVAL', remap={False: 'OFF', True: 'ON'})
+    iq_mode = Unicode(key='CALC:IQ:MODE', only=('TDOMain', 'FDOMain', 'IQ'), case=False)
+    iq_record_length = Int(key='TRAC:IQ:RLEN', min=1, max=461373440)
+    iq_sample_rate = Float(key='TRAC:IQ:SRAT', min=1e-9, max=160e6)
+    iq_format = Unicode(key='CALC:FORM', only=('FREQ', 'MAGN', 'MTAB', 'PEAK', 'RIM', 'VECT'), case=False)
+    iq_format_window2 = Unicode(key='CALC2:FORM', case=False,
                                         only=('FREQ', 'MAGN', 'MTAB', 'PEAK', 'RIM', 'VECT'))
 
     def fetch_trace(self, horizontal=False, trace=None):
@@ -712,18 +712,18 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
 class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
     expected_channel_type = 'RTIM'
 
-    trigger_source = Unicode(command='TRIG:SOUR', only=('IMM', 'EXT', 'EXT2', 'EXT3', 'MASK', 'TDTR'), case=False)
-    trigger_post_time = Float(command='TRIG:POST', min=0)
-    trigger_pre_time = Float(command='TRIG:PRET', min=0)
+    trigger_source = Unicode(key='TRIG:SOUR', only=('IMM', 'EXT', 'EXT2', 'EXT3', 'MASK', 'TDTR'), case=False)
+    trigger_post_time = Float(key='TRIG:POST', min=0)
+    trigger_pre_time = Float(key='TRIG:PRET', min=0)
 
-    iq_fft_length = Int(command='IQ:FFT:LENG', settable=False)
-    iq_bandwidth = Float(command='TRAC:IQ:BWID', settable=False)
-    iq_sample_rate = Float(command='TRACe:IQ:SRAT', settable=False)
-    iq_trigger_position = Float(command='TRAC:IQ:TPIS', settable=False)
+    iq_fft_length = Int(key='IQ:FFT:LENG', settable=False)
+    iq_bandwidth = Float(key='TRAC:IQ:BWID', settable=False)
+    iq_sample_rate = Float(key='TRACe:IQ:SRAT', settable=False)
+    iq_trigger_position = Float(key='TRAC:IQ:TPIS', settable=False)
 
-    sweep_dwell_auto = Bool(command='SWE:DTIM:AUTO', remap={False: '0', True: '1'})
-    sweep_dwell_time = Float(command='SWE:DTIM', min=30e-3)
-    sweep_window_type = Unicode(command='SWE:FFT:WIND:TYP', case=False,
+    sweep_dwell_auto = Bool(key='SWE:DTIM:AUTO', remap={False: '0', True: '1'})
+    sweep_dwell_time = Float(key='SWE:DTIM', min=30e-3)
+    sweep_window_type = Unicode(key='SWE:FFT:WIND:TYP', case=False,
                                         only=('BLAC', 'FLAT', 'GAUS', 'HAMM', 'HANN', 'KAIS', 'RECT'))
 
     #    def fetch_trace(self, horizontal=False):

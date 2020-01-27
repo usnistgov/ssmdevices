@@ -29,8 +29,8 @@ class SpirentGSS8000(lb.SerialDevice):
 
     resource: lb.Unicode('COM17', help='serial port string (COMnn in windows or /dev/xxxx in unix/Linux)')
 
-    def __get_state__(self, trait):
-        return self.query(trait.command)
+    def __get_by_key__(self, key, name):
+        return self.query(key)
 
     'Status messages that may be received from the instrument'
 
@@ -64,7 +64,7 @@ class SpirentGSS8000(lb.SerialDevice):
     def fix_path_name(path):
         return path.replace('\\', '/')
 
-    def write(self, command, returns=None):
+    def write(self, key, returns=None):
         ''' Send a message to the spirent, and check the status message
             returned by the spirent.
             
@@ -73,8 +73,8 @@ class SpirentGSS8000(lb.SerialDevice):
                      exception if a data value is returned)
         '''
         self.backend.read(self.backend.inWaiting())
-        self.logger.debug('write {}'.format(repr(command)))
-        self.backend.write('{}\n'.format(command))
+        self.logger.debug('write {}'.format(repr(key)))
+        self.backend.write('{}\n'.format(key))
 
         # Get the response
         response = b''
