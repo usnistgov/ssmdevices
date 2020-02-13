@@ -3,16 +3,15 @@
 __all__ = ['KeysightU2000XSeries', 'RohdeSchwarzNRP8s', 'RohdeSchwarzNRP18s', 'RohdeSchwarzNRPSeries']
 
 import labbench as lb
-from labbench import VISADevice
 
 
-class KeysightU2000XSeries(VISADevice):
+class KeysightU2000XSeries(lb.VISADevice):
     ''' This is my cool driver for Keysight U2040 X-Series power sensors
     '''
 
     initiate_continuous = lb.Bool(key='INIT:CONT')
     output_trigger = lb.Bool(key='OUTP:TRIG')
-    trigger_source = lb.Unicode(key='TRIG:SOUR', only=('IMM', 'INT', 'EXT', 'BUS', 'INT1'), case=False)
+    trigger_source = lb.Unicode(key='TRIG:SOUR', case=False, only=('IMM', 'INT', 'EXT', 'BUS', 'INT1'))
     trigger_count = lb.Int(key='TRIG:COUN', min=1, max=200)
     measurement_rate = lb.Unicode(key='SENS:MRAT', only=('NORM', 'DOUB', 'FAST'), case=False)
     sweep_aperture = lb.Float(key='SWE:APER', min=20e-6, max=200e-3, help='time (in s)')
@@ -32,13 +31,13 @@ class KeysightU2000XSeries(VISADevice):
             return pd.to_numeric(pd.Series(response))
 
     @classmethod
-    def __imports__ (cls):
+    def __imports__(cls):
         global pd
         import pandas as pd
         super().__imports__()
 
 
-class RohdeSchwarzNRPSeries(VISADevice):
+class RohdeSchwarzNRPSeries(lb.VISADevice):
     ''' Requires drivers from the R&S website; resource strings for connections take the form
         'RSNRP::0x00e2::103892::INSTR'.
     '''
@@ -53,11 +52,11 @@ class RohdeSchwarzNRPSeries(VISADevice):
         # Special case - this message requires quotes around the argument
         self.write('SENSe:FUNCtion "{}"'.format(value))
 
-    @lb.Unicode(key='TRIG:SOUR', case=False,
-                only=('HOLD', 'IMM', 'INT', 'EXT', 'EXT1', 'EXT2', 'BUS', 'INT1'))
+    @lb.Unicode(
+        key='TRIG:SOUR', case=False, only=('HOLD', 'IMM', 'INT', 'EXT', 'EXT1', 'EXT2', 'BUS', 'INT1'))
     def trigger_source(self):
         ''''HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm'''
-        # Special case - the instrument returns '2' instead of 'EXT2'
+        # special case - the instrument returns '2' instead of 'EXT2'
         remap = {'2': 'EXT2'}
         source = self.query('TRIG:SOUR?')
         return remap.get(source, default=source)
