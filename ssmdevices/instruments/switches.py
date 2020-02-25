@@ -60,7 +60,7 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
 # TODO: Test this and replace the above
 #class MiniCircuitsUSBSwitch(SwitchAttenuatorBase):
 #    # Mini-Circuits USB-SP4T-63
-#    PID = 0x22
+#    _PID = 0x22
 #    
 #    @lb.Int(min=1, max=4)
 #    def port(self, port):

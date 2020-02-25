@@ -17,7 +17,7 @@ usb_registry = {} # serial number: USB path
 class MiniCircuitsUSBDevice(lb.Device):
     """ General control over MiniCircuits USB devices
     """
-    VID = 0x20ce # USB HID Vendor ID
+    _VID = 0x20ce # USB HID Vendor ID
 
     resource: lb.Unicode(
         default=None,
@@ -39,9 +39,8 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     @classmethod
     def __imports__(cls):
-        global hid,pd
+        global hid
         import hid
-        import pandas as pd
 
     def open(self):
         if self.settings.usb_path is None:
@@ -109,7 +108,7 @@ class MiniCircuitsUSBDevice(lb.Device):
         with usb_enumerate_lock:        
             found = {}
     
-            for dev in hid.enumerate(cls.VID, cls.PID):
+            for dev in hid.enumerate(cls._VID, cls._PID):
                 # Check for a cached serial number first
                 try:
                     this_serial = usb_registry[dev['path']]
@@ -120,7 +119,7 @@ class MiniCircuitsUSBDevice(lb.Device):
     
                 # Otherwise, connect to the device to learn its serial number
                 try:
-                    with cls(path=dev['path']) as inst:
+                    with cls(usb_path=dev['path']) as inst:
                         this_serial = inst.serial_number
                         usb_registry[dev['path']] = this_serial
                         found[this_serial] = dev['path']
@@ -131,7 +130,7 @@ class MiniCircuitsUSBDevice(lb.Device):
 
         if len(found) == 0:
             raise lb.ConnectionError('found no {} connected that match vid={vid},pid={pid}' \
-                                     .format(cls.__name__, cls.VID, cls.PID))
+                                     .format(cls.__name__, cls._VID, cls._PID))
 
         names = ', '.join([repr(k) for k in found.keys()])
 

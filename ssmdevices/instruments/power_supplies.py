@@ -34,7 +34,7 @@ class RigolDP800Series(lb.VISADevice):
 
     @lb.retry(Exception, 3)
     def open(self):
-        ''' Do a dummy read on *IDN until the instrument responds.
+        ''' Poll *IDN until the instrument responds.
             Sometimes it needs an extra poke before it responds.
         '''
         try:
@@ -43,27 +43,31 @@ class RigolDP800Series(lb.VISADevice):
         finally:
             self.backend.timeout = timeout
 
-    def __get_by_key__(self, key, name):
+    @lb.util.hide_in_traceback
+    def __get_by_key__(self, name, scpi_key):
         ''' This instrument expects queries to have syntax :COMMAND? PARAM,
             instead of :COMMAND PARAM? as implemented in lb.VISADevice.
             
             Implement this behavior here.
         '''
-        if ' ' in key:
-            key = key.replace(' ', '? ', 1)
-        return self.query(key)
+        if ' ' in scpi_key:
+            scpi_key = scpi_key.replace(' ', '? ', 1)
+        else:
+            scpi_key = scpi_key + '?'
+        return self.query(scpi_key)
 
-    def __set_by_key__(self, key, name, value):
+    @lb.util.hide_in_traceback
+    def __set_by_key__(self, name, scpi_key, value):
         ''' This instrument expects sets to have syntax :COMMAND? PARAM,VALUE
             instead of :COMMAND PARAM VALUE? as implemented in lb.VISADevice.
             
             Implement this behavior here.
         '''
-        if ' ' in key:
-            key = f'{key},{value}'
+        if ' ' in scpi_key:
+            scpi_key = f'{scpi_key},{value}'
         else:
-            key = f'{key} {value}'
-        return self.write(key)
+            scpi_key = f'{scpi_key} {value}'
+        return self.write(scpi_key.rstrip())
 
 
 if __name__ == '__main__':

@@ -26,8 +26,36 @@ class Netsh(lb.ShellBackend):
     '''
 
     binary_path: r'C:\Windows\System32\netsh.exe'
-    arguments: ['wlan']
     timeout: 5
+
+    # commandline arguments for netsh, in order (each must define key=)
+    iface_type: lb.Unicode(
+        default='wlan',
+        key=None,
+        only=('wlan',), # TODO: what else is valid here?
+        help="interface type"
+    )
+
+    command: lb.Unicode(
+        default='show',
+        settable=False,
+        key=None,
+    )
+
+    query: lb.Unicode(
+        only=('interfaces', 'networks'),
+        key=None,
+    )
+
+    only_bssid: lb.Bool(
+        default=False,
+        key="mode=bssid",
+    )
+
+    interface: lb.Unicode(
+        key=None,
+        help='name of the interface to query (for query="interfaces" only)'
+    )
 
     def wait(self):
         try:
@@ -52,7 +80,7 @@ class Netsh(lb.ShellBackend):
             return d
 
         # Execute the binary
-        txt = self.foreground('show', 'networks', 'mode=bssid', interface).decode()
+        txt = self.foreground(query='networks', only_bssid=True, interface=interface).decode()
 
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r'^\s*(.*?)\s*:\s*(.*?)\s*$', txt, flags=re.MULTILINE)
@@ -77,7 +105,8 @@ class Netsh(lb.ShellBackend):
             return d
 
         # Execute the binary
-        txt = self.foreground('show', 'interfaces').decode()
+
+        txt = self.foreground(query='interfaces').decode()
 
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r'^\s*(\S+.*?)\s+:\s+(\S+.*?)\s*$', txt, flags=re.MULTILINE)
@@ -291,10 +320,19 @@ class WLANStatus(lb.Device):
 
 
 if __name__ == '__main__':
-    with WLANStatus(resource='WLAN_Client_DUT', ssid='EnGenius1') as wlan:
-        wlan.interface_reconnect()
-        for attr in wlan.__traits__:
-            print(attr, ':', getattr(wlan.state, attr))
+    with Netsh() as netsh:
+        # Check that this interface exists
+        available_interfaces = netsh.get_wlan_interfaces()
+        print(available_interfaces)
+
+        print(netsh.get_wlan_ssids(list(available_interfaces)[0]))
+
+
+    # with WLANStatus(resource='WLAN_Client_DUT', ssid='EnGenius1') as wlan:
+    #     wlan.interface_reconnect()
+    #     for attr in wlan.__traits__:
+    #         print(attr, ':', getattr(wlan.state, attr))
+
 #        while True:
 #            print('isup: ', wlan.state.isup)
 #            state = wlan.state.state

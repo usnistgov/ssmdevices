@@ -16,21 +16,23 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     frequency: lb.Float(
         default=None, allow_none=True,
         min=10e6, max=6e9,
-        help='frequency for calibration data, or None for no calibration'
+        help='frequency for calibration data, or None for no calibration',
+        label='Hz'
     )
 
     output_power_offset: lb.Float(
         default=None, allow_none=True,
-        help='output power at 0 dB attenuation'
+        help='output power level calibrated at 0 dB attenuation',
+        label='dBm'
     )
-    
+
     calibration_path: lb.Unicode(
         default=None, allow_none=True,
         help='path to the calibration table, which is a csv with frequency '\
              '(columns) and attenuation setting (row), or None to search ssmdevices'
     )
 
-    PID = 0x23
+    _PID = 0x23
 
     def open(self):
         import pandas as pd
@@ -67,18 +69,20 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         lb.observe(self.settings, self._update_frequency,
                    name='frequency', type_='set')
         lb.observe(self, self._console_debug, type_='set',
-                   name=('attenuation', 'attenuation_setting', 'output_power'))
+                   name=('attenuation', 'output_power'))
 
         # trigger cal update
         self.settings.frequency = self.settings.frequency 
 
     # the requested attenuation is the only state that directly interacts
     # with the device
-    attenuation_setting = lb.Float(min=0, max=115, step=0.25, label='dB')
+    attenuation_setting = lb.Float(
+        min=0, max=115, step=0.25, label='dB',
+        help='uncalibrated attenuation'
+    )
 
     @attenuation_setting # getter
     def attenuation_setting(self):
-        '''attenuation setting sent to the attenuator (dB), which is different from the calibrated attenuation value an attenuation has been applied'''
         CMD_GET_ATTENUATION = 18
         
         d = self._cmd(CMD_GET_ATTENUATION)
@@ -93,18 +97,20 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         value1 = int(value)
         value2 = int((value - value1) * 4.0)
         self._cmd(CMD_SET_ATTENUATION, value1, value2, 1)
-        self._console.debug(f'applied {value:0.2f} dB attenuation setting')
+        self._console.debug(f'uncalibrated attenuation is now {value:0.2f} dB')
 
     # the remaining traits are transformations to calibrate attenuation_Setting
     attenuation = attenuation_setting.calibrate(
-        lookup=None, help='calibrated attenuation level'
+        lookup=None,
+        help='calibrated attenuation (set settings.calibration_path and settings.frequency to enable)'
     )
 
     _transmission = -attenuation
 
     output_power = _transmission.calibrate(
         offset_name='output_power_offset',
-        help='power level at attenuator output'
+        help='calibrated power level at attenuator output',
+        label='dBm'
     )
 
     def _update_frequency(self, msg):
@@ -115,13 +121,13 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         frequency = msg['new']
         if frequency is None:
             cal = None
-            txt = f"attenuation calibration is disabled"
+            txt = f"set {msg['owner'].frequency} to enable calibration"
         else:
             # pull in the calibration table specific at this frequency
             i_freq = self._cal.index.get_loc(frequency, 'nearest')
             cal = self._cal.iloc[i_freq]
-            txt = f"applied calibration table at {frequency/1e6:0.3f} MHz"
-        
+            txt = f"calibrated at {frequency/1e6:0.3f} MHz"
+
         self['attenuation'].set_table(cal)
         self._console.debug(txt)
 
@@ -138,13 +144,14 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
             uncal = self['attenuation'].find_uncal(cal)
             txt = f'calibrated attenuation set to {cal:0.2f} dB (device setting {uncal:0.2f} dB)'
             self._console.debug(txt)
-        elif name == 'attenuation_setting' and self.settings.frequency is None:
+        elif name == 'output_power':
             uncal = msg['new']
-            self._console.debug(f'applied attenuation setting {uncal:0.2f} dB')
+            label = self["output_power"].label
+            self._console.debug(f'{self["output_power"]} is now {uncal:0.2f} {label}')
 
 
 #class MiniCircuitsRC4DAT(SwitchAttenuatorBase):
-#    PID = 0x23
+#    _PID = 0x23
 #
 #    CMD_GET_ATTENUATION = 18
 #    CMD_SET_ATTENUATION = 19
@@ -220,9 +227,7 @@ class MiniCircuitsRC4DAT(lb.DotNetDevice):
                                      .format(model=self.model,
                                              model_has=self.model_includes))
 
-        self.logger.debug('Connected to {model} attenuator, SN#{sn}'\
-                          .format(model=self.model,
-                                  sn=self.serial_number))
+        self.logger.debug(f'device is {self.model} with serial {self.serial_number}')
 
     def _validate_connection(self):
         if self.backend.GetUSBConnectionStatus() != 1:
@@ -289,9 +294,10 @@ if __name__ == '__main__':
     import numpy as np
     lb.show_messages('info')
     
-    for i in np.arange(0,110.25,0.25):
-        atten = MiniCircuitsRCDAT('11604210014')
-        atten2 = MiniCircuitsRCDAT('11604210008')
+    for i in np.arange(0,110.25,5):
+        atten = MiniCircuitsRCDAT('11604210014', frequency=5.3e9)
+        atten2 = MiniCircuitsRCDAT('11604210008', frequency=5.3e9)
         with atten,atten2:
             atten.attenuation = i
+            # print(atten.output_power)
             lb.console.info(str(atten.attenuation))
