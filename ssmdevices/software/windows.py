@@ -1,24 +1,11 @@
 # -*- coding: utf-8 -*-
-__all__ = ['Netsh', 'WLANStatus', 'WLANException', 'WLANAPException']
+__all__ = ['Netsh', 'WLANStatus']
 
 import labbench as lb
 import re, time
 import subprocess as sp
 import psutil
 import logging
-
-
-class WLANException(ConnectionError):
-    pass
-
-
-class WLANInterfaceException(WLANException):
-    pass
-
-
-class WLANAPException(WLANException):
-    pass
-
 
 class Netsh(lb.ShellBackend):
     ''' Parse calls to netsh to get information about available WLAN access
@@ -126,13 +113,11 @@ class WLANStatus(lb.Device):
             available_interfaces = netsh.get_wlan_interfaces()
 
             if not self.settings.resource:
-                raise WLANInterfaceException(
-                    'must set resource to the name of a WLAN network interface (currently one of {})' \
-                    .format(repr(available_interfaces)))
+                raise ConnectionError('must set resource to specify the a WLAN network interface')
             elif self.settings.resource not in available_interfaces:
-                raise WLANInterfaceException('requested WLAN interface {}, but only {} are available' \
-                                             .format(repr(self.settings.resource),
-                                                     repr(available_interfaces)))
+                txt = f"requested WLAN interface '{self.settings.resource}', "\
+                      f"but only {tuple(available_interfaces.keys())} are available"
+                raise ConnectionError(txt)
 
             guid = available_interfaces[self.settings.resource]['guid'].lower()
 
