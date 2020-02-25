@@ -6,6 +6,14 @@ from labbench import DotNetDevice
 import ssmdevices.lib
 import labbench as lb
 
+if __name__ == '__main__':
+    # allow relative imports for the __main__ block below
+    from _minicircuits_usb import SwitchAttenuatorBase
+else:
+    from ._minicircuits_usb import SwitchAttenuatorBase
+
+__all__ = ['MiniCircuitsUSBSwitch']
+
 class MiniCircuitsUSBSwitch(DotNetDevice):
     ''' A digitally controlled solid-state switch.
 
@@ -47,3 +55,22 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
     def port(self, value):
         self.logger.debug('set switch state {}'.format(repr(value)))
         self.backend.Set_SP4T_COM_To(value)
+
+
+# TODO: Test this and replace the above
+#class MiniCircuitsUSBSwitch(SwitchAttenuatorBase):
+#    # Mini-Circuits USB-SP4T-63
+#    PID = 0x22
+#    
+#    @lb.Int(min=1, max=4)
+#    def port(self, port):
+#        """ the RF port connected to COM port indexed from 1 """
+#        if port not in (1, 2, 3, 4):
+#            raise ValueError("Invalid switch port: %s" % port)
+#        self._cmd(port)
+#
+#    def port(self):
+#        CMD_GET_SWITCH_PORT = 15
+#        d = self._cmd(CMD_GET_SWITCH_PORT)
+#        port = d[1]
+#        return port
