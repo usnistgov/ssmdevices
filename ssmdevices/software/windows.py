@@ -8,7 +8,7 @@ import psutil
 import logging
 
 
-class WLANException(SystemError):
+class WLANException(ConnectionError):
     pass
 
 
@@ -20,7 +20,7 @@ class WLANAPException(WLANException):
     pass
 
 
-class Netsh(lb.CommandLineWrapper):
+class Netsh(lb.ShellBackend):
     ''' Parse calls to netsh to get information about available WLAN access
         points.
     '''
@@ -121,7 +121,7 @@ class WLANStatus(lb.Device):
     @classmethod
     def __imports__(cls):
         global pywifi
-        level = lb.logger.level
+        level = lb.console.logger.level
         try:
             import pywifi
         except ImportError:
@@ -131,7 +131,7 @@ class WLANStatus(lb.Device):
         logger.propagate = False
 
         # Reset the level that has been changed by pywifi
-        lb.logger.setLevel(level)
+        lb.console.logger.setLevel(level)
 
         cls._status_lookup = {pywifi.const.IFACE_CONNECTED: 'connected',
                               pywifi.const.IFACE_CONNECTING: 'connecting',
@@ -286,14 +286,14 @@ class WLANStatus(lb.Device):
         return lb.until_timeout(TimeoutError, 2 * self.settings.timeout)(attempt)()
 
     def refresh(self):
-        for attr in self.traits().keys():
+        for attr in self.__traits__:
             getattr(self, attr)
 
 
 if __name__ == '__main__':
     with WLANStatus(resource='WLAN_Client_DUT', ssid='EnGenius1') as wlan:
         wlan.interface_reconnect()
-        for attr in wlan.traits().keys():
+        for attr in wlan.__traits__:
             print(attr, ':', getattr(wlan.state, attr))
 #        while True:
 #            print('isup: ', wlan.state.isup)

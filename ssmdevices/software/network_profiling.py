@@ -28,7 +28,7 @@ if '_tcp_port_offset' not in dir():
 perf_counter()
 
 
-class IPerf(lb.CommandLineWrapper):
+class IPerf(lb.ShellBackend):
     ''' Run an instance of iperf, collecting output data in a background thread.
         When running as an iperf client (server=False), 
         The default value is the path that installs with 64-bit cygwin.
@@ -282,7 +282,7 @@ class IPerfBoundPair(lb.Device):
         self.port_start = self.settings.port
 
     def open(self):
-        settings = dict([(k, getattr(self.settings, k)) for k, v in self.settings.traits().items() if v.settable])
+        settings = dict([(k, getattr(self.settings, k)) for k, v in self.settings.__traits__.items() if v.settable])
 
         for k in 'resource', 'sender', 'receiver', 'bind':
             if k in settings:
@@ -357,7 +357,7 @@ class IPerfBoundPair(lb.Device):
                 raise lb.DeviceConnectionLost('iperf stopped unexpectedly')
 
         ret = self.fetch()
-        lb.logger.debug('  iperf_client and server returned {} and {} rows' \
+        lb.console.debug('  iperf_client and server returned {} and {} rows' \
                         .format(len(ret['iperf_client']), len(ret['iperf_server'])))
 
         self.kill()
@@ -1130,7 +1130,7 @@ if __name__ == '__main__':
             print(net.is_running())
             ret = net.stop_traffic()
             print(net.is_running())
-#            lb.logger.info(f'test {j}')
+#            lb.console.info(f'test {j}')
 #            ret = mss_mults.append(net.acquire(1460*10,count=1000))
 #            net.settings.bytes = 4096*4
 #            binary_mults.append(net.acquire(1000))

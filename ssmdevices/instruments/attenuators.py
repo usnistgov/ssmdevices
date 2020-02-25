@@ -88,7 +88,7 @@ class MiniCircuitsRC4DAT(DotNetDevice):
             In this case its backend will be used instead of temporarily
             making a new one.
         '''
-        lb.logger.debug('checking available devices')
+        lb.console.debug('checking available devices')
         # Force the dll to import if no devices have been imported yet
         if inst is None:
             if not hasattr(cls, 'dll'):
@@ -99,7 +99,7 @@ class MiniCircuitsRC4DAT(DotNetDevice):
 
         count, response = backend.Get_Available_SN_List('')
         
-        lb.logger.debug('response was {}'.format(response))
+        lb.console.debug('response was {}'.format(response))
         if count > 0:
             return response.split(' ')
         else:
@@ -134,9 +134,9 @@ class MiniCircuitsRC4DAT(DotNetDevice):
 if __name__ == '__main__':
     lb.show_messages('info')
     for i in range(1000):
-        lb.logger.warning(str(i))
+        lb.console.warning(str(i))
         atten = MiniCircuitsRCDAT('11604210014')
         atten2 = MiniCircuitsRCDAT('11604210008')
         with atten,atten2:
             atten.attenuation = 63.
-            lb.logger.info(str(atten.attenuation))
+            lb.console.info(str(atten.attenuation))

@@ -5,7 +5,7 @@ import subprocess as sp
 import labbench as lb
 import ssmdevices.lib
 
-class AndroidDebugBridge(lb.CommandLineWrapper):
+class AndroidDebugBridge(lb.ShellBackend):
 
     binary_path: lb.Unicode(ssmdevices.lib.path('adb.exe'))
     timeout: lb.Float(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
