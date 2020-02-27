@@ -7,6 +7,11 @@ import subprocess as sp
 import psutil
 import logging
 
+if __name__ == '__main__':
+    from _networking import network_interface_info
+else:
+    from ._networking import network_interface_info
+
 class Netsh(lb.ShellBackend):
     ''' Parse calls to netsh to get information about available WLAN access
         points.
@@ -102,27 +107,38 @@ class Netsh(lb.ShellBackend):
 
 
 class WLANStatus(lb.Device):
-    resource: lb.Unicode(allow_none=True)
-    ssid: lb.Unicode(allow_none=True)
-    timeout: lb.Float(10, min=0)
+    resource: lb.Unicode(
+        allow_none=True,
+        help='name of the interface to monitor'
+    )
+
+    ssid: lb.Unicode(
+        allow_none=True,
+        help='the AP for connection with the client'
+    )
+
+    timeout: lb.Float(
+        default=10, min=0,
+        help='time to spend on attempted AP connection before raising ConnectionError'
+    )
 
     def open(self):
         # Use netsh to identify the device guid from the network interface name
-        with Netsh() as netsh:
-            # Check that this interface exists
-            available_interfaces = netsh.get_wlan_interfaces()
+        available = self.list_available_clients('physical_address')
+        resource = self.settings.resource.replace('-', ':').lower()
 
-            if not self.settings.resource:
-                raise ConnectionError('must set resource to specify the a WLAN network interface')
-            elif self.settings.resource not in available_interfaces:
-                txt = f"requested WLAN interface '{self.settings.resource}', "\
-                      f"but only {tuple(available_interfaces.keys())} are available"
-                raise ConnectionError(txt)
+        if not self.settings.resource:
+            raise ConnectionError('set resource to specify the WLAN network interface')
+        elif resource not in available:
+            txt = f"requested WLAN client at physical (MAC) address '{self.settings.resource}', "\
+                  f"but only {tuple(available)} are available"
+            print('raising connection error')
+            raise ConnectionError(txt)
 
-            guid = available_interfaces[self.settings.resource]['guid'].lower()
+        guid = available[resource]['guid'].lower()
 
         ctrl = pywifi.wifi.wifiutil.WifiUtil()
-        global outguid
+
         for iface_key in ctrl.interfaces():
             this_guid = str(iface_key['guid'])[1:-1].lower()
             if this_guid == guid:
@@ -130,22 +146,49 @@ class WLANStatus(lb.Device):
                 break
         else:
             # This really shouldn't happen
-            raise WLANInterfaceException('requested guid not present in pywifi')
+            raise ConnectionError('requested guid not present in pywifi')
+
+        info = network_interface_info(self.settings.resource)
+        self._console.debug(f"client network interface is '{info['interface']}' "
+                            f"at physical address '{info['physical_address']}'")
+
+    @classmethod
+    def list_available_clients(cls, key='interface'):
+        if key not in ('interface', 'guid', 'physical_address'):
+            raise ValueError(f"argument 'key' must be one of ('interface', 'guid', 'physical_address'), not {key}")
+
+        with Netsh() as netsh:
+            # Check that this interface exists
+            interfaces = netsh.get_wlan_interfaces()
+
+        if key == 'interface':
+            return interfaces
+
+        ret = {}
+        for if_name, if_map in interfaces.items():
+            if_map['interface'] = if_name
+            ret[if_map[key]] = if_map
+
+        return ret
 
     @classmethod
     def __imports__(cls):
         global pywifi
+
         level = lb.console.logger.level
         try:
             import pywifi
         except ImportError:
             raise ImportError('install pywifi to use WLANStatus: pip install pywifi')
 
+        # disable pywifi logging
         logger = logging.getLogger('pywifi')
         logger.propagate = False
+        logger.disabled = True
+        logging.root.removeHandler(logging.root.handlers[0])
 
-        # Reset the level that has been changed by pywifi
-        lb.console.logger.setLevel(level)
+        # restore the original messaging format and level
+        lb.show_messages(level)
 
         cls._status_lookup = {pywifi.const.IFACE_CONNECTED: 'connected',
                               pywifi.const.IFACE_CONNECTING: 'connecting',
@@ -179,7 +222,7 @@ class WLANStatus(lb.Device):
                 break
             lb.sleep(.05)
         else:
-            self.logger.debug(f'failed to connect to AP with SSID {repr(self.settings.ssid)}')
+            self._console.debug(f'failed to connect to AP with SSID {repr(self.settings.ssid)}')
             raise TimeoutError('tried to connect but only achieved the {} state ' \
                                .format(repr(s)))
 
@@ -192,7 +235,7 @@ class WLANStatus(lb.Device):
             raise TimeoutError('tried to connect, but got no AP scan information')
 
         time_elapsed = time.perf_counter() - t0
-        self.logger.debug('connected WLAN interface to {}'.format(self.settings.ssid))
+        self._console.debug('connected WLAN interface to {}'.format(self.settings.ssid))
 
         self.backend.scan()
 
@@ -230,7 +273,7 @@ class WLANStatus(lb.Device):
             raise TimeoutError('tried to disconnect but only achieved the {} state ' \
                                .format(repr(s)))
 
-        self.logger.debug('disconnected WLAN interface')
+        self._console.debug('disconnected WLAN interface')
 
     def interface_reconnect(self):
         ''' Reconnect to the network interface.
@@ -248,12 +291,15 @@ class WLANStatus(lb.Device):
     @lb.Bool(settable=False)
     def isup(self):
         ''' `True` if psutil reports that the interface is up '''
-        return stats[self.settings.resource].isup
+        stats = psutil.net_if_stats()
+        iface_name = network_interface_info(self.settings.resource)['interface']
+        return stats[iface_name].isup
 
     @lb.Int(settable=False, allow_none=True, key='ssid')
     def transmit_rate_mbps(self):
         stats = psutil.net_if_stats()
-        return stats[self.settings.resource].speed
+        iface_name = network_interface_info(self.settings.resource)['interface']
+        return stats[iface_name].speed
 
     @lb.Int(allow_none=True, max=100, settable=False, key='ssid')
     def signal(self):
@@ -305,12 +351,21 @@ class WLANStatus(lb.Device):
 
 
 if __name__ == '__main__':
-    with Netsh() as netsh:
-        # Check that this interface exists
-        available_interfaces = netsh.get_wlan_interfaces()
-        print(available_interfaces)
+    client = WLANStatus(
+        resource='e4:be:ed:05:d2:3c', # name of the SSID that the client needs to connect to
+        ssid='EnGenius1', # SSID name to connect with
+        timeout=5 # (s) how long to continue attempts to connect the client and AP
+    )
 
-        print(netsh.get_wlan_ssids(list(available_interfaces)[0]))
+    with client:
+        pass
+
+    # with Netsh() as netsh:
+    #     # Check that this interface exists
+    #     available_interfaces = netsh.get_wlan_interfaces()
+    #     print(available_interfaces)
+    #
+    #     print(netsh.get_wlan_ssids(list(available_interfaces)[0]))
 
 
     # with WLANStatus(resource='WLAN_Client_DUT', ssid='EnGenius1') as wlan:

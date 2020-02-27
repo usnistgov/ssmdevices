@@ -99,6 +99,13 @@ class MiniCircuitsUSBDevice(lb.Device):
         return d
 
     @classmethod
+    def _test_instance(cls, usb_path):
+        """ must return a trial object to test connections when enumerating devices.
+            the subclass must have serial_number and model traits.
+        """
+        raise NotImplementedError("subclasses must implement this to return an instance for trial connection")
+
+    @classmethod
     def _find_path(cls, serial):
         ''' Find a USB HID device path matching the MiniCircuits device with
             the specified serial number. If serial is None, then check that
@@ -119,7 +126,7 @@ class MiniCircuitsUSBDevice(lb.Device):
     
                 # Otherwise, connect to the device to learn its serial number
                 try:
-                    with cls(usb_path=dev['path']) as inst:
+                    with cls._test_instance(dev['path']) as inst:
                         this_serial = inst.serial_number
                         usb_registry[dev['path']] = this_serial
                         found[this_serial] = dev['path']
@@ -210,6 +217,10 @@ class MiniCircuitsUSBDevice(lb.Device):
 class SwitchAttenuatorBase(MiniCircuitsUSBDevice):
     CMD_GET_PART_NUMBER = 40
     CMD_GET_SERIAL_NUMBER = 41
+
+    @classmethod
+    def _test_instance(cls, usb_path):
+        return SwitchAttenuatorBase(usb_path=usb_path)
 
     @lb.Unicode(settable=False, cache=True)
     def model(self):

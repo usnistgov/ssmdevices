@@ -21,6 +21,11 @@ from threading import Event, Thread
 from io import StringIO
 import psutil
 
+if __name__ == '__main__':
+    from _networking import get_ipv4_address
+else:
+    from ._networking import get_ipv4_address
+
 if '_tcp_port_offset' not in dir():
     _tcp_port_offset = 0
 
@@ -96,7 +101,7 @@ class IPerf(lb.ShellBackend):
 
     def background(self, *extra_args, **flags):
         if self.settings.udp and self.settings.buffer_size is not None:
-            self.logger.warning('iperf might not behave nicely setting udp=True with buffer_size')
+            self._console.warning('iperf might not behave nicely setting udp=True with buffer_size')
         if not self.settings.udp and self.settings.bit_rate is not None:
             raise ValueError('iperf does not support setting bit_rate in TCP')
 
@@ -130,16 +135,16 @@ class IPerfOnAndroid(IPerf):
 
     def open(self):
         with self.no_state_arguments:
-            #            self.logger.warning('TODO: need to fix setup for android iperf, but ok for now')
+            #            self._console.warning('TODO: need to fix setup for android iperf, but ok for now')
             #            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
             #            if len(devices) == 0:
             #                raise Exception('adb lists no devices. is the UE connected?')
-            self.logger.debug('waiting for USB connection to phone')
+            self._console.debug('waiting for USB connection to phone')
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True,
                    timeout=30)
 
             lb.sleep(.1)
-            self.logger.debug('copying iperf onto phone')
+            self._console.debug('copying iperf onto phone')
             sp.run([self.settings.binary_path, "push", ssmdevices.lib.path('android', 'iperf'),
                     self.settings.remote_binary_path], check=True, timeout=2)
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
@@ -148,19 +153,19 @@ class IPerfOnAndroid(IPerf):
             sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
 
             #            # Check that it's executable
-            self.logger.debug('verifying iperf execution on phone')
+            self._console.debug('verifying iperf execution on phone')
             cp = sp.run([self.settings.binary_path, 'shell',
                          self.settings.remote_binary_path, '--help'],
                         timeout=2, stdout=sp.PIPE)
             if cp.stdout.startswith(b'/system/bin/sh'):
                 raise Exception('could not execute!!! ', cp.stdout)
-            self.logger.debug('phone is ready to execute iperf')
+            self._console.debug('phone is ready to execute iperf')
 
     def start(self):
         super(IPerfOnAndroid, self).start()
         test = self.read_stdout(1)
         if 'network' in test:
-            self.logger.warning('no network connectivity in UE')
+            self._console.warning('no network connectivity in UE')
 
     def kill(self, wait_time=3):
         ''' Kill the local process and the iperf process on the UE.
@@ -177,7 +182,7 @@ class IPerfOnAndroid(IPerf):
                 line = line.decode(errors='replace')
                 if self.settings.remote_binary_path in line.lower():
                     pid = line.split()[1]
-                    self.logger.debug('killing zombie iperf. stdout: {}' \
+                    self._console.debug('killing zombie iperf. stdout: {}' \
                                       .format(self.foreground('shell', 'kill', '-9', pid)))
             lb.sleep(.1)
             # Wait for any iperf zombie processes to die
@@ -200,7 +205,7 @@ class IPerfOnAndroid(IPerf):
             if ':' not in l:
                 out.append(l)
             else:
-                self.logger.warning('stdout: {}'.format(repr(l)))
+                self._console.warning('stdout: {}'.format(repr(l)))
         return '\n'.join(out)
 
     def fetch(self):
@@ -215,7 +220,7 @@ class IPerfOnAndroid(IPerf):
         import subprocess as sp
         import re
 
-        self.logger.debug('waiting for cellular data connection')
+        self._console.debug('waiting for cellular data connection')
         t0 = time.time()
         out = ''
         while time.time() - t0 < timeout or timeout is None:
@@ -230,7 +235,7 @@ class IPerfOnAndroid(IPerf):
                     break
         else:
             raise TimeoutError('phone did not connect for cellular data before timeout')
-        self.logger.debug('cellular data available after {} s'.format(time.time() - t0))
+        self._console.debug('cellular data available after {} s'.format(time.time() - t0))
 
     def reboot(self, block=True):
         ''' Reboot the device.
@@ -238,7 +243,7 @@ class IPerfOnAndroid(IPerf):
         :param block: if this evaluates to True, block until the device is ready to accept commands
         :return:
         '''
-        self.logger.info('rebooting')
+        self._console.info('rebooting')
         sp.run([self.settings.binary_path, 'reboot'], check=True, timeout=2)
         self.wait()
 
@@ -248,7 +253,7 @@ class IPerfOnAndroid(IPerf):
         :return: None
         '''
         sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=timeout)
-        self.logger.debug('device is ready')
+        self._console.debug('device is ready')
 
 
 class IPerfClient(IPerf):
@@ -256,7 +261,7 @@ class IPerfClient(IPerf):
     '''
 
     def __imports__(self, *args, **kws):
-        self.logger.warning('this class is deprecated! use {} instead' \
+        self._console.warning('this class is deprecated! use {} instead' \
                             .format(repr(IPerf)))
         super(IPerfClient, self).__imports__(*args, **kws)
 
@@ -387,33 +392,6 @@ def bit_errors(x):
 
 
 from contextlib import suppress, AbstractContextManager
-
-
-def get_ipv4_address(iface):
-    ''' Try to look up the IP address corresponding to the network interface
-        referred to by the OS with the name `iface`.
-        
-        If the interface does not exist, the medium is disconnected, or there
-        is no IP address associated with the interface, raise `ConnectionError`.
-    '''
-    addrs = psutil.net_if_addrs()
-
-    # Check whether the interface exists
-    if iface not in addrs:
-        available = ', '.join(addrs.keys())
-        msg = f'specified receiver interface {iface} but only ({available}) are available'
-        raise ConnectionError(msg)
-
-        # Check whether it's up
-    if not psutil.net_if_stats()[iface].isup:
-        raise ConnectionError(f'the {iface} network interface is disabled or disconnected')
-
-    # Lookup and return the address
-    for addr_struct in addrs[iface]:
-        if 'AF_INET' in str(addr_struct.family):
-            return addr_struct.address
-    else:
-        raise ConnectionError(f'no ipv4 address associated with interface "{iface}"')
 
 
 class ClosedLoopBenchmark(lb.Device):
@@ -571,7 +549,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     if len(buf) == 0:
                         break
                 else:
-                    self.logger.warning('failed to flush socket before closing')
+                    self._console.warning('failed to flush socket before closing')
 
             with suppress_matching_arg0(OSError, arg0=10057), \
                  suppress_matching_arg0(OSError, arg0='timed out'):
@@ -663,10 +641,10 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 msg = f'connection failed between server {server_ip} and client {client_ip}'
                 # Windows-specific errors
                 if hasattr(e, 'winerror') and e.winerror in self.port_winerrs:
-                    self.logger.debug(msg)
+                    self._console.debug(msg)
                     raise PortBusyError(msg)
                 elif hasattr(e, 'winerror') and e.winerror in self.conn_winerrs:
-                    self.logger.debug(msg)
+                    self._console.debug(msg)
                     raise ConnectionError(msg)
                 else:
                     raise
@@ -700,7 +678,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     #                    except OSError as e:
                     #                        # Windows-specific errors
                     #                        if hasattr(e, 'winerror') and e.winerror in self.port_winerrs:
-                    #                            self.logger.debug(f'port {port} is inaccessible')
+                    #                            self._console.debug(f'port {port} is inaccessible')
                     #                            raise PortBusyError
                     #                        else:
                     #                            raise
@@ -713,7 +691,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     if other_ip == client_ip:
                         break
                     else:
-                        self.logger.warning(f'connection attempt from unexpected ip {other_ip} instead of {client_ip}')
+                        self._console.warning(f'connection attempt from unexpected ip {other_ip} instead of {client_ip}')
                         if conn is not None:
                             self._close_sockets(conn, bytes_=bytes_)
                             conn = None
@@ -741,7 +719,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 # Suppress the server exception if the client is already
                 # raising one
                 if ex is not None:
-                    self.logger.debug(f'server connection exception: {repr(ex)} (superceded by client exception)')
+                    self._console.debug(f'server connection exception: {repr(ex)} (superceded by client exception)')
                     ex = None
                 if conn is not None:
                     self._close_sockets(conn, bytes_=bytes_)
@@ -786,7 +764,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 # Allow chances to try other ports
                 ret = lb.retry(PortBusyError, 100)(connect)()
             p = ret['client'].getsockname()[1]
-            self.logger.debug(
+            self._console.debug(
                 f'server {server_ip}:{p} connected to client {client_ip}:{p} in {perf_counter() - t0:0.3f}s')
         except PortBusyError:
             raise ConnectionError(r'failed to connect on {retries} ports')
@@ -913,7 +891,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             #                single()
 
             except lb.ThreadEndedByMaster:
-                self.logger.debug(f'{self.__class__.__name__}() ended by master thread')
+                self._console.debug(f'{self.__class__.__name__}() ended by master thread')
                 except_event.set()
             except BaseException:
                 if not (end_event is not None and end_event.is_set()):
@@ -985,11 +963,11 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             #                single()
 
             except lb.ThreadEndedByMaster:
-                self.logger.debug(f'{self.__class__.__name__}() ended by master thread')
+                self._console.debug(f'{self.__class__.__name__}() ended by master thread')
                 except_event.set()
             except BaseException as e:
                 if not (end_event is not None and end_event.is_set()):
-                    self.logger.debug(f'suppressed exception in sender: {e}')
+                    self._console.debug(f'suppressed exception in sender: {e}')
                     except_event.set()
 
             return {'start': start,
@@ -1005,25 +983,25 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     ret = lb.concurrently(sender, receiver, traceback_delay=True)
                     self._background_queue.put(ret)
                     i += 1
-                self.logger.debug(f'finished traffic test of {i} buffers of {bytes_} bytes')
+                self._console.debug(f'finished traffic test of {i} buffers of {bytes_} bytes')
             except BaseException as e:
                 if not self._background_event.is_set():
-                    self.logger.warning(f'background thread exception - traceback: {traceback.format_exc()}')
+                    self._console.warning(f'background thread exception - traceback: {traceback.format_exc()}')
                     self._background_queue.put(e)
                 self._close_sockets(send_sock, recv_sock, listen_sock, bytes_=buffer_size)
             finally:
-                self.logger.debug('background thread finished')
+                self._console.debug('background thread finished')
 
         if background:
             thread = Thread(target=background_thread)
             thread.start()
             tx_ready.wait(timeout=self.settings.timeout)
             rx_ready.wait(timeout=self.settings.timeout)
-            self.logger.debug(f'first buffer sent after {perf_counter() - t_start:0.3f}s')
+            self._console.debug(f'first buffer sent after {perf_counter() - t_start:0.3f}s')
         else:
             ret = lb.concurrently(sender, receiver, traceback_delay=True)
             i = len(ret["t_tx_start"])
-            self.logger.debug(f'finished traffic test of {i} buffers of {bytes_} bytes')
+            self._console.debug(f'finished traffic test of {i} buffers of {bytes_} bytes')
             return ret
 
     def acquire(self, buffer_size, count=None, duration=None):
@@ -1055,7 +1033,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         return self._make_dataframe(ret)
 
     def _make_dataframe(self, worker_data):
-        self.logger.debug('making dataframe')
+        self._console.debug('making dataframe')
         start = worker_data.pop('start', None)
         if start is None:
             raise IOError('the run did not return data')
@@ -1105,7 +1083,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         socks = lb.until_timeout(errors, timeout)(self._open_sockets)()
         self._close_sockets(*socks)
         elapsed = perf_counter() - t0
-        self.logger.debug(f'interfaces ready after {elapsed:0.2f}s')
+        self._console.debug(f'interfaces ready after {elapsed:0.2f}s')
         return elapsed
 
 

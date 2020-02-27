@@ -114,7 +114,7 @@ class QXDM(lb.Win32ComDevice):
                 proc = psutil.Process(pid)
                 for target in 'qpst', 'qxdm', 'atmnserver':
                     if proc.name().lower().startswith(target.lower()):
-                        self.logger.debug('killing zombie process {}'.format(proc.name()))
+                        self._console.debug('killing zombie process {}'.format(proc.name()))
                         proc.kill()
             except psutil.NoSuchProcess:
                 pass
@@ -156,12 +156,12 @@ class QXDM(lb.Win32ComDevice):
             f1 = self._qpst.disconnect
         except AttributeError:
             f1 = lambda: None
-            self.logger.debug('QPST already quit')
+            self._console.debug('QPST already quit')
         try:
             f2 = self._window.QuitApplication
         except AttributeError:
             f2 = lambda: None
-            self.logger.debug('QXDM already quit')
+            self._console.debug('QXDM already quit')
 
         lb.concurrently(f1, f2)
 
@@ -200,7 +200,7 @@ class QXDM(lb.Win32ComDevice):
 
         tree.write(path_out)
         self._load_config(path_out)
-        self.logger.debug('loaded modified configuration at {}' \
+        self._console.debug('loaded modified configuration at {}' \
                           .format(repr(path_out)))
 
     def save(self, path=None, saveNm=None):
@@ -240,7 +240,7 @@ class QXDM(lb.Win32ComDevice):
 
         # Save the file
         self._window.SaveItemStore(path)
-        self.logger.debug('stopped and saved to {} in {}s' \
+        self._console.debug('stopped and saved to {} in {}s' \
                           .format(repr(path), time.time() - t0))
 
         self.__start_time = None
@@ -255,7 +255,7 @@ class QXDM(lb.Win32ComDevice):
         self._set_com_port(self.settings.resource)
         if wait:
             self._wait_for_start()
-        self.logger.debug('running after setup for {}s'.format(time.time() - t0))
+        self._console.debug('running after setup for {}s'.format(time.time() - t0))
 
         self.__start_time = time.time()
 
@@ -320,10 +320,10 @@ class QXDM(lb.Win32ComDevice):
                 else:
                     raise TimeoutError('QXDM timeout disconnecting to UE (return code {})'.format(actual))
             if int(com_port) > 0:
-                self.logger.debug('connected to COM{} in {}s' \
+                self._console.debug('connected to COM{} in {}s' \
                                   .format(self.settings.resource, time.time() - t0))
             else:
-                self.logger.debug('disconnected from COM{} in {}s' \
+                self._console.debug('disconnected from COM{} in {}s' \
                                   .format(self.settings.resource, time.time() - t0))
 
         finally:
@@ -331,7 +331,7 @@ class QXDM(lb.Win32ComDevice):
                 self._qpst.remove_port(self.settings.resource)
 
     def reconnect(self):
-        self.logger.info('reinitializing')
+        self._console.info('reinitializing')
         self.close()
         self.open()
 
@@ -345,7 +345,7 @@ class QXDM(lb.Win32ComDevice):
         for item in 'Item view', 'Filtered view':
             if not self._window.ClearViewItems(item):
                 if item == 'Item view':
-                    self.logger.error('failed to clear view ' + repr(item))
+                    self._console.error('failed to clear view ' + repr(item))
 
         t0 = time.time()
         # Block until the item store is clear
@@ -358,7 +358,7 @@ class QXDM(lb.Win32ComDevice):
             raise TimeoutError('timeout waiting for qxdm to clear, buffer still had {} items'
                                .format(self._get_item_count()))
 
-        self.logger.debug('cleared item store buffer in {}s'.format(time.time() - t0))
+        self._console.debug('cleared item store buffer in {}s'.format(time.time() - t0))
 
     def _wait_for_stop(self):
         ''' Block until the reported number of data rows stops growing.
@@ -388,7 +388,7 @@ class QXDM(lb.Win32ComDevice):
         else:
             raise Exception('timeout waiting for qxdm to start acquisition')
         #        lb.sleep(1)
-        self.logger.debug('activity began after observing items after {}s' \
+        self._console.debug('activity began after observing items after {}s' \
                           .format(self._get_item_count(), time.time() - t0))
 
     # Deprecated

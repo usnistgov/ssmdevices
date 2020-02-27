@@ -227,11 +227,7 @@ class MiniCircuitsRC4DAT(lb.DotNetDevice):
                                      .format(model=self.model,
                                              model_has=self.model_includes))
 
-        self.logger.debug(f'device is {self.model} with serial {self.serial_number}')
-
-    def _validate_connection(self):
-        if self.backend.GetUSBConnectionStatus() != 1:
-            raise lb.DeviceStateError('USB device unexpectedly disconnected')
+        self._console.debug(f'device is {self.model} with serial {self.serial_number}')
 
     def close(self):
         ''' Release the attenuator hardware resource via the driver DLL.
@@ -264,11 +260,15 @@ class MiniCircuitsRC4DAT(lb.DotNetDevice):
         else:
             return []
 
+    def _validate_connection(self):
+        if self.backend.GetUSBConnectionStatus() != 1:
+            raise lb.DeviceStateError('USB device unexpectedly disconnected')
+
     @lb.Unicode(settable=False, cache=True)
     def model(self):
         self._validate_connection()
         return 'MiniCircuits ' + self.backend.Read_ModelName('')[1]
-    
+
     @lb.Unicode(settable=False, cache=True)
     def serial_number(self):
         self._validate_connection()
@@ -282,12 +282,12 @@ class MiniCircuitsRC4DAT(lb.DotNetDevice):
     def __get_by_key__ (self, key, name):
         self._validate_connection()
         ret = self.backend.ReadChannelAtt(key)
-        self.logger.debug(f'got attenuation {key} {ret} dB')
+        self._console.debug(f'got attenuation {key} {ret} dB')
         return ret    
 
     def __set_state_(self, key, name, value):
         self._validate_connection()
-        self.logger.debug(f'set attenuation {key} {value} dB')
+        self._console.debug(f'set attenuation {key} {value} dB')
         self.backend.SetChannelAtt(key, value)
 
 if __name__ == '__main__':

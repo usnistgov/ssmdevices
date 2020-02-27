@@ -73,14 +73,14 @@ class SpirentGSS8000(lb.SerialDevice):
                      exception if a data value is returned)
         '''
         self.backend.read(self.backend.inWaiting())
-        self.logger.debug('write {}'.format(repr(key)))
+        self._console.debug('write {}'.format(repr(key)))
         self.backend.write('{}\n'.format(key))
 
         # Get the response
         response = b''
         while b'</msg>' not in response.lower():
             response += self.backend.readline()
-        self.logger.debug(b'  <- {}'.format(repr(response)))
+        self._console.debug(b'  <- {}'.format(repr(response)))
         self.backend.read(self.backend.inWaiting())  # Clear out any remaining data
 
         # Pull the data/error message payload

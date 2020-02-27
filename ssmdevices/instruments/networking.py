@@ -63,7 +63,7 @@ class AeroflexTM500(lb.TelnetDevice):
             raise TM500Error('the TM500 is already armed with the scenario named {}'.format(scenario_name))
 
         config_path = os.path.join(self.settings.config_root, scenario_name)+'.conf'
-        self.logger.debug('arming TM500 scenario {}'\
+        self._console.debug('arming TM500 scenario {}'\
                           .format(repr(config_path)))
 
         t0 = time.time()
@@ -73,7 +73,7 @@ class AeroflexTM500(lb.TelnetDevice):
         ret = self._send(seq)
         if self.settings.data_root is not None:
             self._send('#$$DATA_LOG_FOLDER 1 "{}"'.format(self.settings.data_root))
-        self.logger.debug('armed in {:.2f}s'.format(time.time()-t0))
+        self._console.debug('armed in {:.2f}s'.format(time.time()-t0))
         self.__latest['scenario_name'] = scenario_name
         return ret
 
@@ -104,10 +104,10 @@ class AeroflexTM500(lb.TelnetDevice):
             self._send('forw mte DeConfigRdaStopTestCase')
             self._send('WAIT FOR "I: CMPI DTE RDA TEST GROUP STOPPED IND" TIMEOUT 300')
         except TM500Error as e:
-            self.logger.debug('exception on attempt to stop scenario: {}'.format(str(e)))
+            self._console.debug('exception on attempt to stop scenario: {}'.format(str(e)))
         else:
             if self.__latest.setdefault('data', None) is None:
-                self.logger.debug('there is no active logging to stop')
+                self._console.debug('there is no active logging to stop')
             else:
                 self._send('#$$STOP_LOGGING')
                 if convert:
@@ -119,7 +119,7 @@ class AeroflexTM500(lb.TelnetDevice):
             self._send('SDLI LTE_NAS_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
             self._send('SDLI LTE_RRC_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000')
         except TM500Error as e:
-            self.logger.debug('exception on attempt to cleanup scenario: {}'.format(str(e)))
+            self._console.debug('exception on attempt to cleanup scenario: {}'.format(str(e)))
 
         self.__latest['scenario_name'] = None
         self.__latest['data'] = None
@@ -155,7 +155,7 @@ class AeroflexTM500(lb.TelnetDevice):
         else:
             raise TimeoutError('no message confirming reboot')
         
-        self.logger.debug('tm500 rebooted after {}s'.format(time.time()-t0))    
+        self._console.debug('tm500 rebooted after {}s'.format(time.time()-t0))
     
     @staticmethod
     def command_log_to_script(path):
@@ -316,7 +316,7 @@ class AeroflexTM500(lb.TelnetDevice):
              and b'timeout' in msg.lower():
             timeout = int(msg.lower().rsplit(b'timeout',1)[1].strip())
 
-        self.logger.debug('write {}'.format(repr(msg)))
+        self._console.debug('write {}'.format(repr(msg)))
         self.backend.write(msg + b'\r')
 
         if not confirm:
@@ -350,9 +350,9 @@ class AeroflexTM500(lb.TelnetDevice):
         extra = self.backend.read_very_eager().strip().rstrip()
         if extra:
             if extra.count(b'\r') <=1:
-                self.logger.debug('extra -> {}'.format(extra.decode()))
+                self._console.debug('extra -> {}'.format(extra.decode()))
             else:
-                self.logger.debug('extra -> ({} lines)'.format(extra.count(b'\r')))
+                self._console.debug('extra -> ({} lines)'.format(extra.count(b'\r')))
         return ret.decode('ascii')
 
     def _convert_to_text(self):
@@ -383,7 +383,7 @@ class AeroflexTM500(lb.TelnetDevice):
                     
         lb.sleep(0.5)
         
-        self.logger.info('converted TM500 logs from binary in {:0.2f}s'
+        self._console.info('converted TM500 logs from binary in {:0.2f}s'
                        .format(time.time()-t0))
 
         return ret
@@ -393,7 +393,7 @@ class AeroflexTM500(lb.TelnetDevice):
             ack_timeout = self.settings.ack_timeout
         else:
             ack_timeout = timeout
-#        self.logger.debug('awaiting response {}'.format(repr(rsp)))
+#        self._console.debug('awaiting response {}'.format(repr(rsp)))
         
         # Block until the expected response is received
         t0 = time.time()
@@ -407,7 +407,7 @@ class AeroflexTM500(lb.TelnetDevice):
                 break
         else:
             raise TimeoutError('response timeout')
-#        self.logger.debug('    -> {}'.format(ret))
+#        self._console.debug('    -> {}'.format(ret))
         return ret
 
 if __name__ == '__main__':
