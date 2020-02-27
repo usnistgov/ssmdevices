@@ -108,8 +108,8 @@ class Netsh(lb.ShellBackend):
 
 class WLANStatus(lb.Device):
     resource: lb.Unicode(
-        allow_none=True,
-        help='name of the interface to monitor'
+        allow_none=False,
+        help='interface name or MAC address (nn:nn:nn:nn:nn)'
     )
 
     ssid: lb.Unicode(
@@ -124,18 +124,18 @@ class WLANStatus(lb.Device):
 
     def open(self):
         # Use netsh to identify the device guid from the network interface name
-        available = self.list_available_clients('physical_address')
-        resource = self.settings.resource.replace('-', ':').lower()
+        info = network_interface_info(self.settings.resource)
 
-        if not self.settings.resource:
-            raise ConnectionError('set resource to specify the WLAN network interface')
-        elif resource not in available:
-            txt = f"requested WLAN client at physical (MAC) address '{self.settings.resource}', "\
-                  f"but only {tuple(available)} are available"
+        available = self.list_available_clients('physical_address')
+        mac = info['physical_address']
+
+        if mac not in available:
+            txt = f"interface with MAC address '{self.settings.resource}' is not one of the "\
+                  f"WLAN interfaces {tuple(available)}"
             print('raising connection error')
             raise ConnectionError(txt)
 
-        guid = available[resource]['guid'].lower()
+        guid = available[mac]['guid'].lower()
 
         ctrl = pywifi.wifi.wifiutil.WifiUtil()
 
@@ -148,7 +148,6 @@ class WLANStatus(lb.Device):
             # This really shouldn't happen
             raise ConnectionError('requested guid not present in pywifi')
 
-        info = network_interface_info(self.settings.resource)
         self._console.debug(f"client network interface is '{info['interface']}' "
                             f"at physical address '{info['physical_address']}'")
 
