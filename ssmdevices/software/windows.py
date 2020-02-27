@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__all__ = ['Netsh', 'WLANStatus']
+__all__ = ['Netsh', 'WLANClient']
 
 import labbench as lb
 import re, time
@@ -106,7 +106,7 @@ class Netsh(lb.ShellBackend):
         return pairs_to_dict(lines)
 
 
-class WLANStatus(lb.Device):
+class WLANClient(lb.Device):
     resource: lb.Unicode(
         allow_none=False,
         help='interface name or MAC address (nn:nn:nn:nn:nn)'
@@ -210,9 +210,7 @@ class WLANStatus(lb.Device):
                 break
             lb.sleep(.02)
         else:
-            msg = f'client interface {repr(self)} tried connecting to ' \
-                  f'SSID {repr(self.settings.ssid)}, but is still down'
-            raise TimeoutError(msg)
+            raise TimeoutError(f'in connecting {repr(self)} to SSID {repr(self.settings.ssid)}')
 
         t1 = time.perf_counter()
         while time.perf_counter() - t1 < self.settings.timeout:
