@@ -67,7 +67,7 @@ def get_ipv4_address(resource):
 
     # Check whether it's up, which is necessary for a good IP address
     if not psutil.net_if_stats()[info['interface']].isup:
-        raise ConnectionError(f'the {iface} network interface is disabled or disconnected')
+        raise ConnectionError(f"the network interface {info['interface']} ({info['physical_address']}) is disabled or disconnected")
 
     # lookup and return the address
     if 'ip_address' not in info:
