@@ -97,7 +97,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         value1 = int(value)
         value2 = int((value - value1) * 4.0)
         self._cmd(CMD_SET_ATTENUATION, value1, value2, 1)
-        self._console.debug(f'uncalibrated attenuation is now {value:0.2f} dB')
+        self._console.debug(f'uncalibrated attenuation set to {value:0.2f} dB')
 
     # the remaining traits are transformations to calibrate attenuation_Setting
     attenuation = attenuation_setting.calibrate(
@@ -142,12 +142,12 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         if name == 'attenuation' and self.settings.frequency is not None:
             cal = msg['new']
             uncal = self['attenuation'].find_uncal(cal)
-            txt = f'calibrated attenuation set to {cal:0.2f} dB (device setting {uncal:0.2f} dB)'
+            txt = f'calibrated attenuation set to {cal:0.2f} dB'
             self._console.debug(txt)
         elif name == 'output_power':
             uncal = msg['new']
             label = self["output_power"].label
-            self._console.debug(f'{self["output_power"]} is now {uncal:0.2f} {label}')
+            self._console.debug(f'output_power set to {uncal:0.2f} {label}')
 
 
 #class MiniCircuitsRC4DAT(SwitchAttenuatorBase):
