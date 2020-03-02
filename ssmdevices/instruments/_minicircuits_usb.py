@@ -220,7 +220,9 @@ class SwitchAttenuatorBase(MiniCircuitsUSBDevice):
 
     @classmethod
     def _test_instance(cls, usb_path):
-        return SwitchAttenuatorBase(usb_path=usb_path)
+        device = SwitchAttenuatorBase(usb_path=usb_path)
+        device._console.logger.disabled = True
+        return device
 
     @lb.Unicode(settable=False, cache=True)
     def model(self):

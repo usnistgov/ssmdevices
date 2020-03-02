@@ -22,9 +22,9 @@ from io import StringIO
 import psutil
 
 if __name__ == '__main__':
-    from _networking import get_ipv4_address
+    from _networking import get_ipv4_address, list_network_interfaces
 else:
-    from ._networking import get_ipv4_address
+    from ._networking import get_ipv4_address, list_network_interfaces
 
 if '_tcp_port_offset' not in dir():
     _tcp_port_offset = 0
@@ -424,6 +424,11 @@ class ClosedLoopBenchmark(lb.Device):
                     server=self.settings.server,
                     client=self.settings.client)
 
+    @classmethod
+    def __imports__(cls):
+        global pd
+        import pandas as pd
+
     def close(self):
         if self.is_running():
             self.stop_traffic()
@@ -731,7 +736,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
             return conn
 
-        def open():
+        def open_():
             global _tcp_port_offset, listen_sock
 
             if self.settings.port != 0:
@@ -759,10 +764,10 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             t0 = perf_counter()
 
             if self.settings.port == 0:
-                ret = connect()
+                ret = open_()
             else:
                 # Allow chances to try other ports
-                ret = lb.retry(PortBusyError, 100)(connect)()
+                ret = lb.retry(PortBusyError, 100)(open_)()
             p = ret['client'].getsockname()[1]
             self._console.debug(
                 f'server {server_ip}:{p} connected to client {client_ip}:{p} in {perf_counter() - t0:0.3f}s')
@@ -1074,7 +1079,8 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         return self.mtu() - 40
 
     def mtu(self):
-        return psutil.net_if_stats()[self.settings.receiver].mtu
+        iface = list_network_interfaces('physical_address')[self.settings.receiver]['interface']
+        return psutil.net_if_stats()[iface].mtu
 
     def wait_for_interfaces(self, timeout):
         errors = (TimeoutError, ConnectionRefusedError)

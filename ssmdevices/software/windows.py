@@ -156,7 +156,9 @@ class WLANClient(lb.Device):
         if key not in ('interface', 'guid', 'physical_address'):
             raise ValueError(f"argument 'key' must be one of ('interface', 'guid', 'physical_address'), not {key}")
 
-        with Netsh() as netsh:
+        netsh = Netsh()
+        netsh._console.logger.disabled = True
+        with netsh:
             # Check that this interface exists
             interfaces = netsh.get_wlan_interfaces()
 
