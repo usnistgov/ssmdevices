@@ -56,6 +56,12 @@ def network_interface_info(resource):
     return addrs[resource]
 
 
+def get_ipv4_occupied_ports(ip):
+    return {conn.laddr[1]
+            for conn in psutil.net_connections(kind='inet4')
+            if ip in conn.laddr}
+
+
 def get_ipv4_address(resource):
     ''' Try to look up the IP address of a network interface by its name
         or MAC (physical) address.

@@ -23,9 +23,9 @@ from threading import Event, Thread
 from io import StringIO
 
 if __name__ == '__main__':
-    from _networking import get_ipv4_address, list_network_interfaces
+    from _networking import get_ipv4_address, list_network_interfaces, get_ipv4_occupied_ports
 else:
-    from ._networking import get_ipv4_address, list_network_interfaces
+    from ._networking import get_ipv4_address, list_network_interfaces, get_ipv4_occupied_ports
 
 if '_tcp_port_offset' not in dir():
     _tcp_port_offset = 0
@@ -395,7 +395,7 @@ class IPerfBoundPair(lb.Device):
     )
 
     port: lb.Int(
-        default=5010+_tcp_port_offset,
+        default=5010,
         key='-p',
         min=5010,
         max=32000,
@@ -422,17 +422,7 @@ class IPerfBoundPair(lb.Device):
             return False
         return self.children['client'].running() or self.children['server'].running()
 
-    def fetch(self):
-        client = self.children['client'].fetch()
-        server = self.children['server'].fetch()
-
-        return {'client': client,
-                'server': server}
-
     def background(self, **flags):
-        if self.running():
-            raise Exception("already running")
-
         self._setup_pair(flags)
 
         self.children['server'].background()
@@ -452,22 +442,18 @@ class IPerfBoundPair(lb.Device):
             Raises a lb.DeviceConnectionLost if iperf stops before the
             duration has finished.
         '''
-        if self.running():
-            # clear any buffered outputs
-            raise Exception("can't start run while a background process is running")
-
         self._setup_pair(flags)
 
         self.children['server'].background()
         client=self.children['client'].foreground()
         server=self.children['server'].fetch()
-        self.children['server'].kill()
+        self.kill()
 
         if isinstance(client, pd.DataFrame):
             return self._merge_dataframes(client, server)
         else:
             return dict(client=client, server=server)
-
+        
     def _merge_dataframes(self, client, server):
         client.columns = [('client_' if n != 'timestamp' else '')+str(n)
                           for n in client.columns]
@@ -476,6 +462,21 @@ class IPerfBoundPair(lb.Device):
         return client.merge(server, how='outer', on='timestamp')
 
     def _setup_pair(self, flags):
+        if self.running():
+            # clear any buffered outputs
+            raise Exception("can't start run while a background process is running")
+
+        flags = dict(flags) # make sure we don't do in-place edits on the caller's variable
+        
+        busy_ports = get_ipv4_occupied_ports(self.settings.server)
+        while self.settings.port in busy_ports:
+            # find an open server port
+            if self.settings.port >= self.settings['port'].max:
+                self.settings.port = self.settings['port'].min
+            else:
+                self.settings.port = self.settings.port + 1
+        flags['port'] = self.settings.port
+
         settings = {k: getattr(self.settings, k)
                     for k, v in self.settings.__traits__.items()
                     if v.key is not lb.Undefined and k not in ('resource', 'bind')}
@@ -485,10 +486,9 @@ class IPerfBoundPair(lb.Device):
             bind=self.settings.client,
             **settings
         )
-
         self.children['client']._update_settings(flags)
 
-        # rehash to avoid in-place changes to flags; clear server-incompatible flags
+        # clear server-incompatible flags
         settings.pop('time', None)
         settings.pop('number', None)
         self.children['server'] = IPerf(
@@ -496,7 +496,6 @@ class IPerfBoundPair(lb.Device):
             server=True,
             **settings
         )
-
         flags = dict(flags)
         flags.pop('time', None)
         flags.pop('number', None)
@@ -504,31 +503,6 @@ class IPerfBoundPair(lb.Device):
 
         # cycle the port for the next call, because windows takes a couple of
         # minutes to release bound ports after use
-        if self.settings.port >= self.settings['port'].max:
-            self.settings.port = self.settings['port'].min
-        else:
-            self.settings.port = self.settings.port + 1
-
-        global _tcp_port_offset
-        _tcp_port_offset += 1
-
-        # # Otherwise, start
-        # self.start()
-        #
-        # # Wait for the duration, checking regularly to ensure the client is running
-        # t0 = time.time()
-        # while time.time() - t0 < duration:
-        #     time.sleep(min(0.5, duration - (time.time() - t0)))
-        #     if not self.running():
-        #         raise lb.DeviceConnectionLost('iperf stopped unexpectedly')
-        #
-        # ret = self.fetch()
-        # lb.console.debug('  iperf_client and server returned {} and {} rows' \
-        #                 .format(len(ret['client']), len(ret['server'])))
-        #
-        # self.kill()
-        # return ret
-
 
 m1 = 0x5555555555555555
 m2 = 0x3333333333333333
