@@ -57,7 +57,7 @@ class IPerf(lb.ShellBackend):
     )
 
     port: lb.Int(
-        default=5001,
+        default=5010,
         key='-p',
         min=0,
         help='network port'
@@ -178,8 +178,20 @@ class IPerf(lb.ShellBackend):
             # csv output
             return self._make_dataframe(stdout)
 
-    def _commandline(self, **flags):
-        self._update_settings(flags)
+    def _update_settings(self, flags):
+        # add a extra checks for incompatible flags
+        super()._update_settings(flags)
+
+        if self.settings.server:
+            busy_ports = get_ipv4_occupied_ports(self.settings.server)
+            while self.settings.port in busy_ports:
+                prev_port = self.settings.ports
+                # find an open server port
+                if self.settings.port >= self.settings['port'].max:
+                    self.settings.port = self.settings['port'].min
+                else:
+                    self.settings.port = self.settings.port + 1
+                self._console.info(f'requested port {prev_port} is in use - changing to {self.settings.port}')
 
         # super()._commandline updates self.settings from flags -
         # now it is time to check for conflicts between parameters
@@ -203,8 +215,6 @@ class IPerf(lb.ShellBackend):
             if self.settings.number is not None:
                 raise ValueError('iperf server does not support the `number` argument')
 
-        return super()._commandline()
-        
     def _make_dataframe(self, stdout):
         columns = 'timestamp', 'source_address', \
                   'source_port', 'destination_address', 'destination_port', \
@@ -394,13 +404,13 @@ class IPerfBoundPair(lb.Device):
         help='the ip address from which the client sends data (must match a network interface on the host)'
     )
 
-    port: lb.Int(
-        default=5010,
-        key='-p',
-        min=5010,
-        max=32000,
-        help='highest port number to use when cycling through ports'
-    )
+    # port: lb.Int(
+    #     default=5010,
+    #     key='-p',
+    #     min=5010,
+    #     max=32000,
+    #     help='highest port number to use when cycling through ports'
+    # )
 
     children = {}
 
@@ -468,15 +478,6 @@ class IPerfBoundPair(lb.Device):
 
         flags = dict(flags) # make sure we don't do in-place edits on the caller's variable
         
-        busy_ports = get_ipv4_occupied_ports(self.settings.server)
-        while self.settings.port in busy_ports:
-            # find an open server port
-            if self.settings.port >= self.settings['port'].max:
-                self.settings.port = self.settings['port'].min
-            else:
-                self.settings.port = self.settings.port + 1
-        flags['port'] = self.settings.port
-
         settings = {k: getattr(self.settings, k)
                     for k, v in self.settings.__traits__.items()
                     if v.key is not lb.Undefined and k not in ('resource', 'bind')}
@@ -500,6 +501,7 @@ class IPerfBoundPair(lb.Device):
         flags.pop('time', None)
         flags.pop('number', None)
         self.children['server']._update_settings(flags)
+        self.children['client'].settings.port = self.children['server'].settings.port
 
         # cycle the port for the next call, because windows takes a couple of
         # minutes to release bound ports after use
@@ -1306,9 +1308,22 @@ if __name__ == '__main__':
     iperf = IPerfBoundPair(
         server='127.0.0.1',
         client='127.0.0.1',
-        time=3,
-        interval=0.25,
-        udp=True
+
+        ### the parameters below set the corresponding iperf command line flags
+        # tcp_window_size=8196# -w (default unknown?)
+        # buffer_size='16k'   # -l (default unknown? possible strange results for UDP)
+        interval=1,         # -i (default is no output until the end of process)
+        # bidirectional=True, # -d (default is False)
+        udp=True,           # -u (default is False (TCP))
+        # bit_rate='1M'       # -b (default is no bit rate throttling)
+        time=10,            # -t (how long to run the iperf client; iperf's default is 10s)
+        # report_style='C',   # -y (we set this from python to 'C' by default for CSV table; set to None for text output)
+        # number=-1,        # -n (by default, iperf uses -t to determine client test length; set -1 to run until killed)
+        # nodelay=True,       # -N (default is False; TCP only)
+        # mss=1460,           # -M (default 1460? - TCP only, of course)
     )
 
-    data = iperf.foreground()
+    # we can override any of these in the call to run iperf
+    data = iperf.foreground(time=3)
+
+    # data
