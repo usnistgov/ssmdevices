@@ -1303,8 +1303,15 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
 # IPerfBoundPair example
 if __name__ == '__main__':
+    # 'debug' shows a lot of info to the screen.
+    # set to 'info' for less, or 'warning' for even less
     lb.show_messages('debug')
 
+    # When both network interfaces run on the same computer,
+    # it is convenient to use IPerfBoundPair, which runs both
+    # an iperf server and an iperf client. each socket is bound
+    # to these interfaces to ensure that traffic is routed through
+    # the devices under test.
     iperf = IPerfBoundPair(
         server='127.0.0.1',
         client='127.0.0.1',
@@ -1323,7 +1330,21 @@ if __name__ == '__main__':
         # mss=1460,           # -M (default 1460? - TCP only, of course)
     )
 
-    # we can override any of these in the call to run iperf
-    data = iperf.foreground(time=3)
+    # Approach 1: blocking (foreground).
+    # Calling foreground() doesn't return until the test is done.
+    # data = iperf.foreground(time=3)
 
-    # data
+    # Approach 2: non-blocking (background) call
+    # background() returns immediately while iperf runs in the background.
+    # this allows other tasks here in the main thread
+    iperf.background(time=3)
+    time.sleep(4) # replace this with other code for automating other equipment
+    iperf.kill()
+    data = iperf.fetch()
+
+    # data is returned as a pandas dataframe.
+    # you can just dump it directly to a csv
+    data.to_csv(r'c:\users\dkuester\output.csv')
+
+    # or make a plot
+    data.plot(x='timestamp', y=['server_bits_per_second', 'client_bits_per_second'])
