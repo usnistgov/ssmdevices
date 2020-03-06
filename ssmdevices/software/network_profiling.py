@@ -3,14 +3,16 @@
 @author: Dan Kuester <daniel.kuester@nist.gov>,
          Michael Voecks <michael.voecks@nist.gov>
 """
-__all__ = ['IPerfClient', 'IPerf', 'IPerfOnAndroid', 'IPerfBoundPair',
+__all__ = ['IPerf', 'IPerfOnAndroid', 'IPerfBoundPair',
            'ClosedLoopTCPBenchmark']
 
 import datetime
 import labbench as lb
 import numpy as np
+import psutil
 import socket
 import ssmdevices.lib
+import subprocess as sp
 import sys
 import time
 import traceback
@@ -19,7 +21,6 @@ from time import perf_counter
 from queue import Queue, Empty
 from threading import Event, Thread
 from io import StringIO
-import psutil
 
 if __name__ == '__main__':
     from _networking import get_ipv4_address, list_network_interfaces
@@ -39,40 +40,172 @@ class IPerf(lb.ShellBackend):
         The default value is the path that installs with 64-bit cygwin.
     '''
 
-    binary_path: lb.Unicode \
-        (ssmdevices.lib.path('iperf.exe'))
-    timeout: lb.Float \
-        (default=6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
-    port: lb.Int \
-        (default=5001, min=1, help='connection port').tag(flag='-p')
-    bind: lb.Unicode \
-        (default=None, allow_none=True, help='bind connection to specified IP').tag(flag='-B')
-    tcp_window_size: lb.Int \
-        (default=None, min=1, help='(bytes)', allow_none=True).tag(flag='-w')
-    buffer_size: lb.Int \
-        (default=None, min=1, allow_none=True,
-         help='Size of data buffer that generates traffic (bytes)').tag(flag='-l')
-    interval: lb.Float \
-        (default=0.25, min=0.01, help='Interval between throughput reports (s)').tag(flag='-i')
-    bidirectional: lb.Bool \
-        (default=False, help='Send and receive simultaneously').tag(flag='-d')
-    udp: lb.Bool \
-        (default=False, help='use UDP instead of the default, TCP').tag(flag='-u')
-    bit_rate: lb.Unicode \
-        (default=None, allow_none=True,
-         help='Maximum bit rate (append unit for size, e.g. 10K)').tag(flag='-b')
-    time: lb.Int \
-        (default=None, min=0, max=16535, allow_none=True,
-         help='time in seconds to transmit before quitting (default 10s)').tag(flag='-t')
-    arguments: lb.List \
-        (default=['-n', '-1', '-y', 'C'], allow_none=True)
+    binary_path: ssmdevices.lib.path('iperf.exe')
+    timeout: 5 # seconds
 
+    resource: lb.Unicode(
+        default=None,
+        key='-c',
+        allow_none=True,
+        help='client host address (leave None, with server=True, to run as a server)'
+    )
+
+    server: lb.Bool(
+        default=False,
+        key='-s',
+        help='True to run as a server'
+    )
+
+    port: lb.Int(
+        default=5001,
+        key='-p',
+        min=0,
+        help='network port'
+    )
+
+    bind: lb.Unicode(
+        default=None,
+        key='-B',
+        allow_none=True,
+        help='bind connection to specified IP'
+    )
+
+    tcp_window_size: lb.Int(
+        default=None,
+        key='-w',
+        min=1,
+        help='(bytes)',
+        allow_none=True
+    )
+
+    buffer_size: lb.Int(
+        default=None,
+        key='-l',
+        min=1, allow_none=True,
+        help='Size of data buffer that generates traffic (bytes)'
+    )
+
+    interval: lb.Float(
+        default=0.25,
+        key='-i',
+        min=0.01,
+        help='Interval between throughput reports (s)'
+    )
+
+    bidirectional: lb.Bool(
+        default=False,
+        key='-d',
+        help='send and receive simultaneously'
+    )
+
+    udp: lb.Bool(
+        default=False,
+        key='-u',
+        help='set True to use UDP instead of TCP'
+    )
+
+    bit_rate: lb.Unicode(
+        default=None,
+        key='-b',
+        allow_none=True,
+        help='maximum bit rate (append unit for unit suffix, e.g. 10K)'
+    )
+
+    time: lb.Int(
+        default=None,
+        key='-t',
+        min=0,
+        max=16535,
+        allow_none=True,
+        help='time in seconds to transmit before quitting (instead of `number`) (default 10s)'
+    )
+
+    report_style: lb.Unicode(
+        default='C',
+        key='-y',
+        only=('C', None),
+        allow_none=True,
+        help='"C" to work with CSV outputs (and fetch pandas DataFrame tables), '\
+             'or None to return and fetch formatted text output'
+    )
+
+    number: lb.Int(
+        default=None,
+        key='-n',
+        min=-1,
+        allow_none=True,
+        help='the number of bytes to transmit (instead of time)'
+    )
+    
+    nodelay: lb.Bool(
+        default=False,
+        key='-N',
+        help='set True to use nodelay (TCP traffic only)'
+    )
+
+    mss: lb.Int(
+        default=None,
+        key='-M',
+        min=10,
+        allow_none=True,
+        help='minimum segment size, in bytes (= MTU - 40 bytes, TCP traffic only)'
+    )
+    
     def fetch(self):
-        ''' Retreive csv-formatted text from standard output and parse into
-            a pandas DataFrame.
+        ''' retreive text from standard output, and parse into a pandas DataFrame.
         '''
-        result = self.read_stdout()
+        stdout = self.read_stdout()
 
+        if self.settings.report_style is None:
+            # human readable table output
+            return stdout
+        else:
+            # csv output
+            return self._make_dataframe(stdout)
+
+    def background(self, **flags):
+        # respawn background calls
+        with self.respawn:
+            super().background(**flags)
+
+    def foreground(self, **flags):
+        stdout = super().foreground(**flags).decode()
+
+        if self.settings.report_style is None:
+            # human readable table output
+            return stdout
+        else:
+            # csv output
+            return self._make_dataframe(stdout)
+
+    def _commandline(self, **flags):
+        self._update_settings(flags)
+
+        # super()._commandline updates self.settings from flags -
+        # now it is time to check for conflicts between parameters
+        if self.settings.resource is not None and self.settings.server:
+            raise ValueError('must set exactly one of (a) client operation by setting resource="(hostname here)", '
+                             'or (b) server operation by setting server=True')
+        if self.settings.udp:
+            if self.settings.mss is not None:
+                raise ValueError('the TCP MSS setting is incompatible with UDP')
+            if self.settings.nodelay:
+                raise ValueError('the TCP nodelay setting is incompatible with UDP')
+            if self.settings.buffer_size is not None:
+                self._console.warning('iperf may work improperly when setting udp=True with buffer_size')
+
+        if not self.settings.udp and self.settings.bit_rate is not None:
+            raise ValueError('iperf does not support setting bit_rate in TCP')
+
+        if self.settings.server:
+            if self.settings.time is not None:
+                raise ValueError('iperf server does not support the `time` argument')
+            if self.settings.number is not None:
+                raise ValueError('iperf server does not support the `number` argument')
+
+        return super()._commandline()
+        
+    def _make_dataframe(self, stdout):
         columns = 'timestamp', 'source_address', \
                   'source_port', 'destination_address', 'destination_port', \
                   'test_id', 'interval', 'transferred_bytes', 'bits_per_second'
@@ -83,45 +216,26 @@ class IPerf(lb.ShellBackend):
                                  'datagrams_sent',
                                  'datagrams_loss_percentage',
                                  'datagrams_out_of_order')
+        #
+        # columns = ['iperf_' + c for c in columns]
 
-        columns = ['iperf_' + c for c in columns]
-
-        data = pd.read_csv(StringIO(result), header=None, index_col=False,
+        data = pd.read_csv(StringIO(stdout), header=None, index_col=False,
                            names=columns)
 
         # throw out the last row (potantially a summary of the previous rows)
         if len(data) == 0:
             data = data.append([None])
-        data.drop(['iperf_interval', 'iperf_transferred_bytes', 'iperf_test_id'], inplace=True, axis=1)
-        data['iperf_timestamp'] = pd.to_datetime(data['iperf_timestamp'], format='%Y%m%d%H%M%S')
-        data['iperf_timestamp'] = data['iperf_timestamp'] + \
+        data.drop(['interval', 'transferred_bytes', 'test_id'], inplace=True, axis=1)
+        data['timestamp'] = pd.to_datetime(data['timestamp'], format='%Y%m%d%H%M%S')
+        data['timestamp'] = data['timestamp'] + \
                                   pd.TimedeltaIndex((data.index * self.settings.interval) % 1, 's')
 
         return data
-
-    def background(self, *extra_args, **flags):
-        if self.settings.udp and self.settings.buffer_size is not None:
-            self._console.warning('iperf might not behave nicely setting udp=True with buffer_size')
-        if not self.settings.udp and self.settings.bit_rate is not None:
-            raise ValueError('iperf does not support setting bit_rate in TCP')
-
-        with self.respawn:  # , self.exception_on_stderr:
-            if self.settings.resource:
-                super(IPerf, self).background('-c', str(self.settings.resource), *extra_args, **flags)
-            else:
-                super(IPerf, self).background('-s', *extra_args, **flags)
-
-    def start(self):
-        self.background()
 
     @classmethod
     def __imports__(cls):
         global pd
         import pandas as pd
-        super().__imports__()
-
-
-import subprocess as sp
 
 
 class IPerfOnAndroid(IPerf):
@@ -256,52 +370,39 @@ class IPerfOnAndroid(IPerf):
         self._console.debug('device is ready')
 
 
-class IPerfClient(IPerf):
-    ''' This class is deprected. Use IPerf instead
-    '''
-
-    def __imports__(self, *args, **kws):
-        self._console.warning('this class is deprecated! use {} instead' \
-                            .format(repr(IPerf)))
-        super(IPerfClient, self).__imports__(*args, **kws)
-
-
 class IPerfBoundPair(lb.Device):
     ''' Run an iperf client and a server on the host computer at the same time. They are
-        bound to opposite interfaces to ensure data is routed between them, and not through
+        bound to interfaces in order to ensure that data is routed between them, not through
         localhost or any other interface.
     '''
 
-    # Copy the IPerf settings. Most of these are simply passed through 
-    resource: lb.Unicode(help='ignored - use sender and receiver instead')
-    bind = None  # blanked out - determined for the client and server based on sender and receiver addresses
-    sender: lb.Unicode(
-        help='the ip address to use for the iperf client, which must match a network interface on the host')
-    receiver: lb.Unicode(
-        help='the ip address to use for the iperf server, which must match a network interface on the host')
-    port_max: lb.Int(6000, min=1, settable=False,
-                     help='highest port number to use when cycling through ports')
+    # take the settings from IPerf, which we will pass through to each IPerf instance
+    __annotations__ = {
+        k: t.copy()
+        for k, t in IPerf.settings.__traits__.items()
+        if k != 'bind'
+    }
 
-    def __init__(self, *args, **kws):
-        super().__init__(*args, **kws)
-        self.port_start = self.settings.port
+    # add other settings
+    resource: lb.Unicode(help='unused - use sender and receiver instead', settable=False)
 
-    def open(self):
-        settings = dict([(k, getattr(self.settings, k)) for k, v in self.settings.__traits__.items() if v.settable])
+    server: lb.Unicode(
+        help='the ip address where the server listens (must match a network interface on the host)'
+    )
 
-        for k in 'resource', 'sender', 'receiver', 'bind':
-            if k in settings:
-                del settings[k]
+    client: lb.Unicode(
+        help='the ip address from which the client sends data (must match a network interface on the host)'
+    )
 
-        client = IPerf(resource=self.settings.sender,
-                       bind=self.settings.receiver,
-                       **settings)
-        server = IPerf(bind=self.settings.sender, **settings)
+    port: lb.Int(
+        default=5010+_tcp_port_offset,
+        key='-p',
+        min=5010,
+        max=32000,
+        help='highest port number to use when cycling through ports'
+    )
 
-        server.open()
-        client.open()
-
-        self.backend = {'iperf_client': client, 'iperf_server': server}
+    children = {}
 
     def close(self):
         try:
@@ -311,62 +412,122 @@ class IPerfBoundPair(lb.Device):
                 raise
 
     def kill(self):
-        backend = self.backend
-        try:
-            backend['iperf_server'].kill()
-        finally:
-            backend['iperf_client'].kill()
+        if 'server' in self.children:
+            self.children['server'].kill()
+        if 'client' in self.children:
+            self.children['client'].kill()
 
     def running(self):
-        return self.backend['iperf_client'].running() \
-               and self.backend['iperf_server'].running()
+        if set(self.children.keys()) != {'client', 'server'}:
+            return False
+        return self.children['client'].running() or self.children['server'].running()
 
     def fetch(self):
-        client = self.backend['iperf_client'].fetch()
-        server = self.backend['iperf_server'].fetch()
+        client = self.children['client'].fetch()
+        server = self.children['server'].fetch()
 
-        return {'iperf_client': client,
-                'iperf_server': server}
+        return {'client': client,
+                'server': server}
 
-    def start(self):
-        # Increment the port, because binding seems to cause blockin in win32
-        self.settings.port = self.settings.port + 1
-        if self.settings.port > self.settings.port_max:
-            self.settings.port = self.port_start
+    def background(self, **flags):
+        if self.running():
+            raise Exception("already running")
 
-        self.backend['iperf_client'].settings.port = self.settings.port
-        self.backend['iperf_server'].settings.port = self.settings.port
+        self._setup_pair(flags)
 
-        self.backend['iperf_server'].start()
-        self.backend['iperf_client'].start()
+        self.children['server'].background()
+        self.children['client'].background()
 
-    def acquire(self, duration):
+    def fetch(self):
+        client=self.children['client'].fetch()
+        server=self.children['server'].fetch()
+
+        if isinstance(client, pd.DataFrame):
+            return self._merge_dataframes(client, server)
+        else:
+            return dict(client=client, server=server)
+
+    def foreground(self, **flags):
         ''' Acquire iperf output for the specified duration and return.
             Raises a lb.DeviceConnectionLost if iperf stops before the
             duration has finished.
-            
-            Call run before 
         '''
         if self.running():
-            # Blank any buffered output
-            self.fetch()
+            # clear any buffered outputs
+            raise Exception("can't start run while a background process is running")
+
+        self._setup_pair(flags)
+
+        self.children['server'].background()
+        client=self.children['client'].foreground()
+        server=self.children['server'].fetch()
+        self.children['server'].kill()
+
+        if isinstance(client, pd.DataFrame):
+            return self._merge_dataframes(client, server)
         else:
-            # Otherwise, start
-            self.start()
+            return dict(client=client, server=server)
 
-        # Wait for the duration, checking regularly to ensure the client is running
-        t0 = time.time()
-        while time.time() - t0 < duration:
-            time.sleep(min(0.5, duration - (time.time() - t0)))
-            if not self.running():
-                raise lb.DeviceConnectionLost('iperf stopped unexpectedly')
+    def _merge_dataframes(self, client, server):
+        client.columns = [('client_' if n != 'timestamp' else '')+str(n)
+                          for n in client.columns]
+        server.columns = [('server_' if n != 'timestamp' else '')+str(n)
+                          for n in server.columns]
+        return client.merge(server, how='outer', on='timestamp')
 
-        ret = self.fetch()
-        lb.console.debug('  iperf_client and server returned {} and {} rows' \
-                        .format(len(ret['iperf_client']), len(ret['iperf_server'])))
+    def _setup_pair(self, flags):
+        settings = {k: getattr(self.settings, k)
+                    for k, v in self.settings.__traits__.items()
+                    if v.key is not lb.Undefined and k not in ('resource', 'bind')}
 
-        self.kill()
-        return ret
+        self.children['client'] = IPerf(
+            resource=self.settings.server,
+            bind=self.settings.client,
+            **settings
+        )
+
+        self.children['client']._update_settings(flags)
+
+        # rehash to avoid in-place changes to flags; clear server-incompatible flags
+        settings.pop('time', None)
+        settings.pop('number', None)
+        self.children['server'] = IPerf(
+            bind=self.settings.server,
+            server=True,
+            **settings
+        )
+
+        flags = dict(flags)
+        flags.pop('time', None)
+        flags.pop('number', None)
+        self.children['server']._update_settings(flags)
+
+        # cycle the port for the next call, because windows takes a couple of
+        # minutes to release bound ports after use
+        if self.settings.port >= self.settings['port'].max:
+            self.settings.port = self.settings['port'].min
+        else:
+            self.settings.port = self.settings.port + 1
+
+        global _tcp_port_offset
+        _tcp_port_offset += 1
+
+        # # Otherwise, start
+        # self.start()
+        #
+        # # Wait for the duration, checking regularly to ensure the client is running
+        # t0 = time.time()
+        # while time.time() - t0 < duration:
+        #     time.sleep(min(0.5, duration - (time.time() - t0)))
+        #     if not self.running():
+        #         raise lb.DeviceConnectionLost('iperf stopped unexpectedly')
+        #
+        # ret = self.fetch()
+        # lb.console.debug('  iperf_client and server returned {} and {} rows' \
+        #                 .format(len(ret['client']), len(ret['server'])))
+        #
+        # self.kill()
+        # return ret
 
 
 m1 = 0x5555555555555555
@@ -1108,52 +1269,72 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 
 # Examples
 # ClosedLoopNetworkingTest example
-if __name__ == '__main__':
-    lb.show_messages('debug')
-
-    net = ClosedLoopTCPBenchmark(server='WLAN_AP_DUT',
-                                 client='WLAN_Client_DUT',
-                                 receiver='WLAN_Client_DUT',
-                                 port=0,
-                                 tcp_nodelay=True)
-
-    mss_mults = []
-    binary_mults = []
-    with net:
-        for j in range(1):
-            net.start_traffic(1460 * 10)
-            print(net.is_running())
-            lb.sleep(3)
-            print(net.is_running())
-            ret = net.stop_traffic()
-            print(net.is_running())
+# if __name__ == '__main__':
+#     lb.show_messages('debug')
+#
+#     net = ClosedLoopTCPBenchmark(server='WLAN_AP_DUT',
+#                                  client='WLAN_Client_DUT',
+#                                  receiver='WLAN_Client_DUT',
+#                                  port=0,
+#                                  tcp_nodelay=True)
+#
+#     mss_mults = []
+#     binary_mults = []
+#     with net:
+#         for j in range(1):
+#             net.start_traffic(1460 * 10)
+#             print(net.is_running())
+#             lb.sleep(3)
+#             print(net.is_running())
+#             ret = net.stop_traffic()
+#             print(net.is_running())
 #            lb.console.info(f'test {j}')
 #            ret = mss_mults.append(net.acquire(1460*10,count=1000))
 #            net.settings.bytes = 4096*4
 #            binary_mults.append(net.acquire(1000))
 
 #            traffic = net.acquire(50)
-##            pylab.figure()
-##            traffic.hist(bins=51)            
-#    #        traffic[['duration','delay']].plot(marker='.', lw=0)
+#            pylab.figure()
+#            traffic.hist(bins=51)
+#            traffic[['duration','delay']].plot(marker='.', lw=0)
 #            traffic['rate'] = net.settings.bytes/traffic.duration*8/1e6
 #            print(f'{traffic.rate.median()} +/- {2*traffic.rate.std()} Mbps')
-##            print('medians\n',traffic.median(axis=0))
+#            print('medians\n',traffic.median(axis=0))
 
+# # IPerf example
 # if __name__ == '__main__':
 #    lb.show_messages('debug')
-#    ips = IPerf(interval=0.5, udp=True)
+#    ips = IPerf(server=True, port=5050, time=10, interval=0.25, udp=True)
+#    ipc = IPerf('127.0.0.1', port=5050, time=10, interval=0.25, udp=True, bit_rate='1M')
+#    ips.open()
+#    ipc.open()
 #
-#    ipc = IPerf('127.0.0.1',interval=1, time=10000, udp=True, bit_rate='1M')
-##    ipc.iperf_path = r'..\lib\iperf.exe'
+#    for i in range(1):
+#        ips.background()
+#        lb.sleep(1)
+#        ipc.background()
 #
-#    with ipc,ips:
-#        for i in range(1):
-#            ips.start()
-#            lb.sleep(1)
-#            ipc.start()
-#            lb.sleep(20)
-#            ipc.kill()
-#            ips.kill()
-#            ips_result = ips.read_stdout()
-#            ipc_result = ipc.read_stdout()
+#        lb.sleep(5)
+#
+#        ipc.kill()
+#        ips.kill()
+#
+#        ips_result = ips.fetch()
+#        ipc_result = ipc.fetch()
+#
+#    print(ips_result)
+#    print(ipc_result)
+
+# IPerfBoundPair example
+if __name__ == '__main__':
+    lb.show_messages('debug')
+
+    iperf = IPerfBoundPair(
+        server='127.0.0.1',
+        client='127.0.0.1',
+        time=3,
+        interval=0.25,
+        udp=True
+    )
+
+    data = iperf.foreground()
