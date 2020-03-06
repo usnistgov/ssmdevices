@@ -128,7 +128,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
             cal = self._cal.iloc[i_freq]
             txt = f"calibrated at {frequency/1e6:0.3f} MHz"
 
-        self['attenuation'].set_table(cal)
+        self['attenuation'].set_table(cal, owner=self)
         self._console.debug(txt)
 
     def _console_debug(self, msg):
@@ -141,7 +141,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         name = msg['name']
         if name == 'attenuation' and self.settings.frequency is not None:
             cal = msg['new']
-            uncal = self['attenuation'].find_uncal(cal)
+            uncal = self['attenuation'].find_uncal(cal, self)
             txt = f'calibrated attenuation set to {cal:0.2f} dB'
             self._console.debug(txt)
         elif name == 'output_power':

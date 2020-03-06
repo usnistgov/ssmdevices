@@ -627,18 +627,27 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 if bytes_actual != bytes_:
                     msg = f'client buffer size is {bytes_actual}, but requested {self.bytes}'
                     raise OSError(msg)
-                sock.bind((client_ip, port))
+
+                try:
+                    sock.bind((client_ip, port))
+                except OSError as e:
+                    ex = e
+                else:
+                    ex = None
+
+                if ex is not None:
+                    raise ConnectionRefusedError(*ex.args)
 
                 # Do the connect                
                 sock.connect((server_ip, port))
 
             # This exception needs to come first, because it is a subclass
             # of OSError (at least on windows)
-            except socket.timeout:
+            except socket.timeout as e:
                 if sock is not None:
                     self._close_sockets(sock, bytes_=bytes_)
                 msg = f'client socket timed out in connection attempt to the server at {server_ip}:{port}'
-                raise ConnectionRefusedError(msg)
+                ex = ConnectionRefusedError(msg)
 
                 # Certain "port busy" errors are raised as OSError. Check whether
             # they match a whitelist of known port errors to map into port busy
@@ -647,19 +656,23 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 # Windows-specific errors
                 if hasattr(e, 'winerror') and e.winerror in self.port_winerrs:
                     self._console.debug(msg)
-                    raise PortBusyError(msg)
+                    ex = PortBusyError(msg)
                 elif hasattr(e, 'winerror') and e.winerror in self.conn_winerrs:
                     self._console.debug(msg)
-                    raise ConnectionError(msg)
+                    ex = ConnectionError(msg)
                 else:
                     raise
-
 
             # For everything else, we still need to clean up
             except BaseException:
                 if sock is not None:
                     self._close_sockets(sock, bytes_=bytes_)
                 raise
+            else:
+                ex = None
+
+            if ex is not None:
+                raise ex
 
             client_done.set()
             if not server_done.wait(timeout):
