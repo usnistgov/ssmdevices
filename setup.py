@@ -55,16 +55,15 @@ if __name__ == '__main__':
                   license='NIST',
                   install_requires=[
               		    	'labbench(>=0.20)',
-                            'pandas(>=0.19.0)',
-                            'pyminicircuits',
+                            'pandas(>=0.23.4)',
                             'pyserial(>3.0)',
                             'pyvisa(>=1.8)',
-                            'ipywidgets',
-                            'notebook',
                             'sphinx',
                             'hidapi',
                             ],
-                  zip_safe=False,
+                 extras_require={'html': ['sphinx(>=1.6)', 'recommonmark'],
+                                 'notebook': ['notebook', 'ipywidgets']},
+                 zip_safe=False,
                  )
 
     # Find and install binaries

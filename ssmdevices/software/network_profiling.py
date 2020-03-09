@@ -3,7 +3,7 @@
 @author: Dan Kuester <daniel.kuester@nist.gov>,
          Michael Voecks <michael.voecks@nist.gov>
 """
-__all__ = ['IPerf', 'IPerfOnAndroid', 'IPerfBoundPair',
+__all__ = ['IPerf2', 'IPerf2OnAndroid', 'IPerf2BoundPair',
            'ClosedLoopTCPBenchmark']
 
 import datetime
@@ -34,7 +34,183 @@ if '_tcp_port_offset' not in dir():
 perf_counter()
 
 
-class IPerf(lb.ShellBackend):
+class IPerf3(lb.ShellBackend):
+    ''' Run an instance of iperf2, collecting output data in a background thread.
+        When running as an iperf client (server=False),
+        The default value is the path that installs with 64-bit cygwin.
+    '''
+
+    binary_path: ssmdevices.lib.path('iperf3.exe')
+    timeout: 5  # seconds
+
+    resource: lb.Unicode(
+        default=None,
+        key='-c',
+        allow_none=True,
+        help='client host address (leave None, with server=True, to run as a server)'
+    )
+
+    server: lb.Bool(
+        default=False,
+        key='-s',
+        help='True to run as a server'
+    )
+
+    port: lb.Int(
+        default=5201,
+        key='-p',
+        min=0,
+        help='network port'
+    )
+
+    format: lb.Unicode(
+        default=None,
+        only=('k', 'm', 'g', 'K', 'M', 'G'),
+        allow_none=True,
+        help='data unit prefix in bits (k, m, g) or bytes (K, M, G), or None for auto'
+    )
+
+    interval: lb.Float(
+        default=None,
+        key='-i',
+        min=0.01,
+        allow_none=True,
+        help='seconds between throughput reports'
+    )
+
+    bind: lb.Unicode(
+        default=None,
+        key='-B',
+        allow_none=True,
+        help='bind connection to specified IP'
+    )
+
+    json: lb.Bool(
+        default=False,
+        key='-J',
+        help='output data in JSON format'
+    )
+
+    udp: lb.Bool(
+        default=False,
+        key='-u',
+        help='set True to use UDP instead of TCP'
+    )
+
+    bit_rate: lb.Unicode(
+        default=None,
+        key='-b',
+        allow_none=True,
+        help='maximum bit rate (append KMG for unit suffix; defaults to 1Mbit/s for UDP, no limit for TCP)'
+    )
+
+    time: lb.Int(
+        default=None,
+        key='-t',
+        min=0,
+        max=16535,
+        allow_none=True,
+        help='time in seconds to transmit before quitting (instead of `number`) (default 10s)'
+    )
+
+    number: lb.Int(
+        default=None,
+        key='-n',
+        min=-1,
+        allow_none=True,
+        help='the number of bytes to transmit (instead of time)'
+    )
+
+    reverse: lb.Bool(
+        default=False,
+        key='-R',
+        help='run in reverse mode (server sends, client receives)'
+    )
+
+    window_size: lb.Int(
+        default=None,
+        key='-w',
+        min=1,
+        help='window / socket size in bytes',
+        allow_none=True
+    )
+
+    buffer_size: lb.Int(
+        default=None,
+        key='-l',
+        min=1, allow_none=True,
+        help='Size of data buffer that generates traffic (bytes)'
+    )
+
+    nodelay: lb.Bool(
+        default=False,
+        key='-N',
+        help='set True to use nodelay (TCP traffic only)'
+    )
+
+    mss: lb.Int(
+        default=None,
+        key='-M',
+        min=10,
+        allow_none=True,
+        help='minimum segment size, in bytes (= MTU - 40 bytes, TCP traffic only)'
+    )
+
+    zerocopy: lb.Bool(
+        default=False,
+        key='-Z',
+        help="use a 'zero copy' method of sending data"
+    )
+
+    def fetch(self):
+        ''' retreive standard output text from a background process
+        '''
+        return self.read_stdout()
+
+    def background(self, **flags):
+        # respawn background calls
+        with self.respawn:
+            super().background(**flags)
+
+    def _update_settings(self, flags):
+        super()._update_settings(flags)
+
+        # now add extra checks for incompatible flags
+        if self.settings.server:
+            busy_ports = get_ipv4_occupied_ports(self.settings.server)
+            while self.settings.port in busy_ports:
+                prev_port = self.settings.ports
+                # find an open server port
+                if self.settings.port >= self.settings['port'].max:
+                    self.settings.port = self.settings['port'].min
+                else:
+                    self.settings.port = self.settings.port + 1
+                self._console.info(f'requested port {prev_port} is in use - changing to {self.settings.port}')
+
+        # super()._commandline updates self.settings from flags -
+        # now it is time to check for conflicts between parameters
+        if self.settings.resource is not None and self.settings.server:
+            raise ValueError('must set exactly one of (a) client operation by setting resource="(hostname here)", '
+                             'or (b) server operation by setting server=True')
+        if self.settings.udp:
+            if self.settings.mss is not None:
+                raise ValueError('the TCP MSS setting is incompatible with UDP')
+            if self.settings.nodelay:
+                raise ValueError('the TCP nodelay setting is incompatible with UDP')
+            if self.settings.buffer_size is not None:
+                self._console.warning('iperf may work improperly when setting udp=True with buffer_size')
+
+        if not self.settings.udp and self.settings.bit_rate is not None:
+            raise ValueError('iperf does not support setting bit_rate in TCP')
+
+        if self.settings.server:
+            if self.settings.time is not None:
+                raise ValueError('iperf server does not support the `time` argument')
+            if self.settings.number is not None:
+                raise ValueError('iperf server does not support the `number` argument')
+
+
+class IPerf2(lb.ShellBackend):
     ''' Run an instance of iperf, collecting output data in a background thread.
         When running as an iperf client (server=False), 
         The default value is the path that installs with 64-bit cygwin.
@@ -248,7 +424,7 @@ class IPerf(lb.ShellBackend):
         import pandas as pd
 
 
-class IPerfOnAndroid(IPerf):
+class IPerf2OnAndroid(IPerf2):
     remote_binary_path = '/data/local/tmp/iperf'
 
     binary_path: lb.Unicode(ssmdevices.lib.path('adb.exe'))
@@ -286,7 +462,7 @@ class IPerfOnAndroid(IPerf):
             self._console.debug('phone is ready to execute iperf')
 
     def start(self):
-        super(IPerfOnAndroid, self).start()
+        super(IPerf2OnAndroid, self).start()
         test = self.read_stdout(1)
         if 'network' in test:
             self._console.warning('no network connectivity in UE')
@@ -296,7 +472,7 @@ class IPerfOnAndroid(IPerf):
         '''
 
         # Kill the local adb process as normal
-        super(IPerfOnAndroid, self).kill()
+        super(IPerf2OnAndroid, self).kill()
 
         # Now's where the fun really starts
         with self.no_state_arguments:
@@ -323,7 +499,7 @@ class IPerfOnAndroid(IPerf):
         ''' adb seems to forward stderr as stdout. Filter out some undesired
             resulting status messages.
         '''
-        txt = super(IPerfOnAndroid, self).read_stdout(n)
+        txt = super(IPerf2OnAndroid, self).read_stdout(n)
         out = []
         for l in txt.splitlines():
             if ':' not in l:
@@ -380,16 +556,16 @@ class IPerfOnAndroid(IPerf):
         self._console.debug('device is ready')
 
 
-class IPerfBoundPair(lb.Device):
+class IPerf2BoundPair(lb.Device):
     ''' Run an iperf client and a server on the host computer at the same time. They are
         bound to interfaces in order to ensure that data is routed between them, not through
         localhost or any other interface.
     '''
 
-    # take the settings from IPerf, which we will pass through to each IPerf instance
+    # take the settings from IPerf2, which we will pass through to each IPerf2 instance
     __annotations__ = {
         k: t.copy()
-        for k, t in IPerf.settings.__traits__.items()
+        for k, t in IPerf2.settings.__traits__.items()
         if k != 'bind'
     }
 
@@ -482,7 +658,7 @@ class IPerfBoundPair(lb.Device):
                     for k, v in self.settings.__traits__.items()
                     if v.key is not lb.Undefined and k not in ('resource', 'bind')}
 
-        self.children['client'] = IPerf(
+        self.children['client'] = IPerf2(
             resource=self.settings.server,
             bind=self.settings.client,
             **settings
@@ -492,7 +668,7 @@ class IPerfBoundPair(lb.Device):
         # clear server-incompatible flags
         settings.pop('time', None)
         settings.pop('number', None)
-        self.children['server'] = IPerf(
+        self.children['server'] = IPerf2(
             bind=self.settings.server,
             server=True,
             **settings
@@ -1277,11 +1453,11 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 #            print(f'{traffic.rate.median()} +/- {2*traffic.rate.std()} Mbps')
 #            print('medians\n',traffic.median(axis=0))
 
-# # IPerf example
+# # IPerf2 example
 # if __name__ == '__main__':
 #    lb.show_messages('debug')
-#    ips = IPerf(server=True, port=5050, time=10, interval=0.25, udp=True)
-#    ipc = IPerf('127.0.0.1', port=5050, time=10, interval=0.25, udp=True, bit_rate='1M')
+#    ips = IPerf2(server=True, port=5050, time=10, interval=0.25, udp=True)
+#    ipc = IPerf2('127.0.0.1', port=5050, time=10, interval=0.25, udp=True, bit_rate='1M')
 #    ips.open()
 #    ipc.open()
 #
@@ -1301,18 +1477,18 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 #    print(ips_result)
 #    print(ipc_result)
 
-# IPerfBoundPair example
+# IPerf2BoundPair example
 if __name__ == '__main__':
     # 'debug' shows a lot of info to the screen.
     # set to 'info' for less, or 'warning' for even less
     lb.show_messages('debug')
 
     # When both network interfaces run on the same computer,
-    # it is convenient to use IPerfBoundPair, which runs both
+    # it is convenient to use IPerf2BoundPair, which runs both
     # an iperf server and an iperf client. each socket is bound
     # to these interfaces to ensure that traffic is routed through
     # the devices under test.
-    iperf = IPerfBoundPair(
+    iperf = IPerf2BoundPair(
         server='127.0.0.1',
         client='127.0.0.1',
 

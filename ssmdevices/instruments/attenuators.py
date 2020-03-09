@@ -150,145 +150,28 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
             self._console.debug(f'output_power set to {uncal:0.2f} {label}')
 
 
-#class MiniCircuitsRC4DAT(SwitchAttenuatorBase):
-#    _PID = 0x23
-#
-#    CMD_GET_ATTENUATION = 18
-#    CMD_SET_ATTENUATION = 19
-#
-#    attenuation1 = lb.Float(min=0, max=115, step=0.25, key=1)
-#    attenuation2 = lb.Float(min=0, max=115, step=0.25, key=2)
-#    attenuation3 = lb.Float(min=0, max=115, step=0.25, key=3)
-#    attenuation4 = lb.Float(min=0, max=115, step=0.25, key=4)
-#
-#    def __get_by_key__(self, key, name):
-#        d = self._cmd(self.CMD_GET_ATTENUATION)
-#        offs = key * 2 - 1
-#        full_part = d[offs]
-#        frac_part = float(d[offs + 1]) / 4.0
-#        return full_part + frac_part
-#
-#    def __set_by_key__(self, key, name, value):
-#        value1 = int(value)
-#        value2 = int((value - value1) * 4.0)
-#        self._cmd(self.CMD_SET_ATTENUATION, value1, value2, key)
+class MiniCircuitsRC4DAT(SwitchAttenuatorBase):
+    _PID = 0x23
 
-
-# TODO: Replace this with the above
-class MiniCircuitsRC4DAT(lb.DotNetDevice):
-    ''' Base class for MiniCircuits USB attenuators.
-    
-        This implementation calls the .NET drivers provided by the
-        manufacturer instead of the recommended C DLL drivers in order to
-        support 64-bit python.
-    '''
-    
-    library  = ssmdevices.lib    # Must be a module
-    dll_name = 'mcl_RUDAT64.dll'
-    model_includes = ''
-    
-    resource: lb.Unicode(None,
-                         help='Serial number of the USB device. Must be defined if more than one device is connected to the computer', allow_none=True)
-
-    def open (self):
-        ''' Open the device resource.
-        '''
-        @lb.retry(ConnectionError, 10, delay=0.25)
-        def do_connect():
-            self.backend = self.dll.USB_RUDAT()
-
-            for retry in range(10):
-                ret = self.backend.Connect(self.settings.resource)[0]
-                if ret == 1:
-                    time.sleep(random.uniform(0,0.2))
-                    break
-            else:
-                time.sleep(0.25)
-                raise ConnectionError('Cannot connect to attenuator resource {}'.format(self.settings.resource))
-            
-        if self.dll is None:
-            raise Exception('Minicircuits attenuator support currently requires pythonnet and windows')
-            
-        # Validate the input resource
-        valid = self.list_available_devices()
-        if self.settings.resource is None:
-            if len(valid) == 0:
-                raise ValueError('no MiniCircuits attenuators were detected on USB')
-            elif len(valid) > 1:
-                raise ValueError('more than one MiniCircuits USB attenuators are connected, specify one of '+repr(valid))
-        else:
-            if self.settings.resource not in valid:
-                raise ValueError('specified serial number {} but only found {} on USB'\
-                                 .format(repr(self.settings.resource),repr(valid)))
-                
-        do_connect()
-        if self.model_includes and self.model_includes not in self.model:
-            raise lb.DeviceException('attenuator model {model} does not include the expected {model_has} string'\
-                                     .format(model=self.model,
-                                             model_has=self.model_includes))
-
-        self._console.debug(f'device is {self.model} with serial {self.serial_number}')
-
-    def close(self):
-        ''' Release the attenuator hardware resource via the driver DLL.
-        '''
-        self.backend.Disconnect()
-
-    @classmethod
-    def list_available_devices(cls, inst=None):
-        ''' Return a list of valid resource strings of MiniCircuitsRCDAT and
-            MiniCircuitsRC4DAT devices that are found on this computer.
-
-            If inst is not None, it should be a MiniCircuitsRCBase instance.
-            In this case its backend will be used instead of temporarily
-            making a new one.
-        '''
-
-        # Force the dll to import if no devices have been imported yet
-        if inst is None:
-            if not hasattr(cls, 'dll'):
-                cls.__imports__()
-            backend = cls.dll.USB_RUDAT()
-        else:
-            backend = inst.backend
-
-        count, response = backend.Get_Available_SN_List('')
-
-        lb.console.debug('response was {}'.format(response))
-        if count > 0:
-            return response.split(' ')
-        else:
-            return []
-
-    def _validate_connection(self):
-        if self.backend.GetUSBConnectionStatus() != 1:
-            raise lb.DeviceStateError('USB device unexpectedly disconnected')
-
-    @lb.Unicode(settable=False, cache=True)
-    def model(self):
-        self._validate_connection()
-        return 'MiniCircuits ' + self.backend.Read_ModelName('')[1]
-
-    @lb.Unicode(settable=False, cache=True)
-    def serial_number(self):
-        self._validate_connection()
-        return self.backend.Read_SN('')[1]
+    CMD_GET_ATTENUATION = 18
+    CMD_SET_ATTENUATION = 19
 
     attenuation1 = lb.Float(min=0, max=115, step=0.25, key=1)
     attenuation2 = lb.Float(min=0, max=115, step=0.25, key=2)
     attenuation3 = lb.Float(min=0, max=115, step=0.25, key=3)
     attenuation4 = lb.Float(min=0, max=115, step=0.25, key=4)
 
-    def __get_by_key__ (self, key, name):
-        self._validate_connection()
-        ret = self.backend.ReadChannelAtt(key)
-        self._console.debug(f'got attenuation {key} {ret} dB')
-        return ret    
+    def __get_by_key__(self, name, key):
+        d = self._cmd(self.CMD_GET_ATTENUATION)
+        offs = key * 2 - 1
+        full_part = d[offs]
+        frac_part = float(d[offs + 1]) / 4.0
+        return full_part + frac_part
 
-    def __set_state_(self, key, name, value):
-        self._validate_connection()
-        self._console.debug(f'set attenuation {key} {value} dB')
-        self.backend.SetChannelAtt(key, value)
+    def __set_by_key__(self, name, key, value):
+        value1 = int(value)
+        value2 = int((value - value1) * 4.0)
+        self._cmd(self.CMD_SET_ATTENUATION, value1, value2, key)
 
 if __name__ == '__main__':
     import numpy as np
