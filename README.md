@@ -1,20 +1,18 @@
-*ssmdevices* are the curated python device drivers to support data acquisition in shared spectrum metrology labs. Equipment support includes
-consumer wireless communication hardware, instruments, diagnostic software, and other miscellaneous lab electronics.
-The drivers are implemented with [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench). Acquired data are packaged into [pandas](http://pandas.pydata.org/) data frames for fast data exploration.
+*ssmdevices* are the curated and maintained python device drivers that have been used to support data acquisition in shared spectrum metrology labs. The scope of equipment targeted here includes consumer wireless communication hardware, instruments, diagnostic software, and other miscellaneous lab electronics.
+The drivers are implemented with [labbench](https://github.com/usnistgov/labbench). Acquired data are packaged into [pandas](http://pandas.pydata.org/) data frames for fast data exploration.
 It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name complications and to restrict
 access based on export control law.
 
 ## Installation
-1. Install a 64-bit distribution of python 3.7 (or newer). This process has been tested only with anaconda; support for python 2.7 is deprecated
+1. Install a 64-bit distribution of python 3.7 (or newer). This process has been tested only with anaconda
 2. If you installed python a while ago, make sure your distribution includes pandas 0.21.0 or newer.
 4. In an anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
 5. If you need support for VISA instruments, install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
-That's it.
 
 ## Documentation
 * [ssmdevices API](http://ssm.ipages.nist.gov/ssmdevices/)
 * [examples](examples)
-* [labbench](https://gitlab.nist.gov/gitlab/ssm/labbench#how-to)
+* [labbench](https://github.com/usnistgov/labbench/blob/master/examples/How%20to%20use%20a%20labbench%20driver%20by%20example.ipynb)
 
 ## Device Support
 | *Class* | *Products* |
