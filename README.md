@@ -1,4 +1,4 @@
-*ssmdevices* are the curated and maintained python device drivers that have been used to support data acquisition in shared spectrum metrology labs. The scope of equipment targeted here includes consumer wireless communication hardware, instruments, diagnostic software, and other miscellaneous lab electronics.
+*ssmdevices* are python device drivers that have been curated and maintained to support automation and data acquisition in shared spectrum metrology experiments. The scope of equipment targeted here includes consumer wireless communication hardware, instruments, diagnostic software, and other miscellaneous lab electronics.
 The drivers are implemented with [labbench](https://github.com/usnistgov/labbench). Acquired data are packaged into [pandas](http://pandas.pydata.org/) data frames for fast data exploration.
 It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name complications and to restrict
 access based on export control law.
