@@ -32,22 +32,22 @@ class AeroflexTM500(lb.TelnetDevice):
         from a file that could be treated as a config file.
     '''
 
-    timeout: lb.Float(1, min=0, help='leave the timeout small to allow keyboard interrupts')
-    ack_timeout: lb.Float(30, min=0.1, help='how long to wait for a command acknowledgment from the TM500 (s)')
-    busy_retries: lb.Int(20, min=0)
-    remote_ip: lb.Unicode('10.133.0.203', help='ip address of TM500 backend')
-    remote_ports: lb.Unicode('5001 5002 5003', help='port of TM500 backend')
-    min_acquisition_time: lb.Int(30, min=0, help='minimum time to spend acquiring logs (s)')
-    port: lb.Int(5003, min=1)
-    config_root : lb.Unicode('.', help='path to the command scripts directory')
-    data_root : lb.Unicode('.', help='remote save root directory')
-    convert_files: lb.List([], help='text to match in the filename of data output files to convert')
+    timeout = lb.value.float(1, min=0, help='leave the timeout small to allow keyboard interrupts')
+    ack_timeout = lb.value.float(30, min=0.1, help='how long to wait for a command acknowledgment from the TM500 (s)')
+    busy_retries = lb.value.int(20, min=0)
+    remote_ip = lb.value.str('10.133.0.203', help='ip address of TM500 backend')
+    remote_ports = lb.value.str('5001 5002 5003', help='port of TM500 backend')
+    min_acquisition_time = lb.value.int(30, min=0, help='minimum time to spend acquiring logs (s)')
+    port = lb.value.int(5003, min=1)
+    config_root = lb.value.str('.', help='path to the command scripts directory')
+    data_root = lb.value.str('.', help='remote save root directory')
+    convert_files = lb.value.list([], help='text to match in the filename of data output files to convert')
 
     def arm(self, scenario_name):
         ''' Load the scenario from the command listing in a local TM500
             configuration file.
             The the full path to the configuration file is
-            `os.path.join(self.settings.config_root, self.settings.config_file)+'.conf'`
+            `os.path.join(self.config_root, self.config_file)+'.conf'`
             (on the host computer running this python instance).
 
             If the last script that was run is the same as the selected config
@@ -62,7 +62,7 @@ class AeroflexTM500(lb.TelnetDevice):
         if scenario_name == self.__latest.setdefault('scenario_name',None) is not None:
             raise TM500Error('the TM500 is already armed with the scenario named {}'.format(scenario_name))
 
-        config_path = os.path.join(self.settings.config_root, scenario_name)+'.conf'
+        config_path = os.path.join(self.config_root, scenario_name)+'.conf'
         self._console.debug('arming TM500 scenario {}'\
                           .format(repr(config_path)))
 
@@ -71,8 +71,8 @@ class AeroflexTM500(lb.TelnetDevice):
             seq = f.readlines()
         self._reconnect()
         ret = self._send(seq)
-        if self.settings.data_root is not None:
-            self._send('#$$DATA_LOG_FOLDER 1 "{}"'.format(self.settings.data_root))
+        if self.data_root is not None:
+            self._send('#$$DATA_LOG_FOLDER 1 "{}"'.format(self.data_root))
         self._console.debug('armed in {:.2f}s'.format(time.time()-t0))
         self.__latest['scenario_name'] = scenario_name
         return ret
@@ -279,7 +279,7 @@ class AeroflexTM500(lb.TelnetDevice):
         else:
             # Now connect
             self._send('#$$PORT {ip} {ports}'\
-                      .format(ip=self.settings.remote_ip, ports=self.settings.remote_ports),
+                      .format(ip=self.remote_ip, ports=self.remote_ports),
                       timeout=1)
             self._send('#$$CONNECT')
 
@@ -290,8 +290,8 @@ class AeroflexTM500(lb.TelnetDevice):
 
         if self.__latest.get('trigger_time',0) > 0:
             elapsed = time.time()-self.__latest.get('trigger_time',0)
-            if elapsed < self.settings.min_acquisition_time:
-                lb.sleep(self.settings.min_acquisition_time-elapsed)
+            if elapsed < self.min_acquisition_time:
+                lb.sleep(self.min_acquisition_time-elapsed)
 
     def _send(self, msg, data_lines=1, confirm=True, timeout=None):
         ''' Send a message, then block until a confirmation message is received.
@@ -334,7 +334,7 @@ class AeroflexTM500(lb.TelnetDevice):
             
             # Receive through the end of line for the rest of the status response
             if timeout is None:
-                timeout = self.settings.timeout
+                timeout = self.timeout
             ret = rsp
             for i in range(data_lines):
                 ret = ret + self.backend.read_until(b'\r', timeout=timeout)
@@ -372,10 +372,10 @@ class AeroflexTM500(lb.TelnetDevice):
         paths = [os.path.join(root, e) for e in entries]
         ret = dict(zip(names,paths))
         
-        # Remove items not listed in self.settings.convert_files
-        if len(self.settings.convert_files)>0:
+        # Remove items not listed in self.convert_files
+        if len(self.convert_files)>0:
             for name in list(ret.keys()):
-                for inc in self.settings.convert_files:
+                for inc in self.convert_files:
                     if inc.upper() in name.upper():
                         break
                 else:
@@ -390,7 +390,7 @@ class AeroflexTM500(lb.TelnetDevice):
 
     def _read_until (self, rsp, timeout=None):
         if timeout is None:
-            ack_timeout = self.settings.ack_timeout
+            ack_timeout = self.ack_timeout
         else:
             ack_timeout = timeout
 #        self._console.debug('awaiting response {}'.format(repr(rsp)))

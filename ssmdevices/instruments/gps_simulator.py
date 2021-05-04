@@ -27,9 +27,9 @@ class SpirentGSS8000(lb.SerialDevice):
         pyvisa, so this driver uses plain serial.
     '''
 
-    resource: lb.Unicode('COM17', help='serial port string (COMnn in windows or /dev/xxxx in unix/Linux)')
+    resource = lb.value.str('COM17', help='serial port string (COMnn in windows or /dev/xxxx in unix/Linux)')
 
-    def __get_by_key__(self, key, name):
+    def get_key(self, key, trait_name=None):
         return self.query(key)
 
     'Status messages that may be received from the instrument'
@@ -134,7 +134,7 @@ class SpirentGSS8000(lb.SerialDevice):
 
         self.rewind()
 
-    @lb.Bytes(settable=False)
+    @lb.property.bytes(settable=False)
     def utc_time(self):
         ''' UTC time of the running scenario '''
         utc_unformatted = self.query(b'-,UTC_TIME')
@@ -147,12 +147,12 @@ class SpirentGSS8000(lb.SerialDevice):
 
         return time.strftime('%Y-%m-%d %H:%M:%S', utc_struct) + '.' + frac
 
-    @lb.Bool(settable=False)
+    @lb.property.bool(settable=False)
     def running(self):
         ''' `True` if a scenario is running. '''
         return self.status == b'running'
 
-    @lb.Bytes(settable=False, only=status_messages, case=False)
+    @lb.property.bytes(settable=False, only=status_messages, case=False)
     def status(self):
         ''' UTC time of the current running scenario.'''
         return self.write(b'NULL', returns=b'status')

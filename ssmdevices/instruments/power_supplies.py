@@ -2,37 +2,35 @@ import labbench as lb
 
 __all__ = ['RigolDP800Series']
 
-
 class RigolDP800Series(lb.VISADevice):
-    enable1 = lb.Bool(key=':OUTP CH1',
-                      remap={False: 'OFF', True: 'ON'},
-                      help='enable DC output on channel 1')
-    enable2 = lb.Bool(key=':OUTP CH2',
-                      remap={False: 'OFF', True: 'ON'},
-                      help='enable DC output on channel 2')
-    enable3 = lb.Bool(key=':OUTP CH3',
-                      remap={False: 'OFF', True: 'ON'},
-                      help='enable DC output on channel 3')
-    voltage_setting1 = lb.Float(key=':SOUR1:VOLT',
-                                help='output voltage setting on channel 1')
-    voltage_setting2 = lb.Float(key=':SOUR2:VOLT',
-                                help='output voltage setting on channel 2')
-    voltage_setting3 = lb.Float(key=':SOUR3:VOLT',
-                                help='output voltage setting on channel 3')
-    voltage1 = lb.Float(key=':MEAS:VOLT CH1', settable=False,
-                        help='output voltage measured on channel 1')
-    voltage2 = lb.Float(key=':MEAS:VOLT CH2', settable=False,
-                        help='output voltage measured on channel 2')
-    voltage3 = lb.Float(key=':MEAS:VOLT CH3', settable=False,
-                        help='output voltage measured on channel 3')
-    current1 = lb.Float(key=':MEAS:CURR CH1', settable=False,
-                        help='current draw measured on channel 1')
-    current2 = lb.Float(key=':MEAS:CURR CH2', settable=False,
-                        help='current draw measured on channel 2')
-    current3 = lb.Float(key=':MEAS:CURR CH3', settable=False,
-                        help='current draw measured on channel 3')
+    REMAP_BOOL = {False: 'OFF', True: 'ON'}
 
-    @lb.retry(Exception, 3)
+    # values are simply local variable attributes with bounds checking (and callback hooks for logging)
+    local_variable = lb.value.str('how to do stuff', help='some configuration for this class')
+
+    # properties accept the "key" argument and/or decorators for custom implementation
+    enable1 = lb.property.bool(key=':OUTP CH1', remap=REMAP_BOOL, help='enable DC output on channel 1')
+    enable2 = lb.property.bool(key=':OUTP CH2', remap=REMAP_BOOL, help='enable DC output on channel 2')
+    enable3 = lb.property.bool(key=':OUTP CH3', remap=REMAP_BOOL, help='enable DC output on channel 3')
+
+    voltage_setting1 = lb.property.float(key=':SOUR1:VOLT', help='output voltage setting on channel 1')
+    voltage_setting2 = lb.property.float(key=':SOUR2:VOLT', help='output voltage setting on channel 2')
+    voltage_setting3 = lb.property.float(key=':SOUR3:VOLT', help='output voltage setting on channel 3')
+
+    voltage1 = lb.property.float(key=':MEAS:VOLT CH1', settable=False, help='output voltage reading on channel 1')
+    voltage2 = lb.property.float(key=':MEAS:VOLT CH2', settable=False, help='output voltage reading channel 2')
+    voltage3 = lb.property.float(key=':MEAS:VOLT CH3', settable=False, help='output voltage reading channel 3')
+
+    current1 = lb.property.float(key=':MEAS:CURR CH1', settable=False, help='current draw reading on channel 1')
+    current2 = lb.property.float(key=':MEAS:CURR CH2', settable=False, help='current draw reading on channel 2')
+    current3 = lb.property.float(key=':MEAS:CURR CH3', settable=False, help='current draw reading on channel 3')
+
+    @lb.datareturn.DataFrame
+    def fetch_data_trace(self, whichone):
+        """ a silly example for a power supply, no? """
+        return self.backend.dosomethingtogettrace(whichone)
+        
+    @lb.retry(BaseException, 3)
     def open(self):
         ''' Poll *IDN until the instrument responds.
             Sometimes it needs an extra poke before it responds.
@@ -43,31 +41,29 @@ class RigolDP800Series(lb.VISADevice):
         finally:
             self.backend.timeout = timeout
 
-    @lb.util.hide_in_traceback
-    def __get_by_key__(self, name, scpi_key):
-        ''' This instrument expects queries to have syntax :COMMAND? PARAM,
-            instead of :COMMAND PARAM? as implemented in lb.VISADevice.
+    def get_key(self, scpi_key, trait_name=None):
+        ''' This instrument expects keys to have syntax ":COMMAND? PARAM",
+            instead of ":COMMAND PARAM?" as implemented in lb.VISADevice.
             
-            Implement this behavior here.
+            Insert the "?" in the appropriate place here.
         '''
         if ' ' in scpi_key:
-            scpi_key = scpi_key.replace(' ', '? ', 1)
+            key = scpi_key.replace(' ', '? ', 1)
         else:
-            scpi_key = scpi_key + '?'
-        return self.query(scpi_key)
+            key = scpi_key + '?'
+        return self.query(key)
 
-    @lb.util.hide_in_traceback
-    def __set_by_key__(self, name, scpi_key, value):
+    def set_key(self, scpi_key, value, trait_name=None):
         ''' This instrument expects sets to have syntax :COMMAND? PARAM,VALUE
             instead of :COMMAND PARAM VALUE? as implemented in lb.VISADevice.
             
             Implement this behavior here.
         '''
         if ' ' in scpi_key:
-            scpi_key = f'{scpi_key},{value}'
+            key = f'{scpi_key},{value}'
         else:
-            scpi_key = f'{scpi_key} {value}'
-        return self.write(scpi_key.rstrip())
+            key = f'{scpi_key} {value}'
+        return self.write(key.rstrip())
 
 
 if __name__ == '__main__':

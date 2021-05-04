@@ -19,19 +19,19 @@ class MiniCircuitsUSBDevice(lb.Device):
     """
     _VID = 0x20ce # USB HID Vendor ID
 
-    resource: lb.Unicode(
+    resource = lb.value.str(
         default=None,
         help='serial number; must be set if more than one device is connected',
         allow_none=True
     )
     
-    usb_path: lb.Bytes(
+    usb_path = lb.value.bytes(
         None,
         allow_none=True,
         help='override `resource` to connect to a specific USB path'
     )
     
-    timeout: lb.Float(
+    timeout = lb.value.float(
         default=1,
         min=0.5,
         label='s'
@@ -43,16 +43,16 @@ class MiniCircuitsUSBDevice(lb.Device):
         import hid
 
     def open(self):
-        if self.settings.usb_path is None:
-            self.settings.usb_path = self._find_path(self.settings.resource)
+        if self.usb_path is None:
+            self.usb_path = self._find_path(self.resource)
 
         self.backend = hid.device()
-        self.backend.open_path(self.settings.usb_path)
+        self.backend.open_path(self.usb_path)
         self.backend.set_nonblocking(1)
     
-        usb_registry[self.settings.usb_path] = self.serial_number
+        usb_registry[self.usb_path] = self.serial_number
 
-        if self.settings.usb_path is None:
+        if self.usb_path is None:
             self._console.info('connected to {self.model} with serial {self.serial_number}')
 
     def close(self):
@@ -82,7 +82,7 @@ class MiniCircuitsUSBDevice(lb.Device):
 
             t0 = time.time()
             msg = None
-            while time.time() - t0 < self.settings.timeout:
+            while time.time() - t0 < self.timeout:
                 d = self.backend.read(64)
                 if d:
                     if d[0] == cmd[0]:
@@ -224,12 +224,12 @@ class SwitchAttenuatorBase(MiniCircuitsUSBDevice):
         device._console.logger.disabled = True
         return device
 
-    @lb.Unicode(settable=False, cache=True)
+    @lb.property.str(settable=False, cache=True)
     def model(self):
         d = self._cmd(self.CMD_GET_PART_NUMBER)
         return self._parse_str(d)
 
-    @lb.Unicode(settable=False, cache=True)
+    @lb.property.str(settable=False, cache=True)
     def serial_number(self):
         d = self._cmd(self.CMD_GET_SERIAL_NUMBER)
         return self._parse_str(d)

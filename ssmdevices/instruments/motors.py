@@ -14,15 +14,15 @@ import labbench as lb
 __all__=['ETSLindgrenAzi2005']
 
 class ETSLindgrenAzi2005(lb.VISADevice):
-    timeout: lb.Float(20, min=0, )
-    baud_rate: lb.Int(9600, min=1, )
-    parity: lb.Bytes(b'N', )
-    stopbits: lb.Float(1, min=1, max=2, step=0.5, )
-    xonxoff: lb.Bool(False, )
-    rtscts: lb.Bool(False, )
-    dsrdtr: lb.Bool(False, )
-    read_termination: lb.Unicode('\n')  # this is an acknowledge byte
-    write_termination: lb.Unicode('\r')  # this is a carriage return
+    timeout = lb.value.float(20, min=0, )
+    baud_rate = lb.value.int(9600, min=1, )
+    parity = lb.value.bytes(b'N', )
+    stopbits = lb.value.float(1, min=1, max=2, step=0.5, )
+    xonxoff = lb.value.bool(False, )
+    rtscts = lb.value.bool(False, )
+    dsrdtr = lb.value.bool(False, )
+    read_termination = lb.value.str('\n')  # this is an acknowledge byte
+    write_termination = lb.value.str('\r')  # this is a carriage return
 
     def config(self, mode):
         if mode is 'CR' or 'NCR':
@@ -42,7 +42,7 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     
     def set_limits(self, side, value):
         '''Probably should put some error checking in here to make sure value is a float
-        Also, note we use write here becuase state.setter inserts a space'''
+        Also, note we use write here becuase property.setter inserts a space'''
         if side is 'lower':
             self.write('LL'+value)
         elif side is 'upper':
@@ -70,13 +70,13 @@ class ETSLindgrenAzi2005(lb.VISADevice):
         #   print('oops still moving!')
 
     # A bunch of command-keyed states
-    speed = lb.Int(key='S', min=0, max=3, help='speed')
-    cwlimit = lb.Float(key='UL', min=000.0, max=999.9, step=0.1, help='cwlimit')
-    cclimit = lb.Float(key='LL',  min=000.0, max=999.9, step=0.1, help='cclimit')
-    define_position = lb.Float(key='CP', min=0, max=360, step=0.1, help='rotation (degrees)')
-    position = lb.Float(key='SK', min=0, max=360, help='rotation (degrees)', gettable=False)
+    speed = lb.property.int(key='S', min=0, max=3, help='speed')
+    cwlimit = lb.property.float(key='UL', min=000.0, max=999.9, step=0.1, help='cwlimit')
+    cclimit = lb.property.float(key='LL',  min=000.0, max=999.9, step=0.1, help='cclimit')
+    define_position = lb.property.float(key='CP', min=0, max=360, step=0.1, help='rotation (degrees)')
+    position = lb.property.float(key='SK', min=0, max=360, help='rotation (degrees)', gettable=False)
 
-    def __set_by_key__(self, key, name, value):
+    def set_key(self, key, value, trait_name=None):
         self.write(key + str(value))
      
 if __name__ == '__main__':

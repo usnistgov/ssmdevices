@@ -1,5 +1,6 @@
 import os, time
 import numpy as np
+from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
 
 __all__ = ['RohdeSchwarzFSW26Base',
            'RohdeSchwarzFSW26SpectrumAnalyzer',
@@ -8,53 +9,52 @@ __all__ = ['RohdeSchwarzFSW26Base',
            'RohdeSchwarzFSW26RealTime']
 
 import labbench as lb
-from labbench import Bool, Int, Unicode, Float, VISADevice
 
 default_channel_name = 'remote'
 
-class RohdeSchwarzFSW26Base(VISADevice):
-    default_window: lb.Unicode('', help='data window number to use if unspecified')
-    default_trace: lb.Unicode('', help='data trace number to use if unspecified')
+class RohdeSchwarzFSW26Base(lb.VISADevice):
+    default_window = lb.value.str('', help='data window number to use if unspecified')
+    default_trace = lb.value.str('', help='data trace number to use if unspecified')
 
-    frequency_center = Float(key='FREQ:CENT', min=2, max=26.5e9, step=1e-9, label='Hz')
-    frequency_span = Float(key='FREQ:SPAN', min=2, max=26.5e9, step=1e-9, label='Hz')
-    frequency_start = Float(key='FREQ:START', min=2, max=26.5e9, step=1e-9, label='Hz')
-    frequency_stop = Float(key='FREQ:STOP', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_center = lb.property.float(key='FREQ:CENT', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_span = lb.property.float(key='FREQ:SPAN', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_start = lb.property.float(key='FREQ:START', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_stop = lb.property.float(key='FREQ:STOP', min=2, max=26.5e9, step=1e-9, label='Hz')
 
-    resolution_bandwidth = Float(key='BAND', min=45e3, max=5.76e6, label='Hz')
-    sweep_time = Float(key='SWE:TIME', label='Hz')
-    sweep_time_window2 = Float(key='SENS2:SWE:TIME', label='Hz')
+    resolution_bandwidth = lb.property.float(key='BAND', min=45e3, max=5.76e6, label='Hz')
+    sweep_time = lb.property.float(key='SWE:TIME', label='Hz')
+    sweep_time_window2 = lb.property.float(key='SENS2:SWE:TIME', label='Hz')
 
-    initiate_continuous = Bool(key='INIT:CONT', remap={False: '0', True: '1'})
+    initiate_continuous = lb.property.bool(key='INIT:CONT', remap={False: '0', True: '1'})
 
-    reference_level = Float(key='DISP:TRAC1:Y:RLEV', step=1e-3, label='dB')
-    reference_level_trace2 = Float(key='DISP:TRAC2:Y:RLEV', step=1e-3, label='dB')
-    reference_level_trace3 = Float(key='DISP:TRAC3:Y:RLEV', step=1e-3, label='dB')
-    reference_level_trace4 = Float(key='DISP:TRAC4:Y:RLEV', step=1e-3, label='dB')
-    reference_level_trace5 = Float(key='DISP:TRAC5:Y:RLEV', step=1e-3, label='dB')
-    reference_level_trace6 = Float(key='DISP:TRAC6:Y:RLEV', step=1e-3, label='dB')
+    reference_level = lb.property.float(key='DISP:TRAC1:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace2 = lb.property.float(key='DISP:TRAC2:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace3 = lb.property.float(key='DISP:TRAC3:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace4 = lb.property.float(key='DISP:TRAC4:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace5 = lb.property.float(key='DISP:TRAC5:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace6 = lb.property.float(key='DISP:TRAC6:Y:RLEV', step=1e-3, label='dB')
 
-    amplitude_offset = Float(key='DISP:TRAC1:Y:RLEV:OFFS', step=1e-3, label='dB')
-    amplitude_offset_trace2 = Float(key='DISP:TRAC2:Y:RLEV:OFFS', step=1e-3, label='dB')
-    amplitude_offset_trace3 = Float(key='DISP:TRAC3:Y:RLEV:OFFS', step=1e-3, label='dB')
-    amplitude_offset_trace4 = Float(key='DISP:TRAC4:Y:RLEV:OFFS', step=1e-3, label='dB')
-    amplitude_offset_trace5 = Float(key='DISP:TRAC5:Y:RLEV:OFFS', step=1e-3, label='dB')
-    amplitude_offset_trace6 = Float(key='DISP:TRAC6:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset = lb.property.float(key='DISP:TRAC1:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset_trace2 = lb.property.float(key='DISP:TRAC2:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset_trace3 = lb.property.float(key='DISP:TRAC3:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset_trace4 = lb.property.float(key='DISP:TRAC4:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset_trace5 = lb.property.float(key='DISP:TRAC5:Y:RLEV:OFFS', step=1e-3, label='dB')
+    amplitude_offset_trace6 = lb.property.float(key='DISP:TRAC6:Y:RLEV:OFFS', step=1e-3, label='dB')
 
-    output_trigger2_direction = Unicode(key='OUTP:TRIG2:DIR', only=('INP', 'OUTP'), case=False)
-    output_trigger3_direction = Unicode(key='OUTP:TRIG3:DIR', only=('INP', 'OUTP'), case=False)
-    output_trigger2_type = Unicode(key='OUTP:TRIG2:OTYP', only=('DEV', 'TARM', 'UDEF'), case=False)
-    output_trigger3_type = Unicode(key='OUTP:TRIG3:OTYP', only=('DEV', 'TARM', 'UDEF'), case=False)
+    output_trigger2_direction = lb.property.str(key='OUTP:TRIG2:DIR', only=('INP', 'OUTP'), case=False)
+    output_trigger3_direction = lb.property.str(key='OUTP:TRIG3:DIR', only=('INP', 'OUTP'), case=False)
+    output_trigger2_type = lb.property.str(key='OUTP:TRIG2:OTYP', only=('DEV', 'TARM', 'UDEF'), case=False)
+    output_trigger3_type = lb.property.str(key='OUTP:TRIG3:OTYP', only=('DEV', 'TARM', 'UDEF'), case=False)
 
-    input_preamplifier_enabled = Bool(key='INP:GAIN:STATE', remap={False: '0', True: '1'})
-    input_attenuation_auto = Bool(key='INP:ATT:AUTO', remap={False: '0', True: '1'})
-    input_attenuation = Float(key='INP:ATT', step=1, min=0, max=79)
+    input_preamplifier_enabled = lb.property.bool(key='INP:GAIN:STATE', remap={False: '0', True: '1'})
+    input_attenuation_auto = lb.property.bool(key='INP:ATT:AUTO', remap={False: '0', True: '1'})
+    input_attenuation = lb.property.float(key='INP:ATT', step=1, min=0, max=79)
 
-    channel_type = Unicode(key='INST', only=('SAN', 'IQ', 'RTIM', default_channel_name), case=False)
-    format = Unicode(key='FORM', only=('ASC,0', 'REAL,32', 'REAL,64', 'REAL,16'), case=False)
-    sweep_points = Int(key='SWE:POIN', min=1, max=100001)
+    channel_type = lb.property.str(key='INST', only=('SAN', 'IQ', 'RTIM', default_channel_name), case=False)
+    format = lb.property.str(key='FORM', only=('ASC,0', 'REAL,32', 'REAL,64', 'REAL,16'), case=False)
+    sweep_points = lb.property.int(key='SWE:POIN', min=1, max=100001)
 
-    display_update = Bool(key='SYST:DISP:UPD', remap={False: 'OFF', True: 'ON'})
+    display_update = lb.property.bool(key='SYST:DISP:UPD', remap={False: 'OFF', True: 'ON'})
 
     expected_channel_type = None
     cache_dir = r'c:\temp\remote-cache'
@@ -62,8 +62,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
     def verify_channel_type(self):
         if self.expected_channel_type is not None \
                 and self.channel_type not in (self.expected_channel_type, default_channel_name):
-            self._console.warning('expected {} mode, but got {}' \
-                                .format(self.expected_channel_type, self.channel_type))
+            self._console.warning(f'expected {self.expected_channel_type} mode, but got {self.channel_type}')
 
     @classmethod
     def __imports__(cls):
@@ -288,9 +287,9 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
     def fetch_horizontal(self, window=None, trace=None):
         if window is None:
-            window = self.settings.default_window
+            window = self.default_window
         if trace is None:
-            trace = self.settings.default_trace
+            trace = self.default_trace
 
         return self.query_ieee_array("TRAC{window}:DATA:X? TRACE{trace}" \
                                      .format(window=window, trace=trace))
@@ -317,16 +316,16 @@ class RohdeSchwarzFSW26Base(VISADevice):
                 count = inst.query("SENSE:SWEEP:COUNT?")
                 self.write("SENSE:SWEEP:COUNT 1")
 
-        :param trace: The trace number to query (or None, the default, to use self.settings.default_trace)
+        :param trace: The trace number to query (or None, the default, to use self.default_trace)
         :param horizontal: Set the index of the returned Series by a call to :method:`fetch_horizontal`
-        :param window: The window number to query (or None, the default, to use self.settings.default_window)
+        :param window: The window number to query (or None, the default, to use self.default_window)
         :return: a pd.Series object containing the returned data
         '''
 
         if trace is None:
-            trace = self.settings.default_trace
+            trace = self.default_trace
         if window is None:
-            window = self.settings.default_window
+            window = self.default_window
         if hasattr(trace, '__iter__'):
             return pd.concat([self.fetch_trace(t, horizontal=horizontal) for t in trace])
 
@@ -347,12 +346,12 @@ class RohdeSchwarzFSW26Base(VISADevice):
             of the signal analyzer should lead to a TimeoutError.
 
         :param all: If True, acquire and return all available timestamps; if False, only the most current timestamp.
-        :param window: The window number corresponding to the desired timestamp data (or self.settings.default_window when window=None)
+        :param window: The window number corresponding to the desired timestamp data (or self.default_window when window=None)
         :return: A number (when `all` is False) or a np.array (when `all` is True)
         '''
 
         if window is None:
-            window = self.settings.default_window
+            window = self.default_window
 
         if all:
             _to, self.backend.timeout = self.backend.timeout, timeout
@@ -381,7 +380,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
         :param freqs: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on FFT parameters), or None (leaving the integer indices)
         :param timestamps: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on sweep time), or None (leaving the integer indices)
-        :param window: The window number corresponding to the desired timestamp data (or self.settings.default_window when window=None)
+        :param window: The window number corresponding to the desired timestamp data (or self.default_window when window=None)
         :return: a pandas DataFrame containing the acquired data
         '''
 
@@ -398,7 +397,7 @@ class RohdeSchwarzFSW26Base(VISADevice):
 
         with self.suppress_timeout():
             if window is None:
-                window = self.settings.default_window
+                window = self.default_window
 
             data = self.query_ieee_array('TRAC{window}:DATA? SPEC'.format(window=window))
 
@@ -619,20 +618,20 @@ e
 
 
 class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
-    format = Unicode(key='FORM', only=('REAL', 'ASCII'), case=False)
+    format = lb.property.str(key='FORM', only=('REAL', 'ASCII'), case=False)
 
-    @Float(min=0)
+    @lb.property.float(min=0)
     def uplink_sample_rate(self):
         response = self.query('CONF:LTE:UL:BW?')
         return float(response[2:].replace('_', '.')) * 1e6
 
-    @Float(min=0)
+    @lb.property.float(min=0)
     def downlink_sample_rate(self):
         response = self.query('CONF:LTE:DL:BW?')
         return float(response[2:].replace('_', '.')) * 1e6
 
     def open(self):
-        VISADevice.open(self)
+        lb.VISADevice.open(self)
         # self.verify_channel_type()
         self.format = 'REAL'
 
@@ -676,13 +675,13 @@ class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
 class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     expected_channel_type = 'RTIM'
 
-    iq_simple_enabled = Bool(key='CALC:IQ', remap={False: 'OFF', True: 'ON'})
-    iq_evaluation_enabled = Bool(key='CALC:IQ:EVAL', remap={False: 'OFF', True: 'ON'})
-    iq_mode = Unicode(key='CALC:IQ:MODE', only=('TDOMain', 'FDOMain', 'IQ'), case=False)
-    iq_record_length = Int(key='TRAC:IQ:RLEN', min=1, max=461373440)
-    iq_sample_rate = Float(key='TRAC:IQ:SRAT', min=1e-9, max=160e6)
-    iq_format = Unicode(key='CALC:FORM', only=('FREQ', 'MAGN', 'MTAB', 'PEAK', 'RIM', 'VECT'), case=False)
-    iq_format_window2 = Unicode(key='CALC2:FORM', case=False,
+    iq_simple_enabled = lb.property.bool(key='CALC:IQ', remap={False: 'OFF', True: 'ON'})
+    iq_evaluation_enabled = lb.property.bool(key='CALC:IQ:EVAL', remap={False: 'OFF', True: 'ON'})
+    iq_mode = lb.property.str(key='CALC:IQ:MODE', only=('TDOMain', 'FDOMain', 'IQ'), case=False)
+    iq_record_length = lb.property.int(key='TRAC:IQ:RLEN', min=1, max=461373440)
+    iq_sample_rate = lb.property.float(key='TRAC:IQ:SRAT', min=1e-9, max=160e6)
+    iq_format = lb.property.str(key='CALC:FORM', only=('FREQ', 'MAGN', 'MTAB', 'PEAK', 'RIM', 'VECT'), case=False)
+    iq_format_window2 = lb.property.str(key='CALC2:FORM', case=False,
                                         only=('FREQ', 'MAGN', 'MTAB', 'PEAK', 'RIM', 'VECT'))
 
     def fetch_trace(self, horizontal=False, trace=None):
@@ -712,18 +711,18 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
 class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
     expected_channel_type = 'RTIM'
 
-    trigger_source = Unicode(key='TRIG:SOUR', only=('IMM', 'EXT', 'EXT2', 'EXT3', 'MASK', 'TDTR'), case=False)
-    trigger_post_time = Float(key='TRIG:POST', min=0)
-    trigger_pre_time = Float(key='TRIG:PRET', min=0)
+    trigger_source = lb.property.str(key='TRIG:SOUR', only=('IMM', 'EXT', 'EXT2', 'EXT3', 'MASK', 'TDTR'), case=False)
+    trigger_post_time = lb.property.float(key='TRIG:POST', min=0)
+    trigger_pre_time = lb.property.float(key='TRIG:PRET', min=0)
 
-    iq_fft_length = Int(key='IQ:FFT:LENG', settable=False)
-    iq_bandwidth = Float(key='TRAC:IQ:BWID', settable=False)
-    iq_sample_rate = Float(key='TRACe:IQ:SRAT', settable=False)
-    iq_trigger_position = Float(key='TRAC:IQ:TPIS', settable=False)
+    iq_fft_length = lb.property.int(key='IQ:FFT:LENG', settable=False)
+    iq_bandwidth = lb.property.float(key='TRAC:IQ:BWID', settable=False)
+    iq_sample_rate = lb.property.float(key='TRACe:IQ:SRAT', settable=False)
+    iq_trigger_position = lb.property.float(key='TRAC:IQ:TPIS', settable=False)
 
-    sweep_dwell_auto = Bool(key='SWE:DTIM:AUTO', remap={False: '0', True: '1'})
-    sweep_dwell_time = Float(key='SWE:DTIM', min=30e-3)
-    sweep_window_type = Unicode(key='SWE:FFT:WIND:TYP', case=False,
+    sweep_dwell_auto = lb.property.bool(key='SWE:DTIM:AUTO', remap={False: '0', True: '1'})
+    sweep_dwell_time = lb.property.float(key='SWE:DTIM', min=30e-3)
+    sweep_window_type = lb.property.str(key='SWE:FFT:WIND:TYP', case=False,
                                         only=('BLAC', 'FLAT', 'GAUS', 'HAMM', 'HANN', 'KAIS', 'RECT'))
 
     #    def fetch_trace(self, horizontal=False):
@@ -760,36 +759,37 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
 
     def set_detector_type(self, type_, window=None, trace=None):
         if window is None:
-            window = self.settings.default_window
+            window = self.default_window
         if trace is None:
-            trace = self.settings.default_trace
+            trace = self.default_trace
         self.write('WIND{window}:DET{trace} {type}' \
                    .format(window=window, trace=trace, type=type_))
 
     def get_detector_type(self, window=None, trace=None):
         if window is None:
-            window = self.settings.default_window
+            window = self.default_window
         if trace is None:
-            trace = self.settings.default_trace
+            trace = self.default_trace
         return self.query('WIND{window}:DET{trace}?' \
                           .format(window=window, trace=trace))
 
-    @Int(min=781, max=100000)
-    def spectrogram_depth(self, depth):
+    # @lb.property.int(min=781, max=100000)
+    def set_spectrogram_depth(self, depth, window=None):
         if window is None:
-            window = self.settings.default_window
+            window = self.default_window
 
         self.write('CALC{window}:SPEC:HDEP {value}' \
                    .format(window=window, value=depth))
-    @spectrogram_depth
-    def spectrogram_depth(self, window=None):
+
+    # @spectrogram_depth
+    def get_spectrogram_depth(self, window=None):
         if window is None:
-            window = self.settings.default_window
+            window = self.default_window
 
         return self.query('CALC{window}:SPEC:HDEP?' \
                           .format(window=window))
 
-    @Float(max=0)
+    @lb.property.float(max=0)
     def trigger_mask_threshold(self, thresholds):
         ''''defined in dB relative to the reference level'''
         self.set_frequency_mask(thresholds, None)
@@ -803,11 +803,11 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         :param thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`), or a scalar to use a constant value across the band
         :param array-like frequency_offsets: frequencies at which the mask is defined, or None (to specify across the whole band)
         :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
-        :param window: The window number corresponding to the desired trigger setting (or self.settings.default_window when window=None)
+        :param window: The window number corresponding to the desired trigger setting (or self.default_window when window=None)
         :return: None
         '''
         if window is None:
-            window = self.settings.default_window
+            window = self.default_window
         if kind.lower() not in ('upper', 'lower'):
             raise ValueError('frequency mask is {} but must be "upper" or "lower"' \
                              .format(repr(kind)))
@@ -834,13 +834,13 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         ''' Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
         :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
-        :param window: The window number corresponding to the desired trigger setting (or self.settings.default_window when window=None)
+        :param window: The window number corresponding to the desired trigger setting (or self.default_window when window=None)
         :param bool first_threshold_only: if True, return only the threshold; otherwise, return a complete parameter dict
         :return: the threshold or a dictionary with keys "frequency_offsets" and "thresholds" and corresponding values (in Hz and dBm, respectively) of equal length
         '''
 
         if window is None:
-            window = self.settings.default_window
+            window = self.default_window
         if kind.lower() not in ('upper', 'lower'):
             raise ValueError('frequency mask is {} but must be "upper" or "lower"' \
                              .format(repr(kind)))
@@ -874,8 +874,8 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         if kws:
             self._console.warning('ignoring spectrogram setup keyword arguments {}'.format(kws))
 
-        self.settings.default_window = 2
-        self.settings.default_trace = 1
+        self.default_window = 2
+        self.default_trace = 1
 
         if self.load_cache():
             return

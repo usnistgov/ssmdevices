@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dan Kuester <daniel.kuester@nist.gov>,
+@authors: Dan Kuester <daniel.kuester@nist.gov>,
          Michael Voecks <michael.voecks@nist.gov>
 """
 __all__ = ['IPerf2', 'IPerf2OnAndroid', 'IPerf2BoundPair',
@@ -9,13 +9,16 @@ __all__ = ['IPerf2', 'IPerf2OnAndroid', 'IPerf2BoundPair',
 import datetime
 import labbench as lb
 import numpy as np
+import pandas as pd
 import psutil
+import re
 import socket
 import ssmdevices.lib
 import subprocess as sp
 import sys
 import time
 import traceback
+
 
 from time import perf_counter
 from queue import Queue, Empty
@@ -33,370 +36,151 @@ if '_tcp_port_offset' not in dir():
 # Make sure the performance counter is initialized
 perf_counter()
 
-
-class IPerf3(lb.ShellBackend):
-    ''' Run an instance of iperf2, collecting output data in a background thread.
-        When running as an iperf client (server=False),
-        The default value is the path that installs with 64-bit cygwin.
-    '''
-
-    binary_path: ssmdevices.lib.path('iperf3.exe')
-    timeout: 5  # seconds
-
-    resource: lb.Unicode(
-        default=None,
-        key='-c',
-        allow_none=True,
-        help='client host address (leave None, with server=True, to run as a server)'
+class _IPerfBase(lb.ShellBackend, timeout=5):
+    FLAGS = dict(
+        resource='-c',
+        server='-s',
+        port='-p',
+        interval='-i',
+        bind='-B',
+        udp='-u',
+        bit_rate='-b',
+        time='-t',
+        number='-n',
+        tcp_window_size='-w',
+        buffer_size='-l',
+        nodelay='-N',
+        mss='-M',
     )
 
-    server: lb.Bool(
-        default=False,
-        key='-s',
-        help='True to run as a server'
-    )
+    # address and network interface parameters
+    resource = lb.value.NetworkAddress(None, allow_port=False, allow_none=True, help='client host address (set None if server=True)')
+    server = lb.value.bool(False, help='True to run as a server')
+    port = lb.value.int(5201, min=0, help='network port')
+    bind = lb.value.str(None, allow_none=True, help='bind connection to specified IP')
 
-    port: lb.Int(
-        default=5201,
-        key='-p',
-        min=0,
-        help='network port'
-    )
+    format = lb.value.str(None, only=('k', 'm', 'g', 'K', 'M', 'G'), allow_none=True, help='data unit prefix in bits (k, m, g) or bytes (K, M, G), or None for auto')    
 
-    format: lb.Unicode(
-        default=None,
-        only=('k', 'm', 'g', 'K', 'M', 'G'),
-        allow_none=True,
-        help='data unit prefix in bits (k, m, g) or bytes (K, M, G), or None for auto'
-    )
+    # timing and duration
+    # (for time, default=None even though we know the default, because setting 10s conflicts with `number`)
+    time = lb.value.float(None, min=0, max=16535, allow_none=True, help='send duration (s) before quitting (default: 10)')
+    number = lb.value.int(None, min=-1, allow_none=True, help='the number of bytes to transmit before quitting')
 
-    interval: lb.Float(
-        default=None,
-        key='-i',
-        min=0.01,
-        allow_none=True,
-        help='seconds between throughput reports'
-    )
+    interval = lb.value.float(None, min=0.01, allow_none=True, help='seconds between throughput reports')
 
-    bind: lb.Unicode(
-        default=None,
-        key='-B',
-        allow_none=True,
-        help='bind connection to specified IP'
-    )
+    # high level buffer commands
+    udp = lb.value.bool(False, help='if True, to use UDP instead of TCP')
+    bit_rate = lb.value.str(None, allow_none=True, help='maximum bit rate (accepts KMG unit suffix; defaults 1Mbit/s UDP, no limit for TCP)')
+    buffer_size = lb.value.int(None, min=1, allow_none=True, help='buffer size (bytes) when generating traffic')
 
-    json: lb.Bool(
-        default=False,
-        key='-J',
-        help='output data in JSON format'
-    )
+    # TCP parameters
+    tcp_window_size = lb.value.int(None, min=1, allow_none=True, help='window / socket size in bytes (default OS dependent?)')
+    nodelay = lb.value.bool(False, help='set True to use nodelay (TCP traffic only)')
+    mss = lb.value.int(None, min=10, allow_none=True, help='minimum segment size (bytes)=MTU-40, TCP only')
 
-    udp: lb.Bool(
-        default=False,
-        key='-u',
-        help='set True to use UDP instead of TCP'
-    )
+    def acquire(self, block=True):
+        self._validate_flags()
+        duration = 0 if self.time is None else self.time+2
+        timeout = max((self.timeout, duration))
+        
+        return self.run(self.FLAGS, background=not block, pipe=True, respawn=not block, check_stderr=True, timeout=timeout)
 
-    bit_rate: lb.Unicode(
-        default=None,
-        key='-b',
-        allow_none=True,
-        help='maximum bit rate (append KMG for unit suffix; defaults to 1Mbit/s for UDP, no limit for TCP)'
-    )
+    def _validate_flags(self):
+        """ update and validate value traits
+        """
 
-    time: lb.Int(
-        default=None,
-        key='-t',
-        min=0,
-        max=16535,
-        allow_none=True,
-        help='time in seconds to transmit before quitting (instead of `number`) (default 10s)'
-    )
-
-    number: lb.Int(
-        default=None,
-        key='-n',
-        min=-1,
-        allow_none=True,
-        help='the number of bytes to transmit (instead of time)'
-    )
-
-    reverse: lb.Bool(
-        default=False,
-        key='-R',
-        help='run in reverse mode (server sends, client receives)'
-    )
-
-    window_size: lb.Int(
-        default=None,
-        key='-w',
-        min=1,
-        help='window / socket size in bytes',
-        allow_none=True
-    )
-
-    buffer_size: lb.Int(
-        default=None,
-        key='-l',
-        min=1, allow_none=True,
-        help='Size of data buffer that generates traffic (bytes)'
-    )
-
-    nodelay: lb.Bool(
-        default=False,
-        key='-N',
-        help='set True to use nodelay (TCP traffic only)'
-    )
-
-    mss: lb.Int(
-        default=None,
-        key='-M',
-        min=10,
-        allow_none=True,
-        help='minimum segment size, in bytes (= MTU - 40 bytes, TCP traffic only)'
-    )
-
-    zerocopy: lb.Bool(
-        default=False,
-        key='-Z',
-        help="use a 'zero copy' method of sending data"
-    )
-
-    def fetch(self):
-        ''' retreive standard output text from a background process
-        '''
-        return self.read_stdout()
-
-    def background(self, **flags):
-        # respawn background calls
-        with self.respawn:
-            super().background(**flags)
-
-    def _update_settings(self, flags):
-        super()._update_settings(flags)
-
-        # now add extra checks for incompatible flags
-        if self.settings.server:
-            busy_ports = get_ipv4_occupied_ports(self.settings.server)
-            while self.settings.port in busy_ports:
-                prev_port = self.settings.ports
+        # port availability
+        if self.server:
+            busy_ports = get_ipv4_occupied_ports(self.server)
+            while self.port in busy_ports:
+                prev_port = self.ports
                 # find an open server port
-                if self.settings.port >= self.settings['port'].max:
-                    self.settings.port = self.settings['port'].min
+                if self.port >= self['port'].max:
+                    self.port = self['port'].min
                 else:
-                    self.settings.port = self.settings.port + 1
-                self._console.info(f'requested port {prev_port} is in use - changing to {self.settings.port}')
+                    self.port = self.port + 1
+                self._console.info(f'requested port {prev_port} is in use - changing to {self.port}')
 
-        # super()._commandline updates self.settings from flags -
-        # now it is time to check for conflicts between parameters
-        if self.settings.resource is not None and self.settings.server:
+        # parameter conflict checks
+        if self.resource is not None and self.server:
             raise ValueError('must set exactly one of (a) client operation by setting resource="(hostname here)", '
                              'or (b) server operation by setting server=True')
-        if self.settings.udp:
-            if self.settings.mss is not None:
+        if self.udp:
+            if self.mss is not None:
                 raise ValueError('the TCP MSS setting is incompatible with UDP')
-            if self.settings.nodelay:
+            if self.nodelay:
                 raise ValueError('the TCP nodelay setting is incompatible with UDP')
-            if self.settings.buffer_size is not None:
+            if self.buffer_size is not None:
                 self._console.warning('iperf may work improperly when setting udp=True with buffer_size')
 
-        if not self.settings.udp and self.settings.bit_rate is not None:
+        if not self.udp and self.bit_rate is not None:
             raise ValueError('iperf does not support setting bit_rate in TCP')
 
-        if self.settings.server:
-            if self.settings.time is not None:
+        if self.server:
+            if self.time is not None:
                 raise ValueError('iperf server does not support the `time` argument')
-            if self.settings.number is not None:
+            if self.number is not None:
                 raise ValueError('iperf server does not support the `number` argument')
 
 
-class IPerf2(lb.ShellBackend):
+class IPerf3(_IPerfBase, binary_path=ssmdevices.lib.path('iperf3.exe')):
+    ''' Run an instance of iperf3, collecting output data in a background thread.
+        When running as an iperf client (server=False),
+        The default value is the path that installs with 64-bit cygwin.
+    '''
+    FLAGS = dict(
+        _IPerfBase.FLAGS,
+
+        json='-J',
+        reverse='-R',
+        zerocopy='-Z'
+    )    
+
+    # IPerf3 only
+    reverse = lb.value.bool(False, help='run in reverse mode (server sends, client receives)')
+    json = lb.value.bool(False, help='output data in JSON format')
+    zerocopy = lb.value.bool(False, help="use a 'zero copy' method of sending data")
+
+
+class IPerf2(_IPerfBase, binary_path=ssmdevices.lib.path('iperf.exe')):
     ''' Run an instance of iperf, collecting output data in a background thread.
         When running as an iperf client (server=False), 
         The default value is the path that installs with 64-bit cygwin.
     '''
 
-    binary_path: ssmdevices.lib.path('iperf.exe')
-    timeout: 5 # seconds
-
-    resource: lb.Unicode(
-        default=None,
-        key='-c',
-        allow_none=True,
-        help='client host address (leave None, with server=True, to run as a server)'
+    FLAGS = dict(
+        _IPerfBase.FLAGS,
+        bidirectional='-d',
+        report_style='-y',
     )
 
-    server: lb.Bool(
-        default=False,
-        key='-s',
-        help='True to run as a server'
-    )
+    bidirectional = lb.value.bool(False, key='-d', help='send and receive simultaneously')
+    report_style = lb.value.str('C', only=('C', None),  allow_none=True, help='"C" for DataFrame table output, None for formatted text')
 
-    port: lb.Int(
-        default=5010,
-        key='-p',
-        min=0,
-        help='network port'
-    )
-
-    bind: lb.Unicode(
-        default=None,
-        key='-B',
-        allow_none=True,
-        help='bind connection to specified IP'
-    )
-
-    tcp_window_size: lb.Int(
-        default=None,
-        key='-w',
-        min=1,
-        help='(bytes)',
-        allow_none=True
-    )
-
-    buffer_size: lb.Int(
-        default=None,
-        key='-l',
-        min=1, allow_none=True,
-        help='Size of data buffer that generates traffic (bytes)'
-    )
-
-    interval: lb.Float(
-        default=0.25,
-        key='-i',
-        min=0.01,
-        help='Interval between throughput reports (s)'
-    )
-
-    bidirectional: lb.Bool(
-        default=False,
-        key='-d',
-        help='send and receive simultaneously'
-    )
-
-    udp: lb.Bool(
-        default=False,
-        key='-u',
-        help='set True to use UDP instead of TCP'
-    )
-
-    bit_rate: lb.Unicode(
-        default=None,
-        key='-b',
-        allow_none=True,
-        help='maximum bit rate (append unit for unit suffix, e.g. 10K)'
-    )
-
-    time: lb.Int(
-        default=None,
-        key='-t',
-        min=0,
-        max=16535,
-        allow_none=True,
-        help='time in seconds to transmit before quitting (instead of `number`) (default 10s)'
-    )
-
-    report_style: lb.Unicode(
-        default='C',
-        key='-y',
-        only=('C', None),
-        allow_none=True,
-        help='"C" to work with CSV outputs (and fetch pandas DataFrame tables), '\
-             'or None to return and fetch formatted text output'
-    )
-
-    number: lb.Int(
-        default=None,
-        key='-n',
-        min=-1,
-        allow_none=True,
-        help='the number of bytes to transmit (instead of time)'
-    )
+    def acquire(self, block=True):
+        ret = super().acquire(block)
+        if block:
+            return self._format_output(ret)
+        else:
+            return ret
     
-    nodelay: lb.Bool(
-        default=False,
-        key='-N',
-        help='set True to use nodelay (TCP traffic only)'
-    )
-
-    mss: lb.Int(
-        default=None,
-        key='-M',
-        min=10,
-        allow_none=True,
-        help='minimum segment size, in bytes (= MTU - 40 bytes, TCP traffic only)'
-    )
-    
-    def fetch(self):
-        ''' retreive text from standard output, and parse into a pandas DataFrame.
+    def read_stdout(self):
+        ''' retreive text from standard output, and parse into a pandas DataFrame if self.report_style is None
         '''
-        stdout = self.read_stdout()
+        return self._format_output(super().read_stdout())
 
-        if self.settings.report_style is None:
-            # human readable table output
-            return stdout
-        else:
-            # csv output
-            return self._make_dataframe(stdout)
+    def _format_output(self, stdout):
+        """ pack stdout into a pandas DataFrame if self.report_style == 'C'
+        """
+        if self.report_style is None:
+            return stdout.decode()
 
-    def background(self, **flags):
-        # respawn background calls
-        with self.respawn:
-            super().background(**flags)
-
-    def foreground(self, **flags):
-        stdout = super().foreground(**flags).decode()
-
-        if self.settings.report_style is None:
-            # human readable table output
-            return stdout
-        else:
-            # csv output
-            return self._make_dataframe(stdout)
-
-    def _update_settings(self, flags):
-        # add a extra checks for incompatible flags
-        super()._update_settings(flags)
-
-        if self.settings.server:
-            busy_ports = get_ipv4_occupied_ports(self.settings.server)
-            while self.settings.port in busy_ports:
-                prev_port = self.settings.ports
-                # find an open server port
-                if self.settings.port >= self.settings['port'].max:
-                    self.settings.port = self.settings['port'].min
-                else:
-                    self.settings.port = self.settings.port + 1
-                self._console.info(f'requested port {prev_port} is in use - changing to {self.settings.port}')
-
-        # super()._commandline updates self.settings from flags -
-        # now it is time to check for conflicts between parameters
-        if self.settings.resource is not None and self.settings.server:
-            raise ValueError('must set exactly one of (a) client operation by setting resource="(hostname here)", '
-                             'or (b) server operation by setting server=True')
-        if self.settings.udp:
-            if self.settings.mss is not None:
-                raise ValueError('the TCP MSS setting is incompatible with UDP')
-            if self.settings.nodelay:
-                raise ValueError('the TCP nodelay setting is incompatible with UDP')
-            if self.settings.buffer_size is not None:
-                self._console.warning('iperf may work improperly when setting udp=True with buffer_size')
-
-        if not self.settings.udp and self.settings.bit_rate is not None:
-            raise ValueError('iperf does not support setting bit_rate in TCP')
-
-        if self.settings.server:
-            if self.settings.time is not None:
-                raise ValueError('iperf server does not support the `time` argument')
-            if self.settings.number is not None:
-                raise ValueError('iperf server does not support the `number` argument')
-
-    def _make_dataframe(self, stdout):
+        # otherwise a dataframe
         columns = 'timestamp', 'source_address', \
                   'source_port', 'destination_address', 'destination_port', \
                   'test_id', 'interval', 'transferred_bytes', 'bits_per_second'
 
-        if self.settings.udp:
+        if self.udp:
             columns = columns + ('jitter_milliseconds',
                                  'datagrams_lost',
                                  'datagrams_sent',
@@ -414,102 +198,109 @@ class IPerf2(lb.ShellBackend):
         data.drop(['interval', 'transferred_bytes', 'test_id'], inplace=True, axis=1)
         data['timestamp'] = pd.to_datetime(data['timestamp'], format='%Y%m%d%H%M%S')
         data['timestamp'] = data['timestamp'] + \
-                                  pd.TimedeltaIndex((data.index * self.settings.interval) % 1, 's')
+                                  pd.TimedeltaIndex((data.index * self.interval) % 1, 's')
 
         return data
 
-    @classmethod
-    def __imports__(cls):
-        global pd
-        import pandas as pd
 
+class IPerf2OnAndroid(IPerf2, binary_path=ssmdevices.lib.path('adb.exe')):
+    # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
+    remote_binary_path = lb.value.str('/data/local/tmp/iperf', cache=True)
 
-class IPerf2OnAndroid(IPerf2):
-    remote_binary_path = '/data/local/tmp/iperf'
+    def acquire(self, block=True):
+        self._validate_flags()
+        duration = 0 if self.time is None else self.time + 3
+        timeout = max((self.timeout, duration))
 
-    binary_path: lb.Unicode(ssmdevices.lib.path('adb.exe'))
-    remote_binary_path: lb.Unicode(remote_binary_path)
-    arguments: lb.List(['shell', remote_binary_path,
-                        # '-y', 'C'
-                        ])
+        # the same flags as in IPerf, we just need to prepend a couple of other arguments first
+        ret = self.run(
+            'shell', self.remote_binary_path, self.FLAGS,
+            background=not block, pipe=True, respawn=not block, check_stderr=True, timeout=timeout
+        )
+
+        if block:
+            return self._format_output(ret)
+        else:
+            # wait for output before returning
+            test = self.read_stdout(1)
+            if 'network' in test:
+                self._console.warning('no network connectivity in UE')
+
+            return ret
+            
 
     def open(self):
-        with self.no_state_arguments:
-            #            self._console.warning('TODO: need to fix setup for android iperf, but ok for now')
-            #            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
-            #            if len(devices) == 0:
-            #                raise Exception('adb lists no devices. is the UE connected?')
-            self._console.debug('waiting for USB connection to phone')
-            sp.run([self.settings.binary_path, 'wait-for-device'], check=True,
-                   timeout=30)
+        """ Open an adb connection to the handset, copy the iperf binary onto the phone, and
+            verify that iperf executes.
+        """
+        #            self._console.warning('TODO: need to fix setup for android iperf, but ok for now')
+        #            devices = self.pipe('devices').strip().rstrip().splitlines()[1:]
+        #            if len(devices) == 0:
+        #                raise Exception('adb lists no devices. is the UE connected?')
+        self._console.debug('awaiting USB connection to handset')
+        self.wait_for_device(30)
 
-            lb.sleep(.1)
-            self._console.debug('copying iperf onto phone')
-            sp.run([self.settings.binary_path, "push", ssmdevices.lib.path('android', 'iperf'),
-                    self.settings.remote_binary_path], check=True, timeout=2)
-            sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
-            sp.run([self.settings.binary_path, "shell", 'chmod', '777',
-                    self.settings.remote_binary_path], timeout=2)
-            sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=2)
+        lb.sleep(.1)
+        self._console.debug('copying iperf onto phone')
+        self.run("push", ssmdevices.lib.path('android', 'iperf'), self.remote_binary_path)
+        self.wait_for_device(2)
+        self.run("shell", 'chmod', '777', self.remote_binary_path, check=False)
+        self.wait_for_device(2)
 
-            #            # Check that it's executable
-            self._console.debug('verifying iperf execution on phone')
-            cp = sp.run([self.settings.binary_path, 'shell',
-                         self.settings.remote_binary_path, '--help'],
-                        timeout=2, stdout=sp.PIPE)
-            if cp.stdout.startswith(b'/system/bin/sh'):
-                raise Exception('could not execute!!! ', cp.stdout)
-            self._console.debug('phone is ready to execute iperf')
+        # Check that it's executable
+        stdout = self.run('shell', self.remote_binary_path, '--help', timeout=2, pipe=True)
+        if stdout.startswith(b'/system/bin/sh'):
+            # adb dumps both stderr and stdout from the handset into stdout, so we get little
+            # from monitoring. if iperf ran correctly, however, there is no message from sh
+            raise OSError(f'adb shell iperf --help failed: {stdout}')
 
-    def start(self):
-        super(IPerf2OnAndroid, self).start()
-        test = self.read_stdout(1)
-        if 'network' in test:
-            self._console.warning('no network connectivity in UE')
+        self._console.debug('phone is ready to execute iperf')
 
     def kill(self, wait_time=3):
         ''' Kill the local process and the iperf process on the UE.
         '''
 
         # Kill the local adb process as normal
-        super(IPerf2OnAndroid, self).kill()
+        super().kill()
 
         # Now's where the fun really starts
-        with self.no_state_arguments:
-            # Find and kill processes on the UE
-            out = self.foreground('shell', 'ps')
-            for line in out.splitlines():
-                line = line.decode(errors='replace')
-                if self.settings.remote_binary_path in line.lower():
-                    pid = line.split()[1]
-                    self._console.debug('killing zombie iperf. stdout: {}' \
-                                      .format(self.foreground('shell', 'kill', '-9', pid)))
+
+        # Find and kill processes on the UE
+        out = self.run('shell', 'ps')
+        for line in out.splitlines():
+            line = line.decode(errors='replace')
+            if self.remote_binary_path in line.lower():
+                pid = line.split()[1]
+                stdout = self.pipe('shell', 'kill', '-9', pid)
+                self._console.debug('killing zombie iperf: {stdout}')
+
             lb.sleep(.1)
             # Wait for any iperf zombie processes to die
             t0 = time.time()
             while time.time() - t0 < wait_time and wait_time != 0:
-                out = self.foreground('shell', 'ps').lower()
+                out = self.pipe('shell', 'ps').lower()
                 if b'iperf' not in out:
                     break
                 lb.sleep(.25)
             else:
                 raise TimeoutError('timeout waiting for iperf process termination on UE')
 
-    def read_stdout(self, n=0):
+    def read_stdout(self):
         ''' adb seems to forward stderr as stdout. Filter out some undesired
             resulting status messages.
         '''
-        txt = super(IPerf2OnAndroid, self).read_stdout(n)
+        txt = lb.ShellBackend.read_stdout(self)
+
+        # remove extra output added by adb
         out = []
         for l in txt.splitlines():
-            if ':' not in l:
+            if b':' not in l:
                 out.append(l)
             else:
                 self._console.warning('stdout: {}'.format(repr(l)))
-        return '\n'.join(out)
+        out = b'\n'.join(out)
 
-    def fetch(self):
-        return self.read_stdout()
+        return self._format_output(out)
 
     def wait_for_cell_data(self, timeout=60):
         ''' Block until cellular data is available
@@ -517,14 +308,12 @@ class IPerf2OnAndroid(IPerf2):
         :param timeout: how long to wait for a connection before raising a Timeout error
         :return: None
         '''
-        import subprocess as sp
-        import re
 
         self._console.debug('waiting for cellular data connection')
         t0 = time.time()
         out = ''
         while time.time() - t0 < timeout or timeout is None:
-            out = sp.run([self.settings.binary_path, 'shell', 'dumpsys', 'telephony.registry'],
+            out = sp.run([self.binary_path, 'shell', 'dumpsys', 'telephony.registry'],
                          stdout=sp.PIPE, check=True, timeout=timeout).stdout
 
             con = re.findall('mDataConnectionState=([\-0-9]+)',
@@ -540,55 +329,45 @@ class IPerf2OnAndroid(IPerf2):
     def reboot(self, block=True):
         ''' Reboot the device.
 
-        :param block: if this evaluates to True, block until the device is ready to accept commands
-        :return:
+        :param block: if truey, block until the device is ready to accept commands.
         '''
         self._console.info('rebooting')
-        sp.run([self.settings.binary_path, 'reboot'], check=True, timeout=2)
-        self.wait()
+        self.run('reboot')
+        if block:
+            self.wait_for_device()
 
-    def wait(self, timeout=30):
+    def wait_for_device(self, timeout=30):
         ''' Block until the device is ready to accept commands
 
         :return: None
         '''
-        sp.run([self.settings.binary_path, 'wait-for-device'], check=True, timeout=timeout)
-        self._console.debug('device is ready')
+        self.run('wait-for-device')
 
 
-class IPerf2BoundPair(lb.Device):
+class IPerf2BoundPair(IPerf2):
     ''' Run an iperf client and a server on the host computer at the same time. They are
         bound to interfaces in order to ensure that data is routed between them, not through
         localhost or any other interface.
     '''
 
-    # take the settings from IPerf2, which we will pass through to each IPerf2 instance
-    __annotations__ = {
-        k: t.copy()
-        for k, t in IPerf2.settings.__traits__.items()
-        if k != 'bind'
-    }
-
     # add other settings
-    resource: lb.Unicode(help='unused - use sender and receiver instead', settable=False)
+    resource = lb.value.str(help='unused - use sender and receiver instead', settable=False)
 
-    server: lb.Unicode(
-        help='the ip address where the server listens (must match a network interface on the host)'
-    )
-
-    client: lb.Unicode(
-        help='the ip address from which the client sends data (must match a network interface on the host)'
-    )
-
-    # port: lb.Int(
-    #     default=5010,
-    #     key='-p',
-    #     min=5010,
-    #     max=32000,
-    #     help='highest port number to use when cycling through ports'
-    # )
+    server = lb.value.NetworkAddress(accepts_ports=False, help='the ip address where the server listens')
+    client = lb.value.NetworkAddress(accepts_ports=False, help='the ip address from which the client sends data')
 
     children = {}
+
+    def open(self):
+        super().open()
+
+        self.children=dict(
+            client=IPerf2(),
+            server=IPerf2()
+        )
+
+        self.backend = lb.sequentially(self.children['server'], self.children['client'])
+        self.backend.__enter__()
 
     def close(self):
         try:
@@ -608,76 +387,67 @@ class IPerf2BoundPair(lb.Device):
             return False
         return self.children['client'].running() or self.children['server'].running()
 
-    def background(self, **flags):
-        self._setup_pair(flags)
-
-        self.children['server'].background()
-        self.children['client'].background()
-
-    def fetch(self):
-        client=self.children['client'].fetch()
-        server=self.children['server'].fetch()
-
-        if isinstance(client, pd.DataFrame):
-            return self._merge_dataframes(client, server)
-        else:
-            return dict(client=client, server=server)
-
-    def foreground(self, **flags):
-        ''' Acquire iperf output for the specified duration and return.
-            Raises a lb.DeviceConnectionLost if iperf stops before the
-            duration has finished.
-        '''
-        self._setup_pair(flags)
-
-        self.children['server'].background()
-        client=self.children['client'].foreground()
-        server=self.children['server'].fetch()
-        self.kill()
-
-        if isinstance(client, pd.DataFrame):
-            return self._merge_dataframes(client, server)
-        else:
-            return dict(client=client, server=server)
+    def start(self):
+        self._setup_pair()
         
+        self.children['server'].acquire(block=False)
+        self.children['client'].acquire(block=False)
+
+    def read_stdout(self):
+        client=self.children['client'].read_stdout()
+        server=self.children['server'].read_stdout()
+
+        if isinstance(client, pd.DataFrame):
+            # a single merged DataFrame
+            return self._merge_dataframes(client, server)
+        else:
+            # a dictionary of text results
+            return dict(client=client, server=server)
+       
     def _merge_dataframes(self, client, server):
-        client.columns = [('client_' if n != 'timestamp' else '')+str(n)
-                          for n in client.columns]
-        server.columns = [('server_' if n != 'timestamp' else '')+str(n)
-                          for n in server.columns]
+        client.columns = [
+            ('client_' if n != 'timestamp' else '')+str(n)
+            for n in client.columns
+        ]
+        
+        server.columns = [
+            ('server_' if n != 'timestamp' else '')+str(n)
+            for n in server.columns
+        ]
+
         return client.merge(server, how='outer', on='timestamp')
 
-    def _setup_pair(self, flags):
+    def _setup_pair(self):
         if self.running():
-            # clear any buffered outputs
-            raise Exception("can't start run while a background process is running")
+            raise BlockingIOError(f"{self} is already running")
 
-        flags = dict(flags) # make sure we don't do in-place edits on the caller's variable
-        
-        settings = {k: getattr(self.settings, k)
-                    for k, v in self.settings.__traits__.items()
-                    if v.key is not lb.Undefined and k not in ('resource', 'bind')}
+        values = {k: getattr(self, k) for k in self.FLAGS.keys()}
 
-        self.children['client'] = IPerf2(
-            resource=self.settings.server,
-            bind=self.settings.client,
-            **settings
+        client_values = dict(values,
+            resource=self.server,
+            server=False,
+            bind=self.client
         )
-        self.children['client']._update_settings(flags)
+        self.children['client'].__dict__.update(
+            values,
+            resource=self.server,
+            server=False,
+            bind=self.client
+        )
 
-        # clear server-incompatible flags
-        settings.pop('time', None)
-        settings.pop('number', None)
-        self.children['server'] = IPerf2(
-            bind=self.settings.server,
+        self.children['server'].__dict__.update(
+            values,
+            resource=None,
             server=True,
-            **settings
+            bind=self.server,
+            time=None,
+            number=None
         )
-        flags = dict(flags)
-        flags.pop('time', None)
-        flags.pop('number', None)
-        self.children['server']._update_settings(flags)
-        self.children['client'].settings.port = self.children['server'].settings.port
+
+        self.children['client']._validate_flags()
+        self.children['server']._validate_flags()
+
+        # self.children['client'].port = self.children['server'].port
 
         # cycle the port for the next call, because windows takes a couple of
         # minutes to release bound ports after use
@@ -714,33 +484,28 @@ class ClosedLoopBenchmark(lb.Device):
         equal to the system time resolution.
     '''
 
-    server: lb.Unicode(help='the name of the network interface that will send data')
-    client: lb.Unicode(help='the name of the network interface that will receive data')
-    receiver: lb.Unicode(help='the name of the network interface that will send data')
-    port: lb.Int(0,
+    server = lb.value.str(help='the name of the network interface that will send data')
+    client = lb.value.str(help='the name of the network interface that will receive data')
+    receiver = lb.value.str(help='the name of the network interface that will send data')
+    port = lb.value.int(0,
                  min=0,
                  help='TCP or UDP port for networking, or 0 to let the operating system choose')
-    resource: lb.Unicode(help='skipd - use sender and receiver instead')
-    timeout: lb.Float(2,
+    resource = lb.value.str(help='skipd - use sender and receiver instead')
+    timeout = lb.value.float(2,
                       min=1e-3,
                       help='timeout before aborting the test')
-    tcp_nodelay: lb.Bool(True,
+    tcp_nodelay = lb.value.bool(True,
                          help='set True to disable Nagle\'s algorithm')
-    sync_each: lb.Bool(False,
+    sync_each = lb.value.bool(False,
                        help='synchronize the start times of the send and receive threads for each buffer at the cost of throughput')
 
-    delay: lb.Float(0, min=0, help='wait time between sending buffers')
+    delay = lb.value.float(0, min=0, help='wait time between sending buffers')
 
     def __repr__(self):
         return "{name}(server='{server}',client='{client}')" \
             .format(name=self.__class__.__name__,
-                    server=self.settings.server,
-                    client=self.settings.client)
-
-    @classmethod
-    def __imports__(cls):
-        global pd
-        import pandas as pd
+                    server=self.server,
+                    client=self.client)
 
     def close(self):
         if self.is_running():
@@ -778,7 +543,7 @@ class ClosedLoopBenchmark(lb.Device):
             raise ChildProcessError('no traffic history, start a run first')
 
         try:
-            ret = self._background_queue.get(timeout=self.settings.timeout)
+            ret = self._background_queue.get(timeout=self.timeout)
         except Empty:
             ret = {}
 
@@ -879,18 +644,18 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
     def _open_sockets(self, buffer_size):
         ''' Connect the supplied client socket to the server.
         '''
-        if self.settings.receiver not in (self.settings.server, self.settings.client):
+        if self.receiver not in (self.server, self.client):
             raise ValueError(f'the receiver setting must match the client or server interface name')
 
         global _tcp_port_offset
 
-        server_ip = get_ipv4_address(self.settings.server)
-        client_ip = get_ipv4_address(self.settings.client)
+        server_ip = get_ipv4_address(self.server)
+        client_ip = get_ipv4_address(self.client)
         listen_sock = None
 
-        timeout = self.settings.timeout
+        timeout = self.timeout
         bytes_ = buffer_size
-        tcp_nodelay = self.settings.tcp_nodelay
+        tcp_nodelay = self.tcp_nodelay
 
         client_done = Event()
         server_done = Event()
@@ -908,7 +673,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, bytes_)
                 bufsize = sock.getsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF)
                 if bufsize < bytes_:
-                    msg = f'recv buffer size is {bufsize}, but need at least {self.settings.bytes}'
+                    msg = f'recv buffer size is {bufsize}, but need at least {self.bytes}'
                     raise OSError(msg)
                 sock.bind((server_ip, port))
 
@@ -988,7 +753,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 raise ex
 
             client_done.set()
-            if not server_done.wait(timeout):
+            if not server_done.wait_for_device(timeout):
                 self._close_sockets(sock, bytes_=bytes_)
 
             return sock
@@ -1046,7 +811,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     msg = f'server buffer size is {bytes_actual}, but requested {self.bytes}'
                     raise OSError(msg)
 
-            if not client_done.wait(timeout):
+            if not client_done.wait_for_device(timeout):
                 # Suppress the server exception if the client is already
                 # raising one
                 if ex is not None:
@@ -1065,8 +830,8 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         def open_():
             global _tcp_port_offset, listen_sock
 
-            if self.settings.port != 0:
-                port = self.settings.port + _tcp_port_offset
+            if self.port != 0:
+                port = self.port + _tcp_port_offset
             else:
                 port = 0
 
@@ -1080,7 +845,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 self._close_sockets(listen_sock, bytes_=0)
                 raise
             finally:
-                if self.settings.port != 0:
+                if self.port != 0:
                     _tcp_port_offset = (_tcp_port_offset + 1) % 5000
 
             ret['listener'] = listen_sock
@@ -1089,7 +854,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         try:
             t0 = perf_counter()
 
-            if self.settings.port == 0:
+            if self.port == 0:
                 ret = open_()
             else:
                 # Allow chances to try other ports
@@ -1107,10 +872,10 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         if duration is count is end_event is None:
             raise ValueError('must pass at least one of duration, count, and end_event to specify end condition')
 
-        if self.settings.tcp_nodelay and buffer_size < self.mss():
+        if self.tcp_nodelay and buffer_size < self.mss():
             raise ValueError(f'with tcp_nodelay enabled, set buffer_size at least as large as the MSS ({self.mss()})')
 
-        if self.settings.server == self.settings.receiver:
+        if self.server == self.receiver:
             send_sock, recv_sock = client_sock, server_sock
         else:
             send_sock, recv_sock = server_sock, client_sock
@@ -1124,10 +889,10 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             count = 1
 
         # Pull some parameters and thread sync objects into the namespace
-        timeout = self.settings.timeout
+        timeout = self.timeout
         bytes_ = buffer_size
-        sync = self.settings.sync_each
-        delay = self.settings.delay
+        sync = self.sync_each
+        delay = self.delay
         rx_ready = Event()
         tx_ready = Event()
 
@@ -1326,8 +1091,8 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         if background:
             thread = Thread(target=background_thread)
             thread.start()
-            tx_ready.wait(timeout=self.settings.timeout)
-            rx_ready.wait(timeout=self.settings.timeout)
+            tx_ready.wait_for_device(timeout=self.timeout)
+            rx_ready.wait_for_device(timeout=self.timeout)
             self._console.debug(f'first buffer sent after {perf_counter() - t_start:0.3f}s')
         else:
             ret = lb.concurrently(sender, receiver, traceback_delay=True)
@@ -1405,7 +1170,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         return self.mtu() - 40
 
     def mtu(self):
-        iface = list_network_interfaces('physical_address')[self.settings.receiver]['interface']
+        iface = list_network_interfaces('physical_address')[self.receiver]['interface']
         return psutil.net_if_stats()[iface].mtu
 
     def wait_for_interfaces(self, timeout):
@@ -1442,85 +1207,93 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 #             print(net.is_running())
 #            lb.console.info(f'test {j}')
 #            ret = mss_mults.append(net.acquire(1460*10,count=1000))
-#            net.settings.bytes = 4096*4
+#            net.bytes = 4096*4
 #            binary_mults.append(net.acquire(1000))
 
 #            traffic = net.acquire(50)
 #            pylab.figure()
 #            traffic.hist(bins=51)
 #            traffic[['duration','delay']].plot(marker='.', lw=0)
-#            traffic['rate'] = net.settings.bytes/traffic.duration*8/1e6
+#            traffic['rate'] = net.bytes/traffic.duration*8/1e6
 #            print(f'{traffic.rate.median()} +/- {2*traffic.rate.std()} Mbps')
 #            print('medians\n',traffic.median(axis=0))
 
-# # IPerf2 example
-# if __name__ == '__main__':
-#    lb.show_messages('debug')
-#    ips = IPerf2(server=True, port=5050, time=10, interval=0.25, udp=True)
-#    ipc = IPerf2('127.0.0.1', port=5050, time=10, interval=0.25, udp=True, bit_rate='1M')
-#    ips.open()
-#    ipc.open()
-#
-#    for i in range(1):
-#        ips.background()
-#        lb.sleep(1)
-#        ipc.background()
-#
-#        lb.sleep(5)
-#
-#        ipc.kill()
-#        ips.kill()
-#
-#        ips_result = ips.fetch()
-#        ipc_result = ipc.fetch()
-#
-#    print(ips_result)
-#    print(ipc_result)
-
-# IPerf2BoundPair example
+# IPerf2 example
 if __name__ == '__main__':
-    # 'debug' shows a lot of info to the screen.
-    # set to 'info' for less, or 'warning' for even less
-    lb.show_messages('debug')
+   lb.show_messages('debug')
+#    ips = IPerf2(server=True, port=5050, interval=0.25, udp=True)
+   ipc = IPerf2('127.0.0.1', port=5054, time=10, interval=0.25)
+   ipc.open()
 
-    # When both network interfaces run on the same computer,
-    # it is convenient to use IPerf2BoundPair, which runs both
-    # an iperf server and an iperf client. each socket is bound
-    # to these interfaces to ensure that traffic is routed through
-    # the devices under test.
-    iperf = IPerf2BoundPair(
-        server='127.0.0.1',
-        client='127.0.0.1',
+   ipc.acquire(block=False)
 
-        ### the parameters below set the corresponding iperf command line flags
-        # tcp_window_size=8196# -w (default unknown?)
-        # buffer_size='16k'   # -l (default unknown? possible strange results for UDP)
-        interval=1,         # -i (default is no output until the end of process)
-        # bidirectional=True, # -d (default is False)
-        udp=True,           # -u (default is False (TCP))
-        # bit_rate='1M'       # -b (default is no bit rate throttling)
-        time=10,            # -t (how long to run the iperf client; iperf's default is 10s)
-        # report_style='C',   # -y (we set this from python to 'C' by default for CSV table; set to None for text output)
-        # number=-1,        # -n (by default, iperf uses -t to determine client test length; set -1 to run until killed)
-        # nodelay=True,       # -N (default is False; TCP only)
-        # mss=1460,           # -M (default 1460? - TCP only, of course)
-    )
+   time.sleep(5)
+   ipc.kill()
+   ipc_result = ipc.read_stdout()
 
-    # Approach 1: blocking (foreground).
-    # Calling foreground() doesn't return until the test is done.
-    # data = iperf.foreground(time=3)
+#    with ipc:
+#         for i in range(1):
+#             # ips.start()
+#             lb.sleep(1)
+#             ipc.start()
 
-    # Approach 2: non-blocking (background) call
-    # background() returns immediately while iperf runs in the background.
-    # this allows other tasks here in the main thread
-    iperf.background(time=3)
-    time.sleep(4) # replace this with other code for automating other equipment
-    iperf.kill()
-    data = iperf.fetch()
+#             lb.sleep(5)
 
-    # data is returned as a pandas dataframe.
-    # you can just dump it directly to a csv
-    data.to_csv(r'c:\users\dkuester\output.csv')
+#             ipc.kill()
+#             # ips.kill()
 
-    # or make a plot
-    data.plot(x='timestamp', y=['server_bits_per_second', 'client_bits_per_second'])
+#             # ips_result = ips.read_stdout()
+#             ipc_result = ipc.read_stdout()
+
+# #    print(ips_result)
+   print(ipc_result)
+
+# # IPerf2BoundPair example
+# if __name__ == '__main__':
+#     # 'debug' shows a lot of info to the screen.
+#     # set to 'info' for less, or 'warning' for even less
+#     lb.show_messages('debug')
+
+#     # When both network interfaces run on the same computer,
+#     # it is convenient to use IPerf2BoundPair, which runs both
+#     # an iperf server and an iperf client. each socket is bound
+#     # to these interfaces to ensure that traffic is routed through
+#     # the devices under test.
+#     iperf = IPerf2BoundPair(
+#         server='127.0.0.1',
+#         client='127.0.0.1',
+
+#         ### the parameters below set the corresponding iperf command line flags
+#         # tcp_window_size=8196# -w (default unknown?)
+#         # buffer_size='16k'   # -l (default unknown? possible strange results for UDP)
+#         interval=1,         # -i (default is no output until the end of process)
+#         # bidirectional=True, # -d (default is False)
+#         udp=True,           # -u (default is False (TCP))
+#         # bit_rate='1M'       # -b (default is no bit rate throttling)
+#         time=10,            # -t (how long to run the iperf client; iperf's default is 10s)
+#         # report_style='C',   # -y (we set this from python to 'C' by default for CSV table; set to None for text output)
+#         # number=-1,        # -n (by default, iperf uses -t to determine client test length; set -1 to run until killed)
+#         # nodelay=True,       # -N (default is False; TCP only)
+#         # mss=1460,           # -M (default 1460? - TCP only, of course)
+#     )
+
+#     # Approach 1: blocking (pipe).
+#     # Calling pipe() doesn't return until the test is done.
+#     # data = iperf.pipe(time=3)
+
+#     # Approach 2: non-blocking (background) call
+#     # background() returns immediately while iperf runs in the background.
+#     # this allows other tasks here in the main thread
+
+#     with iperf:
+#         iperf.start(time=3)
+#         time.sleep(4) # replace this with other code for automating other equipment
+#         iperf.kill()
+#         data = iperf.read_stdout()
+
+#         # data is returned as a pandas dataframe.
+#         # you can just dump it directly to a csv
+#         data.to_csv(r'c:\users\dkuester\output.csv')
+
+#         # or make a plot
+#         data.plot(x='timestamp', y=['server_bits_per_second', 'client_bits_per_second'])

@@ -35,8 +35,8 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
             raise Exception('Minicircuits attenuator support currently requires pythonnet and windows')
         # The USB_Digital_Switch namespace is given in the minicircuits docs
         self.backend = self.dll.USB_Digital_Switch()
-        if self.backend.Connect(self.settings.resource)[0] != 1:
-            raise Exception('Cannot connect to USB switch resource {}'.format(self.settings.resource))
+        if self.backend.Connect(self.resource)[0] != 1:
+            raise Exception('Cannot connect to USB switch resource {}'.format(self.resource))
 
     def close(self):
         ''' Release the attenuator hardware resource via the driver DLL.
@@ -46,7 +46,7 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
         except:
             pass
 
-    @lb.Int(min=1)
+    @lb.property.int(min=1)
     def port(self):
         ret = self.backend.Get_SP4T_State()
         self._console.debug('got switch state {}'.format(repr(ret)))
@@ -62,7 +62,7 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
 #    # Mini-Circuits USB-SP4T-63
 #    _PID = 0x22
 #    
-#    @lb.Int(min=1, max=4)
+#    @lb.property.int(min=1, max=4)
 #    def port(self, port):
 #        """ the RF port connected to COM port indexed from 1 """
 #        if port not in (1, 2, 3, 4):

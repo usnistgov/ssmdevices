@@ -21,30 +21,30 @@ class Netsh(lb.ShellBackend):
     timeout: 5
 
     # commandline arguments for netsh, in order (each must define key=)
-    iface_type: lb.Unicode(
+    iface_type = lb.value.str(
         default='wlan',
         key=None,
         only=('wlan',), # TODO: what else is valid here?
         help="interface type"
     )
 
-    command: lb.Unicode(
+    command = lb.value.str(
         default='show',
         settable=False,
         key=None,
     )
 
-    query: lb.Unicode(
+    query = lb.value.str(
         only=('interfaces', 'networks'),
         key=None,
     )
 
-    only_bssid: lb.Bool(
+    only_bssid = lb.value.bool(
         default=False,
         key="mode=bssid",
     )
 
-    interface: lb.Unicode(
+    interface = lb.value.str(
         key=None,
         help='name of the interface to query (for query="interfaces" only)'
     )
@@ -107,30 +107,30 @@ class Netsh(lb.ShellBackend):
 
 
 class WLANClient(lb.Device):
-    resource: lb.Unicode(
+    resource = lb.value.str(
         allow_none=False,
         help='interface name or MAC address (nn:nn:nn:nn:nn)'
     )
 
-    ssid: lb.Unicode(
+    ssid = lb.value.str(
         allow_none=True,
         help='the AP for connection with the client'
     )
 
-    timeout: lb.Float(
+    timeout = lb.value.float(
         default=10, min=0,
         help='time to spend on attempted AP connection before raising ConnectionError'
     )
 
     def open(self):
         # Use netsh to identify the device guid from the network interface name
-        info = network_interface_info(self.settings.resource)
+        info = network_interface_info(self.resource)
 
         available = self.list_available_clients('physical_address')
         mac = info['physical_address']
 
         if mac not in available:
-            txt = f"interface with MAC address '{self.settings.resource}' is not one of the "\
+            txt = f"interface with MAC address '{self.resource}' is not one of the "\
                   f"WLAN interfaces {tuple(available)}"
             print('raising connection error')
             raise ConnectionError(txt)
@@ -203,30 +203,30 @@ class WLANClient(lb.Device):
 
         # Do the connect
         profile = pywifi.Profile()
-        profile.ssid = self.settings.ssid
+        profile.ssid = self.ssid
         self.backend.connect(profile)
 
         t0 = time.perf_counter()
-        while time.perf_counter() - t0 < self.settings.timeout:
+        while time.perf_counter() - t0 < self.timeout:
             if self.isup:
                 break
             lb.sleep(.02)
         else:
-            raise TimeoutError(f'in connecting {repr(self)} to SSID {repr(self.settings.ssid)}')
+            raise TimeoutError(f'in connecting {repr(self)} to SSID {repr(self.ssid)}')
 
         t1 = time.perf_counter()
-        while time.perf_counter() - t1 < self.settings.timeout:
+        while time.perf_counter() - t1 < self.timeout:
             s = self.state
             if s == 'connected':
                 break
             lb.sleep(.05)
         else:
-            self._console.debug(f'failed to connect to AP with SSID {repr(self.settings.ssid)}')
+            self._console.debug(f'failed to connect to AP with SSID {repr(self.ssid)}')
             raise TimeoutError('tried to connect but only achieved the {} state ' \
                                .format(repr(s)))
 
         t2 = time.perf_counter()
-        while time.perf_counter() - t2 < self.settings.timeout:
+        while time.perf_counter() - t2 < self.timeout:
             if self.channel is not None and self.signal is not None:
                 break
             lb.sleep(.02)
@@ -234,7 +234,7 @@ class WLANClient(lb.Device):
             raise TimeoutError('tried to connect, but got no AP scan information')
 
         time_elapsed = time.perf_counter() - t0
-        self._console.debug('connected WLAN interface to {}'.format(self.settings.ssid))
+        self._console.debug('connected WLAN interface to {}'.format(self.ssid))
 
         self.backend.scan()
 
@@ -255,7 +255,7 @@ class WLANClient(lb.Device):
 
         # First, poll the faster state.isup
         t0 = time.perf_counter()
-        while time.perf_counter() - t0 < self.settings.timeout:
+        while time.perf_counter() - t0 < self.timeout:
             if not self.isup:
                 break
             lb.sleep(.02)
@@ -263,7 +263,7 @@ class WLANClient(lb.Device):
             raise TimeoutError('tried to disconnect but interface did not go down')
 
         # Then confirm with 
-        while time.perf_counter() - t0 < self.settings.timeout:
+        while time.perf_counter() - t0 < self.timeout:
             s = self.state
             if s == 'disconnected':
                 break
@@ -282,29 +282,29 @@ class WLANClient(lb.Device):
         self.interface_disconnect()
         return self.interface_connect()
 
-    @lb.Unicode(settable=False, key='interface')
+    @lb.property.str(settable=False, key='interface')
     def state(self):
         ''' `True` if psutil reports that the interface is up '''
         return self._status_lookup[self.backend.status()]
 
-    @lb.Bool(settable=False)
+    @lb.property.bool(settable=False)
     def isup(self):
         ''' `True` if psutil reports that the interface is up '''
         stats = psutil.net_if_stats()
-        iface_name = network_interface_info(self.settings.resource)['interface']
+        iface_name = network_interface_info(self.resource)['interface']
         return stats[iface_name].isup
 
-    @lb.Int(settable=False, allow_none=True, key='ssid')
+    @lb.property.int(settable=False, allow_none=True, key='ssid')
     def transmit_rate_mbps(self):
         stats = psutil.net_if_stats()
-        iface_name = network_interface_info(self.settings.resource)['interface']
+        iface_name = network_interface_info(self.resource)['interface']
         return stats[iface_name].speed
 
-    @lb.Int(allow_none=True, max=100, settable=False, key='ssid')
+    @lb.property.int(allow_none=True, max=100, settable=False, key='ssid')
     def signal(self):
         def attempt():
             for result in self.backend.scan_results():
-                if result.ssid == self.settings.ssid:
+                if result.ssid == self.ssid:
                     return float(result.signal)
             else:
                 lb.sleep(.2)
@@ -318,17 +318,17 @@ class WLANClient(lb.Device):
         else:
             raise TimeoutError('timeout while scanning for ssid signal strength')
 
-        return lb.until_timeout(TimeoutError, 2 * self.settings.timeout)(attempt)()
+        return lb.until_timeout(TimeoutError, 2 * self.timeout)(attempt)()
 
-    @lb.Unicode(settable=False, key='interface')
+    @lb.property.str(settable=False, key='interface')
     def description(self):
         return self.backend.name()
 
-    @lb.Int(allow_none=True, settable=False, key='ssid')
+    @lb.property.int(allow_none=True, settable=False, key='ssid')
     def channel(self):
         def attempt():
             for result in self.backend.scan_results():
-                if result.ssid == self.settings.ssid:
+                if result.ssid == self.ssid:
                     return float(result.freq) * 1000
             else:
                 lb.sleep(0.2)
@@ -342,10 +342,10 @@ class WLANClient(lb.Device):
         else:
             raise TimeoutError('timeout while scanning for ssid signal strength')
 
-        return lb.until_timeout(TimeoutError, 2 * self.settings.timeout)(attempt)()
+        return lb.until_timeout(TimeoutError, 2 * self.timeout)(attempt)()
 
     def refresh(self):
-        for attr in self.__traits__:
+        for attr in self._traits:
             getattr(self, attr)
 
 
@@ -369,15 +369,15 @@ if __name__ == '__main__':
 
     # with WLANStatus(resource='WLAN_Client_DUT', ssid='EnGenius1') as wlan:
     #     wlan.interface_reconnect()
-    #     for attr in wlan.__traits__:
+    #     for attr in wlan._traits:
     #         print(attr, ':', getattr(wlan.state, attr))
 
 #        while True:
-#            print('isup: ', wlan.state.isup)
-#            state = wlan.state.state
+#            print('isup: ', wlan.isup)
+#            state = wlan.state
 #            if state == 'connected':
 #                try:
-#                    print('RSSI "{}%"'.format(wlan.state.signal))
+#                    print('RSSI "{}%"'.format(wlan.signal))
 #                except:
 #                    pass
 #            else:

@@ -7,8 +7,8 @@ import ssmdevices.lib
 
 class AndroidDebugBridge(lb.ShellBackend):
 
-    binary_path: lb.Unicode(ssmdevices.lib.path('adb.exe'))
-    timeout: lb.Float(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
+    binary_path = lb.value.str(ssmdevices.lib.path('adb.exe'))
+    timeout = lb.value.float(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
 
     def devices(self):
         ''' This function checks ADB to see if any devices are connected, if
@@ -18,15 +18,15 @@ class AndroidDebugBridge(lb.ShellBackend):
             device id and device type. i.e. [['f0593056', 'device']] represents
             one connected device with id f0593056.
         '''
-        with self.no_state_arguments:
-            devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
-            if(len(devices) > 0):
-                # At least one device found, lets return it in a nice way
-                for index in range(len(devices)):
-                    devices[index] = devices[index].decode('utf-8').split('\t')
-                return devices
-            else:
-                raise Exception('No devices found. Is the UE properly connected?')
+        # with self.no_state_arguments:
+        devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
+        if(len(devices) > 0):
+            # At least one device found, lets return it in a nice way
+            for index in range(len(devices)):
+                devices[index] = devices[index].decode('utf-8').split('\t')
+            return devices
+        else:
+            raise Exception('No devices found. Is the UE properly connected?')
 
 
     def is_device_connected(self, serialNum):
@@ -46,13 +46,13 @@ class AndroidDebugBridge(lb.ShellBackend):
         ''' This function takes in a UE's Id, (from self.devices), and reboots
             the specified device.
         '''
-        with self.no_state_arguments:
-            if self.is_device_connected(deviceId):
-                # Device is connected and ready to reboot, lets do
-                self.foreground('-s', str(deviceId), 'reboot')
-            else:
-                # Devices isn't connected, lets raise an error saying so
-                raise Exception('The specified device is not connected to the ADB server')
+        # with self.no_state_arguments:
+        if self.is_device_connected(deviceId):
+            # Device is connected and ready to reboot, lets do
+            self.foreground('-s', str(deviceId), 'reboot')
+        else:
+            # Devices isn't connected, lets raise an error saying so
+            raise Exception('The specified device is not connected to the ADB server')
 
 
     def check_airplane_mode(self, deviceId):

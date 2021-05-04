@@ -7,7 +7,7 @@ class RohdeSchwarzZMBSeries(lb.VISADevice):
     
         Author: Audrey Puls
     '''
-    initiate_continuous = lb.Bool(key='INITiate1:CONTinuous:ALL',
+    initiate_continuous = lb.property.bool(key='INITiate1:CONTinuous:ALL',
                                   remap={True: 'ON', False: 'OFF'},
                                   help='')
 
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     
             na.trigger()
             time.sleep(20) # Pauses python to let the VNA finish a full sweep
-            na.save_trace_to_csv(f'VA_{atten.settings.resource}_{name}.csv')
+            na.save_trace_to_csv(f'VA_{atten.resource}_{name}.csv')
             
         # All done!
         print(r'''ATTENTION USER: This program has completed. Your data is stored

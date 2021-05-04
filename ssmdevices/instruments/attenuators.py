@@ -13,20 +13,20 @@ else:
 
 
 class MiniCircuitsRCDAT(SwitchAttenuatorBase):
-    frequency: lb.Float(
+    frequency = lb.value.float(
         default=None, allow_none=True,
         min=10e6, max=6e9,
         help='frequency for calibration data, or None for no calibration',
         label='Hz'
     )
 
-    output_power_offset: lb.Float(
+    output_power_offset = lb.value.float(
         default=None, allow_none=True,
         help='output power level calibrated at 0 dB attenuation',
         label='dBm'
     )
 
-    calibration_path: lb.Unicode(
+    calibration_path = lb.value.str(
         default=None, allow_none=True,
         help='path to the calibration table, which is a csv with frequency '\
              '(columns) and attenuation setting (row), or None to search ssmdevices'
@@ -44,39 +44,39 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
                                     index_col='Frequency(Hz)',
                                     dtype=float)
             self._cal.columns = self._cal.columns.astype(float)
-            if self.settings['frequency'].max in self._cal.index:
-                self._cal.drop(self.settings['frequency'].max, axis=0, inplace=True)
+            if self['frequency'].max in self._cal.index:
+                self._cal.drop(self['frequency'].max, axis=0, inplace=True)
             #    self._cal_offset.values[:] = self._cal_offset.values-self._cal_offset.columns.values[np.newaxis,:]
 
             self._console.debug(f'calibration data read from {path}')
 
-        if self.settings.calibration_path is None:
+        if self.calibration_path is None:
             cal_path = Path(ssmdevices.lib.path('cal'))
-            cal_filenames = f"MiniCircuitsRCDAT_{self.settings.resource}.csv.xz", \
+            cal_filenames = f"MiniCircuitsRCDAT_{self.resource}.csv.xz", \
                             f"MiniCircuitsRCDAT_default.csv.xz"
                             
             for f in cal_filenames:
                 if (cal_path / f).exists():
                     read(str(cal_path/f))
-                    self.settings.calibration_path = str(cal_path/f)
+                    self.calibration_path = str(cal_path/f)
                     break
             else:
                 self._cal_data = None
                 self._console.debug(f'found no calibration data in {str(cal_path)}')
         else:
-            read(self.settings.calibration_path)
+            read(self.calibration_path)
 
-        lb.observe(self.settings, self._update_frequency,
+        lb.observe(self, self._update_frequency,
                    name='frequency', type_='set')
         lb.observe(self, self._console_debug, type_='set',
                    name=('attenuation', 'output_power'))
 
         # trigger cal update
-        self.settings.frequency = self.settings.frequency 
+        self.frequency = self.frequency 
 
-    # the requested attenuation is the only state that directly interacts
+    # the requested attenuation is the only property that directly interacts
     # with the device
-    attenuation_setting = lb.Float(
+    attenuation_setting = lb.property.float(
         min=0, max=115, step=0.25, label='dB',
         help='uncalibrated attenuation'
     )
@@ -139,7 +139,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
             return
 
         name = msg['name']
-        if name == 'attenuation' and self.settings.frequency is not None:
+        if name == 'attenuation' and self.frequency is not None:
             cal = msg['new']
             uncal = self['attenuation'].find_uncal(cal, self)
             txt = f'calibrated attenuation set to {cal:0.2f} dB'
@@ -156,19 +156,19 @@ class MiniCircuitsRC4DAT(SwitchAttenuatorBase):
     CMD_GET_ATTENUATION = 18
     CMD_SET_ATTENUATION = 19
 
-    attenuation1 = lb.Float(min=0, max=115, step=0.25, key=1)
-    attenuation2 = lb.Float(min=0, max=115, step=0.25, key=2)
-    attenuation3 = lb.Float(min=0, max=115, step=0.25, key=3)
-    attenuation4 = lb.Float(min=0, max=115, step=0.25, key=4)
+    attenuation1 = lb.property.float(min=0, max=115, step=0.25, key=1)
+    attenuation2 = lb.property.float(min=0, max=115, step=0.25, key=2)
+    attenuation3 = lb.property.float(min=0, max=115, step=0.25, key=3)
+    attenuation4 = lb.property.float(min=0, max=115, step=0.25, key=4)
 
-    def __get_by_key__(self, name, key):
+    def get_key(self, key, trait_name=None):
         d = self._cmd(self.CMD_GET_ATTENUATION)
         offs = key * 2 - 1
         full_part = d[offs]
         frac_part = float(d[offs + 1]) / 4.0
         return full_part + frac_part
 
-    def __set_by_key__(self, name, key, value):
+    def set_key(self, key, value, trait_name=None):
         value1 = int(value)
         value2 = int((value - value1) * 4.0)
         self._cmd(self.CMD_SET_ATTENUATION, value1, value2, key)

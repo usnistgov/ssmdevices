@@ -4,8 +4,9 @@ Drivers for USB peripherals
 :author: Dan Kuester <daniel.kuester@nist.gov>, Andre Rosete <andre.rosete@nist.gov>
 '''
 import labbench as lb
+import collections
 
-class AcronameUSBHub2x4(lb.Device):
+class AcronameUSBHub2x4(lb.Device, resource=None):
     ''' This class wraps brainstem drivers to simplify control over USB hubs
         via the brainstem package.
         
@@ -18,17 +19,16 @@ class AcronameUSBHub2x4(lb.Device):
         
     '''
     model = 17
-    resource = None
 
-    data0_enabled  = lb.Bool()
-    data1_enabled  = lb.Bool()
-    data2_enabled  = lb.Bool()
-    data3_enabled  = lb.Bool()
+    data0_enabled = lb.property.bool()
+    data1_enabled = lb.property.bool()
+    data2_enabled = lb.property.bool()
+    data3_enabled = lb.property.bool()
 
-    power0_enabled = lb.Bool()
-    power1_enabled = lb.Bool()
-    power2_enabled = lb.Bool()
-    power3_enabled = lb.Bool()
+    power0_enabled = lb.property.bool()
+    power1_enabled = lb.property.bool()
+    power2_enabled = lb.property.bool()
+    power3_enabled = lb.property.bool()
     
     def __import__ (self):
         global brainstem
@@ -38,16 +38,16 @@ class AcronameUSBHub2x4(lb.Device):
         specs = self._bs.discover.findAllModules(brainstem.link.Spec.USB)
 
         specs = [s for s in specs if s.model == self.model]        
-        if self.settings.resource is not None:
-            specs = [s for s in specs if s.serial_number == self.settings.resource]
+        if self.resource is not None:
+            specs = [s for s in specs if s.serial_number == self.resource]
     
         if len(specs)>1:
-            if self.settings.resource is None:
+            if self.resource is None:
                 raise Exception("More than one connected USB device matches model " + str(self.model) + " - provide serial number?")
             else:
-                raise Exception("More than one connected USB device match model " + str(self.model) + " and serial " + str(self.serial))
+                raise Exception("More than one connected USB device match model " + str(self.model) + " and serial " + str(self.resource))
         elif len(specs)==0:
-            raise Exception("No USB devices connected that match model " + str(self.model) + " and serial " + str(serial))
+            raise Exception("No USB devices connected that match model " + str(self.model) + " and serial " + str(self.resource))
             
         self.backend = brainstem.stem.USBHub2x4()
         self.backend.connectFromSpec(specs[0])
@@ -57,13 +57,13 @@ class AcronameUSBHub2x4(lb.Device):
         '''
         self.backend.disconnect()
 
-    def __set_by_key__ (self, key, name, value):
+    def set_key(self, key, value, name=None):
         ''' Apply an instrument setting to the instrument. The value ``value''
             will be applied to the trait attriute ``attr'' in type(self).
         '''
         cls=type(self).__name__
-        raise NotImplementedError(f'state trait "{name}" is defined but not implemented! implement '\
-                                  f'{cls}.__get_by_key__, or a getter for {cls}.{name}')
+        raise NotImplementedError(f'property trait "{name}" is defined but not implemented! implement '\
+                                  f'{cls}.get_key, or a getter for {cls}.{name}')
         
     def enable (self, data = True, power = True, channel= "all"):
         ''' Enable or disable of USB port features at one or all hub ports.

@@ -3,8 +3,8 @@ __all__ = ['RigolOscilloscope']
 import labbench as lb
 
 class RigolOscilloscope(lb.VISADevice):
-    time_offset        = lb.Float (key=':TIM:OFFS', label='s')
-    time_scale         = lb.Float (key=':TIM:SCAL', label='s')
+    time_offset = lb.property.float(key=':TIM:OFFS', label='s')
+    time_scale = lb.property.float(key=':TIM:SCAL', label='s')
     
     def open (self, horizontal=False):
         self.write(':WAVeform:FORMat ASCii')
