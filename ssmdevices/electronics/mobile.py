@@ -5,10 +5,7 @@ import subprocess as sp
 import labbench as lb
 import ssmdevices.lib
 
-class AndroidDebugBridge(lb.ShellBackend):
-
-    binary_path = lb.value.str(ssmdevices.lib.path('adb.exe'))
-    timeout = lb.value.float(6, min=0, help='wait time for traffic results before throwing a timeout exception (s)')
+class AndroidDebugBridge(lb.ShellBackend, binary_path=ssmdevices.lib.path('adb.exe'), timeout=6):
 
     def devices(self):
         ''' This function checks ADB to see if any devices are connected, if
@@ -19,7 +16,7 @@ class AndroidDebugBridge(lb.ShellBackend):
             one connected device with id f0593056.
         '''
         # with self.no_state_arguments:
-        devices = self.foreground('devices').strip().rstrip().splitlines()[1:]
+        devices = self.run('devices', pipe=True, check_stderr=True, check_return=True).strip().rstrip().splitlines()[1:]
         if(len(devices) > 0):
             # At least one device found, lets return it in a nice way
             for index in range(len(devices)):
@@ -49,7 +46,7 @@ class AndroidDebugBridge(lb.ShellBackend):
         # with self.no_state_arguments:
         if self.is_device_connected(deviceId):
             # Device is connected and ready to reboot, lets do
-            self.foreground('-s', str(deviceId), 'reboot')
+            self.run('-s', str(deviceId), 'reboot', check_return=True)
         else:
             # Devices isn't connected, lets raise an error saying so
             raise Exception('The specified device is not connected to the ADB server')
@@ -62,7 +59,7 @@ class AndroidDebugBridge(lb.ShellBackend):
             raises exception if it cannot find the device
         '''
         if self.is_device_connected(deviceId):
-            res = self.foreground('-s', str(deviceId), 'shell', 'settings', 'get', 'global',    'airplane_mode_on').strip().rstrip()
+            res = self.run('-s', str(deviceId), 'shell', 'settings', 'get', 'global',    'airplane_mode_on', pipe=True).strip().rstrip()
             resInt = res.strip().rstrip().decode('utf-8')
             return resInt
         else:
@@ -80,8 +77,14 @@ class AndroidDebugBridge(lb.ShellBackend):
                 #invalid status argument
                 raise Exception('The Airplane Mode feature can only be set to a value of 0 or 1')
             else:
-                res1 = self.foreground('-s', str(deviceId), 'shell', 'settings', 'put', 'global', 'airplane_mode_on', str(status))
-                res2 = self.foreground('-s', str(deviceId), 'shell', 'am', 'broadcast', '-a', 'android.intent.action.AIRPLANE_MODE')
+                res1 = self.foreground(
+                    '-s', str(deviceId), 'shell', 'settings', 'put', 'global', 'airplane_mode_on', str(status),
+                    pipe=True, check_return=True
+                )
+                res2 = self.foreground(
+                    '-s', str(deviceId), 'shell', 'am', 'broadcast', '-a', 'android.intent.action.AIRPLANE_MODE',
+                    pipe=True, check_return=True
+                )
         else:
             raise Exception('The specified device is not connected to the ADB server')
 
@@ -91,7 +94,10 @@ class AndroidDebugBridge(lb.ShellBackend):
             is specified by deviceId.
         '''
         if self.is_device_connected(deviceId):
-            res = self.foreground('-s', str(deviceId), 'push', local_filepath, device_filepath)
+            res = self.run(
+                '-s', str(deviceId), 'push', local_filepath, device_filepath,
+                pipe=True, check_return=True
+            )
             res = res.strip().rstrip().splitlines()
             for val in res:
                 print(val.decode('utf-8'))
@@ -100,6 +106,7 @@ class AndroidDebugBridge(lb.ShellBackend):
 
 
 if __name__ == '__main__':
+    
     with AndroidDebugBridge() as adb:
         devices = adb.devices() #Returns a list of tuples containing device Ids
 #        adb.reboot(devices[0][0]) # Reboots the device

@@ -12,42 +12,16 @@ if __name__ == '__main__':
 else:
     from ._networking import network_interface_info
 
-class Netsh(lb.ShellBackend):
-    ''' Parse calls to netsh to get information about available WLAN access
-        points.
+class NetshWLAN(lb.ShellBackend, binary_path=r'C:\Windows\System32\netsh.exe', timeout=5):
+    ''' Parse calls to netsh to get information about network interfaces.
     '''
-
-    binary_path: r'C:\Windows\System32\netsh.exe'
-    timeout: 5
-
-    # commandline arguments for netsh, in order (each must define key=)
-    iface_type = lb.value.str(
-        default='wlan',
-        key=None,
-        only=('wlan',), # TODO: what else is valid here?
-        help="interface type"
+    FLAGS = dict(
+        interface='interface=',
+        only_bssid='mode=bssid',
     )
 
-    command = lb.value.str(
-        default='show',
-        settable=False,
-        key=None,
-    )
-
-    query = lb.value.str(
-        only=('interfaces', 'networks'),
-        key=None,
-    )
-
-    only_bssid = lb.value.bool(
-        default=False,
-        key="mode=bssid",
-    )
-
-    interface = lb.value.str(
-        key=None,
-        help='name of the interface to query (for query="interfaces" only)'
-    )
+    only_bssid = lb.value.bool(False, help='gather only BSSID information')
+    interface = lb.value.str(None, help='name of the interface to query')
 
     def wait(self):
         try:
@@ -72,7 +46,7 @@ class Netsh(lb.ShellBackend):
             return d
 
         # Execute the binary
-        txt = self.foreground(query='networks', only_bssid=True, interface=interface).decode()
+        txt = self.run('wlan', 'show', 'networks', self.FLAGS, check_return=True).decode()
 
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r'^\s*(.*?)\s*:\s*(.*?)\s*$', txt, flags=re.MULTILINE)
@@ -98,7 +72,7 @@ class Netsh(lb.ShellBackend):
 
         # Execute the binary
 
-        txt = self.foreground(query='interfaces').decode()
+        txt = self.run('wlan', 'show', 'interfaces', self.FLAGS, check_return=True).decode()
 
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r'^\s*(\S+.*?)\s+:\s+(\S+.*?)\s*$', txt, flags=re.MULTILINE)
@@ -107,20 +81,9 @@ class Netsh(lb.ShellBackend):
 
 
 class WLANClient(lb.Device):
-    resource = lb.value.str(
-        allow_none=False,
-        help='interface name or MAC address (nn:nn:nn:nn:nn)'
-    )
-
-    ssid = lb.value.str(
-        allow_none=True,
-        help='the AP for connection with the client'
-    )
-
-    timeout = lb.value.float(
-        default=10, min=0,
-        help='time to spend on attempted AP connection before raising ConnectionError'
-    )
+    resource = lb.value.str(help='interface name or MAC address (nn:nn:nn:nn:nn)')
+    ssid = lb.value.str(None, help='the AP for connection with the client')
+    timeout = lb.value.float(10, min=0, help='attempt AP connection for this long (s) before raising ConnectionError')
 
     def open(self):
         # Use netsh to identify the device guid from the network interface name
@@ -156,7 +119,7 @@ class WLANClient(lb.Device):
         if key not in ('interface', 'guid', 'physical_address'):
             raise ValueError(f"argument 'key' must be one of ('interface', 'guid', 'physical_address'), not {key}")
 
-        netsh = Netsh()
+        netsh = NetshWLAN()
         netsh._console.logger.disabled = True
         with netsh:
             # Check that this interface exists
@@ -186,7 +149,9 @@ class WLANClient(lb.Device):
         logger = logging.getLogger('pywifi')
         logger.propagate = False
         logger.disabled = True
-        logging.root.removeHandler(logging.root.handlers[0])
+
+        if len(logging.root.handlers)>0:
+            logging.root.removeHandler(logging.root.handlers[0])
 
         # restore the original messaging format and level
         lb.show_messages(level)
@@ -340,7 +305,7 @@ class WLANClient(lb.Device):
                 break
             lb.sleep(.02)
         else:
-            raise TimeoutError('timeout while scanning for ssid signal strength')
+            raise TimeoutError('ssid signal strength scan timeout')
 
         return lb.until_timeout(TimeoutError, 2 * self.timeout)(attempt)()
 
@@ -350,8 +315,8 @@ class WLANClient(lb.Device):
 
 
 if __name__ == '__main__':
-    client = WLANStatus(
-        resource='e4:be:ed:05:d2:3c', # name of the SSID that the client needs to connect to
+    client = WLANClient(
+        resource='f8:ac:65:c8:72:bf', # name of the SSID that the client needs to connect to
         ssid='EnGenius1', # SSID name to connect with
         timeout=5 # (s) how long to continue attempts to connect the client and AP
     )
