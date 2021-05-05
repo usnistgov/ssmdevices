@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__all__ = ['Netsh', 'WLANClient']
+__all__ = ['WLANInfo', 'WLANClient']
 
 import labbench as lb
 import re, time
@@ -12,8 +12,8 @@ if __name__ == '__main__':
 else:
     from ._networking import network_interface_info
 
-class NetshWLAN(lb.ShellBackend, binary_path=r'C:\Windows\System32\netsh.exe', timeout=5):
-    ''' Parse calls to netsh to get information about network interfaces.
+class WLANInfo(lb.ShellBackend, binary_path=r'C:\Windows\System32\netsh.exe', timeout=5):
+    ''' Parse calls to netsh to get information about WLAN interfaces.
     '''
     FLAGS = dict(
         interface='interface=',
@@ -119,7 +119,7 @@ class WLANClient(lb.Device):
         if key not in ('interface', 'guid', 'physical_address'):
             raise ValueError(f"argument 'key' must be one of ('interface', 'guid', 'physical_address'), not {key}")
 
-        netsh = NetshWLAN()
+        netsh = WLANInfo()
         netsh._console.logger.disabled = True
         with netsh:
             # Check that this interface exists
@@ -310,7 +310,7 @@ class WLANClient(lb.Device):
         return lb.until_timeout(TimeoutError, 2 * self.timeout)(attempt)()
 
     def refresh(self):
-        for attr in self._traits:
+        for attr in self._property_attrs:
             getattr(self, attr)
 
 

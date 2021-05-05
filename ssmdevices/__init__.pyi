@@ -1,2 +1,1 @@
-# -*- coding: utf-8 -*-
-from . import instruments,software,electronics
+from . import electronics as electronics, instruments as instruments, software as software

@@ -43,28 +43,29 @@ if __name__ == '__main__':
     from distutils.core import setup
     import setuptools,os,sys,shutil
 
-    dist = setup(name='ssmdevices',
-                  version='0.7',
-                  description='instrument automation drivers',
-                  author='Dan Kuester',
-                  author_email='daniel.kuester@nist.gov',
-                  url='https://gitlab.nist.gov/gitlab/ssm/ssmdevices',
-                  packages=setuptools.find_packages(),
-                  package_data={'ssmdevices': ['*.pyi', '*/*.pyi', '*/*/*.pyi']},
-                  include_package_data=True,
-                  license='NIST',
-                  install_requires=[
-              		    	'labbench(>=0.20)',
-                            'pandas(>=0.23.4)',
-                            'pyserial(>3.0)',
-                            'pyvisa(>=1.8)',
-                            'sphinx',
-                            'hidapi',
-                            ],
-                 extras_require={'html': ['sphinx(>=1.6)', 'recommonmark'],
-                                 'notebook': ['notebook', 'ipywidgets']},
-                 zip_safe=False,
-                 )
+    dist = setup(
+        name='ssmdevices',
+        version='0.8',
+        description='instrument automation drivers',
+        author='Dan Kuester',
+        author_email='daniel.kuester@nist.gov',
+        url='https://gitlab.nist.gov/gitlab/ssm/ssmdevices',
+        packages=setuptools.find_packages(),
+        package_data=dict(
+            ssmdevices=['*.pyi', '*/*.pyi', '*/*/*.pyi', 'typed']
+        ),
+        include_package_data=True,                  
+        license='NIST',
+        install_requires=[
+            'labbench(>=0.22)', # labbench dependencies cover just about everything
+            'hidapi',
+        ],
+        extras_require=dict(
+            maintenance=['ast_decompile', 'mypy','sphinx(>=1.6)','recommonmark'],
+            notebook=['notebook', 'ipywidgets']
+        ),
+        zip_safe=False,
+    )
 
     # Find and install binaries
     def listbinaries(path):
