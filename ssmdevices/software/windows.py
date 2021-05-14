@@ -89,7 +89,7 @@ class WLANClient(lb.Device):
         # Use netsh to identify the device guid from the network interface name
         info = network_interface_info(self.resource)
 
-        available = self.list_available_clients('physical_address')
+        available = self.list_available_clients(by='physical_address')
         mac = info['physical_address']
 
         if mac not in available:
@@ -115,9 +115,9 @@ class WLANClient(lb.Device):
                             f"at physical address '{info['physical_address']}'")
 
     @classmethod
-    def list_available_clients(cls, key='interface'):
-        if key not in ('interface', 'guid', 'physical_address'):
-            raise ValueError(f"argument 'key' must be one of ('interface', 'guid', 'physical_address'), not {key}")
+    def list_available_clients(cls, by='interface'):
+        if by not in ('interface', 'guid', 'physical_address'):
+            raise ValueError(f"argument 'by' must be one of ('interface', 'guid', 'physical_address'), not {by}")
 
         netsh = WLANInfo()
         netsh._console.logger.disabled = True
@@ -125,13 +125,13 @@ class WLANClient(lb.Device):
             # Check that this interface exists
             interfaces = netsh.get_wlan_interfaces()
 
-        if key == 'interface':
+        if by == 'interface':
             return interfaces
 
         ret = {}
         for if_name, if_map in interfaces.items():
             if_map['interface'] = if_name
-            ret[if_map[key]] = if_map
+            ret[if_map[by]] = if_map
 
         return ret
 
@@ -247,7 +247,7 @@ class WLANClient(lb.Device):
         self.interface_disconnect()
         return self.interface_connect()
 
-    @lb.property.str(settable=False, key='interface')
+    @lb.property.str(settable=False)
     def state(self):
         ''' `True` if psutil reports that the interface is up '''
         return self._status_lookup[self.backend.status()]
@@ -259,13 +259,13 @@ class WLANClient(lb.Device):
         iface_name = network_interface_info(self.resource)['interface']
         return stats[iface_name].isup
 
-    @lb.property.int(settable=False, allow_none=True, key='ssid')
+    @lb.property.int(settable=False, allow_none=True)
     def transmit_rate_mbps(self):
         stats = psutil.net_if_stats()
         iface_name = network_interface_info(self.resource)['interface']
         return stats[iface_name].speed
 
-    @lb.property.int(allow_none=True, max=100, settable=False, key='ssid')
+    @lb.property.int(allow_none=True, max=100, settable=False)
     def signal(self):
         def attempt():
             for result in self.backend.scan_results():
@@ -285,11 +285,11 @@ class WLANClient(lb.Device):
 
         return lb.until_timeout(TimeoutError, 2 * self.timeout)(attempt)()
 
-    @lb.property.str(settable=False, key='interface')
+    @lb.property.str(settable=False)
     def description(self):
         return self.backend.name()
 
-    @lb.property.int(allow_none=True, settable=False, key='ssid')
+    @lb.property.int(allow_none=True)
     def channel(self):
         def attempt():
             for result in self.backend.scan_results():

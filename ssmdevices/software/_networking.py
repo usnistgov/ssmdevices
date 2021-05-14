@@ -2,16 +2,20 @@ import psutil
 import socket
 import re
 
-def list_network_interfaces(key='interface'):
-    ''' Try to look up the IP address corresponding to the network interface
+INTERFACE_FIELDS = ('interface', 'ip_address', 'physical_address', 'ipv6_address')
+
+def list_network_interfaces(by='interface'):
+    f''' Try to look up the IP address corresponding to the network interface
         referred to by the OS with the name `iface`.
 
         If the interface does not exist, the medium is disconnected, or there
         is no IP address associated with the interface, raise `ConnectionError`.
+
+        :param by: the field to use as the key in the return dictionary. one of {INTERFACE_FIELDS}
+
     '''
-    ALLOWED = ('interface', 'ip_address', 'physical_address', 'ipv6_address')
-    if key not in ALLOWED:
-        raise ValueError(f"key '{key}' is not one of {ALLOWED}")
+    if by not in INTERFACE_FIELDS:
+        raise ValueError(f"by '{by}' is not one of {INTERFACE_FIELDS}")
 
     ret = {}
     for name, if_structs in psutil.net_if_addrs().items():
@@ -28,8 +32,8 @@ def list_network_interfaces(key='interface'):
             elif family_info.family is psutil.AF_LINK:
                 iface['physical_address'] = family_info.address.replace('-',':').lower()
 
-        if key in iface:
-            ret[iface[key]] = iface
+        if by in iface:
+            ret[iface[by]] = iface
 
     return ret
 
