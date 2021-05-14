@@ -40,7 +40,7 @@ class WLANClient(lb.Device):
         ...
 
     @classmethod
-    def list_available_clients(cls, key: str=...):
+    def list_available_clients(cls, by: str=...):
         ...
 
     @classmethod

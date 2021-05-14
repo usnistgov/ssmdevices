@@ -1,3 +1,1 @@
-from . import electronics
-from . import instruments
-from . import software
+from . import electronics as electronics, instruments as instruments, software as software
