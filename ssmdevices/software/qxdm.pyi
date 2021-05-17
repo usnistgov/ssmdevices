@@ -4,7 +4,7 @@ from typing import Any, Optional
 
 class QPST(lb.Win32ComDevice):
 
-    def __init__(self, resource: str='str', concurrency: str='bool', com_object: str='str'):
+    def __init__(self, resource: str='str', com_object: str='str'):
         ...
     com_object: Any = ...
 
@@ -26,7 +26,6 @@ class QXDM(lb.Win32ComDevice):
     def __init__(
         self,
         resource: str='str',
-        concurrency: str='bool',
         com_object: str='str',
         cache_path: str='str',
         connection_timeout: str='int'

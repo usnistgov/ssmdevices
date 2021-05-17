@@ -66,7 +66,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     trigger_holdoff = lb.property.float(key='TRIG:HOLD', min=0, max=10)
     trigger_level = lb.property.float(key='TRIG:LEV', min=1e-7, max=200e-3)
 
-    trace_points = lb.property.int(key='SENSe:TRACe:POINTs', min=1, max=8192, gettable=False)
+    trace_points = lb.property.int(key='SENSe:TRACe:POINTs', min=1, max=8192, gets=False)
     trace_realtime = lb.property.bool(key='TRAC:REAL', remap={False: 'OFF', True: 'ON'})
     trace_time = lb.property.float(key='TRAC:TIME', min=10e-6, max=3)
     trace_offset_time = lb.property.float(key='TRAC:OFFS:TIME', min=-0.5, max=100)
@@ -77,7 +77,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     average_count = lb.property.int(key='AVER:COUN', min=1, max=65536)
     average_auto = lb.property.bool(key='AVER:COUN:AUTO', remap={False: 'OFF', True: 'ON'})
     average_enable = lb.property.bool(key='AVER', remap={False: 'OFF', True: 'ON'})
-    smoothing_enable = lb.property.bool(key='SMO:STAT', remap={False: 'OFF', True: 'ON'}, gettable=False)
+    smoothing_enable = lb.property.bool(key='SMO:STAT', remap={False: 'OFF', True: 'ON'}, gets=False)
 
     # Local settings traits (leave command unset, and do not implement setter/getter)
     read_termination = lb.property.str()

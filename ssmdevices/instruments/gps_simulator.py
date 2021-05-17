@@ -134,7 +134,7 @@ class SpirentGSS8000(lb.SerialDevice):
 
         self.rewind()
 
-    @lb.property.bytes(settable=False)
+    @lb.property.bytes(sets=False)
     def utc_time(self):
         ''' UTC time of the running scenario '''
         utc_unformatted = self.query(b'-,UTC_TIME')
@@ -147,12 +147,12 @@ class SpirentGSS8000(lb.SerialDevice):
 
         return time.strftime('%Y-%m-%d %H:%M:%S', utc_struct) + '.' + frac
 
-    @lb.property.bool(settable=False)
+    @lb.property.bool(sets=False)
     def running(self):
         ''' `True` if a scenario is running. '''
         return self.status == b'running'
 
-    @lb.property.bytes(settable=False, only=status_messages, case=False)
+    @lb.property.bytes(sets=False, only=status_messages, case=False)
     def status(self):
         ''' UTC time of the current running scenario.'''
         return self.write(b'NULL', returns=b'status')

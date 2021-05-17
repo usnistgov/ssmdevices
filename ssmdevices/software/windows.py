@@ -247,25 +247,25 @@ class WLANClient(lb.Device):
         self.interface_disconnect()
         return self.interface_connect()
 
-    @lb.property.str(settable=False)
+    @lb.property.str(sets=False)
     def state(self):
         ''' `True` if psutil reports that the interface is up '''
         return self._status_lookup[self.backend.status()]
 
-    @lb.property.bool(settable=False)
+    @lb.property.bool(sets=False)
     def isup(self):
         ''' `True` if psutil reports that the interface is up '''
         stats = psutil.net_if_stats()
         iface_name = network_interface_info(self.resource)['interface']
         return stats[iface_name].isup
 
-    @lb.property.int(settable=False, allow_none=True)
+    @lb.property.int(sets=False, allow_none=True)
     def transmit_rate_mbps(self):
         stats = psutil.net_if_stats()
         iface_name = network_interface_info(self.resource)['interface']
         return stats[iface_name].speed
 
-    @lb.property.int(allow_none=True, max=100, settable=False)
+    @lb.property.int(allow_none=True, max=100, sets=False)
     def signal(self):
         def attempt():
             for result in self.backend.scan_results():
@@ -285,7 +285,7 @@ class WLANClient(lb.Device):
 
         return lb.until_timeout(TimeoutError, 2 * self.timeout)(attempt)()
 
-    @lb.property.str(settable=False)
+    @lb.property.str(sets=False)
     def description(self):
         return self.backend.name()
 

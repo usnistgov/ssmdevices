@@ -351,7 +351,7 @@ class IPerf2BoundPair(IPerf2):
     '''
 
     # add other settings
-    resource = lb.value.str(help='unused - use sender and receiver instead', settable=False)
+    resource = lb.value.str(help='unused - use sender and receiver instead', sets=False)
 
     server = lb.value.NetworkAddress(accepts_ports=False, help='the ip address where the server listens')
     client = lb.value.NetworkAddress(accepts_ports=False, help='the ip address from which the client sends data')

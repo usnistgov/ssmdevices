@@ -74,7 +74,7 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     cwlimit = lb.property.float(key='UL', min=000.0, max=999.9, step=0.1, help='cwlimit')
     cclimit = lb.property.float(key='LL',  min=000.0, max=999.9, step=0.1, help='cclimit')
     define_position = lb.property.float(key='CP', min=0, max=360, step=0.1, help='rotation (degrees)')
-    position = lb.property.float(key='SK', min=0, max=360, help='rotation (degrees)', gettable=False)
+    position = lb.property.float(key='SK', min=0, max=360, help='rotation (degrees)', gets=False)
 
     def set_key(self, key, value, trait_name=None):
         self.write(key + str(value))

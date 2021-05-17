@@ -266,7 +266,7 @@ class QXDM(lb.Win32ComDevice):
     def _load_config(self, path):
         self._window.LoadConfig(path)
 
-    @lb.property.str(settable=False, cache=True)
+    @lb.property.str(sets=False, cache=True)
     def version(self):
         '''QXDM application version'''
         _window = self.backend.GetAutomationWindow()

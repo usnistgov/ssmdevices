@@ -17,13 +17,13 @@ class RigolDP800Series(lb.VISADevice):
     voltage_setting2 = lb.property.float(key=':SOUR2:VOLT', help='output voltage setting on channel 2')
     voltage_setting3 = lb.property.float(key=':SOUR3:VOLT', help='output voltage setting on channel 3')
 
-    voltage1 = lb.property.float(key=':MEAS:VOLT CH1', settable=False, help='output voltage reading on channel 1')
-    voltage2 = lb.property.float(key=':MEAS:VOLT CH2', settable=False, help='output voltage reading channel 2')
-    voltage3 = lb.property.float(key=':MEAS:VOLT CH3', settable=False, help='output voltage reading channel 3')
+    voltage1 = lb.property.float(key=':MEAS:VOLT CH1', sets=False, help='output voltage reading on channel 1')
+    voltage2 = lb.property.float(key=':MEAS:VOLT CH2', sets=False, help='output voltage reading channel 2')
+    voltage3 = lb.property.float(key=':MEAS:VOLT CH3', sets=False, help='output voltage reading channel 3')
 
-    current1 = lb.property.float(key=':MEAS:CURR CH1', settable=False, help='current draw reading on channel 1')
-    current2 = lb.property.float(key=':MEAS:CURR CH2', settable=False, help='current draw reading on channel 2')
-    current3 = lb.property.float(key=':MEAS:CURR CH3', settable=False, help='current draw reading on channel 3')
+    current1 = lb.property.float(key=':MEAS:CURR CH1', sets=False, help='current draw reading on channel 1')
+    current2 = lb.property.float(key=':MEAS:CURR CH2', sets=False, help='current draw reading on channel 2')
+    current3 = lb.property.float(key=':MEAS:CURR CH3', sets=False, help='current draw reading on channel 3')
 
     @lb.datareturn.DataFrame
     def fetch_data_trace(self, whichone):

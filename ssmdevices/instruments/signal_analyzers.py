@@ -715,10 +715,10 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
     trigger_post_time = lb.property.float(key='TRIG:POST', min=0)
     trigger_pre_time = lb.property.float(key='TRIG:PRET', min=0)
 
-    iq_fft_length = lb.property.int(key='IQ:FFT:LENG', settable=False)
-    iq_bandwidth = lb.property.float(key='TRAC:IQ:BWID', settable=False)
-    iq_sample_rate = lb.property.float(key='TRACe:IQ:SRAT', settable=False)
-    iq_trigger_position = lb.property.float(key='TRAC:IQ:TPIS', settable=False)
+    iq_fft_length = lb.property.int(key='IQ:FFT:LENG', sets=False)
+    iq_bandwidth = lb.property.float(key='TRAC:IQ:BWID', sets=False)
+    iq_sample_rate = lb.property.float(key='TRACe:IQ:SRAT', sets=False)
+    iq_trigger_position = lb.property.float(key='TRAC:IQ:TPIS', sets=False)
 
     sweep_dwell_auto = lb.property.bool(key='SWE:DTIM:AUTO', remap={False: '0', True: '1'})
     sweep_dwell_time = lb.property.float(key='SWE:DTIM', min=30e-3)

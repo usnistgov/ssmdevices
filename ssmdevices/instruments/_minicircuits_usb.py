@@ -224,12 +224,12 @@ class SwitchAttenuatorBase(MiniCircuitsUSBDevice):
         device._console.logger.disabled = True
         return device
 
-    @lb.property.str(settable=False, cache=True)
+    @lb.property.str(sets=False, cache=True)
     def model(self):
         d = self._cmd(self.CMD_GET_PART_NUMBER)
         return self._parse_str(d)
 
-    @lb.property.str(settable=False, cache=True)
+    @lb.property.str(sets=False, cache=True)
     def serial_number(self):
         d = self._cmd(self.CMD_GET_SERIAL_NUMBER)
         return self._parse_str(d)
