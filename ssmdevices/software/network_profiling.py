@@ -1205,7 +1205,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
 #             print(net.is_running())
 #             ret = net.stop_traffic()
 #             print(net.is_running())
-#            lb.console.info(f'test {j}')
+#            lb.logger.info(f'test {j}')
 #            ret = mss_mults.append(net.acquire(1460*10,count=1000))
 #            net.bytes = 4096*4
 #            binary_mults.append(net.acquire(1000))

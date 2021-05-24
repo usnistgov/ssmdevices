@@ -183,4 +183,4 @@ if __name__ == '__main__':
         with atten,atten2:
             atten.attenuation = i
             # print(atten.output_power)
-            lb.console.info(str(atten.attenuation))
+            lb.logger.info(str(atten.attenuation))

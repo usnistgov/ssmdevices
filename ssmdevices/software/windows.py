@@ -139,7 +139,7 @@ class WLANClient(lb.Device):
     def __imports__(cls):
         global pywifi
 
-        level = lb.console.logger.level
+        level = lb.logger.logger.level
         try:
             import pywifi
         except ImportError:
