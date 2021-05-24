@@ -62,7 +62,7 @@ class RohdeSchwarzFSW26Base(lb.VISADevice):
     def verify_channel_type(self):
         if self.expected_channel_type is not None \
                 and self.channel_type not in (self.expected_channel_type, default_channel_name):
-            self._console.warning(f'expected {self.expected_channel_type} mode, but got {self.channel_type}')
+            self._logger.warning(f'expected {self.expected_channel_type} mode, but got {self.channel_type}')
 
     @classmethod
     def __imports__(cls):
@@ -167,7 +167,7 @@ class RohdeSchwarzFSW26Base(lb.VISADevice):
         except lb.DeviceException:
             return False
         else:
-            self._console.debug('Successfully loaded cached save file')
+            self._logger.debug('Successfully loaded cached save file')
             return True
 
     def save_cache(self):
@@ -257,7 +257,7 @@ class RohdeSchwarzFSW26Base(lb.VISADevice):
         :return: a numpy array containing the response.
         '''
 
-        self._console.debug('query {}'.format(msg))
+        self._logger.debug('query {}'.format(msg))
 
         # The read_termination seems to cause unwanted behavior in self.backend.visalib.read
         self.backend.read_termination, old_read_term = None, self.backend.read_termination
@@ -282,7 +282,7 @@ class RohdeSchwarzFSW26Base(lb.VISADevice):
             self.backend.read_termination = old_read_term
 
         data = np.frombuffer(raw, np.float32)
-        self._console.debug('      -> {} bytes ({} values)'.format(data_size, data.size))
+        self._logger.debug('      -> {} bytes ({} values)'.format(data_size, data.size))
         return data
 
     def fetch_horizontal(self, window=None, trace=None):
@@ -448,7 +448,7 @@ class RohdeSchwarzFSW26Base(lb.VISADevice):
         # If there is a timeout, the return above will not happen.
         # In this case, abort the acquisition and return
         # None.
-        # self._console.warning('received no spectrogram data')
+        # self._logger.warning('received no spectrogram data')
         self.abort()
         self.wait()
 
@@ -872,7 +872,7 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         '''
 
         if kws:
-            self._console.warning('ignoring spectrogram setup keyword arguments {}'.format(kws))
+            self._logger.warning('ignoring spectrogram setup keyword arguments {}'.format(kws))
 
         self.default_window = 2
         self.default_trace = 1
@@ -911,7 +911,7 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
         # Sweep parameters
         self.sweep_time_window2 = time_resolution
         if self.sweep_time_window2 != time_resolution:
-            self._console.warning('requested time resolution {}, but instrument adjusted to {}' \
+            self._logger.warning('requested time resolution {}, but instrument adjusted to {}' \
                                 .format(time_resolution, self.sweep_time_window2))
         self.spectrogram_depth = 100000
 
@@ -997,7 +997,7 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
             specs = pd.concat(specs, axis=0) if specs else pd.DataFrame().iloc[:, :-1]
         else:
             specs = pd.DataFrame()
-            self._console.warning('no data acquired')
+            self._logger.warning('no data acquired')
 
         return {'spectrogram_data': specs,
                 'spectrogram_acquisition_time': time.time() - t0,

@@ -14,7 +14,7 @@ else:
 
 __all__ = ['MiniCircuitsUSBSwitch']
 
-class MiniCircuitsUSBSwitch(DotNetDevice):
+class MiniCircuitsUSBSwitch(DotNetDevice, library=ssmdevices.lib, dll_name='mcl_SolidStateSwitch64.dll'):
     ''' A digitally controlled solid-state switch.
 
         This implementation calls the .NET drivers provided by the
@@ -24,9 +24,6 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
         The .NET documentation is located here:
         https://www.minicircuits.com/softwaredownload/Prog_Manual-Solid_State_Switch.pdf
     '''
-
-    library  = ssmdevices.lib    # Must be a module
-    dll_name = 'mcl_SolidStateSwitch64.dll'
 
     def open (self):
         ''' Open the device resource.
@@ -49,11 +46,11 @@ class MiniCircuitsUSBSwitch(DotNetDevice):
     @lb.property.int(min=1)
     def port(self):
         ret = self.backend.Get_SP4T_State()
-        self._console.debug('got switch state {}'.format(repr(ret)))
+        self._logger.debug('got switch state {}'.format(repr(ret)))
         return ret
     @port
     def port(self, value):
-        self._console.debug('set switch state {}'.format(repr(value)))
+        self._logger.debug('set switch state {}'.format(repr(value)))
         self.backend.Set_SP4T_COM_To(value)
 
 

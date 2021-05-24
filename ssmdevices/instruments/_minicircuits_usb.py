@@ -53,7 +53,7 @@ class MiniCircuitsUSBDevice(lb.Device):
         usb_registry[self.usb_path] = self.serial_number
 
         if self.usb_path is None:
-            self._console.info('connected to {self.model} with serial {self.serial_number}')
+            self._logger.info('connected to {self.model} with serial {self.serial_number}')
 
     def close(self):
         if self.backend:
@@ -221,7 +221,7 @@ class SwitchAttenuatorBase(MiniCircuitsUSBDevice):
     @classmethod
     def _test_instance(cls, usb_path):
         device = SwitchAttenuatorBase(usb_path=usb_path)
-        device._console.logger.disabled = True
+        device._logger.logger.disabled = True
         return device
 
     @lb.property.str(sets=False, cache=True)

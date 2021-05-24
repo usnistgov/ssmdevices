@@ -48,7 +48,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
                 self._cal.drop(self['frequency'].max, axis=0, inplace=True)
             #    self._cal_offset.values[:] = self._cal_offset.values-self._cal_offset.columns.values[np.newaxis,:]
 
-            self._console.debug(f'calibration data read from {path}')
+            self._logger.debug(f'calibration data read from {path}')
 
         if self.calibration_path is None:
             cal_path = Path(ssmdevices.lib.path('cal'))
@@ -62,13 +62,13 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
                     break
             else:
                 self._cal_data = None
-                self._console.debug(f'found no calibration data in {str(cal_path)}')
+                self._logger.debug(f'found no calibration data in {str(cal_path)}')
         else:
             read(self.calibration_path)
 
         lb.observe(self, self._update_frequency,
                    name='frequency', type_='set')
-        lb.observe(self, self._console_debug, type_='set',
+        lb.observe(self, self._logger_debug, type_='set',
                    name=('attenuation', 'output_power'))
 
         # trigger cal update
@@ -97,7 +97,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         value1 = int(value)
         value2 = int((value - value1) * 4.0)
         self._cmd(CMD_SET_ATTENUATION, value1, value2, 1)
-        self._console.debug(f'uncalibrated attenuation set to {value:0.2f} dB')
+        self._logger.debug(f'uncalibrated attenuation set to {value:0.2f} dB')
 
     # the remaining traits are transformations to calibrate attenuation_Setting
     attenuation = attenuation_setting.calibrate(
@@ -129,9 +129,9 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
             txt = f"calibrated at {frequency/1e6:0.3f} MHz"
 
         self['attenuation'].set_table(cal, owner=self)
-        self._console.debug(txt)
+        self._logger.debug(txt)
 
-    def _console_debug(self, msg):
+    def _logger_debug(self, msg):
         """ debug messages """
         
         if msg['new'] == msg['old']:
@@ -143,11 +143,11 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
             cal = msg['new']
             uncal = self['attenuation'].find_uncal(cal, self)
             txt = f'calibrated attenuation set to {cal:0.2f} dB'
-            self._console.debug(txt)
+            self._logger.debug(txt)
         elif name == 'output_power':
             uncal = msg['new']
             label = self["output_power"].label
-            self._console.debug(f'output_power set to {uncal:0.2f} {label}')
+            self._logger.debug(f'output_power set to {uncal:0.2f} {label}')
 
 
 class MiniCircuitsRC4DAT(SwitchAttenuatorBase):

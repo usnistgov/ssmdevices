@@ -111,7 +111,7 @@ class WLANClient(lb.Device):
             # This really shouldn't happen
             raise ConnectionError('requested guid not present in pywifi')
 
-        self._console.debug(f"client network interface is '{info['interface']}' "
+        self._logger.debug(f"client network interface is '{info['interface']}' "
                             f"at physical address '{info['physical_address']}'")
 
     @classmethod
@@ -120,7 +120,7 @@ class WLANClient(lb.Device):
             raise ValueError(f"argument 'by' must be one of ('interface', 'guid', 'physical_address'), not {by}")
 
         netsh = WLANInfo()
-        netsh._console.logger.disabled = True
+        netsh._logger.logger.disabled = True
         with netsh:
             # Check that this interface exists
             interfaces = netsh.get_wlan_interfaces()
@@ -186,7 +186,7 @@ class WLANClient(lb.Device):
                 break
             lb.sleep(.05)
         else:
-            self._console.debug(f'failed to connect to AP with SSID {repr(self.ssid)}')
+            self._logger.debug(f'failed to connect to AP with SSID {repr(self.ssid)}')
             raise TimeoutError('tried to connect but only achieved the {} state ' \
                                .format(repr(s)))
 
@@ -199,7 +199,7 @@ class WLANClient(lb.Device):
             raise TimeoutError('tried to connect, but got no AP scan information')
 
         time_elapsed = time.perf_counter() - t0
-        self._console.debug('connected WLAN interface to {}'.format(self.ssid))
+        self._logger.debug('connected WLAN interface to {}'.format(self.ssid))
 
         self.backend.scan()
 
@@ -237,7 +237,7 @@ class WLANClient(lb.Device):
             raise TimeoutError('tried to disconnect but only achieved the {} state ' \
                                .format(repr(s)))
 
-        self._console.debug('disconnected WLAN interface')
+        self._logger.debug('disconnected WLAN interface')
 
     def interface_reconnect(self):
         ''' Reconnect to the network interface.
