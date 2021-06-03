@@ -2,26 +2,34 @@ import os, time
 import numpy as np
 from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
 
-__all__ = ['RohdeSchwarzFSW26Base',
-           'RohdeSchwarzFSW26SpectrumAnalyzer',
-           'RohdeSchwarzFSW26IQAnalyzer',
-           'RohdeSchwarzFSW26LTEAnalyzer',
-           'RohdeSchwarzFSW26RealTime']
+__all__ = [
+    'RohdeSchwarzFSW26Base',
+    'RohdeSchwarzFSW26SpectrumAnalyzer',
+    'RohdeSchwarzFSW26IQAnalyzer',
+    'RohdeSchwarzFSW26LTEAnalyzer',
+    'RohdeSchwarzFSW26RealTime',
+    'RohdeSchwarzFSW43Base',
+    'RohdeSchwarzFSW43SpectrumAnalyzer',
+    'RohdeSchwarzFSW43IQAnalyzer',
+    'RohdeSchwarzFSW43LTEAnalyzer',
+    'RohdeSchwarzFSW43RealTime',
+]
 
 import labbench as lb
 
 default_channel_name = 'remote'
 
-class RohdeSchwarzFSW26Base(lb.VISADevice):
+class RohdeSchwarzFSWBase(lb.VISADevice):
     default_window = lb.value.str('', help='data window number to use if unspecified')
     default_trace = lb.value.str('', help='data trace number to use if unspecified')
 
-    frequency_center = lb.property.float(key='FREQ:CENT', min=2, max=26.5e9, step=1e-9, label='Hz')
-    frequency_span = lb.property.float(key='FREQ:SPAN', min=2, max=26.5e9, step=1e-9, label='Hz')
-    frequency_start = lb.property.float(key='FREQ:START', min=2, max=26.5e9, step=1e-9, label='Hz')
-    frequency_stop = lb.property.float(key='FREQ:STOP', min=2, max=26.5e9, step=1e-9, label='Hz')
+    # Set these in subclasses for specific FSW instruments
+    frequency_center = None
+    frequency_span = None
+    frequency_start = None
+    frequency_stop = None
+    resolution_bandwidth = None
 
-    resolution_bandwidth = lb.property.float(key='BAND', min=45e3, max=5.76e6, label='Hz')
     sweep_time = lb.property.float(key='SWE:TIME', label='Hz')
     sweep_time_window2 = lb.property.float(key='SENS2:SWE:TIME', label='Hz')
 
@@ -534,7 +542,7 @@ class RohdeSchwarzFSW26Base(lb.VISADevice):
         self.write('OUTPUT:TRIGGER{port}:PULS:IMM'.format(port=port))
 
 
-class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base):
+class RohdeSchwarzSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
     expected_channel_type = 'SAN'
 
     def get_marker_band_power(self, marker):
@@ -617,7 +625,7 @@ e
         return marker_span
 
 
-class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
+class RohdeSchwarzLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
     format = lb.property.str(key='FORM', only=('REAL', 'ASCII'), case=False)
 
     @lb.property.float(min=0)
@@ -672,7 +680,7 @@ class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base):
         return data
 
 
-class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
+class RohdeSchwarzIQAnalyzerMixIn(RohdeSchwarzFSWBase):
     expected_channel_type = 'RTIM'
 
     iq_simple_enabled = lb.property.bool(key='CALC:IQ', remap={False: 'OFF', True: 'ON'})
@@ -687,9 +695,9 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
     def fetch_trace(self, horizontal=False, trace=None):
         fmt = self.iq_format
         if fmt == 'VECT':
-            df = RohdeSchwarzFSW26Base.fetch_trace(self, horizontal=False, trace=trace)
+            df = RohdeSchwarzFSWBase.fetch_trace(self, horizontal=False, trace=trace)
         else:
-            df = RohdeSchwarzFSW26Base.fetch_trace(self, horizontal=horizontal, trace=trace)
+            df = RohdeSchwarzFSWBase.fetch_trace(self, horizontal=horizontal, trace=trace)
 
         if fmt == 'RIM':
             if hasattr(df, 'columns'):
@@ -708,7 +716,7 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base):
         self.write("MMEM:STOR:IQ:STAT 1, '{}'".format(path))
 
 
-class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
+class RohdeSchwarzRealTimeMixIn(lb.VISAInstrument):
     expected_channel_type = 'RTIM'
 
     trigger_source = lb.property.str(key='TRIG:SOUR', only=('IMM', 'EXT', 'EXT2', 'EXT3', 'MASK', 'TDTR'), case=False)
@@ -1026,3 +1034,50 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base):
             self.trigger_single(wait=False)
 
         return {'spectrogram_active_time': time.time() - t0}
+
+class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
+    frequency_center = lb.property.float(key='FREQ:CENT', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_span = lb.property.float(key='FREQ:SPAN', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_start = lb.property.float(key='FREQ:START', min=2, max=26.5e9, step=1e-9, label='Hz')
+    frequency_stop = lb.property.float(key='FREQ:STOP', min=2, max=26.5e9, step=1e-9, label='Hz')
+    resolution_bandwidth = lb.property.float(key='BAND', min=45e3, max=5.76e6, label='Hz')
+
+
+class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base,RohdeSchwarzSpectrumAnalyzerMixIn):
+    pass
+
+
+class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base,RohdeSchwarzLTEAnalyzerMixIn):
+    pass
+
+
+class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base,RohdeSchwarzIQAnalyzerMixIn):
+    pass
+
+
+class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base,RohdeSchwarzRealTimeMixIn):
+    pass
+
+
+class RohdeSchwarzFSW43Base(RohdeSchwarzFSWBase):
+    frequency_center = lb.property.float(key='FREQ:CENT', min=2, max=43.5e9, step=1e-9, label='Hz')
+    frequency_span = lb.property.float(key='FREQ:SPAN', min=2, max=43.5e9, step=1e-9, label='Hz')
+    frequency_start = lb.property.float(key='FREQ:START', min=2, max=43.5e9, step=1e-9, label='Hz')
+    frequency_stop = lb.property.float(key='FREQ:STOP', min=2, max=43.5e9, step=1e-9, label='Hz')
+    resolution_bandwidth = lb.property.float(key='BAND', min=1, max=10e6, label='Hz')
+
+
+class RohdeSchwarzFSW43SpectrumAnalyzer(RohdeSchwarzFSW43Base,RohdeSchwarzSpectrumAnalyzerMixIn):
+    pass
+
+
+class RohdeSchwarzFSW43LTEAnalyzer(RohdeSchwarzFSW43Base,RohdeSchwarzLTEAnalyzerMixIn):
+    pass
+
+
+class RohdeSchwarzFSW43IQAnalyzer(RohdeSchwarzFSW43Base,RohdeSchwarzIQAnalyzerMixIn):
+    pass
+
+
+class RohdeSchwarzFSW43RealTime(RohdeSchwarzFSW43Base,RohdeSchwarzRealTimeMixIn):
+    pass
