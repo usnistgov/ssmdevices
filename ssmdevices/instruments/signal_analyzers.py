@@ -153,25 +153,25 @@ class RohdeSchwarzFSW26Base(lb.VISADevice):
             path = path + '.dfl'
 
         if self.file_info(path) is None:
-            raise lb.DeviceException('there is no file to load on the instrument at path "{}"' \
+            raise FileNotFoundError('there is no file to load on the instrument at path "{}"' \
                                      .format(path))
 
         self.write("MMEM:LOAD:STAT 1,'{}'".format(path))
         self.wait()
 
     def load_cache(self):
-        cache_name = lb.hash_caller(2)
+        cache_name = lb.util.hash_caller(2)
 
         try:
             self.load_state(cache_name, self.cache_dir)
-        except lb.DeviceException:
+        except FileNotFoundError:
             return False
         else:
             self._logger.debug('Successfully loaded cached save file')
             return True
 
     def save_cache(self):
-        cache_name = lb.hash_caller(2)
+        cache_name = lb.util.hash_caller(2)
         self.save_state(cache_name, self.cache_dir)
 
     def mkdir(self, path, recursive=True):

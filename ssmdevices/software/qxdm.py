@@ -13,10 +13,27 @@ import time, os, psutil, datetime
 from xml.etree import ElementTree as ET
 
 
-class QPST(lb.Win32ComDevice):
-    com_object = lb.value.str('QPSTAtmnServer.Application', )
+class QPST(lb.Win32ComDevice, com_object='QPSTAtmnServer.Application'):
+    PORT_LIST_CODES = dict(
+        ue_mode={
+            0: 'No phone detected',
+            2: 'Download',
+            3: 'Diagnostic',
+            4: 'Offline and diagnostic',
+            5: 'Streaming download',
+        }
+    )
+
+    API_ATTR_MAP = dict(
+        ue_model_number='ModelNumber',
+        ue_mode='PhoneMode',
+        ue_imei= 'IMEI',
+        ue_esn= 'ESN',
+        ue_build_id='BuildId',
+    )
 
     def open(self):
+        # have to do this for every method we want to call
         self.backend._FlagAsMethod('AddPort')
         self.backend._FlagAsMethod('RemovePort')
         self.backend._FlagAsMethod('GetPort')
@@ -26,105 +43,77 @@ class QPST(lb.Win32ComDevice):
         self.backend.Quit()
 
     def add_port(self, port):
-        ''' Make sure that QPST is configured to enable the desired port
-        '''
-        state_to_qpst_api = {'ue_model_number': 'ModelNumber',
-                             'ue_mode': 'PhoneMode',
-                             'ue_imei': 'IMEI',
-                             'ue_esn': 'ESN',
-                             'ue_build_id': 'BuildId'}
+        """enables the specified port in QPST"""
 
-        codes = {'ue_mode': {0: 'No phone detected',
-                             2: 'Download',
-                             3: 'Diagnostic',
-                             4: 'Offline and diagnostic',
-                             5: 'Streaming download'}}
+        self.backend.AddPort(f'COM{port}', 'Python generated port')
 
-        self.backend.AddPort('COM{}'.format(port), 'Python generated port')
-
-        t0 = time.time()
-
-        while time.time() - t0 < 5:
+        for elapsed in lb.timeout_iter(5):
             try:
                 port_list = self.backend.GetPortList
                 for i in range(port_list.PhoneCount):
-                    if port_list.PortName(i).upper() == 'COM{}'.format(port):
+                    if port_list.PortName(i).upper() == f'COM{port}':
                         if port_list.PhoneStatus(i) != 5:
-                            raise ValueError('QXDM: no phone detected on COM{}'.format(port))
+                            raise ValueError(f'qpst detected no phone on COM{port}')
                         ret = {}
-                        for key, api_name in state_to_qpst_api.items():
-                            value = getattr(port_list, api_name)(i)
+                        for key, api_name in self.API_ATTR_MAP.items():
+                            func = getattr(port_list, api_name)
+                            port_code = func(i)
 
-                            # Remap integers to strings
-                            value = codes.get(key, {}).get(value, value)
-                            ret[key] = value
+                            # Remap codes into strings
+                            label = self.PORT_LIST_CODES.get(key, {}).get(port_code, port_code)
+                            ret[key] = label
                         break
 
                 else:
-                    raise Exception('QXDM: could not add port at COM{}'.format(port))
+                    raise TimeoutError(f'qpst timeout adding port COM{port}')
             except ValueError:
                 lb.sleep(0.1)
                 continue
-            break
+            else:
+                break
         else:
-            raise TimeoutError('QXDM: could not connect to port on COM{}'.format(port))
+            raise IOError(f'qpst connection failure on COM{port}')
 
         return ret
 
     def remove_port(self, port):
-        ''' Remove the port from QPST for consistency
-        '''
-        self.backend.RemovePort('COM{}'.format(port))
+        """removes the port from QPST for consistency"""
+        self.backend.RemovePort(f'COM{port}')
 
-        t0 = time.time()
-        while time.time() - t0 < 5:
+        for elapsed in lb.timeout_iter(5):
             try:
                 port_list = self.backend.GetPortList
                 for i in range(port_list.PhoneCount):
-                    if port_list.PortName(i).upper() == 'COM{}'.format(port):
+                    if port_list.PortName(i).upper() == f'COM{port}':
                         break
                 else:
                     break
             except ValueError:
                 lb.sleep(0.1)
                 continue
-            break
+            else:
+                break
         else:
-            raise TimeoutError('QXDM: could not disconnect from port on COM{}'.format(port))
+            raise TimeoutError(f'QXDM disconnect timeout on COM{port}')
 
 
-class QXDM(lb.Win32ComDevice):
-    """
-    Class to provide some basic control over the QXDM software.
+class QXDM(lb.Win32ComDevice, com_object="QXDM.QXDMAutoApplication"):
+    """QXDM software wrapper"""
 
-
-    Required parameters:
-            resource int; port number in QXDM to which UE is connected, e.g. 10 for COM10
-            config_path str;
-
-    """
-
-    com_object = lb.value.str("QXDM.QXDMAutoApplication", )
-    cache_path = lb.value.str("temp", help='folder path to contain auto-saved isf file(s)')
-    connection_timeout = lb.value.float(2, min=0.5, help='connection timeout in seconds')
+    resource = lb.value.int(min=0,help='serial port number for the handset connection')
+    cache_path = lb.value.str("temp", help='directory for auto-saved isf files')
+    connection_timeout = lb.value.float(2, min=0.5, help='connection timeout (s)')
 
     def open(self):
-        for pid in psutil.pids():
-            try:
-                proc = psutil.Process(pid)
-                for target in 'qpst', 'qxdm', 'atmnserver':
-                    if proc.name().lower().startswith(target.lower()):
-                        self._logger.debug('killing zombie process {}'.format(proc.name()))
-                        proc.kill()
-            except psutil.NoSuchProcess:
-                pass
+        # 
+        self._killall()
 
-        self.__connection_info = {}
+        self._connection_info = {}
         self._qpst = QPST()
         self._qpst.open()
-        self.__connection_info = self._qpst.add_port(self.resource)
+        self._connection_info = self._qpst.add_port(self.resource)
 
-        self.__start_time = None
+        self._start_time = None
         self._window = self.backend.GetAutomationWindow()
         self.cache_path = os.path.abspath(self.cache_path)
         os.makedirs(self.cache_path, exist_ok=True)
@@ -147,7 +136,7 @@ class QXDM(lb.Win32ComDevice):
 
     def get_key(self, key, trait_name=None):
         try:
-            return self.__connection_info[key]
+            return self._connection_info[key]
         except KeyError:
             raise lb.DeviceStateError(f"no state information for key '{key}'")
 
@@ -166,11 +155,11 @@ class QXDM(lb.Win32ComDevice):
         lb.concurrently(f1, f2)
 
     def configure(self, config_path, min_acquisition_time=None):
-        ''' Load the QXDM .dmc configuration file at the specified path,
+        """ Load the QXDM .dmc configuration file at the specified path,
             with adjustments that disable special file output modes like
             autosave, quicksave, and automatic segmenting based on time and
             file size.
-        '''
+        """
         if not os.path.isfile(config_path):
             raise Exception("config_path {} does not exist.".format(repr(config_path)))
         self._min_acquisition_time = min_acquisition_time
@@ -204,18 +193,18 @@ class QXDM(lb.Win32ComDevice):
                           .format(repr(path_out)))
 
     def save(self, path=None, saveNm=None):
-        ''' Stop the run and save the data in a file at the specified path.
+        """ Stop the run and save the data in a file at the specified path.
             If path is None, autogenerate with self.cache_path and
             self.data_filename.
             
             This method is threadsafe.
             
             :returns: The absolute path to the data file
-        '''
-        if self.__start_time is None:
+        """
+        if self._start_time is None:
             raise Exception('call start() to acquire data before calling save()')
         if self._min_acquisition_time is not None:
-            t_elapsed = time.time() - self.__start_time
+            t_elapsed = time.time() - self._start_time
             if t_elapsed < self._min_acquisition_time:
                 lb.sleep(self._min_acquisition_time - t_elapsed)
         # Munge path
@@ -234,22 +223,21 @@ class QXDM(lb.Win32ComDevice):
             path = os.path.abspath(path)
 
         # Stop acquisition
-        t0 = time.time()
-        self._set_com_port(None)
-        self._wait_for_stop()
+        with lb.stopwatch('saving data'):
+            self._set_com_port(None)
+            self._wait_for_stop()
 
-        # Save the file
-        self._window.SaveItemStore(path)
-        self._logger.debug('stopped and saved to {} in {}s' \
-                          .format(repr(path), time.time() - t0))
+            # Save the file
+            self._window.SaveItemStore(path)
+            self._logger.debug(f'saved to {path}')
 
-        self.__start_time = None
+        self._start_time = None
         return path
 
     def start(self, wait=True):
-        ''' Start acquisition, optionally waiting to return until 
+        """ Start acquisition, optionally waiting to return until 
             new data enters the QXDM item store.
-        '''
+        """
         t0 = time.time()
         self._clear()
         self._set_com_port(self.resource)
@@ -257,7 +245,7 @@ class QXDM(lb.Win32ComDevice):
             self._wait_for_start()
         self._logger.debug('running after setup for {}s'.format(time.time() - t0))
 
-        self.__start_time = time.time()
+        self._start_time = time.time()
 
     # Bare wrapper methods for the low level QXDM COM API
     def _get_com_port(self):
@@ -268,7 +256,7 @@ class QXDM(lb.Win32ComDevice):
 
     @lb.property.str(sets=False, cache=True)
     def version(self):
-        '''QXDM application version'''
+        """QXDM application version"""
         _window = self.backend.GetAutomationWindow()
         if not self.isopen:
             raise lb.DeviceNotReady('need to connect to get application version')
@@ -284,28 +272,46 @@ class QXDM(lb.Win32ComDevice):
     def _get_item_count(self):
         return self._window.GetItemCount()
 
-    # Methods that support the higher-level functions above        
-    def _set_com_port(self, com_port):
-        ''' Set the com_port to the integer n for COMn, or 0 or None to disable
-            acquisition. This includes logic to enable and disable the port
-            in QPST.
+    def _killall(self):
+        """kills all instances of qpst, qxdm, and atmnserver"""
+        for pid in psutil.pids():
+            try:
+                proc = psutil.Process(pid)
+                for target in 'qpst', 'qxdm', 'atmnserver':
+                    if proc.name().lower().startswith(target.lower()):
+                        self._logger.debug('killing zombie process {}'.format(proc.name()))
+                        proc.kill()
+            except psutil.NoSuchProcess:
+                pass
+
+    def _set_com_port(self, com_port:int):
+        """connects to the handset at the specified serial port.
+
+        Blocks until QXDM confirms the phone is connected.
+        
+        Arguments:
+            com_port (int): serial port number, COMn; 0 or None to disable
+
+        Raises:
+            TimeoutError: after waiting `self.connection_timeout` for connection
+            IOError: when the QXDM COM API returns code -1
             
-            Return blocks until QXDM confirms the phone is connected,
-            or raise a TimeoutError if it fails, or Exception on other
-            rare error types that have not been observed.
-        '''
+        """
         if com_port is None:
             com_port = 0
         if int(com_port) > 0:
-            self.__connection_info = self._qpst.add_port(self.resource)
+            self._connection_info = self._qpst.add_port(self.resource)
 
         try:
             code = None
-            t0 = time.time()
-            while time.time() - t0 < self.connection_timeout:
+
+            for elapsed in lb.timeout_iter(self.connection_timeout):
+                # try it
                 ret = int(self._window.setCOMPort(com_port))
+
+                # validate
                 if ret == -1:
-                    raise Exception('Connection error')
+                    raise IOError('Connection error')
                 actual = self._get_com_port()
                 if str(actual) == str(com_port):
                     break
@@ -316,15 +322,14 @@ class QXDM(lb.Win32ComDevice):
                     lb.sleep(0.1)
             else:
                 if com_port:
-                    raise TimeoutError('QXDM timeout connecting to UE (connected to {})'.format(actual))
+                    raise TimeoutError(f'handset connect to port {actual} timed out')
                 else:
-                    raise TimeoutError('QXDM timeout disconnecting to UE (return code {})'.format(actual))
+                    raise TimeoutError(f'handset disconnect to port {actual} timed out')
+
             if int(com_port) > 0:
-                self._logger.debug('connected to COM{} in {}s' \
-                                  .format(self.resource, time.time() - t0))
+                self._logger.debug(f'connect to port {actual} took {elapsed:0.2f}s')
             else:
-                self._logger.debug('disconnected from COM{} in {}s' \
-                                  .format(self.resource, time.time() - t0))
+                self._logger.debug(f'disconnect from port {actual} took {elapsed:0.2f}s')
 
         finally:
             if int(com_port) == 0:
@@ -336,36 +341,33 @@ class QXDM(lb.Win32ComDevice):
         self.open()
 
     def _clear(self, timeout=20):
-        ''' Clear the buffer of data.
+        """clears the buffer of data.
         
-            TODO: Depending on if QXDM is already running, wait for the item
-            count store to start increasing again?
-        '''
+        TODO: Depending on if QXDM is already running, wait for the item
+        count store to start increasing again?
+        """
         start = self._get_item_count()
         for item in 'Item view', 'Filtered view':
             if not self._window.ClearViewItems(item):
                 if item == 'Item view':
                     self._logger.error('failed to clear view ' + repr(item))
 
-        t0 = time.time()
-        # Block until the item store is clear
-        while time.time() - t0 < timeout:
+        # Block until the item store is clear or timeout
+        for elapsed in lb.timeout_iter(timeout):
             count = self._get_item_count()
             if count < start or count < 10:
                 break
             lb.sleep(.05)
         else:
-            raise TimeoutError('timeout waiting for qxdm to clear, buffer still had {} items'
-                               .format(self._get_item_count()))
+            remaining = self._get_item_count()
+            raise TimeoutError(f'QXDM item store clear timed out with {remaining} items')
 
-        self._logger.debug('cleared item store buffer in {}s'.format(time.time() - t0))
+        self._logger.debug(f'cleared item store buffer in {elapsed:0.2f}s')
 
-    def _wait_for_stop(self):
-        ''' Block until the reported number of data rows stops growing.
-        '''
-        t0 = time.time()
+    def _wait_for_stop(self, timeout=10):
+        """blocks until the QXDM item store stops growing"""
         prev = self._get_item_count()
-        while time.time() - t0 < 10:
+        for elapsed in lb.timeout_iter(timeout):
             lb.sleep(.25)
             new = self._get_item_count()
             if new == prev:
@@ -375,25 +377,22 @@ class QXDM(lb.Win32ComDevice):
         else:
             raise TimeoutError('timeout waiting for qxdm to buffer data')
 
-    def _wait_for_start(self):
-        ''' Block until the reported number of data rows starts growing
-            or exceeds 10 rows.
-        '''
-        t0 = time.time()
+    def _wait_for_start(self, timeout=10, min_rows=10):
+        """blocks until the item store has grown by at least `min_rows`"""
+        
         start = self._get_item_count()
-        while time.time() - t0 < 10:
+        for elapsed in lb.timeout_iter(timeout):
             lb.sleep(.05)
             if self._get_item_count() != start:
                 break
         else:
             raise Exception('timeout waiting for qxdm to start acquisition')
         #        lb.sleep(1)
-        self._logger.debug('activity began after observing items after {}s' \
-                          .format(self._get_item_count(), time.time() - t0))
+        self._logger.debug(f'item store grew after {elapsed:0.2f}s')
 
     # Deprecated
 #    def fetch(self):
-#        time_elapsed = time.time() - self.__start_time
+#        time_elapsed = time.time() - self._start_time
 #        if time_elapsed < self.min_acquisition_time:
 #            lb.sleep(self.min_acquisition_time - time_elapsed)
 #

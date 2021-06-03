@@ -7,28 +7,29 @@ __all__ = ['IPerf2', 'IPerf3', 'IPerf2OnAndroid', 'IPerf2BoundPair',
            'ClosedLoopTCPBenchmark']
 
 import datetime
-import labbench as lb
-import numpy as np
-import pandas as pd
-import psutil
 import re
 import socket
-import ssmdevices.lib
 import subprocess as sp
 import sys
 import time
 import traceback
-
-
-from time import perf_counter
-from queue import Queue, Empty
-from threading import Event, Thread
 from io import StringIO
+from queue import Empty, Queue
+from threading import Event, Thread
+from time import perf_counter
+
+import labbench as lb
+import numpy as np
+import pandas as pd
+import psutil
+import ssmdevices.lib
 
 if __name__ == '__main__':
-    from _networking import get_ipv4_address, list_network_interfaces, get_ipv4_occupied_ports
+    from _networking import (get_ipv4_address, get_ipv4_occupied_ports,
+                             list_network_interfaces)
 else:
-    from ._networking import get_ipv4_address, list_network_interfaces, get_ipv4_occupied_ports
+    from ._networking import (get_ipv4_address, get_ipv4_occupied_ports,
+                              list_network_interfaces)
 
 if '_tcp_port_offset' not in dir():
     _tcp_port_offset = 0
@@ -59,7 +60,7 @@ class _IPerfBase(lb.ShellBackend, timeout=5):
     port = lb.value.int(5201, min=0, help='network port')
     bind = lb.value.str(None, allow_none=True, help='bind connection to specified IP')
 
-    format = lb.value.str(None, only=('k', 'm', 'g', 'K', 'M', 'G'), allow_none=True, help='data unit prefix in bits (k, m, g) or bytes (K, M, G), or None for auto')    
+    format = lb.value.str(None, only=('k', 'm', 'g', 'K', 'M', 'G'), allow_none=True, help='data unit prefix in bits (k, m, g), bytes (K, M, G), or None for auto')    
 
     # timing and duration
     # (for time, default=None even though we know the default, because setting 10s conflicts with `number`)
@@ -83,7 +84,10 @@ class _IPerfBase(lb.ShellBackend, timeout=5):
         duration = 0 if self.time is None else self.time+2
         timeout = max((self.timeout, duration))
         
-        return self.run(self.FLAGS, background=not block, pipe=True, respawn=not block, check_stderr=True, timeout=timeout)
+        return self.run(
+            self.FLAGS, background=not block, pipe=True,
+            respawn=not block, check_stderr=True, timeout=timeout
+        )
 
     def _validate_flags(self):
         """ update and validate value traits
@@ -154,6 +158,14 @@ class IPerf2(_IPerfBase, binary_path=ssmdevices.lib.path('iperf.exe')):
         report_style='-y',
     )
 
+    DATAFRAME_COLUMNS = (
+        'jitter_milliseconds',
+        'datagrams_lost',
+        'datagrams_sent',
+        'datagrams_loss_percentage',
+        'datagrams_out_of_order'
+    )
+
     bidirectional = lb.value.bool(False, key='-d', help='send and receive simultaneously')
     report_style = lb.value.str('C', only=('C', None),  allow_none=True, help='"C" for DataFrame table output, None for formatted text')
 
@@ -181,11 +193,7 @@ class IPerf2(_IPerfBase, binary_path=ssmdevices.lib.path('iperf.exe')):
                   'test_id', 'interval', 'transferred_bytes', 'bits_per_second'
 
         if self.udp:
-            columns = columns + ('jitter_milliseconds',
-                                 'datagrams_lost',
-                                 'datagrams_sent',
-                                 'datagrams_loss_percentage',
-                                 'datagrams_out_of_order')
+            columns = columns + self.DATAFRAME_COLUMNS
         #
         # columns = ['iperf_' + c for c in columns]
 
@@ -474,7 +482,7 @@ def bit_errors(x):
     return ((x * h01) >> 56).sum()
 
 
-from contextlib import suppress, AbstractContextManager
+from contextlib import AbstractContextManager, suppress
 
 
 class ClosedLoopBenchmark(lb.Device):
