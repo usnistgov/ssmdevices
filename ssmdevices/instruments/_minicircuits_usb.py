@@ -12,7 +12,6 @@ __all__ = ['MiniCircuitsUSBDevice', 'SwitchAttenuatorBase']
 
 usb_enumerate_lock = Lock()
 usb_command_lock = Lock()
-usb_registry = {} # serial number: USB path
 
 class MiniCircuitsUSBDevice(lb.Device):
     """ General control over MiniCircuits USB devices
@@ -25,17 +24,15 @@ class MiniCircuitsUSBDevice(lb.Device):
         allow_none=True
     )
     
-    usb_path = lb.value.bytes(
-        None,
-        allow_none=True,
-        help='override `resource` to connect to a specific USB path'
-    )
-    
     timeout = lb.value.float(
         default=1,
         min=0.5,
         label='s'
     )
+
+    # overload these with properties
+    model = "Unknown model"
+    serial_number = "Unknown serial number"
 
     @classmethod
     def __imports__(cls):
@@ -43,17 +40,37 @@ class MiniCircuitsUSBDevice(lb.Device):
         import hid
 
     def open(self):
-        if self.usb_path is None:
-            self.usb_path = self._find_path(self.resource)
+        found = self._enumerate()
 
-        self.backend = hid.device()
-        self.backend.open_path(self.usb_path)
-        self.backend.set_nonblocking(1)
-    
-        usb_registry[self.usb_path] = self.serial_number
+        if len(found) == 0:
+            raise ConnectionError( 
+                f'found no USB HID devices connected that match vid={self._VID}, pid={self._PID}'
+            )
 
-        if self.usb_path is None:
-            self._logger.info('connected to {self.model} with serial {self.serial_number}')
+        names = ', '.join([repr(k) for k in found.keys()])
+
+        if self.resource is None:
+            # check that exactly one device is connected, and use its HID path
+            if len(found) == 1:
+                usb_path = next(iter(found.values()))
+            else:
+                raise lb.ConnectionError(
+                    f'specify resource when multiple devices are connected; currently connected: {names}'
+                )
+        else:
+            # find the HID device path matching the MiniCircuits device
+            try:
+                usb_path = found[self.resource]
+            except KeyError:
+                raise lb.ConnectionError(
+                    f'could not find USB HID at serial resource="{self.resource}"'
+                )
+
+        self.backend = self._hid_connect(usb_path)
+
+        self._logger.info(
+            f'opened USB HID path "{usb_path}" to "{self.model}" with serial "{self.serial_number}"'
+        )
 
     def close(self):
         if self.backend:
@@ -99,62 +116,49 @@ class MiniCircuitsUSBDevice(lb.Device):
         return d
 
     @classmethod
-    def _test_instance(cls, usb_path):
+    def _hid_connect(cls, usb_path):
         """ must return a trial object to test connections when enumerating devices.
             the subclass must have serial_number and model traits.
         """
+        hiddev = hid.device()
+        hiddev.open_path(usb_path)
+
+        try:
+            hiddev.set_nonblocking(1)
+        except:
+            hiddev.close()
+            raise
+
+        return hiddev
         raise NotImplementedError("subclasses must implement this to return an instance for trial connection")
 
     @classmethod
-    def _find_path(cls, serial):
-        ''' Find a USB HID device path matching the MiniCircuits device with
-            the specified serial number. If serial is None, then check that
-            exactly one MiniCircuits device is connected, and return its path.
-            Raise an exception if no devices are connected.
-        '''
+    def list_available_devices(cls):
+        return list(cls._enumerate())
+
+    @classmethod
+    def _enumerate(cls):
         with usb_enumerate_lock:        
             found = {}
     
-            for dev in hid.enumerate(cls._VID, cls._PID):
-                # Check for a cached serial number first
-                try:
-                    this_serial = usb_registry[dev['path']]
-                    found[this_serial] = dev['path']
-                    continue
-                except KeyError:
-                    pass
-    
+            for hiddev in hid.enumerate(cls._VID, cls._PID):
                 # Otherwise, connect to the device to learn its serial number
                 try:
-                    with cls._test_instance(dev['path']) as inst:
-                        this_serial = inst.serial_number
-                        usb_registry[dev['path']] = this_serial
-                        found[this_serial] = dev['path']
+                    # bypass cls.open and directly test connection to the hid path
+                    inst = cls()
+                    inst._logger.logger.disabled = True
+                    inst.backend = cls._hid_connect(hiddev['path'])
                 except OSError as e:
                     # Device already open, skipping.
                     print(str(e))
                     pass
+                else:
+                    # success!
+                    found[inst.serial_number] = hiddev['path']
+                finally:
+                    inst.close()
 
-        if len(found) == 0:
-            raise lb.ConnectionError('found no {} connected that match vid={vid},pid={pid}' \
-                                     .format(cls.__name__, cls._VID, cls._PID))
-
-        names = ', '.join([repr(k) for k in found.keys()])
-
-        if serial is None:
-            if len(found) == 1:
-                ret = next(iter(found.values()))
-            else:
-                raise lb.ConnectionError('specify one of the available {} resources: {}' \
-                                         .format(cls.__name__, names))
-
-        try:
-            ret = found[serial]
-        except KeyError:
-            raise lb.ConnectionError('specified resource {}, but only {} are available' \
-                                     .format(repr(serial), names))
-        return ret
-
+        return found
 
 # class PowerSensor(MiniCircuitsUSBDevice):
 #    """
@@ -217,12 +221,6 @@ class MiniCircuitsUSBDevice(lb.Device):
 class SwitchAttenuatorBase(MiniCircuitsUSBDevice):
     CMD_GET_PART_NUMBER = 40
     CMD_GET_SERIAL_NUMBER = 41
-
-    @classmethod
-    def _test_instance(cls, usb_path):
-        device = SwitchAttenuatorBase(usb_path=usb_path)
-        device._logger.logger.disabled = True
-        return device
 
     @lb.property.str(sets=False, cache=True)
     def model(self):

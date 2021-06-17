@@ -99,8 +99,8 @@ class _IPerfBase(lb.ShellBackend, timeout=5):
             while self.port in busy_ports:
                 prev_port = self.ports
                 # find an open server port
-                if self.port >= self['port'].max:
-                    self.port = self['port'].min
+                if self.port >= self._traits['port'].max:
+                    self.port = self._traits['port'].min
                 else:
                     self.port = self.port + 1
                 self._logger.info(f'requested port {prev_port} is in use - changing to {self.port}')
@@ -459,6 +459,7 @@ class IPerf2BoundPair(IPerf2):
 
         # cycle the port for the next call, because windows takes a couple of
         # minutes to release bound ports after use
+
 
 m1 = 0x5555555555555555
 m2 = 0x3333333333333333

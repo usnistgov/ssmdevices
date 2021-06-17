@@ -16,7 +16,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     frequency = lb.value.float(
         default=None, allow_none=True,
         min=10e6, max=6e9,
-        help='frequency for calibration data, or None for no calibration',
+        help='frequency for calibration data (None for no calibration)',
         label='Hz'
     )
 
@@ -44,8 +44,8 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
                                     index_col='Frequency(Hz)',
                                     dtype=float)
             self._cal.columns = self._cal.columns.astype(float)
-            if self['frequency'].max in self._cal.index:
-                self._cal.drop(self['frequency'].max, axis=0, inplace=True)
+            if self._traits['frequency'].max in self._cal.index:
+                self._cal.drop(self._traits['frequency'].max, axis=0, inplace=True)
             #    self._cal_offset.values[:] = self._cal_offset.values-self._cal_offset.columns.values[np.newaxis,:]
 
             self._logger.debug(f'calibration data read from {path}')
@@ -76,13 +76,9 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
 
     # the requested attenuation is the only property that directly interacts
     # with the device
-    attenuation_setting = lb.property.float(
-        min=0, max=115, step=0.25, label='dB',
-        help='uncalibrated attenuation'
-    )
-
-    @attenuation_setting # getter
+    @lb.property.float(min=0, max=115, step=0.25, label='dB', help='uncalibrated attenuation')
     def attenuation_setting(self):
+        # getter
         CMD_GET_ATTENUATION = 18
         
         d = self._cmd(CMD_GET_ATTENUATION)
@@ -90,8 +86,9 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         frac_part = float(d[2]) / 4.0
         return full_part + frac_part
 
-    @attenuation_setting # setter
+    @attenuation_setting
     def attenuation_setting(self, value):
+        # setter
         CMD_SET_ATTENUATION = 19
         
         value1 = int(value)
@@ -99,7 +96,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         self._cmd(CMD_SET_ATTENUATION, value1, value2, 1)
         self._logger.debug(f'uncalibrated attenuation set to {value:0.2f} dB')
 
-    # the remaining traits are transformations to calibrate attenuation_Setting
+    # the remaining traits are calibration corrections for attenuation_setting
     attenuation = attenuation_setting.calibrate(
         lookup=None,
         help='calibrated attenuation (set settings.calibration_path and settings.frequency to enable)'
@@ -128,7 +125,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
             cal = self._cal.iloc[i_freq]
             txt = f"calibrated at {frequency/1e6:0.3f} MHz"
 
-        self['attenuation'].set_table(cal, owner=self)
+        self._traits['attenuation'].set_table(cal, owner=self)
         self._logger.debug(txt)
 
     def _logger_debug(self, msg):
@@ -141,12 +138,12 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         name = msg['name']
         if name == 'attenuation' and self.frequency is not None:
             cal = msg['new']
-            uncal = self['attenuation'].find_uncal(cal, self)
+            uncal = self._traits['attenuation'].find_uncal(cal, self)
             txt = f'calibrated attenuation set to {cal:0.2f} dB'
             self._logger.debug(txt)
         elif name == 'output_power':
             uncal = msg['new']
-            label = self["output_power"].label
+            label = self._traits["output_power"].label
             self._logger.debug(f'output_power set to {uncal:0.2f} {label}')
 
 
