@@ -8,27 +8,24 @@ from threading import Lock
 import ssmdevices.lib
 from pathlib import Path
 
-__all__ = ['MiniCircuitsUSBDevice', 'SwitchAttenuatorBase']
+__all__ = ["MiniCircuitsUSBDevice", "SwitchAttenuatorBase"]
 
 usb_enumerate_lock = Lock()
 usb_command_lock = Lock()
 
+
 class MiniCircuitsUSBDevice(lb.Device):
-    """ General control over MiniCircuits USB devices
-    """
-    _VID = 0x20ce # USB HID Vendor ID
+    """General control over MiniCircuits USB devices"""
+
+    _VID = 0x20CE  # USB HID Vendor ID
 
     resource = lb.value.str(
         default=None,
-        help='serial number; must be set if more than one device is connected',
-        allow_none=True
+        help="serial number; must be set if more than one device is connected",
+        allow_none=True,
     )
-    
-    timeout = lb.value.float(
-        default=1,
-        min=0.5,
-        label='s'
-    )
+
+    timeout = lb.value.float(default=1, min=0.5, label="s")
 
     # overload these with properties
     model = "Unknown model"
@@ -43,11 +40,11 @@ class MiniCircuitsUSBDevice(lb.Device):
         found = self._enumerate()
 
         if len(found) == 0:
-            raise ConnectionError( 
-                f'found no USB HID devices connected that match vid={self._VID}, pid={self._PID}'
+            raise ConnectionError(
+                f"found no USB HID devices connected that match vid={self._VID}, pid={self._PID}"
             )
 
-        names = ', '.join([repr(k) for k in found.keys()])
+        names = ", ".join([repr(k) for k in found.keys()])
 
         if self.resource is None:
             # check that exactly one device is connected, and use its HID path
@@ -55,7 +52,7 @@ class MiniCircuitsUSBDevice(lb.Device):
                 usb_path = next(iter(found.values()))
             else:
                 raise lb.ConnectionError(
-                    f'specify resource when multiple devices are connected; currently connected: {names}'
+                    f"specify resource when multiple devices are connected; currently connected: {names}"
                 )
         else:
             # find the HID device path matching the MiniCircuits device
@@ -78,21 +75,19 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     @classmethod
     def _parse_str(cls, data):
-        ''' Convert a command response to a string.
-        '''
-        b = np.array(data[1:], dtype='uint8').tobytes()
-        return b.split(b'\x00', 1)[0].decode()
+        """Convert a command response to a string."""
+        b = np.array(data[1:], dtype="uint8").tobytes()
+        return b.split(b"\x00", 1)[0].decode()
 
     def _cmd(self, *cmd):
-        ''' Send up to 64 1-byte unsigned integers and return the response.
-        '''
-        with usb_command_lock:       
+        """Send up to 64 1-byte unsigned integers and return the response."""
+        with usb_command_lock:
             if len(cmd) > 64:
-                raise ValueError('command key data length is limited to 64')
+                raise ValueError("command key data length is limited to 64")
 
             cmd = list(cmd) + (63 - len(cmd)) * [0]
 
-            if platform.system().lower() == 'windows':
+            if platform.system().lower() == "windows":
                 self.backend.write([0] + cmd[:-1])
             else:
                 self.backend.write(cmd)
@@ -105,11 +100,12 @@ class MiniCircuitsUSBDevice(lb.Device):
                     if d[0] == cmd[0]:
                         break
                     else:
-                        msg = "device responded to command code {}, but expected {} (full response {})" \
-                            .format(d[0], cmd[0], repr(d))
+                        msg = "device responded to command code {}, but expected {} (full response {})".format(
+                            d[0], cmd[0], repr(d)
+                        )
             else:
                 if msg is None:
-                    raise TimeoutError('no response from device')
+                    raise TimeoutError("no response from device")
                 else:
                     raise lb.DeviceException(msg)
 
@@ -117,8 +113,8 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     @classmethod
     def _hid_connect(cls, usb_path):
-        """ must return a trial object to test connections when enumerating devices.
-            the subclass must have serial_number and model traits.
+        """must return a trial object to test connections when enumerating devices.
+        the subclass must have serial_number and model traits.
         """
         hiddev = hid.device()
         hiddev.open_path(usb_path)
@@ -130,7 +126,9 @@ class MiniCircuitsUSBDevice(lb.Device):
             raise
 
         return hiddev
-        raise NotImplementedError("subclasses must implement this to return an instance for trial connection")
+        raise NotImplementedError(
+            "subclasses must implement this to return an instance for trial connection"
+        )
 
     @classmethod
     def list_available_devices(cls):
@@ -138,27 +136,28 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     @classmethod
     def _enumerate(cls):
-        with usb_enumerate_lock:        
+        with usb_enumerate_lock:
             found = {}
-    
+
             for hiddev in hid.enumerate(cls._VID, cls._PID):
                 # Otherwise, connect to the device to learn its serial number
                 try:
                     # bypass cls.open and directly test connection to the hid path
                     inst = cls()
                     inst._logger.logger.disabled = True
-                    inst.backend = cls._hid_connect(hiddev['path'])
+                    inst.backend = cls._hid_connect(hiddev["path"])
                 except OSError as e:
                     # Device already open, skipping.
                     print(str(e))
                     pass
                 else:
                     # success!
-                    found[inst.serial_number] = hiddev['path']
+                    found[inst.serial_number] = hiddev["path"]
                 finally:
                     inst.close()
 
         return found
+
 
 # class PowerSensor(MiniCircuitsUSBDevice):
 #    """
