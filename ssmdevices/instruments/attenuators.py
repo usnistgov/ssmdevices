@@ -38,37 +38,11 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
 
     _PID = 0x23
 
-    def open(self):
-        import pandas as pd
-        from pathlib import Path
+    def __init__(self, *args, **kws):
+        super().__init__(*args, **kws)
 
-        def read(path):
-            # quick read
-            self._cal = pd.read_csv(str(path), index_col="Frequency(Hz)", dtype=float)
-            self._cal.columns = self._cal.columns.astype(float)
-            if self._traits["frequency"].max in self._cal.index:
-                self._cal.drop(self._traits["frequency"].max, axis=0, inplace=True)
-            #    self._cal_offset.values[:] = self._cal_offset.values-self._cal_offset.columns.values[np.newaxis,:]
-
-            self._logger.debug(f"calibration data read from {path}")
-
-        if self.calibration_path is None:
-            cal_path = Path(ssmdevices.lib.path("cal"))
-            cal_filenames = (
-                f"MiniCircuitsRCDAT_{self.resource}.csv.xz",
-                f"MiniCircuitsRCDAT_default.csv.xz",
-            )
-
-            for f in cal_filenames:
-                if (cal_path / f).exists():
-                    read(str(cal_path / f))
-                    self.calibration_path = str(cal_path / f)
-                    break
-            else:
-                self._cal_data = None
-                self._logger.debug(f"found no calibration data in {str(cal_path)}")
-        else:
-            read(self.calibration_path)
+        lb.observe(self, self._load_calibration_table, name="calibration_path", type_="set")
+        self.calibration_path = self.calibration_path
 
         lb.observe(self, self._update_frequency, name="frequency", type_="set")
         lb.observe(
@@ -116,26 +90,65 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         label="dBm",
     )
 
-    def _update_frequency(self, msg):
-        """match the calibration table to the frequency"""
-        if self._cal is None:
-            return
+    def _load_calibration_table(self, msg):
+        """ stash the calibration table from disk
+        """
+        import pandas as pd
+        from pathlib import Path
 
+        path = msg['new']
+
+        def read(path):
+            # quick read
+            cal = pd.read_csv(str(path), index_col="Frequency(Hz)", dtype=float)
+            cal.columns = cal.columns.astype(float)
+            if self._traits["frequency"].max in cal.index:
+                cal.drop(self._traits["frequency"].max, axis=0, inplace=True)
+            #    self._cal_offset.values[:] = self._cal_offset.values-self._cal_offset.columns.values[np.newaxis,:]
+
+            self._calibrations['full_table'] = cal
+
+            self._logger.debug(f"calibration data read from {path}")
+
+        if path is None:
+            cal_path = Path(ssmdevices.lib.path("cal"))
+            cal_filenames = (
+                f"MiniCircuitsRCDAT_{self.resource}.csv.xz",
+                f"MiniCircuitsRCDAT_default.csv.xz",
+            )
+
+            for f in cal_filenames:
+                if (cal_path / f).exists():
+                    read(str(cal_path / f))
+                    self.calibration_path = str(cal_path / f)
+                    break
+            else:
+                self._calibrations.pop('full_table', None)
+                self._logger.debug(f"found no calibration data in {str(cal_path)}")
+        else:
+            read(path)
+
+    def _update_frequency(self, msg):
+        """update the calibration on change of frequency"""
+        cal = self._calibrations.get('full_table', None)
         frequency = msg["new"]
-        if frequency is None:
+    
+        if cal is None:
+            txt = f'frequency change has no effect because calibration_data has not been set'
+        elif frequency is None:
             cal = None
             txt = f"set {msg['owner'].frequency} to enable calibration"
         else:
             # pull in the calibration table specific at this frequency
-            i_freq = self._cal.index.get_loc(frequency, "nearest")
-            cal = self._cal.iloc[i_freq]
+            i_freq = cal.index.get_loc(frequency, "nearest")
+            cal = cal.iloc[i_freq]
             txt = f"calibrated at {frequency/1e6:0.3f} MHz"
 
         self._traits["attenuation"].set_table(cal, owner=self)
         self._logger.debug(txt)
 
     def _logger_debug(self, msg):
-        """debug messages"""
+        """emit debug message for the specified message"""
 
         if msg["new"] == msg["old"]:
             # only log on changes
