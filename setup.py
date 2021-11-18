@@ -59,6 +59,7 @@ if __name__ == '__main__':
         install_requires=[
             'labbench(>=0.22)', # labbench dependencies cover just about everything
             'hidapi',
+            'pywifi'
         ],
         extras_require=dict(
             maintenance=['ast_decompile', 'mypy','sphinx(>=1.6)','recommonmark'],
