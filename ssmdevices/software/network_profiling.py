@@ -574,8 +574,9 @@ class ClosedLoopBenchmark(lb.Device):
     client = lb.value.str(
         help="the name of the network interface that will receive data"
     )
-    receiver = lb.value.str(
-        help="the name of the network interface that will send data"
+    receive_side = lb.value.str(
+        help="which of the server or the client does the receiving",
+        only=('server', 'client')
     )
     port = lb.value.int(
         0,
@@ -737,12 +738,16 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
             with suppress_matching_arg0(OSError, arg0=10057):
                 sock.close()
 
+    @property
+    def _receive_interface(self):
+        if self.receive_side == 'server':
+            return self.server
+        else:
+            return self.client
+        
+
     def _open_sockets(self, buffer_size):
         """Connect the supplied client socket to the server."""
-        if self.receiver not in (self.server, self.client):
-            raise ValueError(
-                f"the receiver setting must match the client or server interface name"
-            )
 
         global _tcp_port_offset
 
@@ -993,7 +998,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 f"with tcp_nodelay enabled, set buffer_size at least as large as the MSS ({self.mss()})"
             )
 
-        if self.server == self.receiver:
+        if self.server == self._receive_interface:
             send_sock, recv_sock = client_sock, server_sock
         else:
             send_sock, recv_sock = server_sock, client_sock
@@ -1312,7 +1317,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
         return self.mtu() - 40
 
     def mtu(self):
-        iface = list_network_interfaces("physical_address")[self.receiver]["interface"]
+        iface = list_network_interfaces("physical_address")[self._receive_interface]["interface"]
         return psutil.net_if_stats()[iface].mtu
 
     def wait_for_interfaces(self, timeout):

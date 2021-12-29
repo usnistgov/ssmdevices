@@ -97,10 +97,22 @@ class WLANClient(lb.Device):
     )
 
     def open(self):
+        available = self.list_available_clients(by="physical_address")
+        available_by_interface = {
+            k: v['interface']
+            for k,v in available.items()
+        }
+        if (self.resource not in available_by_interface.keys()
+            and self.resource not in available_by_interface.values()):
+            txt = (
+                f"resource '{self.resource}' does not match any of the available "
+                f"WLAN interface names {tuple(available_by_interface.keys())} "
+                f"or corresponding MAC addresses {tuple(available_by_interface.values())}"
+            )
+            raise ConnectionError(txt)
+
         # Use netsh to identify the device guid from the network interface name
         info = network_interface_info(self.resource)
-
-        available = self.list_available_clients(by="physical_address")
         mac = info["physical_address"]
 
         if mac not in available:
