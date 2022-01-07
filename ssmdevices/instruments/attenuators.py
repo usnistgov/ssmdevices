@@ -35,8 +35,8 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     calibration_path = lb.value.str(
         default=None,
         allow_none=True,
-        help="path to the calibration table csv file, a csv file arranged with frequency "
-        "(column) and attenuation setting (row), or None to search ssmdevices",
+        help="path to the calibration table csv file (containing frequency "
+        "(row) and attenuation setting (column)), or None to search ssmdevices",
     )
 
     # the only property that directly sets attenuation in the device
@@ -60,7 +60,6 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         value1 = int(value)
         value2 = int((value - value1) * 4.0)
         self._cmd(CMD_SET_ATTENUATION, value1, value2, 1)
-        self._logger.debug(f"uncalibrated attenuation set to {value:0.2f} dB")
 
     # the remaining traits are calibration corrections for attenuation_setting
     attenuation = attenuation_setting.calibrate_from_table(

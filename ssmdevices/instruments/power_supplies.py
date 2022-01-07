@@ -6,11 +6,6 @@ __all__ = ["RigolDP800Series"]
 class RigolDP800Series(lb.VISADevice):
     REMAP_BOOL = {False: "OFF", True: "ON"}
 
-    # values are simply local variable attributes with bounds checking (and callback hooks for logging)
-    local_variable = lb.value.str(
-        "how to do stuff", help="some configuration for this class"
-    )
-
     # properties accept the "key" argument and/or decorators for custom implementation
     enable1 = lb.property.bool(
         key=":OUTP CH1", remap=REMAP_BOOL, help="enable DC output on channel 1"

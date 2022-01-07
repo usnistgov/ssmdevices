@@ -8,7 +8,7 @@ __all__ = [
     "IPerf3",
     "IPerf2OnAndroid",
     "IPerf2BoundPair",
-    "ClosedLoopTCPBenchmark",
+    "TrafficProfiler_ClosedLoopTCP",
 ]
 
 import datetime
@@ -563,7 +563,7 @@ def bit_errors(x):
 from contextlib import AbstractContextManager, suppress
 
 
-class ClosedLoopBenchmark(lb.Device):
+class TrafficProfiler_ClosedLoop(lb.Device):
     """Profile closed-loop traffic between two network interfaces
     on this computer. Takes advantage of the system clock as a common
     basis for traffic delay measurement, with uncertainty approximately
@@ -703,7 +703,7 @@ class PortBusyError(ConnectionError):
     pass
 
 
-class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
+class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
     _server = None
     port_winerrs = (10013, 10048)
     conn_winerrs = (10051,)
@@ -856,7 +856,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                 raise ex
 
             client_done.set()
-            if not server_done.wait_for_device(timeout):
+            if not server_done.wait(timeout):
                 self._close_sockets(sock, bytes_=bytes_)
 
             return sock
@@ -918,7 +918,7 @@ class ClosedLoopTCPBenchmark(ClosedLoopBenchmark):
                     msg = f"server buffer size is {bytes_actual}, but requested {self.bytes}"
                     raise OSError(msg)
 
-            if not client_done.wait_for_device(timeout):
+            if not client_done.wait(timeout):
                 # Suppress the server exception if the client is already
                 # raising one
                 if ex is not None:
