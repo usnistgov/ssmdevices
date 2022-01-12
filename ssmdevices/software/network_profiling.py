@@ -580,15 +580,15 @@ class TrafficProfiler_ClosedLoop(lb.Device):
         min=0,
         help="TCP or UDP port for networking, or 0 to let the operating system choose",
     )
-    resource = lb.value.str(help="skipd - use sender and receiver instead")
-    timeout = lb.value.float(2, min=1e-3, help="timeout before aborting the test")
+    resource = lb.value.str(help="skipd - use sender and receiver instead", cache=True)
+    timeout = lb.value.float(2, min=1e-3, help="timeout before aborting the test", cache=True)
     tcp_nodelay = lb.value.bool(True, help="set True to disable Nagle's algorithm")
     sync_each = lb.value.bool(
         False,
         help="synchronize the start times of the send and receive threads for each buffer at the cost of throughput",
     )
 
-    delay = lb.value.float(0, min=0, help="wait time between sending buffers")
+    delay = lb.value.float(0, min=0, help="wait time before profiling", cache=True)
 
     def __repr__(self):
         return "{name}(server='{server}',client='{client}')".format(
@@ -1008,7 +1008,6 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
                 f"with tcp_nodelay enabled, set buffer_size at least as large as the MSS ({self.mss()})"
             )
 
-        print("receive interface is ", self._receive_interface)
         if self.server == self._receive_interface:
             send_sock, recv_sock = client_sock, server_sock
         else:

@@ -47,11 +47,6 @@ class RigolDP800Series(lb.VISADevice):
         key=":MEAS:CURR CH3", sets=False, help="current draw reading on channel 3"
     )
 
-    @lb.datareturn.DataFrame
-    def fetch_data_trace(self, whichone):
-        """a silly example for a power supply, no?"""
-        return self.backend.dosomethingtogettrace(whichone)
-
     @lb.retry(BaseException, 3)
     def open(self):
         """Poll *IDN until the instrument responds.

@@ -25,15 +25,17 @@ class MiniCircuitsUSBDevice(lb.Device):
         default=None,
         help="serial number; must be set if more than one device is connected",
         allow_none=True,
+        cache=True,
     )
 
     usb_path = lb.value.bytes(
         None,
         allow_none=True,
         help="override `resource` to connect to a specific USB path",
+        cache=True
     )
 
-    timeout = lb.value.float(default=1, min=0.5, label="s")
+    timeout = lb.value.float(default=1, min=0.5, label="s", cache=True)
 
     @classmethod
     def __imports__(cls):

@@ -85,12 +85,13 @@ class WLANInfo(
 
 
 class WLANClient(lb.Device):
-    resource = lb.value.str(help="interface name or MAC address (nn:nn:nn:nn:nn)")
+    resource = lb.value.str(help="interface name (from the OS) or MAC address (nn:nn:nn:nn:nn)", cache=True)
     ssid = lb.value.str(None, help="the AP for connection with the client")
     timeout = lb.value.float(
         10,
         min=0,
         help="attempt AP connection for this long (s) before raising ConnectionError",
+        cache=True
     )
 
     def open(self):
@@ -314,7 +315,7 @@ class WLANClient(lb.Device):
 
         return lb.until_timeout(TimeoutError, 2 * self.timeout)(attempt)()
 
-    @lb.property.str(sets=False)
+    @lb.property.str(sets=False, cache=True)
     def description(self):
         return self.backend.name()
 
