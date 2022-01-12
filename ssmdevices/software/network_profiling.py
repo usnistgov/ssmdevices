@@ -22,6 +22,7 @@ from io import StringIO
 from queue import Empty, Queue
 from threading import Event, Thread
 from time import perf_counter
+import selectors
 
 import labbench as lb
 import numpy as np
@@ -130,7 +131,7 @@ class _IPerfBase(lb.ShellBackend, timeout=5):
         help="minimum segment size (bytes)=MTU-40, TCP only",
     )
 
-    def acquire(self, block=True):
+    def profile(self, block=True):
         self._validate_flags()
         duration = 0 if self.time is None else self.time + 2
         timeout = max((self.timeout, duration))
@@ -209,11 +210,7 @@ class IPerf2(_IPerfBase, binary_path=ssmdevices.lib.path("iperf.exe")):
     The default value is the path that installs with 64-bit cygwin.
     """
 
-    FLAGS = dict(
-        _IPerfBase.FLAGS,
-        bidirectional="-d",
-        report_style="-y",
-    )
+    FLAGS = dict(_IPerfBase.FLAGS, bidirectional="-d", report_style="-y",)
 
     DATAFRAME_COLUMNS = (
         "jitter_milliseconds",
@@ -233,8 +230,8 @@ class IPerf2(_IPerfBase, binary_path=ssmdevices.lib.path("iperf.exe")):
         help='"C" for DataFrame table output, None for formatted text',
     )
 
-    def acquire(self, block=True):
-        ret = super().acquire(block)
+    def profile(self, block=True):
+        ret = super().profile(block)
         if block:
             return self._format_output(ret)
         else:
@@ -287,7 +284,7 @@ class IPerf2OnAndroid(IPerf2, binary_path=ssmdevices.lib.path("adb.exe")):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
     remote_binary_path = lb.value.str("/data/local/tmp/iperf", cache=True)
 
-    def acquire(self, block=True):
+    def profile(self, block=True):
         self._validate_flags()
         duration = 0 if self.time is None else self.time + 3
         timeout = max((self.timeout, duration))
@@ -488,8 +485,8 @@ class IPerf2BoundPair(IPerf2):
     def start(self):
         self._setup_pair()
 
-        self.children["server"].acquire(block=False)
-        self.children["client"].acquire(block=False)
+        self.children["server"].profile(block=False)
+        self.children["client"].profile(block=False)
 
     def read_stdout(self):
         client = self.children["client"].read_stdout()
@@ -576,7 +573,7 @@ class TrafficProfiler_ClosedLoop(lb.Device):
     )
     receive_side = lb.value.str(
         help="which of the server or the client does the receiving",
-        only=('server', 'client')
+        only=("server", "client"),
     )
     port = lb.value.int(
         0,
@@ -644,9 +641,7 @@ class TrafficProfiler_ClosedLoop(lb.Device):
         if isinstance(ret, BaseException):
             raise ret
         else:
-            return self._make_dataframe(
-                ret,
-            )
+            return self._make_dataframe(ret,)
 
     def stop(self):
         if not hasattr(self, "_background_queue"):
@@ -705,8 +700,8 @@ class PortBusyError(ConnectionError):
 
 class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
     _server = None
-    port_winerrs = (10013, 10048)
-    conn_winerrs = (10051,)
+    PORT_WINERRS = (10013, 10048)
+    CONN_WINERRS = (10051,)
 
     def _close_sockets(self, *sockets, bytes_=0):
         for sock in sockets:
@@ -740,11 +735,10 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
 
     @property
     def _receive_interface(self):
-        if self.receive_side == 'server':
+        if self.receive_side == "server":
             return self.server
         else:
             return self.client
-        
 
     def _open_sockets(self, buffer_size):
         """Connect the supplied client socket to the server."""
@@ -772,18 +766,22 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
 
                 # Set the size of the buffer for this socket
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, bytes_)
+                self._logger.info(
+                    f"created server socket with recv buffer size {bytes_}"
+                )
                 bufsize = sock.getsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF)
                 if bufsize < bytes_:
                     msg = (
                         f"recv buffer size is {bufsize}, but need at least {self.bytes}"
                     )
                     raise OSError(msg)
+                self._logger.info(f"binding listener to {server_ip}:{port}")
                 sock.bind((server_ip, port))
 
                 # start listening
                 sock.listen(5)
             except OSError as e:
-                if hasattr(e, "winerror") and e.winerror in self.port_winerrs:
+                if hasattr(e, "winerror") and e.winerror in self.PORT_WINERRS:
                     raise PortBusyError()
                 else:
                     raise
@@ -793,6 +791,8 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
         def client(listen_sock):
             port = listen_sock.getsockname()[1]
             sock = None
+
+            self._logger.warning("client start")
 
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -810,7 +810,9 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
                     raise OSError(msg)
 
                 try:
-                    sock.bind((client_ip, port))
+                    # binding to the specific port creates a conflict
+                    # with the server, and a connection failure
+                    sock.bind((client_ip, 0))
                 except OSError as e:
                     ex = e
                 else:
@@ -827,7 +829,7 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
             except socket.timeout as e:
                 if sock is not None:
                     self._close_sockets(sock, bytes_=bytes_)
-                msg = f"client socket timed out in connection attempt to the server at {server_ip}:{port}"
+                msg = f"client socket timed out in attempt to connect to the server at {server_ip}:{port}"
                 ex = ConnectionRefusedError(msg)
 
                 # Certain "port busy" errors are raised as OSError. Check whether
@@ -835,10 +837,10 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
             except OSError as e:
                 msg = f"connection failed between server {server_ip} and client {client_ip}"
                 # Windows-specific errors
-                if hasattr(e, "winerror") and e.winerror in self.port_winerrs:
+                if hasattr(e, "winerror") and e.winerror in self.PORT_WINERRS:
                     self._logger.debug(msg)
                     ex = PortBusyError(msg)
-                elif hasattr(e, "winerror") and e.winerror in self.conn_winerrs:
+                elif hasattr(e, "winerror") and e.winerror in self.CONN_WINERRS:
                     self._logger.debug(msg)
                     ex = ConnectionError(msg)
                 else:
@@ -855,6 +857,9 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
             if ex is not None:
                 raise ex
 
+            # if this times out, some kind of exception should have been
+            # raised in the server thread. leave quietly and allow the
+            # exception to come from the server.
             client_done.set()
             if not server_done.wait(timeout):
                 self._close_sockets(sock, bytes_=bytes_)
@@ -862,15 +867,18 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
             return sock
 
         def server(listen_sock):
+            self._logger.warning("server start")
+
             conn = None
             ex = None
             # Try to get a connection
             t0 = perf_counter()
-            #            ex = TimeoutError('received no attempted client connections')
+            
             try:
                 while perf_counter() - t0 < timeout:
                     try:
-                        listen_sock.settimeout(0.01 + timeout - (perf_counter() - t0))
+                        listen_sock.settimeout(0.051 + timeout - (perf_counter() - t0))
+                        self._sock = listen_sock
                         conn, (other_ip, _) = listen_sock.accept()
                     except socket.timeout:
                         continue
@@ -890,15 +898,17 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
                     if other_ip == client_ip:
                         break
                     else:
+                        port = listen_sock.getsockname()[1]
                         self._logger.warning(
-                            f"connection attempt from unexpected ip {other_ip} instead of {client_ip}"
+                            f"connection attempt from unexpected ip {other_ip} instead of {client_ip}:{port}"
                         )
                         if conn is not None:
                             self._close_sockets(conn, bytes_=bytes_)
                             conn = None
                 else:
+                    port = listen_sock.getsockname()[1]
                     raise TimeoutError(
-                        "no connection attempt seen from the expected client"
+                        f"socket server received no connection attempt on {server_ip}:{port}"
                     )
             except BaseException as e:
                 listen_sock.settimeout(timeout)
@@ -972,7 +982,7 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
                 ret = lb.retry(PortBusyError, 100)(open_)()
             p = ret["client"].getsockname()[1]
             self._logger.debug(
-                f"server {server_ip}:{p} connected to client {client_ip}:{p} in {perf_counter() - t0:0.3f}s"
+                f"server {server_ip}:{p} accepted connection from client {client_ip}:{p} in {perf_counter() - t0:0.3f}s"
             )
         except PortBusyError:
             raise ConnectionError(r"failed to connect on {retries} ports")
@@ -998,6 +1008,7 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
                 f"with tcp_nodelay enabled, set buffer_size at least as large as the MSS ({self.mss()})"
             )
 
+        print("receive interface is ", self._receive_interface)
         if self.server == self._receive_interface:
             send_sock, recv_sock = client_sock, server_sock
         else:
@@ -1238,14 +1249,44 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
             )
             return ret
 
-    def acquire(self, buffer_size, count=None, duration=None):
-        """Repeatedly send traffic in buffers of `buffer_size` bytes. Stop
-        when the first of `count` buffers have been sent, or `duration`
-        time has elapsed. At least one of `count` or `duration` must be
-        set. This call will block until the traffic is done.
+    def profile_count(self, buffer_size: int, count: int):
+        """sends `count` buffers of size `buffer_size` bytes
+        and returns profiling information"
 
-        :param count: Maximum number of buffers to send, or None to skip this check
-        :param duration: Maximum duration of the traffic sent, or None to skip this check
+        Arguments:
+
+            buffer_size (int): number of bytes to send in each buffer
+
+            count (int): the number of buffers to send
+
+        :returns: a DataFrame indexed on PC time containing columns 'bits_per_second', 'duration', 'delay', 'queuing_duration'
+        """
+
+        # Connect all the sockets
+        server_sock, client_sock, listener = self._open_sockets(buffer_size)
+
+        try:
+            ret = self._run(
+                client_sock=client_sock,
+                server_sock=server_sock,
+                count=count,
+                buffer_size=buffer_size,
+            )
+
+        finally:
+            self._close_sockets(client_sock, server_sock, listener)
+
+        return self._make_dataframe(ret)
+
+    def profile_duration(self, buffer_size: int, duration: float):
+        """sends buffers of size `buffer_size` bytes until
+        `duration` seconds have elapsed, and returns profiling information"
+
+        Arguments:
+
+            buffer_size (int): number of bytes to send in each buffer
+
+            duration (float): the minimum number of seconds to spend profiling
 
         :returns: a DataFrame indexed on PC time containing columns 'bits_per_second', 'duration', 'delay', 'queuing_duration'
         """
@@ -1258,7 +1299,6 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
             ret = self._run(
                 client_sock=client_sock,
                 server_sock=server_sock,
-                count=count,
                 buffer_size=buffer_size,
                 duration=duration,
             )
@@ -1317,7 +1357,9 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
         return self.mtu() - 40
 
     def mtu(self):
-        iface = list_network_interfaces("physical_address")[self._receive_interface]["interface"]
+        iface = list_network_interfaces("interface")[self._receive_interface][
+            "interface"
+        ]
         return psutil.net_if_stats()[iface].mtu
 
     def wait_for_interfaces(self, timeout):
@@ -1369,14 +1411,27 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
 if __name__ == "__main__":
     lb.show_messages("debug")
     #    ips = IPerf2(server=True, port=5050, interval=0.25, udp=True)
-    ipc = IPerf2("127.0.0.1", port=5054, time=10, interval=0.25)
-    ipc.open()
 
-    ipc.acquire(block=False)
+    net = TrafficProfiler_ClosedLoopTCP(
+        server="Ethernet",
+        client="Ethernet",
+        receive_side="server",  # "WLAN_Client_DUT",
+        port=0,
+        tcp_nodelay=True,
+        timeout=2,
+    )
 
-    time.sleep(5)
-    ipc.kill()
-    ipc_result = ipc.read_stdout()
+    with net:
+        print(net.acquire(10 * net.mtu(), count=10))
+
+    # ipc = IPerf2("127.0.0.1", port=5054, time=10, interval=0.25)
+    # ipc.open()
+
+    # ipc.acquire(block=False)
+
+    # time.sleep(5)
+    # ipc.kill()
+    # ipc_result = ipc.read_stdout()
 
     #    with ipc:
     #         for i in range(1):
@@ -1393,7 +1448,7 @@ if __name__ == "__main__":
     #             ipc_result = ipc.read_stdout()
 
     # #    print(ips_result)
-    print(ipc_result)
+    # print(ipc_result)
 
 # # IPerf2BoundPair example
 # if __name__ == '__main__':

@@ -35,6 +35,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     calibration_path = lb.value.str(
         default=None,
         allow_none=True,
+        cache=True,
         help="path to the calibration table csv file (containing frequency "
         "(row) and attenuation setting (column)), or None to search ssmdevices",
     )
@@ -65,7 +66,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     attenuation = attenuation_setting.calibrate_from_table(
         path_trait=calibration_path,
         index_lookup_trait=frequency,
-        table_index_column='Frequency(Hz)',
+        table_index_column="Frequency(Hz)",
         help="calibrated attenuation",
     )
 
@@ -74,6 +75,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         help="calibrated output power level",
         label="dBm",
     )
+
 
 class MiniCircuitsRC4DAT(SwitchAttenuatorBase):
     _PID = 0x23

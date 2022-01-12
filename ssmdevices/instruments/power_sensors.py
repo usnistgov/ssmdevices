@@ -67,18 +67,14 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     )
 
     @lb.property.str(
-        key="SENS:FUNC",
-        case=False,
-        only=FUNCTIONS,
+        key="SENS:FUNC", case=False, only=FUNCTIONS,
     )
     def function(self, value):
         # Special case - this message requires quotes around the argument
         self.write(f'SENSe:FUNCtion "{value}"')
 
     @lb.property.str(
-        key="TRIG:SOUR",
-        case=False,
-        only=TRIGGER_SOURCES,
+        key="TRIG:SOUR", case=False, only=TRIGGER_SOURCES,
     )
     def trigger_source(self):
         """'HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm"""

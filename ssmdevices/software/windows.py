@@ -18,10 +18,7 @@ class WLANInfo(
 ):
     """Parse calls to netsh to get information about WLAN interfaces."""
 
-    FLAGS = dict(
-        interface="interface=",
-        only_bssid="mode=bssid",
-    )
+    FLAGS = dict(interface="interface=", only_bssid="mode=bssid",)
 
     only_bssid = lb.value.bool(False, help="gather only BSSID information")
     interface = lb.value.str(None, help="name of the interface to query")
@@ -98,12 +95,11 @@ class WLANClient(lb.Device):
 
     def open(self):
         available = self.list_available_clients(by="physical_address")
-        available_by_interface = {
-            k: v['interface']
-            for k,v in available.items()
-        }
-        if (self.resource not in available_by_interface.keys()
-            and self.resource not in available_by_interface.values()):
+        available_by_interface = {k: v["interface"] for k, v in available.items()}
+        if (
+            self.resource not in available_by_interface.keys()
+            and self.resource not in available_by_interface.values()
+        ):
             txt = (
                 f"resource '{self.resource}' does not match any of the available "
                 f"WLAN interface names {tuple(available_by_interface.keys())} "

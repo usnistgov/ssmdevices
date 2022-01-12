@@ -8,34 +8,32 @@ from threading import Lock
 import ssmdevices.lib
 from pathlib import Path
 
-__all__ = ['MiniCircuitsUSBDevice', 'SwitchAttenuatorBase']
+__all__ = ["MiniCircuitsUSBDevice", "SwitchAttenuatorBase"]
 
 usb_enumerate_lock = Lock()
 usb_command_lock = Lock()
-usb_registry = {} # serial number: USB path
+usb_registry = {}  # serial number: USB path
+
 
 class MiniCircuitsUSBDevice(lb.Device):
     """ General control over MiniCircuits USB devices
     """
-    _VID = 0x20ce # USB HID Vendor ID
+
+    _VID = 0x20CE  # USB HID Vendor ID
 
     resource = lb.value.str(
         default=None,
-        help='serial number; must be set if more than one device is connected',
-        allow_none=True
+        help="serial number; must be set if more than one device is connected",
+        allow_none=True,
     )
-    
+
     usb_path = lb.value.bytes(
         None,
         allow_none=True,
-        help='override `resource` to connect to a specific USB path'
+        help="override `resource` to connect to a specific USB path",
     )
-    
-    timeout = lb.value.float(
-        default=1,
-        min=0.5,
-        label='s'
-    )
+
+    timeout = lb.value.float(default=1, min=0.5, label="s")
 
     @classmethod
     def __imports__(cls):
@@ -49,11 +47,13 @@ class MiniCircuitsUSBDevice(lb.Device):
         self.backend = hid.device()
         self.backend.open_path(self.usb_path)
         self.backend.set_nonblocking(1)
-    
+
         usb_registry[self.usb_path] = self.serial_number
 
         if self.usb_path is None:
-            self._logger.info('connected to {self.model} with serial {self.serial_number}')
+            self._logger.info(
+                "connected to {self.model} with serial {self.serial_number}"
+            )
 
     def close(self):
         if self.backend:
@@ -61,21 +61,21 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     @classmethod
     def _parse_str(cls, data):
-        ''' Convert a command response to a string.
-        '''
-        b = np.array(data[1:], dtype='uint8').tobytes()
-        return b.split(b'\x00', 1)[0].decode()
+        """ Convert a command response to a string.
+        """
+        b = np.array(data[1:], dtype="uint8").tobytes()
+        return b.split(b"\x00", 1)[0].decode()
 
     def _cmd(self, *cmd):
-        ''' Send up to 64 1-byte unsigned integers and return the response.
-        '''
-        with usb_command_lock:       
+        """ Send up to 64 1-byte unsigned integers and return the response.
+        """
+        with usb_command_lock:
             if len(cmd) > 64:
-                raise ValueError('command key data length is limited to 64')
+                raise ValueError("command key data length is limited to 64")
 
             cmd = list(cmd) + (63 - len(cmd)) * [0]
 
-            if platform.system().lower() == 'windows':
+            if platform.system().lower() == "windows":
                 self.backend.write([0] + cmd[:-1])
             else:
                 self.backend.write(cmd)
@@ -88,11 +88,12 @@ class MiniCircuitsUSBDevice(lb.Device):
                     if d[0] == cmd[0]:
                         break
                     else:
-                        msg = "device responded to command code {}, but expected {} (full response {})" \
-                            .format(d[0], cmd[0], repr(d))
+                        msg = "device responded to command code {}, but expected {} (full response {})".format(
+                            d[0], cmd[0], repr(d)
+                        )
             else:
                 if msg is None:
-                    raise TimeoutError('no response from device')
+                    raise TimeoutError("no response from device")
                 else:
                     raise lb.DeviceException(msg)
 
@@ -103,53 +104,61 @@ class MiniCircuitsUSBDevice(lb.Device):
         """ must return a trial object to test connections when enumerating devices.
             the subclass must have serial_number and model traits.
         """
-        raise NotImplementedError("subclasses must implement this to return an instance for trial connection")
+        raise NotImplementedError(
+            "subclasses must implement this to return an instance for trial connection"
+        )
 
     @classmethod
     def _find_path(cls, serial):
-        ''' Find a USB HID device path matching the MiniCircuits device with
+        """ Find a USB HID device path matching the MiniCircuits device with
             the specified serial number. If serial is None, then check that
             exactly one MiniCircuits device is connected, and return its path.
             Raise an exception if no devices are connected.
-        '''
-        with usb_enumerate_lock:        
+        """
+        with usb_enumerate_lock:
             found = {}
-    
+
             for dev in hid.enumerate(cls._VID, cls._PID):
                 # Check for a cached serial number first
                 try:
-                    this_serial = usb_registry[dev['path']]
-                    found[this_serial] = dev['path']
+                    this_serial = usb_registry[dev["path"]]
+                    found[this_serial] = dev["path"]
                     continue
                 except KeyError:
                     pass
-    
+
                 # Otherwise, connect to the device to learn its serial number
                 try:
-                    with cls._test_instance(dev['path']) as inst:
+                    with cls._test_instance(dev["path"]) as inst:
                         this_serial = inst.serial_number
-                        usb_registry[dev['path']] = this_serial
-                        found[this_serial] = dev['path']
+                        usb_registry[dev["path"]] = this_serial
+                        found[this_serial] = dev["path"]
                 except OSError as e:
                     # Device already open, skipping.
                     print(str(e))
                     pass
 
         if len(found) == 0:
-            raise ConnectionError(f'found no {cls.__name__} connected with vid={cls._VID}, pid={cls._PID}')
+            raise ConnectionError(
+                f"found no {cls.__name__} connected with vid={cls._VID}, pid={cls._PID}"
+            )
 
-        names = ', '.join([repr(k) for k in found.keys()])
+        names = ", ".join([repr(k) for k in found.keys()])
 
         if serial is None:
             if len(found) == 1:
                 ret = next(iter(found.values()))
             else:
-                raise ConnectionError(f'specify one of the available {cls.__name__} resources: {names}')
+                raise ConnectionError(
+                    f"specify one of the available {cls.__name__} resources: {names}"
+                )
 
         try:
             ret = found[serial]
         except KeyError:
-            raise ConnectionError(f'specified resource {repr(serial)}, but only {names} are available')
+            raise ConnectionError(
+                f"specified resource {repr(serial)}, but only {names} are available"
+            )
         return ret
 
 
