@@ -86,11 +86,12 @@ class WLANInfo(
 
 class WLANClient(lb.Device):
     resource = lb.value.str(help="interface name (from the OS) or MAC address (nn:nn:nn:nn:nn)", cache=True)
-    ssid = lb.value.str(None, help="the AP for connection with the client")
+    ssid = lb.value.str(None, help="SSID of the AP for connection")
     timeout = lb.value.float(
         10,
         min=0,
-        help="attempt AP connection for this long (s) before raising ConnectionError",
+        help="attempt AP connection for this long before raising ConnectionError",
+        label='s',
         cache=True
     )
 
@@ -165,22 +166,24 @@ class WLANClient(lb.Device):
     def __imports__(cls):
         global pywifi
 
-        level = lb.logger.logger.level
+        # pywifi wants to clobber the global logging display settings with its own.
+        # temporarily monkeypatch logging.basicConfig to bypass this
         try:
-            import pywifi
-        except ImportError:
-            raise ImportError("install pywifi to use WLANStatus: pip install pywifi")
+            logging.basicConfig, orig_config = lambda **kws: None, logging.basicConfig            
+            # level = lb.logger.logger.level
+            try:
+                import pywifi
+            except ImportError:
+                raise ImportError("install pywifi to use WLANStatus: pip install pywifi")
 
-        # disable pywifi logging
+        finally:
+            logging.basicConfig = orig_config
+
+        # reduce pywifi logging
         logger = logging.getLogger("pywifi")
         logger.propagate = False
         logger.disabled = True
-
-        if len(logging.root.handlers) > 0:
-            logging.root.removeHandler(logging.root.handlers[0])
-
-        # restore the original messaging format and level
-        lb.show_messages(level)
+        logger.setLevel(logging.WARNING)
 
         cls._status_lookup = {
             pywifi.const.IFACE_CONNECTED: "connected",
@@ -346,7 +349,7 @@ class WLANClient(lb.Device):
 
 if __name__ == "__main__":
     client = WLANClient(
-        resource="f8:ac:65:c8:72:bf",  # name of the SSID that the client needs to connect to
+        resource="f8:ac:65:c8:72:bf",  # MAC address of the wireless client device on the host
         ssid="EnGenius1",  # SSID name to connect with
         timeout=5,  # (s) how long to continue attempts to connect the client and AP
     )
