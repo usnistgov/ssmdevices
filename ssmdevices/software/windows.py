@@ -179,11 +179,12 @@ class WLANClient(lb.Device):
         finally:
             logging.basicConfig = orig_config
 
+
         # reduce pywifi logging
         logger = logging.getLogger("pywifi")
-        logger.propagate = False
-        logger.disabled = True
-        logger.setLevel(logging.WARNING)
+        # logger.propagate = False
+        # logger.disabled = True
+        logger.setLevel(10000000000)
 
         cls._status_lookup = {
             pywifi.const.IFACE_CONNECTED: "connected",

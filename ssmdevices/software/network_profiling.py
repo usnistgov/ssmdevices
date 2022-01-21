@@ -1039,7 +1039,7 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
 
             # Bail if the sender hit an exception
             if except_event.is_set():
-                raise lb.ThreadEndedByMaster()
+                raise lb.util.ThreadEndedByMaster()
 
         def traffic_done(i):
             if background and end_event.is_set():
@@ -1117,7 +1117,7 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
                 # One to the wind
             #                single()
 
-            except lb.ThreadEndedByMaster:
+            except lb.util.ThreadEndedByMaster:
                 self._logger.debug(
                     f"{self.__class__.__name__}() ended by master thread"
                 )
@@ -1192,7 +1192,7 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
                 # Throwaway buffer
             #                single()
 
-            except lb.ThreadEndedByMaster:
+            except lb.util.ThreadEndedByMaster:
                 self._logger.debug(
                     f"{self.__class__.__name__}() ended by master thread"
                 )
