@@ -147,7 +147,7 @@ class WLANClient(lb.Device):
             )
 
         netsh = WLANInfo()
-        netsh._logger.logger.disabled = True
+        # netsh._logger.logger.disabled = True
         with netsh:
             # Check that this interface exists
             interfaces = netsh.get_wlan_interfaces()
