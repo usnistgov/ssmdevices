@@ -1,12 +1,11 @@
-*ssmdevices* are python device drivers that have been curated and maintained to support automation and data acquisition in shared spectrum metrology experiments. The scope of equipment targeted here includes consumer wireless communication hardware, instruments, diagnostic software, and other miscellaneous lab electronics.
-The drivers are implemented with [labbench](https://github.com/usnistgov/labbench). Acquired data are packaged into [pandas](http://pandas.pydata.org/) data frames for fast data exploration.
-It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name complications and to restrict
-access based on export control law.
+*ssmdevices* is a curated collection of python device drivers for lab equipment in wireless and radio frequency electromagnetic experiments. The scope of equipment targeted here includes consumer wireless communication hardware, instruments, diagnostic software, and other miscellaneous lab electronics.
+The drivers are implemented with [labbench](https://github.com/usnistgov/labbench). In many cases the acquired data are packaged into [pandas](http://pandas.pydata.org/) data frames.
+It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name and export control complications.
 
 ## Installation
 1. Install a 64-bit distribution of python 3.7 (or newer). This process has been tested only with anaconda
 2. If you installed python a while ago, make sure your distribution includes pandas 0.21.0 or newer.
-4. In an anaconda command prompt, type `pip install git+https://gitlab.nist.gov/gitlab/ssm/ssmdevices`
+4. In an anaconda command prompt, type `pip install git+https://github.com/usnistgov/ssmdevices`
 5. If you need support for VISA instruments, install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
 
 ## Documentation
