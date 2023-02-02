@@ -94,8 +94,13 @@ class WLANClient(lb.Device):
         label='s',
         cache=True
     )
+    _status_lookup = {}
 
     def open(self):
+        if len(type(self)._status_lookup) == 0:
+            self._setup_pywifi()
+        import pywifi
+
         available = self.list_available_clients(by="physical_address")
         available_by_interface = {k: v["interface"] for k, v in available.items()}
         if (
@@ -163,8 +168,8 @@ class WLANClient(lb.Device):
         return ret
 
     @classmethod
-    def __imports__(cls):
-        global pywifi
+    def _setup_pywifi(cls):
+        import pywifi
 
         # pywifi wants to clobber the global logging display settings with its own.
         # temporarily monkeypatch logging.basicConfig to bypass this
@@ -195,6 +200,8 @@ class WLANClient(lb.Device):
         }
 
     def interface_connect(self):
+        import pywifi
+        
         if self.state == "connected":
             return 0.0
 
