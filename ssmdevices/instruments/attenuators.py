@@ -2,9 +2,7 @@
 
 __all__ = ["MiniCircuitsRCDAT", "MiniCircuitsRC4DAT"]
 
-import ssmdevices.lib
 import labbench as lb
-import time, random
 
 if __name__ == "__main__":
     from _minicircuits_usb import SwitchAttenuatorBase
