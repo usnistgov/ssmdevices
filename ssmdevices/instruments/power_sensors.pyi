@@ -81,10 +81,6 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     ) -> None:
         ...
 
-    @classmethod
-    def __imports__(cls) -> None:
-        ...
-
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
 
