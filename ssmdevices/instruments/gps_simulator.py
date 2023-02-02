@@ -8,7 +8,6 @@ __all__ = ["SpirentGSS8000"]
 
 import time, re
 import labbench as lb
-import traitlets as tl
 
 status_messages = (
     b"no scenario",

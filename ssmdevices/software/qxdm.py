@@ -9,7 +9,7 @@ Edits by Dan Kuester (dkuester@nist.gov)
 __all__ = ["QXDM"]
 
 import labbench as lb
-import time, os, psutil, datetime
+import time, os, datetime
 from xml.etree import ElementTree as ET
 
 
@@ -278,6 +278,8 @@ class QXDM(lb.Win32ComDevice, com_object="QXDM.QXDMAutoApplication"):
 
     def _killall(self):
         """kills all instances of qpst, qxdm, and atmnserver"""
+        import psutil
+
         for pid in psutil.pids():
             try:
                 proc = psutil.Process(pid)

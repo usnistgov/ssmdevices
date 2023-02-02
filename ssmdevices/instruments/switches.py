@@ -6,12 +6,6 @@ from labbench import DotNetDevice
 import ssmdevices.lib
 import labbench as lb
 
-if __name__ == "__main__":
-    # allow relative imports for the __main__ block below
-    from _minicircuits_usb import SwitchAttenuatorBase
-else:
-    from ._minicircuits_usb import SwitchAttenuatorBase
-
 __all__ = ["MiniCircuitsUSBSwitch"]
 
 
