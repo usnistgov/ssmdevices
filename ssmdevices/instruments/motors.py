@@ -26,7 +26,7 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     write_termination = lb.value.str("\r")  # this is a carriage return
 
     def config(self, mode):
-        if mode is "CR" or "NCR":
+        if mode in ("CR" or "NCR"):
             self.write(self, mode)
         else:
             print("check your spelling!")
@@ -45,9 +45,9 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     def set_limits(self, side, value):
         """Probably should put some error checking in here to make sure value is a float
         Also, note we use write here becuase property.setter inserts a space"""
-        if side is "lower":
+        if side == "lower":
             self.write("LL" + value)
-        elif side is "upper":
+        elif side == "upper":
             self.write("UL" + value)
         else:
             print("you typed the wrong thing.")

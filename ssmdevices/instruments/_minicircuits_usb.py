@@ -5,8 +5,6 @@ import labbench as lb
 import platform
 import numpy as np
 from threading import Lock
-import ssmdevices.lib
-from pathlib import Path
 
 __all__ = ["MiniCircuitsUSBDevice", "SwitchAttenuatorBase"]
 

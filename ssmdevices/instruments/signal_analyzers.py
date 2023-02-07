@@ -1,6 +1,5 @@
 import os, time
 import numpy as np
-from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
 
 __all__ = [
     "RohdeSchwarzFSW26Base",
@@ -322,6 +321,8 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         :param msg: The SCPI command to send
         :return: a numpy array containing the response.
         """
+
+        from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
 
         self._logger.debug(f"query {msg}")
 

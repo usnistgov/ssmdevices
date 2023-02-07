@@ -15,14 +15,12 @@ import datetime
 import re
 import socket
 import subprocess as sp
-import sys
 import time
 import traceback
 from io import StringIO
 from queue import Empty, Queue
 from threading import Event, Thread
 from time import perf_counter
-import selectors
 
 import labbench as lb
 import numpy as np
