@@ -239,7 +239,7 @@ class AeroflexTM500(lb.TelnetDevice):
             # text. Throw a warning unless there was exactly 1 match in the
             # block of text.
             matches = re.findall(
-                br"^([\#\$]*" + cmd + b".*)", blocks[i], re.MULTILINE | re.IGNORECASE
+                rb"^([\#\$]*" + cmd + b".*)", blocks[i], re.MULTILINE | re.IGNORECASE
             )
             if len(matches) == 0:
                 print(

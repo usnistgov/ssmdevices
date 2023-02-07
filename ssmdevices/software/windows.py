@@ -18,7 +18,10 @@ class WLANInfo(
 ):
     """Parse calls to netsh to get information about WLAN interfaces."""
 
-    FLAGS = dict(interface="interface=", only_bssid="mode=bssid",)
+    FLAGS = dict(
+        interface="interface=",
+        only_bssid="mode=bssid",
+    )
 
     only_bssid = lb.value.bool(False, help="gather only BSSID information")
     interface = lb.value.str(None, help="name of the interface to query")
@@ -85,14 +88,16 @@ class WLANInfo(
 
 
 class WLANClient(lb.Device):
-    resource = lb.value.str(help="interface name (from the OS) or MAC address (nn:nn:nn:nn:nn)", cache=True)
+    resource = lb.value.str(
+        help="interface name (from the OS) or MAC address (nn:nn:nn:nn:nn)", cache=True
+    )
     ssid = lb.value.str(None, help="SSID of the AP for connection")
     timeout = lb.value.float(
         10,
         min=0,
         help="attempt AP connection for this long before raising ConnectionError",
-        label='s',
-        cache=True
+        label="s",
+        cache=True,
     )
 
     def open(self):
@@ -169,16 +174,17 @@ class WLANClient(lb.Device):
         # pywifi wants to clobber the global logging display settings with its own.
         # temporarily monkeypatch logging.basicConfig to bypass this
         try:
-            logging.basicConfig, orig_config = lambda **kws: None, logging.basicConfig            
+            logging.basicConfig, orig_config = lambda **kws: None, logging.basicConfig
             # level = lb.logger.logger.level
             try:
                 import pywifi
             except ImportError:
-                raise ImportError("install pywifi to use WLANStatus: pip install pywifi")
+                raise ImportError(
+                    "install pywifi to use WLANStatus: pip install pywifi"
+                )
 
         finally:
             logging.basicConfig = orig_config
-
 
         # reduce pywifi logging
         logger = logging.getLogger("pywifi")

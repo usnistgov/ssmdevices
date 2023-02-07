@@ -15,13 +15,32 @@ __all__ = ["ETSLindgrenAzi2005"]
 
 
 class ETSLindgrenAzi2005(lb.VISADevice):
-    timeout = lb.value.float(20, min=0,)
-    baud_rate = lb.value.int(9600, min=1,)
-    parity = lb.value.bytes(b"N",)
-    stopbits = lb.value.float(1, min=1, max=2, step=0.5,)
-    xonxoff = lb.value.bool(False,)
-    rtscts = lb.value.bool(False,)
-    dsrdtr = lb.value.bool(False,)
+    timeout = lb.value.float(
+        20,
+        min=0,
+    )
+    baud_rate = lb.value.int(
+        9600,
+        min=1,
+    )
+    parity = lb.value.bytes(
+        b"N",
+    )
+    stopbits = lb.value.float(
+        1,
+        min=1,
+        max=2,
+        step=0.5,
+    )
+    xonxoff = lb.value.bool(
+        False,
+    )
+    rtscts = lb.value.bool(
+        False,
+    )
+    dsrdtr = lb.value.bool(
+        False,
+    )
     read_termination = lb.value.str("\n")  # this is an acknowledge byte
     write_termination = lb.value.str("\r")  # this is a carriage return
 
@@ -103,7 +122,6 @@ if __name__ == "__main__":
     lb.show_messages("debug")
 
     with ETSLindgrenAzi2005("COM4") as motor:
-
         #        print(motor.query('?'))
         motor.set_position("30")
         print(repr(motor.whereami()))

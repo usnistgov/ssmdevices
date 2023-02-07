@@ -208,7 +208,11 @@ class IPerf2(_IPerfBase, binary_path=ssmdevices.lib.path("iperf.exe")):
     The default value is the path that installs with 64-bit cygwin.
     """
 
-    FLAGS = dict(_IPerfBase.FLAGS, bidirectional="-d", report_style="-y",)
+    FLAGS = dict(
+        _IPerfBase.FLAGS,
+        bidirectional="-d",
+        report_style="-y",
+    )
 
     DATAFRAME_COLUMNS = (
         "jitter_milliseconds",
@@ -579,7 +583,9 @@ class TrafficProfiler_ClosedLoop(lb.Device):
         help="TCP or UDP port for networking, or 0 to let the operating system choose",
     )
     resource = lb.value.str(help="skipd - use sender and receiver instead", cache=True)
-    timeout = lb.value.float(2, min=1e-3, help="timeout before aborting the test", cache=True)
+    timeout = lb.value.float(
+        2, min=1e-3, help="timeout before aborting the test", cache=True
+    )
     tcp_nodelay = lb.value.bool(True, help="set True to disable Nagle's algorithm")
     sync_each = lb.value.bool(
         False,
@@ -639,7 +645,9 @@ class TrafficProfiler_ClosedLoop(lb.Device):
         if isinstance(ret, BaseException):
             raise ret
         else:
-            return self._make_dataframe(ret,)
+            return self._make_dataframe(
+                ret,
+            )
 
     def stop(self):
         if not hasattr(self, "_background_queue"):
@@ -871,7 +879,7 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
             ex = None
             # Try to get a connection
             t0 = perf_counter()
-            
+
             try:
                 while perf_counter() - t0 < timeout:
                     try:

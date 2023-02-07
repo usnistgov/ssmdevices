@@ -144,7 +144,6 @@ class AndroidDebugBridge(
 
 
 if __name__ == "__main__":
-
     with AndroidDebugBridge() as adb:
         devices = adb.devices()  # Returns a list of tuples containing device Ids
         #        adb.reboot(devices[0][0]) # Reboots the device

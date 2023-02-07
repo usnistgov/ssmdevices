@@ -14,8 +14,7 @@ usb_registry = {}  # serial number: USB path
 
 
 class MiniCircuitsUSBDevice(lb.Device):
-    """ General control over MiniCircuits USB devices
-    """
+    """General control over MiniCircuits USB devices"""
 
     _VID = 0x20CE  # USB HID Vendor ID
 
@@ -30,7 +29,7 @@ class MiniCircuitsUSBDevice(lb.Device):
         None,
         allow_none=True,
         help="override `resource` to connect to a specific USB path",
-        cache=True
+        cache=True,
     )
 
     timeout = lb.value.float(default=1, min=0.5, label="s", cache=True)
@@ -61,14 +60,12 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     @classmethod
     def _parse_str(cls, data):
-        """ Convert a command response to a string.
-        """
+        """Convert a command response to a string."""
         b = np.array(data[1:], dtype="uint8").tobytes()
         return b.split(b"\x00", 1)[0].decode()
 
     def _cmd(self, *cmd):
-        """ Send up to 64 1-byte unsigned integers and return the response.
-        """
+        """Send up to 64 1-byte unsigned integers and return the response."""
         with usb_command_lock:
             if len(cmd) > 64:
                 raise ValueError("command key data length is limited to 64")
@@ -101,8 +98,8 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     @classmethod
     def _test_instance(cls, usb_path):
-        """ must return a trial object to test connections when enumerating devices.
-            the subclass must have serial_number and model traits.
+        """must return a trial object to test connections when enumerating devices.
+        the subclass must have serial_number and model traits.
         """
         raise NotImplementedError(
             "subclasses must implement this to return an instance for trial connection"
@@ -110,10 +107,10 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     @classmethod
     def _find_path(cls, serial):
-        """ Find a USB HID device path matching the MiniCircuits device with
-            the specified serial number. If serial is None, then check that
-            exactly one MiniCircuits device is connected, and return its path.
-            Raise an exception if no devices are connected.
+        """Find a USB HID device path matching the MiniCircuits device with
+        the specified serial number. If serial is None, then check that
+        exactly one MiniCircuits device is connected, and return its path.
+        Raise an exception if no devices are connected.
         """
         with usb_enumerate_lock:
             found = {}
