@@ -32,11 +32,9 @@ class AcronameUSBHub2x4(lb.Device, resource=None):
     power2_enabled = lb.property.bool()
     power3_enabled = lb.property.bool()
 
-    def __import__(self):
-        global brainstem
+    def open(self):
         import brainstem
 
-    def open(self):
         specs = self._bs.discover.findAllModules(brainstem.link.Spec.USB)
 
         specs = [s for s in specs if s.model == self.model]

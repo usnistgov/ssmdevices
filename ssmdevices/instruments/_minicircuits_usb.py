@@ -34,12 +34,9 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     timeout = lb.value.float(default=1, min=0.5, label="s", cache=True)
 
-    @classmethod
-    def __imports__(cls):
-        global hid
+    def open(self):
         import hid
 
-    def open(self):
         if self.usb_path is None:
             self.usb_path = self._find_path(self.resource)
 
@@ -112,6 +109,8 @@ class MiniCircuitsUSBDevice(lb.Device):
         exactly one MiniCircuits device is connected, and return its path.
         Raise an exception if no devices are connected.
         """
+        import hid
+
         with usb_enumerate_lock:
             found = {}
 

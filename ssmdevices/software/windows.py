@@ -101,6 +101,8 @@ class WLANClient(lb.Device):
     )
 
     def open(self):
+        self._import_pywifi()
+
         available = self.list_available_clients(by="physical_address")
         available_by_interface = {k: v["interface"] for k, v in available.items()}
         if (
@@ -168,7 +170,7 @@ class WLANClient(lb.Device):
         return ret
 
     @classmethod
-    def __imports__(cls):
+    def _import_pywifi(cls):
         global pywifi
 
         # pywifi wants to clobber the global logging display settings with its own.
@@ -176,12 +178,7 @@ class WLANClient(lb.Device):
         try:
             logging.basicConfig, orig_config = lambda **kws: None, logging.basicConfig
             # level = lb.logger.logger.level
-            try:
-                import pywifi
-            except ImportError:
-                raise ImportError(
-                    "install pywifi to use WLANStatus: pip install pywifi"
-                )
+            import pywifi
 
         finally:
             logging.basicConfig = orig_config

@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 
 """ Network test instruments
+
+Authors:
+    Aziz Kord
+    Dan Kuester
 """
 
 import labbench as lb
 import time, os
 import numbers
+import re
 
-__copyright__ = "U.S. government work, not subject to copyright in the U.S."
-__credits__ = ["Aziz Kord", "Dan Kuester"]
-__author__ = ",".join(__credits__)
-__license__ = "NIST"
-__maintainer__ = "Dan Kuester"
-__email__ = "daniel.kuester@nist.gov"
 __all__ = ["AeroflexTM500"]
 
 
@@ -187,8 +186,6 @@ class AeroflexTM500(lb.TelnetDevice):
         for an input that takes the form <path>/<to>/<filename>.txt
         will be <path>/<to>/<filename>-script.txt.
         """
-        import re
-
         with open(path, "rb") as f:
             txt = f.read()
 

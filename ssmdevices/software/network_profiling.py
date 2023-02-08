@@ -21,6 +21,8 @@ from io import StringIO
 from queue import Empty, Queue
 from threading import Event, Thread
 from time import perf_counter
+from contextlib import AbstractContextManager, suppress
+
 
 import labbench as lb
 import psutil
@@ -460,7 +462,7 @@ class IPerf2BoundPair(IPerf2):
     children = {}
 
     def open(self):
-        super().open()
+        import pandas
 
         self.children = dict(client=IPerf2(), server=IPerf2())
 
@@ -562,9 +564,6 @@ def bit_errors(x):
     x = (x & m2) + ((x >> 2) & m2)
     x = (x + (x >> 4)) & m4
     return ((x * h01) >> 56).sum()
-
-
-from contextlib import AbstractContextManager, suppress
 
 
 class TrafficProfiler_ClosedLoop(lb.Device):
