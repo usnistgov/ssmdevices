@@ -23,8 +23,6 @@ from threading import Event, Thread
 from time import perf_counter
 
 import labbench as lb
-import numpy as np
-import pandas as pd
 import psutil
 import ssmdevices.lib
 
@@ -245,6 +243,9 @@ class IPerf2(_IPerfBase, binary_path=ssmdevices.lib.path("iperf.exe")):
 
     def _format_output(self, stdout):
         """pack stdout into a pandas DataFrame if self.report_style == 'C'"""
+
+        import pandas as pd
+
         if self.report_style is None:
             return stdout.decode()
 
@@ -491,6 +492,8 @@ class IPerf2BoundPair(IPerf2):
         self.children["client"].profile(block=False)
 
     def read_stdout(self):
+        import pandas as pd
+
         client = self.children["client"].read_stdout()
         server = self.children["server"].read_stdout()
 
@@ -549,6 +552,8 @@ h01 = 0x0101010101010101
 
 def bit_errors(x):
     """See: https://en.wikipedia.org/wiki/Hamming_weight"""
+    import numpy as np
+
     if x is None:
         return None
     #    a1 = np.frombuffer(buf1,dtype='uint64')
@@ -1159,6 +1164,8 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
                     tx_ready.set()
 
             def single():
+                import numpy as np
+
                 data = np.random.bytes(bytes_)
                 do_sync()
                 t0 = t1 = perf_counter()
@@ -1314,6 +1321,8 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
         return self._make_dataframe(ret)
 
     def _make_dataframe(self, worker_data):
+        import pandas as pd
+
         self._logger.debug("making dataframe")
         start = worker_data.pop("start", None)
         if start is None:
