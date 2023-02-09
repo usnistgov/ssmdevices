@@ -6,7 +6,7 @@ It is separate from the `labbench` library to simplify future release of the `la
 1. Install a 64-bit distribution of python 3.7 (or newer). This process has been tested only with anaconda
 2. If you installed python a while ago, make sure your distribution includes pandas 0.21.0 or newer.
 4. In an anaconda command prompt, type `pip install git+https://github.com/usnistgov/ssmdevices`
-5. If you need support for VISA instruments, install an NI VISA runtime, for example [this one for windows](http://download.ni.com/support/softlib/visa/NI-VISA/16.0/Windows/NIVISA1600runtime.exe).
+5. If you need support for VISA instruments, install an NI VISA runtime, for example [from here](https://www.ni.com/en-us/support/downloads/drivers/download.ni-visa.html#460225).
 
 ## Documentation
 * [ssmdevices API](http://ssm.ipages.nist.gov/ssmdevices/)
