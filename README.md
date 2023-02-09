@@ -3,7 +3,7 @@ The drivers are implemented with [labbench](https://github.com/usnistgov/labbenc
 It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name and export control complications.
 
 ## Installation
-1. Install a 64-bit distribution of python 3.7 (or newer). This process has been tested only with anaconda
+1. Install a 64-bit distribution of python 3.7 (or newer)
 2. In an anaconda command prompt, type `pip install git+https://github.com/usnistgov/ssmdevices`
 3. If you need support for VISA instruments, install an NI VISA runtime, for example [from here](https://www.ni.com/en-us/support/downloads/drivers/download.ni-visa.html#460225).
 
