@@ -105,19 +105,19 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
 
 if __name__ == "__main__":
     import numpy as np
-    check_single_channel = False
-    check_four_channel = True
-    resource = '12208250156'
+    check_single_channel = True
+    check_four_channel = False
+#    resource = '12208250156'
+    resource = '12104060052'
 
     lb.show_messages("info")
 
     if check_single_channel:
         for i in np.arange(0, 110.25, 5):
-            atten = MiniCircuitsRCDAT("11604210014", frequency=5.3e9)
+            atten = MiniCircuitsRCDAT(resource, frequency=5.3e9)
             with atten:
-                atten.attenuation = i
-                # print(atten.output_power)
-                lb.logger.info(str(atten.attenuation))
+                atten.attenuation_setting = i
+                print(f"Attenuator set point {str(atten.attenuation_setting)}")
 
     if check_four_channel:
         for i in np.arange(0, 110.25, 5):
