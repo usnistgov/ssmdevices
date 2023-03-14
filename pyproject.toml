@@ -1,6 +1,6 @@
 [project]
 name = "ssmdevices"
-version = "0.9"
+version = "0.10"
 description = "a curated set of instrument automation drivers implemented with labbench"
 
 authors = [
