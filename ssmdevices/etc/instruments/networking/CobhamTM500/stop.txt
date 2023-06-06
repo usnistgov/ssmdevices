@@ -1,3 +1,0 @@
-forw mte MtsClearMts
-forw mte DeConfigRdaStopTestCase
-#$$STOP_LOGGING
