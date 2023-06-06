@@ -1,0 +1,59 @@
+:py:mod:`ssmdevices.software._networking`
+=========================================
+
+.. py:module:: ssmdevices.software._networking
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   ssmdevices.software._networking.list_network_interfaces
+   ssmdevices.software._networking.network_interface_info
+   ssmdevices.software._networking.get_ipv4_occupied_ports
+   ssmdevices.software._networking.get_ipv4_address
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   ssmdevices.software._networking.INTERFACE_FIELDS
+
+
+.. py:data:: INTERFACE_FIELDS
+   :value: ('interface', 'ip_address', 'physical_address', 'ipv6_address')
+
+   
+
+.. py:function:: list_network_interfaces(by='interface')
+
+
+.. py:function:: network_interface_info(resource)
+
+   Try to look up the IP address of a network interface by its name
+   or MAC (physical) address.
+
+   If the interface does not exist, the medium is disconnected, or there
+   is no IP address associated with the interface, raise `ConnectionError`.
+
+
+.. py:function:: get_ipv4_occupied_ports(ip)
+
+
+.. py:function:: get_ipv4_address(resource)
+
+   Try to look up the IP address of a network interface by its name
+   or MAC (physical) address.
+
+   If the interface does not exist, the medium is disconnected, or there
+   is no IP address associated with the interface, raise `ConnectionError`.
+
+

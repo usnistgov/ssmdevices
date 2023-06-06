@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ssmdevices.instruments.power_sensors &#8212; ssmdevices v0.11</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+<header class="nist-header">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>NIST Pages Template</title>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="ssmdevices v0.11">
+  <link rel="canonical" href="../../../">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Google Analytics -->
+  <!--<script type="text/javascript" id="_fed_an_js_tag" src="http://www.nist.gov/js/federated-analytics.all.min.js?agency=NIST&subagency=mml&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script> -->
+  <!-- DAP Analytics -->
+  <script type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=DOC&subagefncy=NIST&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../..//static/NISTStyle.css">
+  <link rel="stylesheet" href="../../..//static/NISTPages.css">
+
+  <h1>
+    <a class="nist-logo" target="_blank" href="http://www.nist.gov/" title="Go to nist.gov">National Institute of Standards and Technology</a>
+  </h1>
+  <div class="nist-links">
+    <a class="nist-links-button" target="_blank" href="http://www.nist.gov">NIST Website</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="http://www.nist.gov/public_affairs/nandyou.cfm">About NIST</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="https://github.com/usnistgov">usnistgov on GitHub</a>
+  </div>
+  
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</header>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ssmdevices.instruments.power_sensors</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ssmdevices.instruments.power_sensors</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;KeysightU2000XSeries&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RohdeSchwarzNRP8s&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RohdeSchwarzNRP18s&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RohdeSchwarzNRPSeries&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+
+
+<div class="viewcode-block" id="KeysightU2000XSeries"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.KeysightU2000XSeries">[docs]</a><span class="k">class</span> <span class="nc">KeysightU2000XSeries</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">VISADevice</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This is my cool driver for Keysight U2040 X-Series power sensors&quot;&quot;&quot;</span>
+
+    <span class="n">TRIGGER_SOURCES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;IMM&quot;</span><span class="p">,</span> <span class="s2">&quot;INT&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT&quot;</span><span class="p">,</span> <span class="s2">&quot;BUS&quot;</span><span class="p">,</span> <span class="s2">&quot;INT1&quot;</span><span class="p">)</span>
+
+    <span class="n">initiate_continuous</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;INIT:CONT&quot;</span><span class="p">)</span>
+    <span class="n">output_trigger</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;OUTP:TRIG&quot;</span><span class="p">)</span>
+    <span class="n">trigger_source</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">str</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRIG:SOUR&quot;</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">only</span><span class="o">=</span><span class="n">TRIGGER_SOURCES</span><span class="p">)</span>
+    <span class="n">trigger_count</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRIG:COUN&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">measurement_rate</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">str</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;SENS:MRAT&quot;</span><span class="p">,</span> <span class="n">only</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;NORM&quot;</span><span class="p">,</span> <span class="s2">&quot;DOUB&quot;</span><span class="p">,</span> <span class="s2">&quot;FAST&quot;</span><span class="p">),</span> <span class="n">case</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">sweep_aperture</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">float</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;SWE:APER&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">20e-6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">200e-3</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;s&quot;</span>
+    <span class="p">)</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">float</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;SENS:FREQ&quot;</span><span class="p">,</span>
+        <span class="nb">min</span><span class="o">=</span><span class="mf">10e6</span><span class="p">,</span>
+        <span class="nb">max</span><span class="o">=</span><span class="mf">18e9</span><span class="p">,</span>
+        <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;input signal center frequency (in Hz)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="KeysightU2000XSeries.preset"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.KeysightU2000XSeries.preset">[docs]</a>    <span class="k">def</span> <span class="nf">preset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SYST:PRES&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KeysightU2000XSeries.fetch"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.KeysightU2000XSeries.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a single number or pandas Series containing the power readings&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;FETC?&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">response</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="KeysightU2000XSeries.__imports__"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.KeysightU2000XSeries.__imports__">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__imports__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">pd</span>
+        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__imports__</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.RohdeSchwarzNRPSeries">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzNRPSeries</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">VISADevice</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Requires drivers from the R&amp;S website; resource strings for connections take the form</span>
+<span class="sd">    &#39;RSNRP::0x00e2::103892::INSTR&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">FUNCTIONS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;POW:AVG&quot;</span><span class="p">,</span> <span class="s2">&quot;POW:BURS:AVG&quot;</span><span class="p">,</span> <span class="s2">&quot;POW:TSL:AVG&quot;</span><span class="p">,</span> <span class="s2">&quot;XTIM:POW&quot;</span><span class="p">,</span> <span class="s2">&quot;XTIM:POWer&quot;</span><span class="p">)</span>
+    <span class="n">TRIGGER_SOURCES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;HOLD&quot;</span><span class="p">,</span> <span class="s2">&quot;IMM&quot;</span><span class="p">,</span> <span class="s2">&quot;INT&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT1&quot;</span><span class="p">,</span> <span class="s2">&quot;EXT2&quot;</span><span class="p">,</span> <span class="s2">&quot;BUS&quot;</span><span class="p">,</span> <span class="s2">&quot;INT1&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Instrument state traits (pass command arguments and/or implement setter/getter)</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;SENS:FREQ&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">10e6</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Hz&quot;</span><span class="p">)</span>
+    <span class="n">initiate_continuous</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;INIT:CONT&quot;</span><span class="p">,</span> <span class="n">remap</span><span class="o">=</span><span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="s2">&quot;OFF&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s2">&quot;ON&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="nd">@lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">str</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;SENS:FUNC&quot;</span><span class="p">,</span>
+        <span class="n">case</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">only</span><span class="o">=</span><span class="n">FUNCTIONS</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># Special case - this message requires quotes around the argument</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SENSe:FUNCtion &quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+
+    <span class="nd">@lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">str</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRIG:SOUR&quot;</span><span class="p">,</span>
+        <span class="n">case</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">only</span><span class="o">=</span><span class="n">TRIGGER_SOURCES</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">trigger_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&#39;HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm&quot;&quot;&quot;</span>
+        <span class="c1"># special case - the instrument returns &#39;2&#39; instead of &#39;EXT2&#39;</span>
+        <span class="n">remap</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;2&quot;</span><span class="p">:</span> <span class="s2">&quot;EXT2&quot;</span><span class="p">}</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;TRIG:SOUR?&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">remap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="n">trigger_delay</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRIG:DELAY&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">trigger_count</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRIG:COUN&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;help me&quot;</span><span class="p">)</span>
+    <span class="n">trigger_holdoff</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRIG:HOLD&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">trigger_level</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRIG:LEV&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">200e-3</span><span class="p">)</span>
+
+    <span class="n">trace_points</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">int</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;SENSe:TRACe:POINTs&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span> <span class="n">gets</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">trace_realtime</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRAC:REAL&quot;</span><span class="p">,</span> <span class="n">remap</span><span class="o">=</span><span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="s2">&quot;OFF&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s2">&quot;ON&quot;</span><span class="p">})</span>
+    <span class="n">trace_time</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRAC:TIME&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">10e-6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">trace_offset_time</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRAC:OFFS:TIME&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">trace_average_count</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRAC:AVER:COUN&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">65536</span><span class="p">)</span>
+    <span class="n">trace_average_mode</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">str</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRAC:AVER:TCON&quot;</span><span class="p">,</span> <span class="n">only</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;MOV&quot;</span><span class="p">,</span> <span class="s2">&quot;REP&quot;</span><span class="p">),</span> <span class="n">case</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">trace_average_enable</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;TRAC:AVER&quot;</span><span class="p">,</span> <span class="n">remap</span><span class="o">=</span><span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="s2">&quot;OFF&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s2">&quot;ON&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="n">average_count</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;AVER:COUN&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">65536</span><span class="p">)</span>
+    <span class="n">average_auto</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;AVER:COUN:AUTO&quot;</span><span class="p">,</span> <span class="n">remap</span><span class="o">=</span><span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="s2">&quot;OFF&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s2">&quot;ON&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">average_enable</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;AVER&quot;</span><span class="p">,</span> <span class="n">remap</span><span class="o">=</span><span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="s2">&quot;OFF&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s2">&quot;ON&quot;</span><span class="p">})</span>
+    <span class="n">smoothing_enable</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;SMO:STAT&quot;</span><span class="p">,</span> <span class="n">remap</span><span class="o">=</span><span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="s2">&quot;OFF&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="s2">&quot;ON&quot;</span><span class="p">},</span> <span class="n">gets</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Local settings traits (leave command unset, and do not implement setter/getter)</span>
+    <span class="n">read_termination</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">str</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.preset"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.RohdeSchwarzNRPSeries.preset">[docs]</a>    <span class="k">def</span> <span class="nf">preset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;*PRE&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.trigger_single"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.RohdeSchwarzNRPSeries.trigger_single">[docs]</a>    <span class="k">def</span> <span class="nf">trigger_single</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;INIT&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.fetch"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.RohdeSchwarzNRPSeries.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a single number or pandas Series containing the power readings&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;FETC?&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">trace_time</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trace_points</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.fetch_buffer"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.RohdeSchwarzNRPSeries.fetch_buffer">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a single number or pandas Series containing the power readings&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;FETC:ARR?&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># np.arange(len(response))*(self.trace_time/float(self.trace_points))</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.setup_trace"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.RohdeSchwarzNRPSeries.setup_trace">[docs]</a>    <span class="k">def</span> <span class="nf">setup_trace</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">frequency</span><span class="p">,</span>
+        <span class="n">trace_points</span><span class="p">,</span>
+        <span class="n">sample_period</span><span class="p">,</span>
+        <span class="n">trigger_level</span><span class="p">,</span>
+        <span class="n">trigger_delay</span><span class="p">,</span>
+        <span class="n">trigger_source</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param frequency: in Hz</span>
+<span class="sd">        :param trace_points: number of points in the trace (perhaps as high as 5000)</span>
+<span class="sd">        :param sample_period: in s</span>
+<span class="sd">        :param trigger_level: in dBm</span>
+<span class="sd">        :param trigger_delay: in s</span>
+<span class="sd">        :param trigger_source: &#39;HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm&#39;</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;*RST&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="n">frequency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="s2">&quot;XTIM:POW&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace_points</span> <span class="o">=</span> <span class="n">trace_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace_time</span> <span class="o">=</span> <span class="n">trace_points</span> <span class="o">*</span> <span class="n">sample_period</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger_level</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">trigger_level</span> <span class="o">/</span> <span class="mf">10.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger_delay</span> <span class="o">=</span> <span class="n">trigger_delay</span>  <span class="c1"># self.Ts / 2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace_realtime</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger_source</span> <span class="o">=</span> <span class="n">trigger_source</span>  <span class="c1"># &#39;EXT2&#39;  # Signal analyzer trigger output (10kOhm impedance)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initiate_continuous</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RohdeSchwarzNRPSeries.__imports__"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.RohdeSchwarzNRPSeries.__imports__">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__imports__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">pd</span>
+        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__imports__</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="RohdeSchwarzNRP8s"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.RohdeSchwarzNRP8s">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzNRP8s</span><span class="p">(</span><span class="n">RohdeSchwarzNRPSeries</span><span class="p">):</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">float</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;SENS:FREQ&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">10e6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">8e9</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Hz&quot;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RohdeSchwarzNRP18s"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/power_sensors/index.html#ssmdevices.instruments.RohdeSchwarzNRP18s">[docs]</a><span class="k">class</span> <span class="nc">RohdeSchwarzNRP18s</span><span class="p">(</span><span class="n">RohdeSchwarzNRPSeries</span><span class="p">):</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">float</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span><span class="s2">&quot;SENS:FREQ&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">10e6</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">18e9</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Hz&quot;</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pylab</span> <span class="kn">import</span> <span class="o">*</span>
+    <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+    <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;ticks&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Enable labbench debug messages</span>
+    <span class="c1"># log_to_screen()</span>
+
+    <span class="k">with</span> <span class="n">KeysightU2000XSeries</span><span class="p">(</span><span class="s2">&quot;USB0::0x2A8D::0x1E01::SG56360004::INSTR&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sensor</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connected to &quot;</span><span class="p">,</span> <span class="n">sensor</span><span class="o">.</span><span class="n">identity</span><span class="p">)</span>
+
+        <span class="c1"># Configure</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">preset</span><span class="p">()</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="mf">1e9</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">measurement_rate</span> <span class="o">=</span> <span class="s2">&quot;FAST&quot;</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">trigger_count</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">sweep_aperture</span> <span class="o">=</span> <span class="mf">20e-6</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">trigger_source</span> <span class="o">=</span> <span class="s2">&quot;IMM&quot;</span>
+        <span class="n">sensor</span><span class="o">.</span><span class="n">initiate_continuous</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">power</span> <span class="o">=</span> <span class="n">sensor</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+
+    <span class="n">power</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Power level&quot;</span><span class="p">)</span>
+    <span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Count&quot;</span><span class="p">)</span>
+    <span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of power sensor readings&quot;</span><span class="p">)</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ssmdevices.instruments.power_sensors</a></li> 
+      </ul>
+    </div>
+<hr \>
+<section class="footer">
+<br><a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#privpolicy">Privacy Policy</a> | <a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#secnot">Security Notice</a> | <a href="http://www.nist.gov/public_affairs/privacy.cfm#accesstate">Accessibility Statement</a>
+<br><em>United States government work, not subject to copyright in the United States</em>
+</section>
+
+  </body>
+</html>

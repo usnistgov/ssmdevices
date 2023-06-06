@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ssmdevices.software &#8212; ssmdevices v0.11</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+<header class="nist-header">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>NIST Pages Template</title>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="ssmdevices v0.11">
+  <link rel="canonical" href="../../../">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Google Analytics -->
+  <!--<script type="text/javascript" id="_fed_an_js_tag" src="http://www.nist.gov/js/federated-analytics.all.min.js?agency=NIST&subagency=mml&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script> -->
+  <!-- DAP Analytics -->
+  <script type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=DOC&subagefncy=NIST&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../..//static/NISTStyle.css">
+  <link rel="stylesheet" href="../../..//static/NISTPages.css">
+
+  <h1>
+    <a class="nist-logo" target="_blank" href="http://www.nist.gov/" title="Go to nist.gov">National Institute of Standards and Technology</a>
+  </h1>
+  <div class="nist-links">
+    <a class="nist-links-button" target="_blank" href="http://www.nist.gov">NIST Website</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="http://www.nist.gov/public_affairs/nandyou.cfm">About NIST</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="https://github.com/usnistgov">usnistgov on GitHub</a>
+  </div>
+  
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</header>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software</span></code></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-ssmdevices.software">
+<span id="ssmdevices-software"></span><h1><a class="reference internal" href="#module-ssmdevices.software" title="ssmdevices.software"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software</span></code></a><a class="headerlink" href="#module-ssmdevices.software" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_networking/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software._networking</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="network_profiling/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software.network_profiling</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="qxdm/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software.qxdm</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="windows/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software.windows</span></code></a></li>
+</ul>
+</div>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Permalink to this heading">¶</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.software.IPerf2" title="ssmdevices.software.IPerf2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf2</span></code></a></p></td>
+<td><p>Run an instance of iperf, collecting output data in a background thread.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssmdevices.software.IPerf3" title="ssmdevices.software.IPerf3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf3</span></code></a></p></td>
+<td><p>Run an instance of iperf3, collecting output data in a background thread.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.software.IPerf2OnAndroid" title="ssmdevices.software.IPerf2OnAndroid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf2OnAndroid</span></code></a></p></td>
+<td><p>Run an instance of iperf, collecting output data in a background thread.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair" title="ssmdevices.software.IPerf2BoundPair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf2BoundPair</span></code></a></p></td>
+<td><p>Run an iperf client and a server on the host computer at the same time. They are</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP" title="ssmdevices.software.TrafficProfiler_ClosedLoopTCP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP</span></code></a></p></td>
+<td><p>Profile closed-loop traffic between two network interfaces</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssmdevices.software.WLANInfo" title="ssmdevices.software.WLANInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WLANInfo</span></code></a></p></td>
+<td><p>Parse calls to netsh to get information about WLAN interfaces.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.software.WLANClient" title="ssmdevices.software.WLANClient"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WLANClient</span></code></a></p></td>
+<td><p>base class for labbench device wrappers.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssmdevices.software.QXDM" title="ssmdevices.software.QXDM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QXDM</span></code></a></p></td>
+<td><p>QXDM software wrapper</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.software.list_network_interfaces" title="ssmdevices.software.list_network_interfaces"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_network_interfaces</span></code></a>([by])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssmdevices.software.network_interface_info" title="ssmdevices.software.network_interface_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">network_interface_info</span></code></a>(resource)</p></td>
+<td><p>Try to look up the IP address of a network interface by its name</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.software.get_ipv4_occupied_ports" title="ssmdevices.software.get_ipv4_occupied_ports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ipv4_occupied_ports</span></code></a>(ip)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssmdevices.software.get_ipv4_address" title="ssmdevices.software.get_ipv4_address"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ipv4_address</span></code></a>(resource)</p></td>
+<td><p>Try to look up the IP address of a network interface by its name</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.software.INTERFACE_FIELDS" title="ssmdevices.software.INTERFACE_FIELDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">INTERFACE_FIELDS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="ssmdevices.software.INTERFACE_FIELDS">
+<span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">INTERFACE_FIELDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('interface',</span> <span class="pre">'ip_address',</span> <span class="pre">'physical_address',</span> <span class="pre">'ipv6_address')</span></em><a class="headerlink" href="#ssmdevices.software.INTERFACE_FIELDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ssmdevices.software.list_network_interfaces">
+<span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">list_network_interfaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'interface'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/_networking.html#list_network_interfaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.list_network_interfaces" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ssmdevices.software.network_interface_info">
+<span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">network_interface_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/_networking.html#network_interface_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_interface_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to look up the IP address of a network interface by its name
+or MAC (physical) address.</p>
+<p>If the interface does not exist, the medium is disconnected, or there
+is no IP address associated with the interface, raise <cite>ConnectionError</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ssmdevices.software.get_ipv4_occupied_ports">
+<span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">get_ipv4_occupied_ports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/_networking.html#get_ipv4_occupied_ports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.get_ipv4_occupied_ports" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ssmdevices.software.get_ipv4_address">
+<span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">get_ipv4_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/_networking.html#get_ipv4_address"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.get_ipv4_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to look up the IP address of a network interface by its name
+or MAC (physical) address.</p>
+<p>If the interface does not exist, the medium is disconnected, or there
+is no IP address associated with the interface, raise <cite>ConnectionError</cite>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">IPerf2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">_IPerfBase</span></code></p>
+<p>Run an instance of iperf, collecting output data in a background thread.
+When running as an iperf client (server=False),
+The default value is the path that installs with 64-bit cygwin.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2.FLAGS">
+<span class="sig-name descname"><span class="pre">FLAGS</span></span><a class="headerlink" href="#ssmdevices.software.IPerf2.FLAGS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2.DATAFRAME_COLUMNS">
+<span class="sig-name descname"><span class="pre">DATAFRAME_COLUMNS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('jitter_milliseconds',</span> <span class="pre">'datagrams_lost',</span> <span class="pre">'datagrams_sent',</span> <span class="pre">'datagrams_loss_percentage',...</span></em><a class="headerlink" href="#ssmdevices.software.IPerf2.DATAFRAME_COLUMNS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2.bidirectional">
+<span class="sig-name descname"><span class="pre">bidirectional</span></span><a class="headerlink" href="#ssmdevices.software.IPerf2.bidirectional" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2.report_style">
+<span class="sig-name descname"><span class="pre">report_style</span></span><a class="headerlink" href="#ssmdevices.software.IPerf2.report_style" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2.profile">
+<span class="sig-name descname"><span class="pre">profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2.profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2.profile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2.read_stdout">
+<span class="sig-name descname"><span class="pre">read_stdout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2.read_stdout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2.read_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>retreive text from standard output, and parse into a pandas DataFrame if self.report_style is None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2._format_output">
+<span class="sig-name descname"><span class="pre">_format_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2._format_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2._format_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>pack stdout into a pandas DataFrame if self.report_style == ‘C’</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf3">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">IPerf3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">_IPerfBase</span></code></p>
+<p>Run an instance of iperf3, collecting output data in a background thread.
+When running as an iperf client (server=False),
+The default value is the path that installs with 64-bit cygwin.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf3.FLAGS">
+<span class="sig-name descname"><span class="pre">FLAGS</span></span><a class="headerlink" href="#ssmdevices.software.IPerf3.FLAGS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf3.reverse">
+<span class="sig-name descname"><span class="pre">reverse</span></span><a class="headerlink" href="#ssmdevices.software.IPerf3.reverse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf3.json">
+<span class="sig-name descname"><span class="pre">json</span></span><a class="headerlink" href="#ssmdevices.software.IPerf3.json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf3.zerocopy">
+<span class="sig-name descname"><span class="pre">zerocopy</span></span><a class="headerlink" href="#ssmdevices.software.IPerf3.zerocopy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2OnAndroid">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">IPerf2OnAndroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2OnAndroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ssmdevices.software.IPerf2" title="ssmdevices.software.IPerf2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf2</span></code></a></p>
+<p>Run an instance of iperf, collecting output data in a background thread.
+When running as an iperf client (server=False),
+The default value is the path that installs with 64-bit cygwin.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2OnAndroid.remote_binary_path">
+<span class="sig-name descname"><span class="pre">remote_binary_path</span></span><a class="headerlink" href="#ssmdevices.software.IPerf2OnAndroid.remote_binary_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2OnAndroid.profile">
+<span class="sig-name descname"><span class="pre">profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2OnAndroid.profile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2OnAndroid.open">
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2OnAndroid.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open an adb connection to the handset, copy the iperf binary onto the phone, and
+verify that iperf executes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2OnAndroid.kill">
+<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.kill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2OnAndroid.kill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kill the local process and the iperf process on the UE.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2OnAndroid.read_stdout">
+<span class="sig-name descname"><span class="pre">read_stdout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.read_stdout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2OnAndroid.read_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>adb seems to forward stderr as stdout. Filter out some undesired
+resulting status messages.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2OnAndroid.wait_for_cell_data">
+<span class="sig-name descname"><span class="pre">wait_for_cell_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.wait_for_cell_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2OnAndroid.wait_for_cell_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Block until cellular data is available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout</strong> – how long to wait for a connection before raising a Timeout error</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2OnAndroid.reboot">
+<span class="sig-name descname"><span class="pre">reboot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.reboot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2OnAndroid.reboot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reboot the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>block</strong> – if truey, block until the device is ready to accept commands.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2OnAndroid.wait_for_device">
+<span class="sig-name descname"><span class="pre">wait_for_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.wait_for_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2OnAndroid.wait_for_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Block until the device is ready to accept commands</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">IPerf2BoundPair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ssmdevices.software.IPerf2" title="ssmdevices.software.IPerf2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf2</span></code></a></p>
+<p>Run an iperf client and a server on the host computer at the same time. They are
+bound to interfaces in order to ensure that data is routed between them, not through
+localhost or any other interface.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair.resource">
+<span class="sig-name descname"><span class="pre">resource</span></span><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair.server">
+<span class="sig-name descname"><span class="pre">server</span></span><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair.server" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair.client">
+<span class="sig-name descname"><span class="pre">client</span></span><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair.client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair.children">
+<span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair.children" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair.open">
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.open" title="ssmdevices.software.IPerf2BoundPair.open"><code class="xref py py-meth docutils literal notranslate"><span class="pre">open()</span></code></a> method implements opening in the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> object protocol. Call the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code> method when open to
+execute the binary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair.kill">
+<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.kill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair.kill" title="Permalink to this definition">¶</a></dt>
+<dd><p>If a process is running in the background, kill it. Sends a console
+warning if no process is running.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair.running">
+<span class="sig-name descname"><span class="pre">running</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.running"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair.running" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a background process is running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if running, otherwise False</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair.read_stdout">
+<span class="sig-name descname"><span class="pre">read_stdout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.read_stdout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair.read_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>retreive text from standard output, and parse into a pandas DataFrame if self.report_style is None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair._merge_dataframes">
+<span class="sig-name descname"><span class="pre">_merge_dataframes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair._merge_dataframes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair._merge_dataframes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.IPerf2BoundPair._setup_pair">
+<span class="sig-name descname"><span class="pre">_setup_pair</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair._setup_pair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.IPerf2BoundPair._setup_pair" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">TrafficProfiler_ClosedLoopTCP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoop</span></code></p>
+<p>Profile closed-loop traffic between two network interfaces
+on this computer. Takes advantage of the system clock as a common
+basis for traffic delay measurement, with uncertainty approximately
+equal to the system time resolution.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP._receive_interface">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_receive_interface</span></span><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._receive_interface" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP._server">
+<span class="sig-name descname"><span class="pre">_server</span></span><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._server" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP.PORT_WINERRS">
+<span class="sig-name descname"><span class="pre">PORT_WINERRS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(10013,</span> <span class="pre">10048)</span></em><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.PORT_WINERRS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP.CONN_WINERRS">
+<span class="sig-name descname"><span class="pre">CONN_WINERRS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(10051,)</span></em><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.CONN_WINERRS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP._close_sockets">
+<span class="sig-name descname"><span class="pre">_close_sockets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sockets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP._close_sockets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._close_sockets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP._open_sockets">
+<span class="sig-name descname"><span class="pre">_open_sockets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP._open_sockets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._open_sockets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect the supplied client socket to the server.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP._run">
+<span class="sig-name descname"><span class="pre">_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_sock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_sock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP._run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP.profile_count">
+<span class="sig-name descname"><span class="pre">profile_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP.profile_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.profile_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>sends <cite>count</cite> buffers of size <cite>buffer_size</cite> bytes
+and returns profiling information”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer_size</strong> (<em>int</em>) – number of bytes to send in each buffer</p></li>
+<li><p><strong>count</strong> (<em>int</em>) – the number of buffers to send</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a DataFrame indexed on PC time containing columns ‘bits_per_second’, ‘duration’, ‘delay’, ‘queuing_duration’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP.profile_duration">
+<span class="sig-name descname"><span class="pre">profile_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP.profile_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.profile_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>sends buffers of size <cite>buffer_size</cite> bytes until
+<cite>duration</cite> seconds have elapsed, and returns profiling information”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer_size</strong> (<em>int</em>) – number of bytes to send in each buffer</p></li>
+<li><p><strong>duration</strong> (<em>float</em>) – the minimum number of seconds to spend profiling</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a DataFrame indexed on PC time containing columns ‘bits_per_second’, ‘duration’, ‘delay’, ‘queuing_duration’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP._make_dataframe">
+<span class="sig-name descname"><span class="pre">_make_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">worker_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP._make_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._make_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP.mss">
+<span class="sig-name descname"><span class="pre">mss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP.mss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.mss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP.mtu">
+<span class="sig-name descname"><span class="pre">mtu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP.mtu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.mtu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.TrafficProfiler_ClosedLoopTCP.wait_for_interfaces">
+<span class="sig-name descname"><span class="pre">wait_for_interfaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP.wait_for_interfaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.wait_for_interfaces" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANInfo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">WLANInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">labbench.ShellBackend</span></code></p>
+<p>Parse calls to netsh to get information about WLAN interfaces.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANInfo.FLAGS">
+<span class="sig-name descname"><span class="pre">FLAGS</span></span><a class="headerlink" href="#ssmdevices.software.WLANInfo.FLAGS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANInfo.only_bssid">
+<span class="sig-name descname"><span class="pre">only_bssid</span></span><a class="headerlink" href="#ssmdevices.software.WLANInfo.only_bssid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANInfo.interface">
+<span class="sig-name descname"><span class="pre">interface</span></span><a class="headerlink" href="#ssmdevices.software.WLANInfo.interface" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANInfo.wait">
+<span class="sig-name descname"><span class="pre">wait</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANInfo.wait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANInfo.wait" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANInfo.get_wlan_ssids">
+<span class="sig-name descname"><span class="pre">get_wlan_ssids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interface</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANInfo.get_wlan_ssids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANInfo.get_wlan_ssids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANInfo.get_wlan_interfaces">
+<span class="sig-name descname"><span class="pre">get_wlan_interfaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANInfo.get_wlan_interfaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANInfo.get_wlan_interfaces" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">WLANClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">labbench.Device</span></code></p>
+<p>base class for labbench device wrappers.</p>
+<p>Drivers that subclass <cite>Device</cite> share</p>
+<ul class="simple">
+<li><p>standardized connection management via context blocks (the <cite>with</cite> statement)</p></li>
+<li><p>hooks for automatic data logging and heads-up displays</p></li>
+<li><p>API style consistency</p></li>
+<li><p>bounds checking and casting for typed attributes</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This <cite>Device</cite> base class has convenience
+functions for device control, but no implementation.</p>
+<p>Some wrappers for particular APIs labbench Device subclasses:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>VISADevice: pyvisa,</p></li>
+<li><p>ShellBackend: binaries and scripts</p></li>
+<li><p>Serial: pyserial</p></li>
+<li><p>DotNetDevice: pythonnet</p></li>
+</ul>
+</div></blockquote>
+<p>(and others). If you are implementing a driver that uses one of
+these backends, inherit from the corresponding class above, not
+<cite>Device</cite>.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.resource">
+<span class="sig-name descname"><span class="pre">resource</span></span><a class="headerlink" href="#ssmdevices.software.WLANClient.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.ssid">
+<span class="sig-name descname"><span class="pre">ssid</span></span><a class="headerlink" href="#ssmdevices.software.WLANClient.ssid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.timeout">
+<span class="sig-name descname"><span class="pre">timeout</span></span><a class="headerlink" href="#ssmdevices.software.WLANClient.timeout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.open">
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANClient.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANClient.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backend implementations overload this to open a backend
+connection to the resource.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.list_available_clients">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_available_clients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'interface'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANClient.list_available_clients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANClient.list_available_clients" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient._import_pywifi">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_import_pywifi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANClient._import_pywifi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANClient._import_pywifi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.interface_connect">
+<span class="sig-name descname"><span class="pre">interface_connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANClient.interface_connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANClient.interface_connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.interface_disconnect">
+<span class="sig-name descname"><span class="pre">interface_disconnect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANClient.interface_disconnect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANClient.interface_disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to disconnect to the WLAN interface, or raise TimeoutError
+if there is no connection after the specified timeout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout</strong> (<em>float</em>) – timeout to wait before raising TimeoutError</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.interface_reconnect">
+<span class="sig-name descname"><span class="pre">interface_reconnect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANClient.interface_reconnect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANClient.interface_reconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reconnect to the network interface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>time elapsed to reconnect</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.WLANClient.state" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>True</cite> if psutil reports that the interface is up</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.isup">
+<span class="sig-name descname"><span class="pre">isup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.WLANClient.isup" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>True</cite> if psutil reports that the interface is up</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.transmit_rate_mbps">
+<span class="sig-name descname"><span class="pre">transmit_rate_mbps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.WLANClient.transmit_rate_mbps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.signal">
+<span class="sig-name descname"><span class="pre">signal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.WLANClient.signal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.description">
+<span class="sig-name descname"><span class="pre">description</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.WLANClient.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.WLANClient.channel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.WLANClient.refresh">
+<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/windows.html#WLANClient.refresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.WLANClient.refresh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.</span></span><span class="sig-name descname"><span class="pre">QXDM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">labbench.Win32ComDevice</span></code></p>
+<p>QXDM software wrapper</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.resource">
+<span class="sig-name descname"><span class="pre">resource</span></span><a class="headerlink" href="#ssmdevices.software.QXDM.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.cache_path">
+<span class="sig-name descname"><span class="pre">cache_path</span></span><a class="headerlink" href="#ssmdevices.software.QXDM.cache_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.connection_timeout">
+<span class="sig-name descname"><span class="pre">connection_timeout</span></span><a class="headerlink" href="#ssmdevices.software.QXDM.connection_timeout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.ue_model_number">
+<span class="sig-name descname"><span class="pre">ue_model_number</span></span><a class="headerlink" href="#ssmdevices.software.QXDM.ue_model_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.ue_mode">
+<span class="sig-name descname"><span class="pre">ue_mode</span></span><a class="headerlink" href="#ssmdevices.software.QXDM.ue_mode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.ue_imei">
+<span class="sig-name descname"><span class="pre">ue_imei</span></span><a class="headerlink" href="#ssmdevices.software.QXDM.ue_imei" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.ue_esn">
+<span class="sig-name descname"><span class="pre">ue_esn</span></span><a class="headerlink" href="#ssmdevices.software.QXDM.ue_esn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.ue_build_id">
+<span class="sig-name descname"><span class="pre">ue_build_id</span></span><a class="headerlink" href="#ssmdevices.software.QXDM.ue_build_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.open">
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to the win32 com object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.get_key">
+<span class="sig-name descname"><span class="pre">get_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trait_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM.get_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM.get_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>implement this in subclasses to use <cite>key</cite> to retreive a parameter value from the
+Device with self.backend.</p>
+<p>property traits defined with “key=” call this to retrieve values
+from the backend.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.configure">
+<span class="sig-name descname"><span class="pre">configure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_acquisition_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM.configure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM.configure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the QXDM .dmc configuration file at the specified path,
+with adjustments that disable special file output modes like
+autosave, quicksave, and automatic segmenting based on time and
+file size.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveNm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop the run and save the data in a file at the specified path.
+If path is None, autogenerate with self.cache_path and
+self.data_filename.</p>
+<p>This method is threadsafe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The absolute path to the data file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start acquisition, optionally waiting to return until
+new data enters the QXDM item store.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM._get_com_port">
+<span class="sig-name descname"><span class="pre">_get_com_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM._get_com_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM._get_com_port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM._load_config">
+<span class="sig-name descname"><span class="pre">_load_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM._load_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM._load_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.version">
+<span class="sig-name descname"><span class="pre">version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ssmdevices.software.QXDM.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>QXDM application version</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM._get_server_state">
+<span class="sig-name descname"><span class="pre">_get_server_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM._get_server_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM._get_server_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM._get_item_count">
+<span class="sig-name descname"><span class="pre">_get_item_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM._get_item_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM._get_item_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM._killall">
+<span class="sig-name descname"><span class="pre">_killall</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM._killall"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM._killall" title="Permalink to this definition">¶</a></dt>
+<dd><p>kills all instances of qpst, qxdm, and atmnserver</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM._set_com_port">
+<span class="sig-name descname"><span class="pre">_set_com_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">com_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM._set_com_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM._set_com_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>connects to the handset at the specified serial port.</p>
+<p>Blocks until QXDM confirms the phone is connected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>com_port</strong> (<em>int</em>) – serial port number, COMn; 0 or None to disable</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TimeoutError</strong> – after waiting <cite>self.connection_timeout</cite> for connection</p></li>
+<li><p><strong>IOError</strong> – when the QXDM COM API returns code -1</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM.reconnect">
+<span class="sig-name descname"><span class="pre">reconnect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM.reconnect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM.reconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM._clear">
+<span class="sig-name descname"><span class="pre">_clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM._clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM._clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>clears the buffer of data.</p>
+<p>TODO: Depending on if QXDM is already running, wait for the item
+count store to start increasing again?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM._wait_for_stop">
+<span class="sig-name descname"><span class="pre">_wait_for_stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM._wait_for_stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM._wait_for_stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>blocks until the QXDM item store stops growing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.QXDM._wait_for_start">
+<span class="sig-name descname"><span class="pre">_wait_for_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/ssmdevices/software/qxdm.html#QXDM._wait_for_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.QXDM._wait_for_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>blocks until the item store has grown by at least <cite>min_rows</cite></p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../ssmdevices.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software</span></code></a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.INTERFACE_FIELDS"><code class="docutils literal notranslate"><span class="pre">INTERFACE_FIELDS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.list_network_interfaces"><code class="docutils literal notranslate"><span class="pre">list_network_interfaces()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_interface_info"><code class="docutils literal notranslate"><span class="pre">network_interface_info()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.get_ipv4_occupied_ports"><code class="docutils literal notranslate"><span class="pre">get_ipv4_occupied_ports()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.get_ipv4_address"><code class="docutils literal notranslate"><span class="pre">get_ipv4_address()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2"><code class="docutils literal notranslate"><span class="pre">IPerf2</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2.FLAGS"><code class="docutils literal notranslate"><span class="pre">IPerf2.FLAGS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2.DATAFRAME_COLUMNS"><code class="docutils literal notranslate"><span class="pre">IPerf2.DATAFRAME_COLUMNS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2.bidirectional"><code class="docutils literal notranslate"><span class="pre">IPerf2.bidirectional</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2.report_style"><code class="docutils literal notranslate"><span class="pre">IPerf2.report_style</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2.profile"><code class="docutils literal notranslate"><span class="pre">IPerf2.profile()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2.read_stdout"><code class="docutils literal notranslate"><span class="pre">IPerf2.read_stdout()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2._format_output"><code class="docutils literal notranslate"><span class="pre">IPerf2._format_output()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf3"><code class="docutils literal notranslate"><span class="pre">IPerf3</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf3.FLAGS"><code class="docutils literal notranslate"><span class="pre">IPerf3.FLAGS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf3.reverse"><code class="docutils literal notranslate"><span class="pre">IPerf3.reverse</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf3.json"><code class="docutils literal notranslate"><span class="pre">IPerf3.json</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf3.zerocopy"><code class="docutils literal notranslate"><span class="pre">IPerf3.zerocopy</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2OnAndroid"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2OnAndroid.remote_binary_path"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.remote_binary_path</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2OnAndroid.profile"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.profile()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2OnAndroid.open"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.open()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2OnAndroid.kill"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.kill()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2OnAndroid.read_stdout"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.read_stdout()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2OnAndroid.wait_for_cell_data"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.wait_for_cell_data()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2OnAndroid.reboot"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.reboot()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2OnAndroid.wait_for_device"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.wait_for_device()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.resource"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.resource</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.server"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.server</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.client"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.client</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.children"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.children</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.open"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.open()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.close"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.close()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.kill"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.kill()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.running"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.running()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.start"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.start()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair.read_stdout"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.read_stdout()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair._merge_dataframes"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair._merge_dataframes()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.IPerf2BoundPair._setup_pair"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair._setup_pair()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._receive_interface"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._receive_interface</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._server"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._server</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.PORT_WINERRS"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.PORT_WINERRS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.CONN_WINERRS"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.CONN_WINERRS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._close_sockets"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._close_sockets()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._open_sockets"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._open_sockets()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._run"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._run()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.profile_count"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.profile_count()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.profile_duration"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.profile_duration()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP._make_dataframe"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._make_dataframe()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.mss"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.mss()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.mtu"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.mtu()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.TrafficProfiler_ClosedLoopTCP.wait_for_interfaces"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.wait_for_interfaces()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANInfo"><code class="docutils literal notranslate"><span class="pre">WLANInfo</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.WLANInfo.FLAGS"><code class="docutils literal notranslate"><span class="pre">WLANInfo.FLAGS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANInfo.only_bssid"><code class="docutils literal notranslate"><span class="pre">WLANInfo.only_bssid</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANInfo.interface"><code class="docutils literal notranslate"><span class="pre">WLANInfo.interface</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANInfo.wait"><code class="docutils literal notranslate"><span class="pre">WLANInfo.wait()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANInfo.get_wlan_ssids"><code class="docutils literal notranslate"><span class="pre">WLANInfo.get_wlan_ssids()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANInfo.get_wlan_interfaces"><code class="docutils literal notranslate"><span class="pre">WLANInfo.get_wlan_interfaces()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient"><code class="docutils literal notranslate"><span class="pre">WLANClient</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.resource"><code class="docutils literal notranslate"><span class="pre">WLANClient.resource</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.ssid"><code class="docutils literal notranslate"><span class="pre">WLANClient.ssid</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.timeout"><code class="docutils literal notranslate"><span class="pre">WLANClient.timeout</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.open"><code class="docutils literal notranslate"><span class="pre">WLANClient.open()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.list_available_clients"><code class="docutils literal notranslate"><span class="pre">WLANClient.list_available_clients()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient._import_pywifi"><code class="docutils literal notranslate"><span class="pre">WLANClient._import_pywifi()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.interface_connect"><code class="docutils literal notranslate"><span class="pre">WLANClient.interface_connect()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.interface_disconnect"><code class="docutils literal notranslate"><span class="pre">WLANClient.interface_disconnect()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.interface_reconnect"><code class="docutils literal notranslate"><span class="pre">WLANClient.interface_reconnect()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.state"><code class="docutils literal notranslate"><span class="pre">WLANClient.state()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.isup"><code class="docutils literal notranslate"><span class="pre">WLANClient.isup()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.transmit_rate_mbps"><code class="docutils literal notranslate"><span class="pre">WLANClient.transmit_rate_mbps()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.signal"><code class="docutils literal notranslate"><span class="pre">WLANClient.signal()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.description"><code class="docutils literal notranslate"><span class="pre">WLANClient.description()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.channel"><code class="docutils literal notranslate"><span class="pre">WLANClient.channel()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.WLANClient.refresh"><code class="docutils literal notranslate"><span class="pre">WLANClient.refresh()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM"><code class="docutils literal notranslate"><span class="pre">QXDM</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.resource"><code class="docutils literal notranslate"><span class="pre">QXDM.resource</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.cache_path"><code class="docutils literal notranslate"><span class="pre">QXDM.cache_path</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.connection_timeout"><code class="docutils literal notranslate"><span class="pre">QXDM.connection_timeout</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.ue_model_number"><code class="docutils literal notranslate"><span class="pre">QXDM.ue_model_number</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.ue_mode"><code class="docutils literal notranslate"><span class="pre">QXDM.ue_mode</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.ue_imei"><code class="docutils literal notranslate"><span class="pre">QXDM.ue_imei</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.ue_esn"><code class="docutils literal notranslate"><span class="pre">QXDM.ue_esn</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.ue_build_id"><code class="docutils literal notranslate"><span class="pre">QXDM.ue_build_id</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.open"><code class="docutils literal notranslate"><span class="pre">QXDM.open()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.get_key"><code class="docutils literal notranslate"><span class="pre">QXDM.get_key()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.close"><code class="docutils literal notranslate"><span class="pre">QXDM.close()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.configure"><code class="docutils literal notranslate"><span class="pre">QXDM.configure()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.save"><code class="docutils literal notranslate"><span class="pre">QXDM.save()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.start"><code class="docutils literal notranslate"><span class="pre">QXDM.start()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM._get_com_port"><code class="docutils literal notranslate"><span class="pre">QXDM._get_com_port()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM._load_config"><code class="docutils literal notranslate"><span class="pre">QXDM._load_config()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.version"><code class="docutils literal notranslate"><span class="pre">QXDM.version()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM._get_server_state"><code class="docutils literal notranslate"><span class="pre">QXDM._get_server_state()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM._get_item_count"><code class="docutils literal notranslate"><span class="pre">QXDM._get_item_count()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM._killall"><code class="docutils literal notranslate"><span class="pre">QXDM._killall()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM._set_com_port"><code class="docutils literal notranslate"><span class="pre">QXDM._set_com_port()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM.reconnect"><code class="docutils literal notranslate"><span class="pre">QXDM.reconnect()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM._clear"><code class="docutils literal notranslate"><span class="pre">QXDM._clear()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM._wait_for_stop"><code class="docutils literal notranslate"><span class="pre">QXDM._wait_for_stop()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.QXDM._wait_for_start"><code class="docutils literal notranslate"><span class="pre">QXDM._wait_for_start()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../sources/autoapi/ssmdevices/software/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software</span></code></a></li> 
+      </ul>
+    </div>
+<hr \>
+<section class="footer">
+<br><a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#privpolicy">Privacy Policy</a> | <a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#secnot">Security Notice</a> | <a href="http://www.nist.gov/public_affairs/privacy.cfm#accesstate">Accessibility Statement</a>
+<br><em>United States government work, not subject to copyright in the United States</em>
+</section>
+
+  </body>
+</html>

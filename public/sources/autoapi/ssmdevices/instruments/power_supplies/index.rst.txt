@@ -1,0 +1,129 @@
+:py:mod:`ssmdevices.instruments.power_supplies`
+===============================================
+
+.. py:module:: ssmdevices.instruments.power_supplies
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ssmdevices.instruments.power_supplies.RigolDP800Series
+
+
+
+
+.. py:class:: RigolDP800Series(resource=Undefined, **values)
+
+   Bases: :py:obj:`labbench.VISADevice`
+
+   base class for VISA device wrappers with pyvisa.
+
+   .. rubric:: Examples
+
+   Autodetect a list of valid `resource` strings on the host::
+
+       print(VISADevice.list_resources())
+
+   Fetch the instrument identity string::
+
+       with VISADevice('USB0::0x2A8D::0x1E01::SG56360004::INSTR') as instr:
+           print(inst.identity)
+
+   Write ':FETCH?' to the instrument, read an expected ASCII CSV response,
+   and return it as a pandas DataFrame::
+
+       with VISADevice('USB0::0x2A8D::0x1E01::SG56360004::INSTR') as instr:
+           print(inst.query_ascii_values(':FETCH?'))
+
+   See also:
+   .. _installing a proprietary OS service for VISA:
+       https://pyvisa.readthedocs.io/en/latest/faq/getting_nivisa.html#faq-getting-nivisa
+   .. _resource strings and basic configuration:
+       https://pyvisa.readthedocs.io/en/latest/introduction/communication.html#getting-the-instrument-configuration-right
+
+   .. attribute:: backend
+
+      instance of a pyvisa instrument object (when open)
+
+      :type: pyvisa.Resource
+
+   .. py:attribute:: REMAP_BOOL
+
+      
+
+   .. py:attribute:: enable1
+
+      
+
+   .. py:attribute:: enable2
+
+      
+
+   .. py:attribute:: enable3
+
+      
+
+   .. py:attribute:: voltage_setting1
+
+      
+
+   .. py:attribute:: voltage_setting2
+
+      
+
+   .. py:attribute:: voltage_setting3
+
+      
+
+   .. py:attribute:: voltage1
+
+      
+
+   .. py:attribute:: voltage2
+
+      
+
+   .. py:attribute:: voltage3
+
+      
+
+   .. py:attribute:: current1
+
+      
+
+   .. py:attribute:: current2
+
+      
+
+   .. py:attribute:: current3
+
+      
+
+   .. py:method:: open()
+
+      Poll *IDN until the instrument responds.
+      Sometimes it needs an extra poke before it responds.
+
+
+   .. py:method:: get_key(scpi_key, trait_name=None)
+
+      This instrument expects keys to have syntax ":COMMAND? PARAM",
+      instead of ":COMMAND PARAM?" as implemented in lb.VISADevice.
+
+      Insert the "?" in the appropriate place here.
+
+
+   .. py:method:: set_key(scpi_key, value, trait_name=None)
+
+      This instrument expects sets to have syntax :COMMAND? PARAM,VALUE
+      instead of :COMMAND PARAM VALUE? as implemented in lb.VISADevice.
+
+      Implement this behavior here.
+
+
+

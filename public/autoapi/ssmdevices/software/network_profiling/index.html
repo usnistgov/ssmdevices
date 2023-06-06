@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ssmdevices.software.network_profiling &#8212; ssmdevices v0.11</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/nature.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+<header class="nist-header">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>NIST Pages Template</title>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="ssmdevices v0.11">
+  <link rel="canonical" href="../../../../">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Google Analytics -->
+  <!--<script type="text/javascript" id="_fed_an_js_tag" src="http://www.nist.gov/js/federated-analytics.all.min.js?agency=NIST&subagency=mml&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script> -->
+  <!-- DAP Analytics -->
+  <script type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=DOC&subagefncy=NIST&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../../..//static/NISTStyle.css">
+  <link rel="stylesheet" href="../../../..//static/NISTPages.css">
+
+  <h1>
+    <a class="nist-logo" target="_blank" href="http://www.nist.gov/" title="Go to nist.gov">National Institute of Standards and Technology</a>
+  </h1>
+  <div class="nist-links">
+    <a class="nist-links-button" target="_blank" href="http://www.nist.gov">NIST Website</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="http://www.nist.gov/public_affairs/nandyou.cfm">About NIST</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="https://github.com/usnistgov">usnistgov on GitHub</a>
+  </div>
+  
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</header>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software.network_profiling</span></code></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-ssmdevices.software.network_profiling">
+<span id="ssmdevices-software-network-profiling"></span><h1><a class="reference internal" href="#module-ssmdevices.software.network_profiling" title="ssmdevices.software.network_profiling"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software.network_profiling</span></code></a><a class="headerlink" href="#module-ssmdevices.software.network_profiling" title="Permalink to this heading">¶</a></h1>
+<dl class="simple">
+<dt>&#64;authors: Dan Kuester &lt;<a class="reference external" href="mailto:daniel&#46;kuester&#37;&#52;&#48;nist&#46;gov">daniel<span>&#46;</span>kuester<span>&#64;</span>nist<span>&#46;</span>gov</a>&gt;,</dt><dd><p>Michael Voecks &lt;<a class="reference external" href="mailto:michael&#46;voecks&#37;&#52;&#48;nist&#46;gov">michael<span>&#46;</span>voecks<span>&#64;</span>nist<span>&#46;</span>gov</a>&gt;</p>
+</dd>
+</dl>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf3" title="ssmdevices.software.network_profiling.IPerf3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf3</span></code></a></p></td>
+<td><p>Run an instance of iperf3, collecting output data in a background thread.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2" title="ssmdevices.software.network_profiling.IPerf2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf2</span></code></a></p></td>
+<td><p>Run an instance of iperf, collecting output data in a background thread.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid" title="ssmdevices.software.network_profiling.IPerf2OnAndroid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf2OnAndroid</span></code></a></p></td>
+<td><p>Run an instance of iperf, collecting output data in a background thread.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair" title="ssmdevices.software.network_profiling.IPerf2BoundPair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf2BoundPair</span></code></a></p></td>
+<td><p>Run an iperf client and a server on the host computer at the same time. They are</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP" title="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP</span></code></a></p></td>
+<td><p>Profile closed-loop traffic between two network interfaces</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf3">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.network_profiling.</span></span><span class="sig-name descname"><span class="pre">IPerf3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">_IPerfBase</span></code></p>
+<p>Run an instance of iperf3, collecting output data in a background thread.
+When running as an iperf client (server=False),
+The default value is the path that installs with 64-bit cygwin.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf3.FLAGS">
+<span class="sig-name descname"><span class="pre">FLAGS</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf3.FLAGS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf3.reverse">
+<span class="sig-name descname"><span class="pre">reverse</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf3.reverse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf3.json">
+<span class="sig-name descname"><span class="pre">json</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf3.json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf3.zerocopy">
+<span class="sig-name descname"><span class="pre">zerocopy</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf3.zerocopy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.network_profiling.</span></span><span class="sig-name descname"><span class="pre">IPerf2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">_IPerfBase</span></code></p>
+<p>Run an instance of iperf, collecting output data in a background thread.
+When running as an iperf client (server=False),
+The default value is the path that installs with 64-bit cygwin.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2.FLAGS">
+<span class="sig-name descname"><span class="pre">FLAGS</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2.FLAGS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2.DATAFRAME_COLUMNS">
+<span class="sig-name descname"><span class="pre">DATAFRAME_COLUMNS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('jitter_milliseconds',</span> <span class="pre">'datagrams_lost',</span> <span class="pre">'datagrams_sent',</span> <span class="pre">'datagrams_loss_percentage',...</span></em><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2.DATAFRAME_COLUMNS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2.bidirectional">
+<span class="sig-name descname"><span class="pre">bidirectional</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2.bidirectional" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2.report_style">
+<span class="sig-name descname"><span class="pre">report_style</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2.report_style" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2.profile">
+<span class="sig-name descname"><span class="pre">profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2.profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2.profile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2.read_stdout">
+<span class="sig-name descname"><span class="pre">read_stdout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2.read_stdout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2.read_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>retreive text from standard output, and parse into a pandas DataFrame if self.report_style is None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2._format_output">
+<span class="sig-name descname"><span class="pre">_format_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2._format_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2._format_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>pack stdout into a pandas DataFrame if self.report_style == ‘C’</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2OnAndroid">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.network_profiling.</span></span><span class="sig-name descname"><span class="pre">IPerf2OnAndroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2" title="ssmdevices.software.network_profiling.IPerf2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf2</span></code></a></p>
+<p>Run an instance of iperf, collecting output data in a background thread.
+When running as an iperf client (server=False),
+The default value is the path that installs with 64-bit cygwin.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2OnAndroid.remote_binary_path">
+<span class="sig-name descname"><span class="pre">remote_binary_path</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.remote_binary_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2OnAndroid.profile">
+<span class="sig-name descname"><span class="pre">profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.profile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2OnAndroid.open">
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open an adb connection to the handset, copy the iperf binary onto the phone, and
+verify that iperf executes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2OnAndroid.kill">
+<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.kill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.kill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kill the local process and the iperf process on the UE.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2OnAndroid.read_stdout">
+<span class="sig-name descname"><span class="pre">read_stdout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.read_stdout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.read_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>adb seems to forward stderr as stdout. Filter out some undesired
+resulting status messages.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2OnAndroid.wait_for_cell_data">
+<span class="sig-name descname"><span class="pre">wait_for_cell_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.wait_for_cell_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.wait_for_cell_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Block until cellular data is available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout</strong> – how long to wait for a connection before raising a Timeout error</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2OnAndroid.reboot">
+<span class="sig-name descname"><span class="pre">reboot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.reboot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.reboot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reboot the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>block</strong> – if truey, block until the device is ready to accept commands.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2OnAndroid.wait_for_device">
+<span class="sig-name descname"><span class="pre">wait_for_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2OnAndroid.wait_for_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.wait_for_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Block until the device is ready to accept commands</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.network_profiling.</span></span><span class="sig-name descname"><span class="pre">IPerf2BoundPair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2" title="ssmdevices.software.network_profiling.IPerf2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IPerf2</span></code></a></p>
+<p>Run an iperf client and a server on the host computer at the same time. They are
+bound to interfaces in order to ensure that data is routed between them, not through
+localhost or any other interface.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair.resource">
+<span class="sig-name descname"><span class="pre">resource</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.resource" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair.server">
+<span class="sig-name descname"><span class="pre">server</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.server" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair.client">
+<span class="sig-name descname"><span class="pre">client</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.client" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair.children">
+<span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.children" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair.open">
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.open" title="ssmdevices.software.network_profiling.IPerf2BoundPair.open"><code class="xref py py-meth docutils literal notranslate"><span class="pre">open()</span></code></a> method implements opening in the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> object protocol. Call the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code> method when open to
+execute the binary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backend implementations must overload this to disconnect an
+existing connection to the resource encapsulated in the object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair.kill">
+<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.kill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.kill" title="Permalink to this definition">¶</a></dt>
+<dd><p>If a process is running in the background, kill it. Sends a console
+warning if no process is running.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair.running">
+<span class="sig-name descname"><span class="pre">running</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.running"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.running" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a background process is running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if running, otherwise False</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair.read_stdout">
+<span class="sig-name descname"><span class="pre">read_stdout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair.read_stdout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.read_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>retreive text from standard output, and parse into a pandas DataFrame if self.report_style is None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair._merge_dataframes">
+<span class="sig-name descname"><span class="pre">_merge_dataframes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair._merge_dataframes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair._merge_dataframes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.IPerf2BoundPair._setup_pair">
+<span class="sig-name descname"><span class="pre">_setup_pair</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#IPerf2BoundPair._setup_pair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.IPerf2BoundPair._setup_pair" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.software.network_profiling.</span></span><span class="sig-name descname"><span class="pre">TrafficProfiler_ClosedLoopTCP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoop</span></code></p>
+<p>Profile closed-loop traffic between two network interfaces
+on this computer. Takes advantage of the system clock as a common
+basis for traffic delay measurement, with uncertainty approximately
+equal to the system time resolution.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._receive_interface">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_receive_interface</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._receive_interface" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._server">
+<span class="sig-name descname"><span class="pre">_server</span></span><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._server" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.PORT_WINERRS">
+<span class="sig-name descname"><span class="pre">PORT_WINERRS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(10013,</span> <span class="pre">10048)</span></em><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.PORT_WINERRS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.CONN_WINERRS">
+<span class="sig-name descname"><span class="pre">CONN_WINERRS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(10051,)</span></em><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.CONN_WINERRS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._close_sockets">
+<span class="sig-name descname"><span class="pre">_close_sockets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sockets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bytes_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP._close_sockets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._close_sockets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._open_sockets">
+<span class="sig-name descname"><span class="pre">_open_sockets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP._open_sockets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._open_sockets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect the supplied client socket to the server.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._run">
+<span class="sig-name descname"><span class="pre">_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_sock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_sock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP._run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.profile_count">
+<span class="sig-name descname"><span class="pre">profile_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP.profile_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.profile_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>sends <cite>count</cite> buffers of size <cite>buffer_size</cite> bytes
+and returns profiling information”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer_size</strong> (<em>int</em>) – number of bytes to send in each buffer</p></li>
+<li><p><strong>count</strong> (<em>int</em>) – the number of buffers to send</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a DataFrame indexed on PC time containing columns ‘bits_per_second’, ‘duration’, ‘delay’, ‘queuing_duration’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.profile_duration">
+<span class="sig-name descname"><span class="pre">profile_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP.profile_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.profile_duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>sends buffers of size <cite>buffer_size</cite> bytes until
+<cite>duration</cite> seconds have elapsed, and returns profiling information”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer_size</strong> (<em>int</em>) – number of bytes to send in each buffer</p></li>
+<li><p><strong>duration</strong> (<em>float</em>) – the minimum number of seconds to spend profiling</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a DataFrame indexed on PC time containing columns ‘bits_per_second’, ‘duration’, ‘delay’, ‘queuing_duration’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._make_dataframe">
+<span class="sig-name descname"><span class="pre">_make_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">worker_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP._make_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._make_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.mss">
+<span class="sig-name descname"><span class="pre">mss</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP.mss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.mss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.mtu">
+<span class="sig-name descname"><span class="pre">mtu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP.mtu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.mtu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.wait_for_interfaces">
+<span class="sig-name descname"><span class="pre">wait_for_interfaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/software/network_profiling.html#TrafficProfiler_ClosedLoopTCP.wait_for_interfaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.wait_for_interfaces" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../../ssmdevices.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software.network_profiling</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf3"><code class="docutils literal notranslate"><span class="pre">IPerf3</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf3.FLAGS"><code class="docutils literal notranslate"><span class="pre">IPerf3.FLAGS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf3.reverse"><code class="docutils literal notranslate"><span class="pre">IPerf3.reverse</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf3.json"><code class="docutils literal notranslate"><span class="pre">IPerf3.json</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf3.zerocopy"><code class="docutils literal notranslate"><span class="pre">IPerf3.zerocopy</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2"><code class="docutils literal notranslate"><span class="pre">IPerf2</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2.FLAGS"><code class="docutils literal notranslate"><span class="pre">IPerf2.FLAGS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2.DATAFRAME_COLUMNS"><code class="docutils literal notranslate"><span class="pre">IPerf2.DATAFRAME_COLUMNS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2.bidirectional"><code class="docutils literal notranslate"><span class="pre">IPerf2.bidirectional</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2.report_style"><code class="docutils literal notranslate"><span class="pre">IPerf2.report_style</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2.profile"><code class="docutils literal notranslate"><span class="pre">IPerf2.profile()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2.read_stdout"><code class="docutils literal notranslate"><span class="pre">IPerf2.read_stdout()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2._format_output"><code class="docutils literal notranslate"><span class="pre">IPerf2._format_output()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.remote_binary_path"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.remote_binary_path</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.profile"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.profile()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.open"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.open()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.kill"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.kill()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.read_stdout"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.read_stdout()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.wait_for_cell_data"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.wait_for_cell_data()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.reboot"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.reboot()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2OnAndroid.wait_for_device"><code class="docutils literal notranslate"><span class="pre">IPerf2OnAndroid.wait_for_device()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.resource"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.resource</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.server"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.server</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.client"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.client</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.children"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.children</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.open"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.open()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.close"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.close()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.kill"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.kill()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.running"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.running()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.start"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.start()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair.read_stdout"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair.read_stdout()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair._merge_dataframes"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair._merge_dataframes()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.IPerf2BoundPair._setup_pair"><code class="docutils literal notranslate"><span class="pre">IPerf2BoundPair._setup_pair()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._receive_interface"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._receive_interface</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._server"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._server</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.PORT_WINERRS"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.PORT_WINERRS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.CONN_WINERRS"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.CONN_WINERRS</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._close_sockets"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._close_sockets()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._open_sockets"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._open_sockets()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._run"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._run()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.profile_count"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.profile_count()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.profile_duration"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.profile_duration()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP._make_dataframe"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP._make_dataframe()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.mss"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.mss()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.mtu"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.mtu()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.software.network_profiling.TrafficProfiler_ClosedLoopTCP.wait_for_interfaces"><code class="docutils literal notranslate"><span class="pre">TrafficProfiler_ClosedLoopTCP.wait_for_interfaces()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../sources/autoapi/ssmdevices/software/network_profiling/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.software.network_profiling</span></code></a></li> 
+      </ul>
+    </div>
+<hr \>
+<section class="footer">
+<br><a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#privpolicy">Privacy Policy</a> | <a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#secnot">Security Notice</a> | <a href="http://www.nist.gov/public_affairs/privacy.cfm#accesstate">Accessibility Statement</a>
+<br><em>United States government work, not subject to copyright in the United States</em>
+</section>
+
+  </body>
+</html>

@@ -1,0 +1,61 @@
+:py:mod:`ssmdevices.instruments.attenuators`
+============================================
+
+.. py:module:: ssmdevices.instruments.attenuators
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ssmdevices.instruments.attenuators.MiniCircuitsRCDAT
+
+
+
+
+.. py:class:: MiniCircuitsRCDAT(resource=Undefined, **values)
+
+   Bases: :py:obj:`_minicircuits_usb.SwitchAttenuatorBase`
+
+   General control over MiniCircuits USB devices
+
+   .. py:attribute:: _PID
+      :value: 35
+
+      
+
+   .. py:attribute:: frequency
+
+      
+
+   .. py:attribute:: output_power_offset
+
+      
+
+   .. py:attribute:: calibration_path
+
+      
+
+   .. py:attribute:: channel
+
+      
+
+   .. py:attribute:: attenuation
+
+      
+
+   .. py:attribute:: output_power
+
+      
+
+   .. py:method:: attenuation_setting()
+
+
+   .. py:method:: attenuation_setting(value)
+
+
+

@@ -1,0 +1,231 @@
+:py:mod:`ssmdevices.instruments.power_sensors`
+==============================================
+
+.. py:module:: ssmdevices.instruments.power_sensors
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ssmdevices.instruments.power_sensors.KeysightU2000XSeries
+   ssmdevices.instruments.power_sensors.RohdeSchwarzNRPSeries
+   ssmdevices.instruments.power_sensors.RohdeSchwarzNRP8s
+   ssmdevices.instruments.power_sensors.RohdeSchwarzNRP18s
+
+
+
+
+.. py:class:: KeysightU2000XSeries(resource=Undefined, **values)
+
+   Bases: :py:obj:`labbench.VISADevice`
+
+   This is my cool driver for Keysight U2040 X-Series power sensors
+
+   .. py:attribute:: TRIGGER_SOURCES
+      :value: ('IMM', 'INT', 'EXT', 'BUS', 'INT1')
+
+      
+
+   .. py:attribute:: initiate_continuous
+
+      
+
+   .. py:attribute:: output_trigger
+
+      
+
+   .. py:attribute:: trigger_source
+
+      
+
+   .. py:attribute:: trigger_count
+
+      
+
+   .. py:attribute:: measurement_rate
+
+      
+
+   .. py:attribute:: sweep_aperture
+
+      
+
+   .. py:attribute:: frequency
+
+      
+
+   .. py:method:: preset()
+
+      sends '*RST' to reset the instrument to preset
+
+
+   .. py:method:: fetch()
+
+      Return a single number or pandas Series containing the power readings
+
+
+   .. py:method:: __imports__()
+      :classmethod:
+
+
+
+.. py:class:: RohdeSchwarzNRPSeries(resource=Undefined, **values)
+
+   Bases: :py:obj:`labbench.VISADevice`
+
+   Requires drivers from the R&S website; resource strings for connections take the form
+   'RSNRP::0x00e2::103892::INSTR'.
+
+   .. py:attribute:: FUNCTIONS
+      :value: ('POW:AVG', 'POW:BURS:AVG', 'POW:TSL:AVG', 'XTIM:POW', 'XTIM:POWer')
+
+      
+
+   .. py:attribute:: TRIGGER_SOURCES
+      :value: ('HOLD', 'IMM', 'INT', 'EXT', 'EXT1', 'EXT2', 'BUS', 'INT1')
+
+      
+
+   .. py:attribute:: frequency
+
+      
+
+   .. py:attribute:: initiate_continuous
+
+      
+
+   .. py:attribute:: trigger_delay
+
+      
+
+   .. py:attribute:: trigger_count
+
+      
+
+   .. py:attribute:: trigger_holdoff
+
+      
+
+   .. py:attribute:: trigger_level
+
+      
+
+   .. py:attribute:: trace_points
+
+      
+
+   .. py:attribute:: trace_realtime
+
+      
+
+   .. py:attribute:: trace_time
+
+      
+
+   .. py:attribute:: trace_offset_time
+
+      
+
+   .. py:attribute:: trace_average_count
+
+      
+
+   .. py:attribute:: trace_average_mode
+
+      
+
+   .. py:attribute:: trace_average_enable
+
+      
+
+   .. py:attribute:: average_count
+
+      
+
+   .. py:attribute:: average_auto
+
+      
+
+   .. py:attribute:: average_enable
+
+      
+
+   .. py:attribute:: smoothing_enable
+
+      
+
+   .. py:attribute:: read_termination
+
+      
+
+   .. py:method:: function(value)
+
+
+   .. py:method:: trigger_source()
+
+      'HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm
+
+
+   .. py:method:: preset()
+
+      sends '*RST' to reset the instrument to preset
+
+
+   .. py:method:: trigger_single()
+
+
+   .. py:method:: fetch()
+
+      Return a single number or pandas Series containing the power readings
+
+
+   .. py:method:: fetch_buffer()
+
+      Return a single number or pandas Series containing the power readings
+
+
+   .. py:method:: setup_trace(frequency, trace_points, sample_period, trigger_level, trigger_delay, trigger_source)
+
+      :param frequency: in Hz
+      :param trace_points: number of points in the trace (perhaps as high as 5000)
+      :param sample_period: in s
+      :param trigger_level: in dBm
+      :param trigger_delay: in s
+      :param trigger_source: 'HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm'
+      :return: None
+
+
+   .. py:method:: __imports__()
+      :classmethod:
+
+
+
+.. py:class:: RohdeSchwarzNRP8s(resource=Undefined, **values)
+
+   Bases: :py:obj:`RohdeSchwarzNRPSeries`
+
+   Requires drivers from the R&S website; resource strings for connections take the form
+   'RSNRP::0x00e2::103892::INSTR'.
+
+   .. py:attribute:: frequency
+
+      
+
+
+.. py:class:: RohdeSchwarzNRP18s(resource=Undefined, **values)
+
+   Bases: :py:obj:`RohdeSchwarzNRPSeries`
+
+   Requires drivers from the R&S website; resource strings for connections take the form
+   'RSNRP::0x00e2::103892::INSTR'.
+
+   .. py:attribute:: frequency
+
+      
+
+

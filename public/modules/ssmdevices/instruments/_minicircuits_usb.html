@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ssmdevices.instruments._minicircuits_usb &#8212; ssmdevices v0.11</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+<header class="nist-header">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>NIST Pages Template</title>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="ssmdevices v0.11">
+  <link rel="canonical" href="../../../">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Google Analytics -->
+  <!--<script type="text/javascript" id="_fed_an_js_tag" src="http://www.nist.gov/js/federated-analytics.all.min.js?agency=NIST&subagency=mml&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script> -->
+  <!-- DAP Analytics -->
+  <script type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=DOC&subagefncy=NIST&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../..//static/NISTStyle.css">
+  <link rel="stylesheet" href="../../..//static/NISTPages.css">
+
+  <h1>
+    <a class="nist-logo" target="_blank" href="http://www.nist.gov/" title="Go to nist.gov">National Institute of Standards and Technology</a>
+  </h1>
+  <div class="nist-links">
+    <a class="nist-links-button" target="_blank" href="http://www.nist.gov">NIST Website</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="http://www.nist.gov/public_affairs/nandyou.cfm">About NIST</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="https://github.com/usnistgov">usnistgov on GitHub</a>
+  </div>
+  
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</header>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ssmdevices.instruments._minicircuits_usb</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ssmdevices.instruments._minicircuits_usb</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Lock</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MiniCircuitsUSBDevice&quot;</span><span class="p">,</span> <span class="s2">&quot;SwitchAttenuatorBase&quot;</span><span class="p">]</span>
+
+<span class="n">usb_enumerate_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+<span class="n">usb_command_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+<span class="n">usb_registry</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># serial number: USB path</span>
+
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/_minicircuits_usb/index.html#ssmdevices.instruments._minicircuits_usb.MiniCircuitsUSBDevice">[docs]</a><span class="k">class</span> <span class="nc">MiniCircuitsUSBDevice</span><span class="p">(</span><span class="n">lb</span><span class="o">.</span><span class="n">Device</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;General control over MiniCircuits USB devices&quot;&quot;&quot;</span>
+
+    <span class="n">_VID</span> <span class="o">=</span> <span class="mh">0x20CE</span>  <span class="c1"># USB HID Vendor ID</span>
+
+    <span class="n">resource</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">str</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;serial number; must be set if more than one device is connected&quot;</span><span class="p">,</span>
+        <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">usb_path</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">bytes</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;override `resource` to connect to a specific USB path&quot;</span><span class="p">,</span>
+        <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">timeout</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice.open"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/_minicircuits_usb/index.html#ssmdevices.instruments._minicircuits_usb.MiniCircuitsUSBDevice.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">hid</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">usb_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">usb_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">hid</span><span class="o">.</span><span class="n">device</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">open_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">usb_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">set_nonblocking</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">usb_registry</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">usb_path</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">serial_number</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">usb_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;connected to </span><span class="si">{self.model}</span><span class="s2"> with serial </span><span class="si">{self.serial_number}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice.close"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/_minicircuits_usb/index.html#ssmdevices.instruments._minicircuits_usb.MiniCircuitsUSBDevice.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice._parse_str"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/_minicircuits_usb/index.html#ssmdevices.instruments._minicircuits_usb.MiniCircuitsUSBDevice._parse_str">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_parse_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a command response to a string.&quot;&quot;&quot;</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice._cmd"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/_minicircuits_usb/index.html#ssmdevices.instruments._minicircuits_usb.MiniCircuitsUSBDevice._cmd">[docs]</a>    <span class="k">def</span> <span class="nf">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">cmd</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send up to 64 1-byte unsigned integers and return the response.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">usb_command_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">64</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;command key data length is limited to 64&quot;</span><span class="p">)</span>
+
+            <span class="n">cmd</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">63</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span> <span class="o">*</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;windows&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">write</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">cmd</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+            <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">d</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;device responded to command code </span><span class="si">{}</span><span class="s2">, but expected </span><span class="si">{}</span><span class="s2"> (full response </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">repr</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                        <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">&quot;no response from device&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">lb</span><span class="o">.</span><span class="n">DeviceException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice._test_instance"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/_minicircuits_usb/index.html#ssmdevices.instruments._minicircuits_usb.MiniCircuitsUSBDevice._test_instance">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_test_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">usb_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;must return a trial object to test connections when enumerating devices.</span>
+<span class="sd">        the subclass must have serial_number and model traits.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;subclasses must implement this to return an instance for trial connection&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="MiniCircuitsUSBDevice._find_path"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/_minicircuits_usb/index.html#ssmdevices.instruments._minicircuits_usb.MiniCircuitsUSBDevice._find_path">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_find_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">serial</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find a USB HID device path matching the MiniCircuits device with</span>
+<span class="sd">        the specified serial number. If serial is None, then check that</span>
+<span class="sd">        exactly one MiniCircuits device is connected, and return its path.</span>
+<span class="sd">        Raise an exception if no devices are connected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">hid</span>
+
+        <span class="k">with</span> <span class="n">usb_enumerate_lock</span><span class="p">:</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">dev</span> <span class="ow">in</span> <span class="n">hid</span><span class="o">.</span><span class="n">enumerate</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_VID</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_PID</span><span class="p">):</span>
+                <span class="c1"># Check for a cached serial number first</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">this_serial</span> <span class="o">=</span> <span class="n">usb_registry</span><span class="p">[</span><span class="n">dev</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]]</span>
+                    <span class="n">found</span><span class="p">[</span><span class="n">this_serial</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span>
+                    <span class="k">continue</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="c1"># Otherwise, connect to the device to learn its serial number</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_test_instance</span><span class="p">(</span><span class="n">dev</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">inst</span><span class="p">:</span>
+                        <span class="n">this_serial</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">serial_number</span>
+                        <span class="n">usb_registry</span><span class="p">[</span><span class="n">dev</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">this_serial</span>
+                        <span class="n">found</span><span class="p">[</span><span class="n">this_serial</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="c1"># Device already open, skipping.</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                    <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;found no </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> connected with vid=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_VID</span><span class="si">}</span><span class="s2">, pid=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_PID</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">names</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">found</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+
+        <span class="k">if</span> <span class="n">serial</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">found</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;specify one of the available </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> resources: </span><span class="si">{</span><span class="n">names</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">found</span><span class="p">[</span><span class="n">serial</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;specified resource </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">serial</span><span class="p">)</span><span class="si">}</span><span class="s2">, but only </span><span class="si">{</span><span class="n">names</span><span class="si">}</span><span class="s2"> are available&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div></div>
+
+
+<span class="c1"># class PowerSensor(MiniCircuitsUSBDevice):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    Class for interfacing with Mini-Circuits USB Power Sensors.</span>
+<span class="c1">#    Verified working:</span>
+<span class="c1">#        - PWR-6GHS</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#    # Mini-Circuits PWR-6GHS USB Power Sensor</span>
+<span class="c1">#    PID = 0x11</span>
+<span class="c1">#</span>
+<span class="c1">#    # Not sure if any of these command codes are also shared.</span>
+<span class="c1">#    CMD_GET_MODEL_NAME = 104</span>
+<span class="c1">#    CMD_GET_SERIAL = 105</span>
+<span class="c1">#    CMD_SET_MEASUREMENT_MODE = 15</span>
+<span class="c1">#    CMD_READ_POWER = 102</span>
+<span class="c1">#    CMD_GET_TEMPERATURE = 103</span>
+<span class="c1">#    CMD_GET_FIRMWARE_VERSION = 99</span>
+<span class="c1">#</span>
+<span class="c1">#    def get_model_name(self):</span>
+<span class="c1">#        d = self._cmd(self.CMD_GET_MODEL_NAME)</span>
+<span class="c1">#        return self._parse_str(d)</span>
+<span class="c1">#</span>
+<span class="c1">#    def get_serial(self):</span>
+<span class="c1">#        d = self._cmd(self.CMD_GET_SERIAL)</span>
+<span class="c1">#        return self._parse_str(d)</span>
+<span class="c1">#</span>
+<span class="c1">#    def set_measurement_mode(self, mode=&#39;low-noise&#39;):</span>
+<span class="c1">#        mode_num = {</span>
+<span class="c1">#            &#39;low-noise&#39;: 0,</span>
+<span class="c1">#            &#39;fast-sampling&#39;: 1,</span>
+<span class="c1">#            &#39;fastest-sampling&#39;: 2,</span>
+<span class="c1">#        }[mode]</span>
+<span class="c1">#        self._cmd(self.CMD_SET_MEASUREMENT_MODE, mode_num)</span>
+<span class="c1">#</span>
+<span class="c1">#    def get_power(self, freq):</span>
+<span class="c1">#        if freq &gt; 65.535e6:</span>
+<span class="c1">#            scale = 1e6</span>
+<span class="c1">#            units = &#39;M&#39;</span>
+<span class="c1">#        else:</span>
+<span class="c1">#            scale = 1e3</span>
+<span class="c1">#            units = &#39;k&#39;</span>
+<span class="c1">#        freq = int(round(freq / scale))</span>
+<span class="c1">#        freq1 = freq &gt;&gt; 8</span>
+<span class="c1">#        freq2 = freq - (freq1 &lt;&lt; 8)</span>
+<span class="c1">#        d = self._cmd(self.CMD_READ_POWER, freq1, freq2, ord(units))</span>
+<span class="c1">#        s = &#39;&#39;.join(chr(c) for c in d[1:7])</span>
+<span class="c1">#        return float(s)</span>
+<span class="c1">#</span>
+<span class="c1">#    def get_temperature(self):</span>
+<span class="c1">#        d = self._cmd(self.CMD_GET_TEMPERATURE)</span>
+<span class="c1">#        s = &#39;&#39;.join(chr(c) for c in d[1:7])</span>
+<span class="c1">#        return float(s)</span>
+<span class="c1">#</span>
+<span class="c1">#    def get_firmware_version(self):</span>
+<span class="c1">#        d = self._cmd(self.CMD_GET_FIRMWARE_VERSION)</span>
+<span class="c1">#        return chr(d[5]) + chr(d[6])</span>
+
+
+<div class="viewcode-block" id="SwitchAttenuatorBase"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/_minicircuits_usb/index.html#ssmdevices.instruments._minicircuits_usb.SwitchAttenuatorBase">[docs]</a><span class="k">class</span> <span class="nc">SwitchAttenuatorBase</span><span class="p">(</span><span class="n">MiniCircuitsUSBDevice</span><span class="p">):</span>
+    <span class="n">CMD_GET_PART_NUMBER</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="n">CMD_GET_SERIAL_NUMBER</span> <span class="o">=</span> <span class="mi">41</span>
+
+<div class="viewcode-block" id="SwitchAttenuatorBase._test_instance"><a class="viewcode-back" href="../../../autoapi/ssmdevices/instruments/_minicircuits_usb/index.html#ssmdevices.instruments._minicircuits_usb.SwitchAttenuatorBase._test_instance">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_test_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">usb_path</span><span class="p">):</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">SwitchAttenuatorBase</span><span class="p">(</span><span class="n">usb_path</span><span class="o">=</span><span class="n">usb_path</span><span class="p">)</span>
+        <span class="n">device</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">disabled</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">device</span></div>
+
+    <span class="nd">@lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">str</span><span class="p">(</span><span class="n">sets</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CMD_GET_PART_NUMBER</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+    <span class="nd">@lb</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">str</span><span class="p">(</span><span class="n">sets</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">serial_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CMD_GET_SERIAL_NUMBER</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ssmdevices.instruments._minicircuits_usb</a></li> 
+      </ul>
+    </div>
+<hr \>
+<section class="footer">
+<br><a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#privpolicy">Privacy Policy</a> | <a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#secnot">Security Notice</a> | <a href="http://www.nist.gov/public_affairs/privacy.cfm#accesstate">Accessibility Statement</a>
+<br><em>United States government work, not subject to copyright in the United States</em>
+</section>
+
+  </body>
+</html>

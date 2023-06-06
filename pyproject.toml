@@ -1,6 +1,6 @@
 [project]
 name = "ssmdevices"
-version = "0.10"
+version = "0.11"
 description = "a curated set of instrument automation drivers implemented with labbench"
 
 authors = [
@@ -27,7 +27,7 @@ dependencies = [
     "brainstem>=2.9.26",
 ]
 
-requires-python = ">=3.7"
+requires-python = ">=3.8,<3.12"
 readme = "README.md"
 license = {file = "LICENSE.md"}
 
@@ -45,18 +45,32 @@ build-backend = "pdm.pep517.api"
 [tool]
 [tool.pdm]
 
+[tool.pdm.version]
+source = "scm"
+write_to = "ssmdevices/_version.py"
+write_template = "__version__ = '{}'"
+
 [tool.pdm.dev-dependencies]
-lint = [
+dev = [
+    "black[jupyter]",
+    "ipython",
     "flake8",
-    "black",
     "ast_decompiler",
     "mypy",
+    "pytest",
+    "pytest-cov",
+    "sphinx>=4.5",
+    "recommonmark",
+    "ipywidgets",
+    "sphinx-autoapi>=2.1.0",
 ]
-test = ["pytest", "pytest-cov"]
-doc = ["sphinx>=1.6", "recommonmark"]
-tools = ["ipython", "jupyter"]
 
 [tool.black]
 line-length = 88
-target-version = ["py37", "py38", "py39", "py310", "py311"]
+target-version = ["py38", "py39", "py310", "py311"]
 include = '\.pyi?$'
+
+[tool.pdm.scripts]
+build-html = {cmd = "sphinx-build -b html doc public"}
+build-latex = {cmd = "sphinx-build -b latex doc latex"}
+build-rst = {cmd = "sphinx-apidoc -F . -o doc"}

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ssmdevices.instruments.power_supplies &#8212; ssmdevices v0.11</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/nature.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+<header class="nist-header">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>NIST Pages Template</title>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="ssmdevices v0.11">
+  <link rel="canonical" href="../../../../">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Google Analytics -->
+  <!--<script type="text/javascript" id="_fed_an_js_tag" src="http://www.nist.gov/js/federated-analytics.all.min.js?agency=NIST&subagency=mml&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script> -->
+  <!-- DAP Analytics -->
+  <script type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=DOC&subagefncy=NIST&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../../..//static/NISTStyle.css">
+  <link rel="stylesheet" href="../../../..//static/NISTPages.css">
+
+  <h1>
+    <a class="nist-logo" target="_blank" href="http://www.nist.gov/" title="Go to nist.gov">National Institute of Standards and Technology</a>
+  </h1>
+  <div class="nist-links">
+    <a class="nist-links-button" target="_blank" href="http://www.nist.gov">NIST Website</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="http://www.nist.gov/public_affairs/nandyou.cfm">About NIST</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="https://github.com/usnistgov">usnistgov on GitHub</a>
+  </div>
+  
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</header>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.instruments.power_supplies</span></code></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-ssmdevices.instruments.power_supplies">
+<span id="ssmdevices-instruments-power-supplies"></span><h1><a class="reference internal" href="#module-ssmdevices.instruments.power_supplies" title="ssmdevices.instruments.power_supplies"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.instruments.power_supplies</span></code></a><a class="headerlink" href="#module-ssmdevices.instruments.power_supplies" title="Permalink to this heading">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading">¶</a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series" title="ssmdevices.instruments.power_supplies.RigolDP800Series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RigolDP800Series</span></code></a></p></td>
+<td><p>base class for VISA device wrappers with pyvisa.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssmdevices.instruments.power_supplies.</span></span><span class="sig-name descname"><span class="pre">RigolDP800Series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Undefined</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/instruments/power_supplies.html#RigolDP800Series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">labbench.VISADevice</span></code></p>
+<p>base class for VISA device wrappers with pyvisa.</p>
+<p class="rubric">Examples</p>
+<p>Autodetect a list of valid <cite>resource</cite> strings on the host:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">VISADevice</span><span class="o">.</span><span class="n">list_resources</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Fetch the instrument identity string:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">VISADevice</span><span class="p">(</span><span class="s1">&#39;USB0::0x2A8D::0x1E01::SG56360004::INSTR&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">instr</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">inst</span><span class="o">.</span><span class="n">identity</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Write ‘:FETCH?’ to the instrument, read an expected ASCII CSV response,
+and return it as a pandas DataFrame:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">VISADevice</span><span class="p">(</span><span class="s1">&#39;USB0::0x2A8D::0x1E01::SG56360004::INSTR&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">instr</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">inst</span><span class="o">.</span><span class="n">query_ascii_values</span><span class="p">(</span><span class="s1">&#39;:FETCH?&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>See also:
+.. _installing a proprietary OS service for VISA:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://pyvisa.readthedocs.io/en/latest/faq/getting_nivisa.html#faq-getting-nivisa">https://pyvisa.readthedocs.io/en/latest/faq/getting_nivisa.html#faq-getting-nivisa</a></p>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.backend">
+<span class="sig-name descname"><span class="pre">backend</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>instance of a pyvisa instrument object (when open)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pyvisa.Resource</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.REMAP_BOOL">
+<span class="sig-name descname"><span class="pre">REMAP_BOOL</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.REMAP_BOOL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.enable1">
+<span class="sig-name descname"><span class="pre">enable1</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.enable1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.enable2">
+<span class="sig-name descname"><span class="pre">enable2</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.enable2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.enable3">
+<span class="sig-name descname"><span class="pre">enable3</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.enable3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.voltage_setting1">
+<span class="sig-name descname"><span class="pre">voltage_setting1</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage_setting1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.voltage_setting2">
+<span class="sig-name descname"><span class="pre">voltage_setting2</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage_setting2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.voltage_setting3">
+<span class="sig-name descname"><span class="pre">voltage_setting3</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage_setting3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.voltage1">
+<span class="sig-name descname"><span class="pre">voltage1</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.voltage2">
+<span class="sig-name descname"><span class="pre">voltage2</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.voltage3">
+<span class="sig-name descname"><span class="pre">voltage3</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.current1">
+<span class="sig-name descname"><span class="pre">current1</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.current1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.current2">
+<span class="sig-name descname"><span class="pre">current2</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.current2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.current3">
+<span class="sig-name descname"><span class="pre">current3</span></span><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.current3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.open">
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/instruments/power_supplies.html#RigolDP800Series.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Poll <a href="#id1"><span class="problematic" id="id2">*</span></a>IDN until the instrument responds.
+Sometimes it needs an extra poke before it responds.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.get_key">
+<span class="sig-name descname"><span class="pre">get_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scpi_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trait_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/instruments/power_supplies.html#RigolDP800Series.get_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.get_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>This instrument expects keys to have syntax “:COMMAND? PARAM”,
+instead of “:COMMAND PARAM?” as implemented in lb.VISADevice.</p>
+<p>Insert the “?” in the appropriate place here.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssmdevices.instruments.power_supplies.RigolDP800Series.set_key">
+<span class="sig-name descname"><span class="pre">set_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scpi_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trait_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/ssmdevices/instruments/power_supplies.html#RigolDP800Series.set_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.set_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>This instrument expects sets to have syntax :COMMAND? PARAM,VALUE
+instead of :COMMAND PARAM VALUE? as implemented in lb.VISADevice.</p>
+<p>Implement this behavior here.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../../ssmdevices.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.instruments.power_supplies</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a><ul>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series</span></code></a><ul>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.backend"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.backend</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.REMAP_BOOL"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.REMAP_BOOL</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.enable1"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.enable1</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.enable2"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.enable2</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.enable3"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.enable3</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage_setting1"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.voltage_setting1</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage_setting2"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.voltage_setting2</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage_setting3"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.voltage_setting3</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage1"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.voltage1</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage2"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.voltage2</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.voltage3"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.voltage3</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.current1"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.current1</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.current2"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.current2</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.current3"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.current3</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.open"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.open()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.get_key"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.get_key()</span></code></a></li>
+<li><a class="reference internal" href="#ssmdevices.instruments.power_supplies.RigolDP800Series.set_key"><code class="docutils literal notranslate"><span class="pre">RigolDP800Series.set_key()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../sources/autoapi/ssmdevices/instruments/power_supplies/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">ssmdevices.instruments.power_supplies</span></code></a></li> 
+      </ul>
+    </div>
+<hr \>
+<section class="footer">
+<br><a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#privpolicy">Privacy Policy</a> | <a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#secnot">Security Notice</a> | <a href="http://www.nist.gov/public_affairs/privacy.cfm#accesstate">Accessibility Statement</a>
+<br><em>United States government work, not subject to copyright in the United States</em>
+</section>
+
+  </body>
+</html>

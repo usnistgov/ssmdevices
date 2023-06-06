@@ -1,0 +1,29 @@
+:py:mod:`ssmdevices.etc`
+========================
+
+.. py:module:: ssmdevices.etc
+
+
+Package Contents
+----------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   ssmdevices.etc.default_path
+
+
+
+.. py:function:: default_path(cls)
+
+   Return a module imported from the provided path to a dll
+   that contains a .NET library called `libname.`
+
+   :param cls: the class
+
+   :param module_: the module where the config lives
+
+

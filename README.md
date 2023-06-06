@@ -1,18 +1,19 @@
-*ssmdevices* is a curated collection of python device drivers for lab equipment in wireless and radio frequency electromagnetic experiments. The scope of equipment targeted here includes consumer wireless communication hardware, instruments, diagnostic software, and other miscellaneous lab electronics.
+*ssmdevices* is a collection of python wrappers for various lab tools that have been used in wireless and radio frequency electromagnetic experiments published by the NIST spectrum technology and research division. The scope of equipment targeted here includes consumer wireless communication hardware, instruments, diagnostic software, and other miscellaneous lab electronics.
 The drivers are implemented with [labbench](https://github.com/usnistgov/labbench). In many cases the acquired data are packaged into [pandas](http://pandas.pydata.org/) data frames.
-It is separate from the `labbench` library to simplify future release of the `labbench` core without trade name and export control complications.
 
 ## Installation
-1. Install a 64-bit distribution of python 3.7 (or newer)
-2. In an anaconda command prompt, type `pip install git+https://github.com/usnistgov/ssmdevices`
+1. Ensure python 3.8 or newer is installed
+2. In a command prompt environment for this python interpreter, run `pip install git+https://github.com/usnistgov/ssmdevices`
 3. If you need support for VISA instruments, install an NI VISA runtime, for example [from here](https://www.ni.com/en-us/support/downloads/drivers/download.ni-visa.html#460225).
+_Note: Certain commercial equipment, instruments, and software are identified here in order to help specify experimental procedures.  Such identification is not intended to imply recommendation or endorsement of any product or service by NIST, nor is it intended to imply that the materials or equipment identified are necessarily the best available for the purpose._
 
 ## Documentation
 * [ssmdevices API](http://ssm.ipages.nist.gov/ssmdevices/)
 * [examples](examples)
 * [labbench](https://github.com/usnistgov/labbench/blob/master/examples/How%20to%20use%20a%20labbench%20driver%20by%20example.ipynb)
 
-## Device Support
+## Wrapper list
+
 | *Class* | *Products* |
 |-------------|---------|
 |Attenuators|Minicircuits RUDAT series|
@@ -33,10 +34,10 @@ It is separate from the `labbench` library to simplify future release of the `la
 |                            |Windows WLAN adapters|
 |                            |Qualcomm QXDM|
 |Switches|Minicircuits SPnT USB|
-|Miscellaneous Lab Gear      |Acroname USBHub 2x4 (python 2.7 only)|
+|Miscellaneous Lab Gear      |Acroname USBHub 2x4|
 |Consumer Electronics        |SwiftNav Piksi GPS Receiver|
 |                            |Android handsets|
-
+|
 
 
 ### Contributors

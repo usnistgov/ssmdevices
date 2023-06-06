@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ssmdevices.electronics.mobile &#8212; ssmdevices v0.11</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nature.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+<header class="nist-header">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>NIST Pages Template</title>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="ssmdevices v0.11">
+  <link rel="canonical" href="../../../">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Google Analytics -->
+  <!--<script type="text/javascript" id="_fed_an_js_tag" src="http://www.nist.gov/js/federated-analytics.all.min.js?agency=NIST&subagency=mml&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script> -->
+  <!-- DAP Analytics -->
+  <script type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=DOC&subagefncy=NIST&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../..//static/NISTStyle.css">
+  <link rel="stylesheet" href="../../..//static/NISTPages.css">
+
+  <h1>
+    <a class="nist-logo" target="_blank" href="http://www.nist.gov/" title="Go to nist.gov">National Institute of Standards and Technology</a>
+  </h1>
+  <div class="nist-links">
+    <a class="nist-links-button" target="_blank" href="http://www.nist.gov">NIST Website</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="http://www.nist.gov/public_affairs/nandyou.cfm">About NIST</a>
+    <a class="nist-links-button mobile-hide" target="_blank" href="https://github.com/usnistgov">usnistgov on GitHub</a>
+  </div>
+  
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</header>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ssmdevices.electronics.mobile</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ssmdevices.electronics.mobile</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Made by Michael Voecks</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">import</span> <span class="nn">labbench</span> <span class="k">as</span> <span class="nn">lb</span>
+<span class="kn">import</span> <span class="nn">ssmdevices.lib</span>
+
+
+<div class="viewcode-block" id="AndroidDebugBridge"><a class="viewcode-back" href="../../../autoapi/ssmdevices/electronics/mobile/index.html#ssmdevices.electronics.mobile.AndroidDebugBridge">[docs]</a><span class="k">class</span> <span class="nc">AndroidDebugBridge</span><span class="p">(</span>
+    <span class="n">lb</span><span class="o">.</span><span class="n">ShellBackend</span><span class="p">,</span> <span class="n">binary_path</span><span class="o">=</span><span class="n">ssmdevices</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;adb.exe&quot;</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">6</span>
+<span class="p">):</span>
+<div class="viewcode-block" id="AndroidDebugBridge.devices"><a class="viewcode-back" href="../../../autoapi/ssmdevices/electronics/mobile/index.html#ssmdevices.electronics.mobile.AndroidDebugBridge.devices">[docs]</a>    <span class="k">def</span> <span class="nf">devices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function checks ADB to see if any devices are connected, if</span>
+<span class="sd">        none are, it raises an exception, if there is at least one device</span>
+<span class="sd">        connected:</span>
+<span class="sd">        This function returns a list of tuples, each tuple contains the</span>
+<span class="sd">        device id and device type. i.e. [[&#39;f0593056&#39;, &#39;device&#39;]] represents</span>
+<span class="sd">        one connected device with id f0593056.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># with self.no_state_arguments:</span>
+        <span class="n">devices</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;devices&quot;</span><span class="p">,</span> <span class="n">pipe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_return</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># At least one device found, lets return it in a nice way</span>
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)):</span>
+                <span class="n">devices</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">devices</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">devices</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No devices found. Is the UE properly connected?&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AndroidDebugBridge.is_device_connected"><a class="viewcode-back" href="../../../autoapi/ssmdevices/electronics/mobile/index.html#ssmdevices.electronics.mobile.AndroidDebugBridge.is_device_connected">[docs]</a>    <span class="k">def</span> <span class="nf">is_device_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serialNum</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Uses the devices function to check if a device (sepecified by the</span>
+<span class="sd">        serialNum argument) is connected to the ADB server, return true/false</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get list of devices</span>
+        <span class="n">devices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">devices</span><span class="p">()</span>
+
+        <span class="c1"># Test to see if serialNum is one of the first elements in the list of tuples</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">serialNum</span> <span class="ow">in</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="AndroidDebugBridge.reboot"><a class="viewcode-back" href="../../../autoapi/ssmdevices/electronics/mobile/index.html#ssmdevices.electronics.mobile.AndroidDebugBridge.reboot">[docs]</a>    <span class="k">def</span> <span class="nf">reboot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deviceId</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function takes in a UE&#39;s Id, (from self.devices), and reboots</span>
+<span class="sd">        the specified device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># with self.no_state_arguments:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">deviceId</span><span class="p">):</span>
+            <span class="c1"># Device is connected and ready to reboot, lets do</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">deviceId</span><span class="p">),</span> <span class="s2">&quot;reboot&quot;</span><span class="p">,</span> <span class="n">check_return</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Devices isn&#39;t connected, lets raise an error saying so</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The specified device is not connected to the ADB server&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AndroidDebugBridge.check_airplane_mode"><a class="viewcode-back" href="../../../autoapi/ssmdevices/electronics/mobile/index.html#ssmdevices.electronics.mobile.AndroidDebugBridge.check_airplane_mode">[docs]</a>    <span class="k">def</span> <span class="nf">check_airplane_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deviceId</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the status of airplane mode of device deviceId,</span>
+<span class="sd">        returns 0 if deviceId&#39;s airplane_mode is OFF</span>
+<span class="sd">        returns 1 if deviceId&#39;s airplane_mode is ON</span>
+<span class="sd">        raises exception if it cannot find the device</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">deviceId</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">deviceId</span><span class="p">),</span>
+                    <span class="s2">&quot;shell&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;settings&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;get&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;airplane_mode_on&quot;</span><span class="p">,</span>
+                    <span class="n">pipe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="n">resInt</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">resInt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The specified device is not connected to the ADB server&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AndroidDebugBridge.set_airplane_mode"><a class="viewcode-back" href="../../../autoapi/ssmdevices/electronics/mobile/index.html#ssmdevices.electronics.mobile.AndroidDebugBridge.set_airplane_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_airplane_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deviceId</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the airplane_mode feature on the device specified by deviceId</span>
+<span class="sd">        to the value of the &#39;status&#39; argumentself.</span>
+<span class="sd">        status should be set to either 0 or 1, 0 indicating that the airplane_mode</span>
+<span class="sd">        should be turned off, 1 indicating it should be turned on</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">deviceId</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">status</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+                <span class="c1"># invalid status argument</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;The Airplane Mode feature can only be set to a value of 0 or 1&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">foreground</span><span class="p">(</span>
+                    <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">deviceId</span><span class="p">),</span>
+                    <span class="s2">&quot;shell&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;settings&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;put&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;airplane_mode_on&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">status</span><span class="p">),</span>
+                    <span class="n">pipe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">check_return</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">res2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">foreground</span><span class="p">(</span>
+                    <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">deviceId</span><span class="p">),</span>
+                    <span class="s2">&quot;shell&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;am&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;broadcast&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;-a&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;android.intent.action.AIRPLANE_MODE&quot;</span><span class="p">,</span>
+                    <span class="n">pipe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">check_return</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The specified device is not connected to the ADB server&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AndroidDebugBridge.push_file"><a class="viewcode-back" href="../../../autoapi/ssmdevices/electronics/mobile/index.html#ssmdevices.electronics.mobile.AndroidDebugBridge.push_file">[docs]</a>    <span class="k">def</span> <span class="nf">push_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deviceId</span><span class="p">,</span> <span class="n">local_filepath</span><span class="p">,</span> <span class="n">device_filepath</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Takes a file at the location specified by local_filepath and copys</span>
+<span class="sd">        it into the directory specified by device_filepath on the device that</span>
+<span class="sd">        is specified by deviceId.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">deviceId</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">deviceId</span><span class="p">),</span>
+                <span class="s2">&quot;push&quot;</span><span class="p">,</span>
+                <span class="n">local_filepath</span><span class="p">,</span>
+                <span class="n">device_filepath</span><span class="p">,</span>
+                <span class="n">pipe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">check_return</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The specified device is not connected to the ADB server&quot;</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">AndroidDebugBridge</span><span class="p">()</span> <span class="k">as</span> <span class="n">adb</span><span class="p">:</span>
+        <span class="n">devices</span> <span class="o">=</span> <span class="n">adb</span><span class="o">.</span><span class="n">devices</span><span class="p">()</span>  <span class="c1"># Returns a list of tuples containing device Ids</span>
+        <span class="c1">#        adb.reboot(devices[0][0]) # Reboots the device</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">adb</span><span class="o">.</span><span class="n">check_airplane_mode</span><span class="p">(</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">adb</span><span class="o">.</span><span class="n">set_airplane_mode</span><span class="p">(</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">adb</span><span class="o">.</span><span class="n">check_airplane_mode</span><span class="p">(</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">adb</span><span class="o">.</span><span class="n">push_file</span><span class="p">(</span>
+            <span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">ssmdevices</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="s2">&quot;android&quot;</span><span class="p">,</span> <span class="s2">&quot;iperf&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;/data/local/tmp/iperf&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../ssmdevices.html">ssmdevices v0.11</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">ssmdevices.electronics.mobile</a></li> 
+      </ul>
+    </div>
+<hr \>
+<section class="footer">
+<br><a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#privpolicy">Privacy Policy</a> | <a target="_blank" href="http://www.nist.gov/public_affairs/privacy.cfm#secnot">Security Notice</a> | <a href="http://www.nist.gov/public_affairs/privacy.cfm#accesstate">Accessibility Statement</a>
+<br><em>United States government work, not subject to copyright in the United States</em>
+</section>
+
+  </body>
+</html>

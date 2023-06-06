@@ -1,0 +1,49 @@
+:py:mod:`ssmdevices.instruments.switches`
+=========================================
+
+.. py:module:: ssmdevices.instruments.switches
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ssmdevices.instruments.switches.MiniCircuitsUSBSwitch
+
+
+
+
+.. py:class:: MiniCircuitsUSBSwitch(resource=Undefined, **values)
+
+   Bases: :py:obj:`labbench.DotNetDevice`
+
+   A digitally controlled solid-state switch.
+
+   This implementation calls the .NET drivers provided by the
+   manufacturer instead of the recommended C DLL drivers in order to
+   support 64-bit python.
+
+   The .NET documentation is located here:
+   https://www.minicircuits.com/softwaredownload/Prog_Manual-Solid_State_Switch.pdf
+
+   .. py:method:: open()
+
+      Open the device resource.
+
+
+   .. py:method:: close()
+
+      Release the attenuator hardware resource via the driver DLL.
+
+
+   .. py:method:: port()
+
+
+   .. py:method:: port(value)
+
+
+
