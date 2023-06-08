@@ -7,15 +7,16 @@ In many cases the acquired data are returned in tabular form as [pandas](http://
 | Name  |  Contact Info |
 |---|---|
 | Dan Kuester (maintainer)  |  <daniel.kuester@nist.gov> |
-| Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
-| Andre Rosete        | <andre.rosete@nist.gov> |
-| Paul Blanchard | <paul.blanchard@nist.gov> |
-| Michael Voecks | <michael.voecks@nist.gov> |
-| Ryan Jacobs | ryan.jacobs@nist.gov |
-| Alex Curtin | alexandra.curtin@nist.gov |
-| Audrey Puls | <audrey.puls@nist.gov> |
+| Paul Blanchard | formerly with NIST |
+| Alex Curtin | formerly with NIST |
+| Keith Forsyth  | <keith.forsyth@nist.gov>  |
+| Ryan Jacobs | formerly with NIST |
 | John Ladbury | <john.ladbury@nist.gov> |
 | Yao Ma | <yao.ma@nist.gov> |
+| Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
+| Audrey Puls | formerly with NIST |
+| Andre Rosete        | formerly with NIST |
+| Michael Voecks | <michael.voecks@nist.gov> |
 
 # Getting started with `ssmdevices`
 ## Installation
