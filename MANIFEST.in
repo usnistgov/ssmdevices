@@ -1,0 +1,2 @@
+recursive-include ssmdevices/lib *
+recursive-include ssmdevices/etc *
