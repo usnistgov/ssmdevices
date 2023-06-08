@@ -101,7 +101,11 @@ class _IPerfBase(lb.ShellBackend, timeout=5):
     )
 
     interval = lb.value.float(
-        None, min=0.01, allow_none=True, label='s', help="seconds between throughput reports"
+        None,
+        min=0.01,
+        allow_none=True,
+        label="s",
+        help="seconds between throughput reports",
     )
 
     # high level buffer commands
@@ -109,11 +113,15 @@ class _IPerfBase(lb.ShellBackend, timeout=5):
     bit_rate = lb.value.str(
         None,
         allow_none=True,
-        label='bits/s',
+        label="bits/s",
         help="maximum bit rate, accepts KMG unit suffix; defaults 1Mbit/s UDP, no limit for TCP",
     )
     buffer_size = lb.value.int(
-        None, min=1, allow_none=True, help="buffer size when generating traffic", label="bytes"
+        None,
+        min=1,
+        allow_none=True,
+        help="buffer size when generating traffic",
+        label="bytes",
     )
 
     # TCP parameters
@@ -122,7 +130,7 @@ class _IPerfBase(lb.ShellBackend, timeout=5):
         min=1,
         allow_none=True,
         help="window / socket size (default OS dependent?)",
-        label="bytes"
+        label="bytes",
     )
     nodelay = lb.value.bool(False, help="set True to use nodelay (TCP traffic only)")
     mss = lb.value.int(
@@ -130,7 +138,7 @@ class _IPerfBase(lb.ShellBackend, timeout=5):
         min=10,
         allow_none=True,
         help="minimum segment size=MTU-40, TCP only",
-        label="bytes"
+        label="bytes",
     )
 
     def profile(self, block=True):

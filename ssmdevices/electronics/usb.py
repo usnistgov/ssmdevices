@@ -22,7 +22,11 @@ class AcronameUSBHub2x4(lb.Device, resource=None):
     power2_enabled = lb.property.bool()
     power3_enabled = lb.property.bool()
 
-    resource = lb.value.str(allow_none=True, cache=True, help="None to autodetect, or a serial number string")
+    resource = lb.value.str(
+        allow_none=True,
+        cache=True,
+        help="None to autodetect, or a serial number string",
+    )
 
     def open(self):
         import brainstem

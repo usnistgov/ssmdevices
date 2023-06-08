@@ -12,6 +12,7 @@ class AcronameUSBHub2x4(lb.Device):
     power1_enabled: Incomplete
     power2_enabled: Incomplete
     power3_enabled: Incomplete
+    resource: Incomplete
     backend: Incomplete
 
     def open(self) -> None: ...

@@ -12,6 +12,7 @@ import labbench as lb
 
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
+
     TRIGGER_SOURCES = ("IMM", "INT", "EXT", "BUS", "INT1")
 
     initiate_continuous = lb.property.bool(key="INIT:CONT")
@@ -53,7 +54,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
 class RohdeSchwarzNRPSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB.
-    
+
     These require the installation of proprietary drivers from the vendor website. Resource strings for connections take the form
     'RSNRP::0x00e2::103892::INSTR'.
     """
@@ -186,13 +187,23 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
     frequency = lb.property.float(
-        key="SENS:FREQ", min=10e6, max=8e9, step=1e-3, label="Hz", help="calibration frequency"
+        key="SENS:FREQ",
+        min=10e6,
+        max=8e9,
+        step=1e-3,
+        label="Hz",
+        help="calibration frequency",
     )
 
 
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
     frequency = lb.property.float(
-        key="SENS:FREQ", min=10e6, max=18e9, step=1e-3, label="Hz", help="calibration frequency"
+        key="SENS:FREQ",
+        min=10e6,
+        max=18e9,
+        step=1e-3,
+        label="Hz",
+        help="calibration frequency",
     )
 
 
