@@ -38,18 +38,13 @@ class KeysightU2000XSeries(lb.VISADevice):
 
     def fetch(self):
         """Return a single number or pandas Series containing the power readings"""
+        import pandas as pd
+
         response = self.query("FETC?").split(",")
         if len(response) == 1:
             return float(response[0])
         else:
             return pd.to_numeric(pd.Series(response))
-
-    @classmethod
-    def __imports__(cls):
-        global pd
-        import pandas as pd
-
-        super().__imports__()
 
 
 class RohdeSchwarzNRPSeries(lb.VISADevice):
@@ -128,6 +123,8 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
     def fetch(self):
         """Return a single number or pandas Series containing the power readings"""
+        import pandas as pd
+
         response = self.query("FETC?").split(",")
         if len(response) == 1:
             return float(response[0])
@@ -139,6 +136,8 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
     def fetch_buffer(self):
         """Return a single number or pandas Series containing the power readings"""
+        import pandas as pd
+
         response = self.query("FETC:ARR?").split(",")
         if len(response) == 1:
             return float(response[0])
@@ -176,13 +175,6 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         self.trigger_source = trigger_source  # 'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
         self.initiate_continuous = False
         self.wait()
-
-    @classmethod
-    def __imports__(cls):
-        global pd
-        import pandas as pd
-
-        super().__imports__()
 
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
