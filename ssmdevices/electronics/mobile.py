@@ -1,7 +1,6 @@
 """
 Made by Michael Voecks
 """
-import subprocess as sp
 import labbench as lb
 import ssmdevices.lib
 
@@ -40,7 +39,7 @@ class AndroidDebugBridge(
         devices = self.devices()
 
         # Test to see if serialNum is one of the first elements in the list of tuples
-        if not serialNum in [i[0] for i in devices]:
+        if serialNum not in [i[0] for i in devices]:
             return False
         return True
 
@@ -95,7 +94,7 @@ class AndroidDebugBridge(
                     "The Airplane Mode feature can only be set to a value of 0 or 1"
                 )
             else:
-                res1 = self.foreground(
+                self.foreground(
                     "-s",
                     str(deviceId),
                     "shell",
@@ -107,7 +106,7 @@ class AndroidDebugBridge(
                     pipe=True,
                     check_return=True,
                 )
-                res2 = self.foreground(
+                self.foreground(
                     "-s",
                     str(deviceId),
                     "shell",

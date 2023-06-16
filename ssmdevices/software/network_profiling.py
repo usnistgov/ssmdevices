@@ -401,11 +401,11 @@ class IPerf2OnAndroid(IPerf2, binary_path=ssmdevices.lib.path("adb.exe")):
 
         # remove extra output added by adb
         out = []
-        for l in txt.splitlines():
-            if b":" not in l:
-                out.append(l)
+        for line in txt.splitlines():
+            if b":" not in line:
+                out.append(line)
             else:
-                self._logger.warning("stdout: {}".format(repr(l)))
+                self._logger.warning("stdout: {}".format(repr(line)))
         out = b"\n".join(out)
 
         return self._format_output(out)
@@ -882,7 +882,7 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
 
             # This exception needs to come first, because it is a subclass
             # of OSError (at least on windows)
-            except socket.timeout as e:
+            except socket.timeout:
                 if sock is not None:
                     self._close_sockets(sock, bytes_=bytes_)
                 msg = f"client socket timed out in attempt to connect to the server at {server_ip}:{port}"

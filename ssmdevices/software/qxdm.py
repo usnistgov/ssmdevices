@@ -8,9 +8,13 @@ Edits by Dan Kuester (dkuester@nist.gov)
 
 __all__ = ["QXDM"]
 
-import labbench as lb
-import time, os, psutil, datetime
+import datetime
+import os
+import time
 from xml.etree import ElementTree as ET
+
+import labbench as lb
+import psutil
 
 
 class QPST(lb.Win32ComDevice, com_object="QPSTAtmnServer.Application"):
@@ -147,15 +151,18 @@ class QXDM(lb.Win32ComDevice, com_object="QXDM.QXDMAutoApplication"):
             raise lb.DeviceStateError(f"no state information for key '{key}'")
 
     def close(self):
+        def none_func():
+            pass
+
         try:
             f1 = self._qpst.disconnect
         except AttributeError:
-            f1 = lambda: None
+            f1 = none_func
             self._logger.debug("QPST already quit")
         try:
             f2 = self._window.QuitApplication
         except AttributeError:
-            f2 = lambda: None
+            f2 = none_func
             self._logger.debug("QXDM already quit")
 
         lb.concurrently(f1, f2)
@@ -217,7 +224,7 @@ class QXDM(lb.Win32ComDevice, com_object="QXDM.QXDMAutoApplication"):
             now = datetime.datetime.now()
             fmt = lb.Host.time_format.replace(" ", "_").replace(":", "")
             timestamp = "{}.{}".format(now.strftime(fmt), now.microsecond)
-            if not saveNm == None:
+            if saveNm is not None:
                 path = os.path.join(
                     self.cache_path, "{}-{}.isf".format(saveNm, timestamp)
                 )
@@ -409,12 +416,12 @@ class QXDM(lb.Win32ComDevice, com_object="QXDM.QXDMAutoApplication"):
 #            lb.sleep(self.min_acquisition_time - time_elapsed)
 #
 #        self.stop()
-##        lb.sleep(1)
+#        lb.sleep(1)
 #
 #        # Quitting the application should force QXDM to write a "temporary" .isf file containing
 #        # whatever hasn't already been saved.  This needs to be renamed with the .isf base name.
 #        path = self.renameLatestISF('99-Final', self.max_cleanup_tries)
-##        self.clear_stale_isf(path)
+#        self.clear_stale_isf(path)
 #        return path
 #    def _list_isf(self):
 #        return [e for e in os.listdir(self.cache_path)\
@@ -428,7 +435,7 @@ class QXDM(lb.Win32ComDevice, com_object="QXDM.QXDMAutoApplication"):
 #
 #    # Connect to application
 #    with QXDM(8, cache_path=r'C:\Python Code\potato', concurrency=False) as qxdm:
-##        mod = inspect.getmodule(qxdm.backend._FlagAsMethod).__name__
+#        mod = inspect.getmodule(qxdm.backend._FlagAsMethod).__name__
 #        print(repr(qxdm.backend),dir(qxdm.backend))
 #        qxdm.configure(r'C:\Python Code\potato\180201_QXDMConfig.dmc')
 #        for i in range(1):

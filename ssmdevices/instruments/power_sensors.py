@@ -11,6 +11,7 @@ import labbench as lb
 import pandas as pd
 import typing
 
+
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
@@ -138,6 +139,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     def fetch(self):
         """Return a single number or pandas Series containing the power readings"""
         import pandas as pd
+        import numpy as np
 
         response = self.query("FETC?").split(",")
         if len(response) == 1:
@@ -214,7 +216,7 @@ class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
 
 
 if __name__ == "__main__":
-    from pylab import *
+    from matplotlib import pyplot as plt
     import seaborn as sns
 
     sns.set(style="ticks")
@@ -237,6 +239,6 @@ if __name__ == "__main__":
         power = sensor.fetch()
 
     power.hist(figsize=(6, 2))
-    xlabel("Power level")
-    ylabel("Count")
-    title("Histogram of power sensor readings")
+    plt.xlabel("Power level")
+    plt.ylabel("Count")
+    plt.title("Histogram of power sensor readings")

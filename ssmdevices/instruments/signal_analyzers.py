@@ -1,4 +1,6 @@
-import os, time
+import os
+import time
+
 import numpy as np
 
 __all__ = [
@@ -319,7 +321,8 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         :return: a numpy array containing the response.
         """
 
-        from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
+        from pyvisa.constants import (VI_SUCCESS_DEV_NPRESENT,
+                                      VI_SUCCESS_MAX_CNT)
 
         self._logger.debug(f"query {msg}")
 
@@ -479,7 +482,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
                 raise ValueError("timestamps argument must be 'fast', 'exact', or None")
             elif timestamps == "exact":
                 t = self.fetch_timestamps(all=True, window=window, timeout=timeout)
-            elif timestamps == None:
+            elif timestamps is None:
                 t = None
 
             # Fetch frequency axis
@@ -495,7 +498,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             if freqs == "exact":
                 f_ = self.fetch_horizontal(window)
                 Nfreqs = len(f_)
-            elif freqs == None:
+            elif freqs is None:
                 f_ = None
                 Nfreqs = self.sweep_points
 
@@ -648,11 +651,11 @@ class RohdeSchwarzSpectrumAnalyzerMixIn(
         )
 
         for m in enables.index:
-            if enables.loc[m, "Marker"] == True:
+            if enables.loc[m, "Marker"]:
                 values.loc[m, "Marker"] = self.get_marker_power(m)
                 values.loc[m, "Frequency"] = self.get_marker_position(m)
 
-                if enables.loc[m, "Band"] == True:
+                if enables.loc[m, "Band"]:
                     values.loc[m, "Band"] = self.get_marker_band_power(m)
 
         values.dropna(how="all", inplace=True)

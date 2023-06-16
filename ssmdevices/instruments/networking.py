@@ -7,10 +7,12 @@ Authors:
     Dan Kuester
 """
 
-import labbench as lb
-import time, os
 import numbers
+import os
 import re
+import time
+
+import labbench as lb
 
 __all__ = ["AeroflexTM500"]
 

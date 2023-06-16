@@ -3,8 +3,9 @@ Drivers for USB peripherals
 
 :author: Dan Kuester <daniel.kuester@nist.gov>, Andre Rosete <andre.rosete@nist.gov>
 """
-import labbench as lb
 import collections
+
+import labbench as lb
 
 
 class AcronameUSBHub2x4(lb.Device, resource=None):

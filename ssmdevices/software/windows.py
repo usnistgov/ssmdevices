@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 __all__ = ["WLANInfo", "WLANClient"]
 
-import labbench as lb
-import re, time
-import subprocess as sp
-import psutil
 import logging
+import re
+import subprocess as sp
+import time
+
+import labbench as lb
+import psutil
 
 if __name__ == "__main__":
     from _networking import network_interface_info
