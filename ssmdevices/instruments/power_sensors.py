@@ -8,7 +8,8 @@ __all__ = [
 ]
 
 import labbench as lb
-
+import pandas as pd
+import typing
 
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
@@ -32,19 +33,32 @@ class KeysightU2000XSeries(lb.VISADevice):
         step=1e-3,
         help="input signal center frequency (in Hz)",
     )
+    auto_calibration = lb.property.bool(
+        key='CAL:ZERO:AUTO',
+        case=False,
+        remap={False: "OFF", True: "ON"}
+    )
 
-    def preset(self):
+    def preset(self, wait=True) -> None:
+        """restore the instrument to its default state"""
         self.write("SYST:PRES")
+        if wait:
+            self.wait()
 
-    def fetch(self):
-        """Return a single number or pandas Series containing the power readings"""
-        import pandas as pd
-
+    def fetch(self) -> typing.Union[float, pd.Series]:
+        """return power readings from the instrument.
+        
+        Returns:
+            a single number if trigger_count == 1, otherwise or pandas.Series"""
         response = self.query("FETC?").split(",")
         if len(response) == 1:
             return float(response[0])
         else:
             return pd.to_numeric(pd.Series(response))
+
+    def calibrate(self) -> None:
+        if int(self.query('CAL?')) != 0:
+            raise ValueError("calibration failed")
 
 
 class RohdeSchwarzNRPSeries(lb.VISADevice):
