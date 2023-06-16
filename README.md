@@ -1,3 +1,10 @@
+<!-- [![PyPI Latest Release](https://img.shields.io/pypi/v/ssmdevices.svg)](https://pypi.org/project/ssmdevices/) -->
+<!-- [![DOI](https://zenodo.org/badge/DOI/10.18434/M32122.svg)](https://doi.org/10.18434/M32122) -->
+[![License](https://img.shields.io/badge/license-NIST-brightgreen)](https://github.com/usnistgov/ssmdevices/blob/master/LICENSE.md)
+<!-- [![Downloads](https://static.pepy.tech/badge/ssmdevices)](https://pepy.tech/project/ssmdevices) -->
+<!-- [![Last commit](https://img.shields.io/github/last-commit/usnistgov/ssmdevices)](https://pypi.org/project/ssmdevices/) -->
+
+
 *ssmdevices* is a collection of python wrappers that have been used for automated experiments by the NIST Spectrum Technology and Research Division. They are released here for transparency, for re-use of the drivers ``as-is'' by the test community, and as a demonstration of lab automation based on [labbench](https://github.com/usnistgov/labbench).
 
 The equipment includes consumer wireless communication hardware, test instruments, diagnostic software, and other miscellaneous lab electronics.
@@ -29,6 +36,10 @@ _Note: Certain commercial equipment, instruments, and software are identified he
 ## Documentation
 * [API Reference](https://github.com/usnistgov/ssmdevices/blob/main/doc/ssmdevices-api.pdf)
 * [Examples](https://github.com/usnistgov/ssmdevices/tree/main/examples)
+
+## Contributing
+* [Pull requests](https://github.com/usnistgov/ssmdevices/pulls) are welcome!
+* [Inline documentation style convention](https://google.github.io/styleguide/pyguide.html#s3.8-comments-and-docstrings)
 
 ## See also
 * [labbench](https://github.com/usnistgov/labbench) the base library to develop these device wrappers
