@@ -321,8 +321,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         :return: a numpy array containing the response.
         """
 
-        from pyvisa.constants import (VI_SUCCESS_DEV_NPRESENT,
-                                      VI_SUCCESS_MAX_CNT)
+        from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
 
         self._logger.debug(f"query {msg}")
 

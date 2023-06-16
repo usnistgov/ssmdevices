@@ -74,5 +74,5 @@ include = '\.pyi?$'
 [tool.pdm.scripts]
 build-html = {cmd = "sphinx-build -b html doc doc/html"}
 build-latex = {cmd = "sphinx-build -b latex doc doc/latex"}
-build-pdf = {cmd = "pdflatex doc/latex/ssmdevices-api.tex"}
+build-pdf = {cmd = "pdflatex doc/latex/ssmdevices-api.tex --output-directory=doc", env = {"TEXINPUTS" = "doc/latex"}}
 build-rst = {cmd = "sphinx-apidoc -F . -o doc"}

@@ -35,9 +35,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         help="input signal center frequency (in Hz)",
     )
     auto_calibration = lb.property.bool(
-        key='CAL:ZERO:AUTO',
-        case=False,
-        remap={False: "OFF", True: "ON"}
+        key="CAL:ZERO:AUTO", case=False, remap={False: "OFF", True: "ON"}
     )
 
     def preset(self, wait=True) -> None:
@@ -48,7 +46,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
     def fetch(self) -> typing.Union[float, pd.Series]:
         """return power readings from the instrument.
-        
+
         Returns:
             a single number if trigger_count == 1, otherwise or pandas.Series"""
         response = self.query("FETC?").split(",")
@@ -58,7 +56,7 @@ class KeysightU2000XSeries(lb.VISADevice):
             return pd.to_numeric(pd.Series(response))
 
     def calibrate(self) -> None:
-        if int(self.query('CAL?')) != 0:
+        if int(self.query("CAL?")) != 0:
             raise ValueError("calibration failed")
 
 
