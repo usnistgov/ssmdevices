@@ -9,6 +9,7 @@ __all__ = [
 
 import labbench as lb
 import pandas as pd
+import numpy as np
 import typing
 
 
@@ -53,7 +54,12 @@ class KeysightU2000XSeries(lb.VISADevice):
         if len(response) == 1:
             return float(response[0])
         else:
-            return pd.to_numeric(pd.Series(response))
+            df = pd.to_numeric(pd.Series(response))
+            df.index = pd.Index(
+                self.sweep_aperture * np.arange(len(df)), name="Time elapsed (s)"
+            )
+            df.columns.name = "Power (dBm)"
+            return df
 
     def calibrate(self) -> None:
         if int(self.query("CAL?")) != 0:
@@ -136,9 +142,6 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
     def fetch(self):
         """Return a single number or pandas Series containing the power readings"""
-        import pandas as pd
-        import numpy as np
-
         response = self.query("FETC?").split(",")
         if len(response) == 1:
             return float(response[0])
@@ -150,8 +153,6 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
     def fetch_buffer(self):
         """Return a single number or pandas Series containing the power readings"""
-        import pandas as pd
-
         response = self.query("FETC:ARR?").split(",")
         if len(response) == 1:
             return float(response[0])

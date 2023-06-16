@@ -2,6 +2,7 @@ import os
 import time
 
 import numpy as np
+import pandas as pd
 
 __all__ = [
     "RohdeSchwarzFSW26Base",
@@ -128,14 +129,10 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             )
 
     def open(self):
-        import pandas
-
         # self.verify_channel_type()
         self.format = "REAL,32"
 
     def acquire_spectrogram(self, acquisition_time_sec):
-        import pandas as pd
-
         t0 = time.time()
 
         specs = []
@@ -391,8 +388,6 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         :param window: The window number to query (or None, the default, to use self.default_window)
         :return: a pd.Series object containing the returned data
         """
-        import pandas as pd
-
         if trace is None:
             trace = self.default_trace
         if window is None:
@@ -455,8 +450,6 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         :param window: The window number corresponding to the desired timestamp data (or self.default_window when window=None)
         :return: a pandas DataFrame containing the acquired data
         """
-        import pandas as pd
-
         if timeout is None:
             if self.trigger_source.lower() == "mask":
                 max_trigger_time = self.trigger_post_time
@@ -550,8 +543,6 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         return float(self.query(f"CALC:MARK{marker}:{axis}?"))
 
     def get_marker_enables(self):
-        import pandas as pd
-
         markers = list(range(1, 17))
         states = [
             [
@@ -638,8 +629,6 @@ class RohdeSchwarzSpectrumAnalyzerMixIn(
 
     def get_marker_power_table(self):
         """Get the values of all markers."""
-        import pandas as pd
-
         enables = self.get_marker_enables()
 
         values = pd.DataFrame(
@@ -705,15 +694,11 @@ class RohdeSchwarzLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
         return float(response[2:].replace("_", ".")) * 1e6
 
     def open(self):
-        import pandas as pd
-
         lb.VISADevice.open(self)
         # self.verify_channel_type()
         self.format = "REAL"
 
     def fetch_power_vs_symbol_x_carrier(self, window, trace):
-        import pandas as pd
-
         data = self.fetch_trace(window=window, trace=trace)
 
         # Dimensioning is based on LTE standard definitions
@@ -733,8 +718,6 @@ class RohdeSchwarzLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
     # The methods should be deprecatable now, since the base fetch_trace() should work fine now that format is set
     # in the connect() method and the window parameter is supported by fetch_trace()
     def get_ascii_window_trace(self, window, trace):
-        import pandas as pd
-
         self.write("FORM ASCII")
         data = self.backend.query_ascii_values(
             f"TRAC{window}:DATA? TRACE{trace}", container=pd.Series
@@ -742,8 +725,6 @@ class RohdeSchwarzLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
         return data
 
     def get_binary_window_trace(self, window, trace):
-        import pandas as pd
-
         self.write("FORM REAL")
         data = self.backend.query_binary_values(
             f"TRAC{window}:DATA? TRACE{trace}",
@@ -776,8 +757,6 @@ class RohdeSchwarzIQAnalyzerMixIn(RohdeSchwarzFSWBase, expected_channel_type="RT
     iq_format_window2 = lb.property.str(key="CALC2:FORM", case=False, only=_IQ_FORMATS)
 
     def fetch_trace(self, horizontal=False, trace=None):
-        import pandas as pd
-
         fmt = self.iq_format
         if fmt == "VECT":
             df = RohdeSchwarzFSWBase.fetch_trace(self, horizontal=False, trace=trace)
@@ -1066,8 +1045,6 @@ class RohdeSchwarzRealTimeMixIn(RohdeSchwarzFSWBase, expected_channel_type="RTIM
         :param timestamps: 'fast' (with potential for rounding errors to ~ 10 ns) or 'exact' (slow and not recommended)
         :return: dictionary structured as {'spectrogram': pd.DataFrame, 'spectrogram_acquisition_time': float, 'spectrogram_active_time': float}
         """
-        import pandas as pd
-
         specs = []
 
         if self.trigger_source.lower() == "mask":

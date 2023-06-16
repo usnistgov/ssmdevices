@@ -24,8 +24,8 @@ from time import perf_counter
 from contextlib import AbstractContextManager, suppress
 from ._networking import find_free_port
 
-
 import labbench as lb
+import pandas as pd
 import psutil
 import ssmdevices.lib
 
@@ -258,8 +258,6 @@ class IPerf2(_IPerfBase, binary_path=ssmdevices.lib.path("iperf.exe")):
 
     def _format_output(self, stdout):
         """pack stdout into a pandas DataFrame if self.report_style == 'C'"""
-
-        import pandas as pd
 
         if self.report_style is None:
             return stdout.decode()
@@ -522,8 +520,6 @@ class IPerf2BoundPair(IPerf2):
             return ret
 
     def read_stdout(self, client_ret=None):
-        import pandas as pd
-
         if client_ret is None:
             client = self.children["client"].read_stdout()
         else:
@@ -1366,8 +1362,6 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
         return self._make_dataframe(ret)
 
     def _make_dataframe(self, worker_data):
-        import pandas as pd
-
         self._logger.debug("making dataframe")
         start = worker_data.pop("start", None)
         if start is None:
