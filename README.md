@@ -5,7 +5,7 @@
 <!-- [![Last commit](https://img.shields.io/github/last-commit/usnistgov/ssmdevices)](https://pypi.org/project/ssmdevices/) -->
 
 
-*ssmdevices* is a collection of python wrappers that have been used for automated experiments by the NIST Spectrum Technology and Research Division. They are released here for transparency, for re-use of the drivers ``as-is'' by the test community, and as a demonstration of lab automation based on [labbench](https://github.com/usnistgov/labbench).
+*ssmdevices* is a collection of python wrappers that have been used for automated experiments by the Spectrum Technology and Research Division at NIST. They are released here for transparency, for re-use of the drivers ``as-is'' by collaborators and the broader test community, and as a demonstration of lab automation based on [labbench](https://github.com/usnistgov/labbench).
 
 The equipment includes consumer wireless communication hardware, test instruments, diagnostic software, and other miscellaneous lab electronics.
 In many cases the acquired data are returned in tabular form as [pandas](http://pandas.pydata.org/) data frames.
