@@ -23,7 +23,7 @@ In many cases the acquired data are returned in tabular form as [pandas](http://
 | Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
 | Audrey Puls | formerly with NIST |
 | Andre Rosete        | formerly with NIST |
-| Michael Voecks | <michael.voecks@nist.gov> |
+| Michael Voecks | formerly with NIST |
 
 # Getting started with `ssmdevices`
 ## Installation
