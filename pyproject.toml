@@ -22,7 +22,7 @@ maintainers = [
 ]
 
 dependencies = [
-    "labbench>=0.26",
+    "labbench @ git+https://github.com/usnistgov/labbench@backend-property-decorators",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",

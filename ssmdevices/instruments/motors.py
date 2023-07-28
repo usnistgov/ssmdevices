@@ -14,6 +14,7 @@ import labbench as lb
 __all__ = ["ETSLindgrenAzi2005"]
 
 
+@lb.VISAPropertyAdapter(write_fmt="{key}{value}")
 class ETSLindgrenAzi2005(lb.VISADevice):
     timeout = lb.value.float(
         20,
@@ -104,9 +105,6 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     position = lb.property.float(
         key="SK", min=0, max=360, help="rotation (degrees)", gets=False
     )
-
-    def set_key(self, key, value, trait_name=None):
-        self.write(key + str(value))
 
 
 if __name__ == "__main__":

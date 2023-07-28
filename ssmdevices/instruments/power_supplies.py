@@ -3,19 +3,38 @@ import labbench as lb
 __all__ = ["RigolDP800Series"]
 
 
-class RigolDP800Series(lb.VISADevice):
-    REMAP_BOOL = {False: "OFF", True: "ON"}
+class VISAPropertyAdapter(lb.VISAPropertyAdapter):
+    def get(self, device: lb.Device, scpi_key: str, trait_name=None):
+        """This instrument expects keys to have syntax ":COMMAND? PARAM",
+        instead of ":COMMAND PARAM?" as implemented in lb.VISADevice.
 
+        Insert the "?" in the appropriate place here.
+        """
+        if " " in scpi_key:
+            key = scpi_key.replace(" ", "? ", 1)
+        else:
+            key = scpi_key + "?"
+        return device.query(key)
+
+    def set(self, device: lb.Device, scpi_key: str, value, trait_name=None):
+        """This instrument expects sets to have syntax :COMMAND PARAM,VALUE
+        instead of :COMMAND PARAM VALUE? as implemented in lb.VISADevice.
+
+        Implement this behavior here.
+        """
+        if " " in scpi_key:
+            key = f"{scpi_key},{value}"
+        else:
+            key = f"{scpi_key} {value}"
+        return device.write(key.rstrip())
+
+
+@VISAPropertyAdapter(remap={True: "ON", False: "OFF"})
+class RigolDP800Series(lb.VISADevice):
     # properties accept the "key" argument and/or decorators for custom implementation
-    enable1 = lb.property.bool(
-        key=":OUTP CH1", remap=REMAP_BOOL, help="enable DC output on channel 1"
-    )
-    enable2 = lb.property.bool(
-        key=":OUTP CH2", remap=REMAP_BOOL, help="enable DC output on channel 2"
-    )
-    enable3 = lb.property.bool(
-        key=":OUTP CH3", remap=REMAP_BOOL, help="enable DC output on channel 3"
-    )
+    enable1 = lb.property.bool(key=":OUTP CH1", help="enable channel 1 output")
+    enable2 = lb.property.bool(key=":OUTP CH2", help="enable channel 2 output")
+    enable3 = lb.property.bool(key=":OUTP CH3", help="enable channel 3 output")
 
     voltage_setting1 = lb.property.float(
         key=":SOUR1:VOLT", help="output voltage setting on channel 1"
@@ -57,30 +76,6 @@ class RigolDP800Series(lb.VISADevice):
             self.identity
         finally:
             self.backend.timeout = timeout
-
-    def get_key(self, scpi_key, trait_name=None):
-        """This instrument expects keys to have syntax ":COMMAND? PARAM",
-        instead of ":COMMAND PARAM?" as implemented in lb.VISADevice.
-
-        Insert the "?" in the appropriate place here.
-        """
-        if " " in scpi_key:
-            key = scpi_key.replace(" ", "? ", 1)
-        else:
-            key = scpi_key + "?"
-        return self.query(key)
-
-    def set_key(self, scpi_key, value, trait_name=None):
-        """This instrument expects sets to have syntax :COMMAND? PARAM,VALUE
-        instead of :COMMAND PARAM VALUE? as implemented in lb.VISADevice.
-
-        Implement this behavior here.
-        """
-        if " " in scpi_key:
-            key = f"{scpi_key},{value}"
-        else:
-            key = f"{scpi_key} {value}"
-        return self.write(key.rstrip())
 
 
 if __name__ == "__main__":
