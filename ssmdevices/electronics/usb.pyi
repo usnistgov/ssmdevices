@@ -1,9 +1,21 @@
 import labbench as lb
 from _typeshed import Incomplete
 
+
+class AcronameKeying(lb.BackendPropertyAdapter):
+
+    def set(self, device, key: tuple, value, trait: Incomplete | None=...):
+        ...
+
+    def get(self, device, key: tuple, trait: Incomplete | None=...):
+        ...
+
+
 class AcronameUSBHub2x4(lb.Device):
-    def __init__(self, resource: str = "NoneType"): ...
-    model: int
+
+    def __init__(self, resource: str='NoneType'):
+        ...
+    MODEL: int
     data0_enabled: Incomplete
     data1_enabled: Incomplete
     data2_enabled: Incomplete
@@ -15,9 +27,8 @@ class AcronameUSBHub2x4(lb.Device):
     resource: Incomplete
     backend: Incomplete
 
-    def open(self) -> None: ...
-    def close(self) -> None: ...
-    def set_key(self, key, value, name: Incomplete | None = ...) -> None: ...
-    def enable(
-        self, data: bool = ..., power: bool = ..., channel: str = ...
-    ) -> None: ...
+    def open(self) -> None:
+        ...
+
+    def close(self) -> None:
+        ...
