@@ -13,9 +13,8 @@ import numpy as np
 import typing
 
 
-@lb.VISAPropertyAdapter(
-    query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
-)
+@lb.VISAPropertyAdapter(remap={True: "ON", False: "OFF"})
+@lb.mutate_trait('resource_pattern', default='Keysight Technologies,U204[0-9]X')
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 

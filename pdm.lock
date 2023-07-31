@@ -1083,7 +1083,7 @@ version = "0.27.0"
 requires_python = ">=3.8,<3.12"
 git = "https://github.com/usnistgov/labbench"
 ref = "backend-property-decorators"
-revision = "4d343816d87b138a3d5c834bad5e8a58c08dda78"
+revision = "532b8e19dfe07ac76c7650d463f380e126fed2eb"
 summary = "A set of python tools for clear, concise, and explainable laboratory automation. Codethat achieves these goals should read like a pseudocode expression of the experimentalprocedure. The labbench module supports this goal through an object protocol and support functions.These separate repetitive and error-prone boilerplate code, Use of these capabilitiesamong multiple experimental runs also helps to produced data sets with consistentstructure."
 dependencies = [
     "GitPython>=2.0",

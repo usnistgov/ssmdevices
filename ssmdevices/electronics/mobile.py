@@ -5,8 +5,8 @@ import labbench as lb
 import ssmdevices.lib
 
 
-lb.mutate_trait('binary_path', default=ssmdevices.lib.path("adb.exe"))
-lb.mutate_trait('timeout', default=6)
+lb.mutate_trait(lb.ShellBackend.binary_path, default=ssmdevices.lib.path("adb.exe"))
+lb.mutate_trait(lb.ShellBackend.timeout, default=6)
 class AndroidDebugBridge(lb.ShellBackend):
     def devices(self):
         """This function checks ADB to see if any devices are connected, if
@@ -62,22 +62,17 @@ class AndroidDebugBridge(lb.ShellBackend):
         raises exception if it cannot find the device
         """
         if self.is_device_connected(deviceId):
-            res = (
-                self.run(
-                    "-s",
-                    str(deviceId),
-                    "shell",
-                    "settings",
-                    "get",
-                    "global",
-                    "airplane_mode_on",
-                    pipe=True,
-                )
-                .strip()
-                .rstrip()
+            res = self.run(
+                "-s",
+                str(deviceId),
+                "shell",
+                "settings",
+                "get",
+                "global",
+                "airplane_mode_on",
+                pipe=True,
             )
-            resInt = res.strip().rstrip().decode("utf-8")
-            return resInt
+            return res.strip().rstrip().decode("utf-8")
         else:
             raise Exception("The specified device is not connected to the ADB server")
 
@@ -144,13 +139,13 @@ class AndroidDebugBridge(lb.ShellBackend):
 
 if __name__ == "__main__":
     with AndroidDebugBridge() as adb:
-        devices = adb.devices()  # Returns a list of tuples containing device Ids
-        #        adb.reboot(devices[0][0]) # Reboots the device
-        print(adb.check_airplane_mode(devices[0][0]))
-        adb.set_airplane_mode(devices[0][0], 0)
-        print(adb.check_airplane_mode(devices[0][0]))
+        devices = adb.devices()[0][0]  # Returns a list of tuples containing device Ids
+        #  adb.reboot(devices[0][0])
+        print(adb.check_airplane_mode(devices))
+        adb.set_airplane_mode(devices, 0)
+        print(adb.check_airplane_mode(devices))
         adb.push_file(
-            devices[0][0],
+            devices,
             ssmdevices.lib.path("android", "iperf"),
             "/data/local/tmp/iperf",
         )
