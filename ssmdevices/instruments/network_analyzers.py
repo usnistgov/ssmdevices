@@ -3,9 +3,7 @@ import labbench as lb
 __all__ = ["RohdeSchwarzZMBSeries"]
 
 
-@lb.property.visa_adapter(
-    query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
-)
+@lb.property.visa_adapter(remap={True: "ON", False: "OFF"})
 class RohdeSchwarzZMBSeries(lb.VISADevice):
     """A network analyzer.
 

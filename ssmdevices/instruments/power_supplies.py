@@ -3,7 +3,7 @@ import labbench as lb
 __all__ = ["RigolDP800Series"]
 
 
-class VISAPropertyAdapter(lb.property.visa_adapter):
+class rigol_property_adapter(lb.property.visa_adapter):
     def get(self, device: lb.Device, scpi_key: str, trait_name=None):
         """This instrument expects keys to have syntax ":COMMAND? PARAM",
         instead of ":COMMAND PARAM?" as implemented in lb.VISADevice.
@@ -29,7 +29,7 @@ class VISAPropertyAdapter(lb.property.visa_adapter):
         return device.write(key.rstrip())
 
 
-@VISAPropertyAdapter(remap={True: "ON", False: "OFF"})
+@rigol_property_adapter(remap={True: "ON", False: "OFF"})
 class RigolDP800Series(lb.VISADevice):
     # properties accept the "key" argument and/or decorators for custom implementation
     enable1 = lb.property.bool(key=":OUTP CH1", help="enable channel 1 output")

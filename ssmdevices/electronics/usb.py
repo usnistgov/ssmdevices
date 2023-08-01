@@ -7,7 +7,7 @@ import collections
 import labbench as lb
 
 
-class acronamy_property_adapter(lb.BackendPropertyAdapter):
+class AcronamePropertyAdapter(lb.BackendPropertyAdapter):
     def set(self, device, key: tuple, value, trait=None):
         """Apply an instrument setting to the instrument. The value ``value''
         will be applied to the trait attriute ``attr'' in type(self).
@@ -39,7 +39,7 @@ class acronamy_property_adapter(lb.BackendPropertyAdapter):
             )
 
 
-@acronamy_property_adapter
+@AcronamePropertyAdapter
 @lb.Device.resource.adopt(None)
 class AcronameUSBHub2x4(lb.Device):
     """A USB hub with control over each port."""

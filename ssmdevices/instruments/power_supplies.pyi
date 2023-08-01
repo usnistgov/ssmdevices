@@ -2,7 +2,7 @@ import labbench as lb
 from _typeshed import Incomplete
 
 
-class VISAPropertyAdapter(lb.property.visa_adapter):
+class rigol_property_adapter(lb.property.visa_adapter):
 
     def get(self, device: lb.Device, scpi_key: str, trait_name: Incomplete | None=...):
         ...
