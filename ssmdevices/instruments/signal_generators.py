@@ -9,7 +9,7 @@ import labbench as lb
 __all__ = ["RohdeSchwarzSMW200A"]
 
 
-@lb.VISAPropertyAdapter(remap={True: "0", False: "1"})
+@lb.property.visa_adapter(remap={True: "0", False: "1"})
 class RohdeSchwarzSMW200A(lb.VISADevice):
     frequency_center = lb.property.float(
         key=":freq", min=2e3, max=26.5e9, step=1e3, label="Hz"

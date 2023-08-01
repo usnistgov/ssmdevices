@@ -14,7 +14,7 @@ import labbench as lb
 __all__ = ["ETSLindgrenAzi2005"]
 
 
-@lb.VISAPropertyAdapter(write_fmt="{key}{value}")
+@lb.property.visa_adapter(write_fmt="{key}{value}")
 class ETSLindgrenAzi2005(lb.VISADevice):
     timeout = lb.value.float(
         20,

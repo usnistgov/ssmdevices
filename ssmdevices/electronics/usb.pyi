@@ -2,7 +2,7 @@ import labbench as lb
 from _typeshed import Incomplete
 
 
-class AcronameKeying(lb.BackendPropertyAdapter):
+class acronamy_property_adapter(lb.BackendPropertyAdapter):
 
     def set(self, device, key: tuple, value, trait: Incomplete | None=...):
         ...

@@ -3,7 +3,7 @@ import labbench as lb
 __all__ = ["RigolDP800Series"]
 
 
-class VISAPropertyAdapter(lb.VISAPropertyAdapter):
+class VISAPropertyAdapter(lb.property.visa_adapter):
     def get(self, device: lb.Device, scpi_key: str, trait_name=None):
         """This instrument expects keys to have syntax ":COMMAND? PARAM",
         instead of ":COMMAND PARAM?" as implemented in lb.VISADevice.

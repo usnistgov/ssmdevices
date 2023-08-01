@@ -13,7 +13,7 @@ import numpy as np
 import typing
 
 
-@lb.VISAPropertyAdapter(remap={True: "ON", False: "OFF"})
+@lb.property.visa_adapter(remap={True: "ON", False: "OFF"})
 @lb.VISADevice.identity_pattern.adopt('Keysight Technologies,U204[0-9]X')
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
@@ -66,7 +66,7 @@ class KeysightU2000XSeries(lb.VISADevice):
             raise ValueError("calibration failed")
 
 
-@lb.VISAPropertyAdapter(
+@lb.property.visa_adapter(
     query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
 )
 class RohdeSchwarzNRPSeries(lb.VISADevice):

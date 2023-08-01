@@ -9,6 +9,9 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -154,6 +157,9 @@ class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -182,6 +188,9 @@ class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -217,6 +226,9 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -243,6 +255,9 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -348,6 +363,9 @@ class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -362,6 +380,9 @@ class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base, _RSSpectrumAnalyz
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -376,6 +397,9 @@ class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base, _RSLTEAnalyzerMixIn):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -390,6 +414,9 @@ class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base, _RSIQAnalyzerMixIn):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -404,6 +431,9 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base, _RSRealTimeMixIn):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -418,6 +448,9 @@ class RohdeSchwarzFSW43Base(RohdeSchwarzFSWBase):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -432,6 +465,9 @@ class RohdeSchwarzFSW43SpectrumAnalyzer(RohdeSchwarzFSW43Base, _RSSpectrumAnalyz
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -446,6 +482,9 @@ class RohdeSchwarzFSW43LTEAnalyzer(RohdeSchwarzFSW43Base, _RSLTEAnalyzerMixIn):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -460,6 +499,9 @@ class RohdeSchwarzFSW43IQAnalyzer(RohdeSchwarzFSW43Base, _RSIQAnalyzerMixIn):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):
@@ -474,6 +516,9 @@ class RohdeSchwarzFSW43RealTime(RohdeSchwarzFSW43Base, _RSRealTimeMixIn):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType',
         default_window: str='str',
         default_trace: str='str'
     ):

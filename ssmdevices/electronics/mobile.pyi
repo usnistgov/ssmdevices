@@ -3,7 +3,7 @@ import labbench as lb
 
 class AndroidDebugBridge(lb.ShellBackend):
 
-    def __init__(self, resource: str='str', binary_path: str='NoneType', timeout: str='int'):
+    def __init__(self, resource: str='str', binary_path: str='str', timeout: str='int'):
         ...
 
     def devices(self):

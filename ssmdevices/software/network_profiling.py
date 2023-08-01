@@ -216,7 +216,7 @@ class IPerf3(_IPerfBase):
     zerocopy = lb.value.bool(False, help="use a 'zero copy' method of sending data")
 
 
-@_IPerfBase.binary_path.tune(ssmdevices.lib.path("iperf.exe"))
+@_IPerfBase.binary_path.adopt(ssmdevices.lib.path("iperf.exe"))
 class IPerf2(_IPerfBase):
     """Run an instance of iperf to profile data transfer speed. It can
     operate as a server (listener) or client (sender), operating either

@@ -10,10 +10,12 @@ class KeysightU2000XSeries(lb.VISADevice):
         self,
         resource: str='str',
         read_termination: str='str',
-        write_termination: str='str'
+        write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='str',
+        timeout: str='NoneType'
     ):
         ...
-    TRIGGER_SOURCES: Incomplete
     initiate_continuous: Incomplete
     output_trigger: Incomplete
     trigger_source: Incomplete
@@ -35,10 +37,15 @@ class KeysightU2000XSeries(lb.VISADevice):
 
 class RohdeSchwarzNRPSeries(lb.VISADevice):
 
-    def __init__(self, resource: str='str', write_termination: str='str'):
+    def __init__(
+        self,
+        resource: str='str',
+        write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType'
+    ):
         ...
-    FUNCTIONS: Incomplete
-    TRIGGER_SOURCES: Incomplete
     frequency: Incomplete
     initiate_continuous: Incomplete
 
@@ -90,13 +97,27 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
 
-    def __init__(self, resource: str='str', write_termination: str='str'):
+    def __init__(
+        self,
+        resource: str='str',
+        write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType'
+    ):
         ...
-    frequency: Incomplete
+    ...
 
 
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
 
-    def __init__(self, resource: str='str', write_termination: str='str'):
+    def __init__(
+        self,
+        resource: str='str',
+        write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType'
+    ):
         ...
-    frequency: Incomplete
+    ...

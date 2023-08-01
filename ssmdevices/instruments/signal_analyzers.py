@@ -22,7 +22,7 @@ import labbench as lb
 DEFAULT_CHANNEL_NAME = "remote"
 
 
-@lb.VISAPropertyAdapter(
+@lb.property.visa_adapter(
     query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
 )
 class RohdeSchwarzFSWBase(lb.VISADevice):
@@ -600,7 +600,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self.write(f"OUTPUT:TRIGGER{port}:PULS:IMM")
 
 
-@lb.RohdeSchwarzFSWBase.expected_channel_type.adopt('SAN')
+@RohdeSchwarzFSWBase.expected_channel_type.adopt('SAN')
 class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
     def get_marker_band_power(self, marker: int) -> float:
         """Get marker band power measurement
@@ -739,7 +739,7 @@ class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
 
 
 @RohdeSchwarzFSWBase.expected_channel_type.adopt('RTIM')
-@lb.VISAPropertyAdapter(
+@lb.property.visa_adapter(
     query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
 )
 class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
@@ -786,12 +786,12 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
         self.write(f"MMEM:STOR:IQ:STAT 1, '{path}'")
 
 
-@lb.VISAPropertyAdapter(
+@lb.property.visa_adapter(
     query_fmt="{key}?",
     write_fmt="{key} {value}",
     remap={True: "ON", False: "OFF"}
 )
-@lb.RohdeSchwarzFSWBase.expected_channel_type.adopt('RTIM')
+@RohdeSchwarzFSWBase.expected_channel_type.adopt('RTIM')
 class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
     TRIGGER_SOURCES = "IMM", "EXT", "EXT2", "EXT3", "MASK", "TDTR"
     WINDOW_FUNCTIONS = "BLAC", "FLAT", "GAUS", "HAMM", "HANN", "KAIS", "RECT"

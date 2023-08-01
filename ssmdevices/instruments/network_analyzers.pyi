@@ -8,7 +8,10 @@ class RohdeSchwarzZMBSeries(lb.VISADevice):
         self,
         resource: str='str',
         read_termination: str='str',
-        write_termination: str='str'
+        write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType'
     ):
         ...
     initiate_continuous: Incomplete

@@ -9,6 +9,8 @@ class ETSLindgrenAzi2005(lb.VISADevice):
         resource: str='str',
         read_termination: str='str',
         write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
         timeout: str='int',
         baud_rate: str='int',
         parity: str='bytes',
