@@ -40,7 +40,7 @@ class AcronameKeying(lb.BackendPropertyAdapter):
 
 
 @AcronameKeying
-@lb.mutate_trait('resource', default=None)
+@lb.Device.resource.adopt(None)
 class AcronameUSBHub2x4(lb.Device):
     """A USB hub with control over each port."""
 

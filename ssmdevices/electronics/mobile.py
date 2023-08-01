@@ -5,8 +5,8 @@ import labbench as lb
 import ssmdevices.lib
 
 
-lb.mutate_trait(lb.ShellBackend.binary_path, default=ssmdevices.lib.path("adb.exe"))
-lb.mutate_trait(lb.ShellBackend.timeout, default=6)
+@lb.ShellBackend.binary_path.adopt(ssmdevices.lib.path("adb.exe"))
+@lb.ShellBackend.timeout.adopt(6)
 class AndroidDebugBridge(lb.ShellBackend):
     def devices(self):
         """This function checks ADB to see if any devices are connected, if

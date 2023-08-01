@@ -14,15 +14,15 @@ import typing
 
 
 @lb.VISAPropertyAdapter(remap={True: "ON", False: "OFF"})
-@lb.mutate_trait('resource_pattern', default='Keysight Technologies,U204[0-9]X')
+@lb.VISADevice.identity_pattern.adopt('Keysight Technologies,U204[0-9]X')
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
-    TRIGGER_SOURCES = ("IMM", "INT", "EXT", "BUS", "INT1")
+    _TRIGGER_SOURCES = ("IMM", "INT", "EXT", "BUS", "INT1")
 
     initiate_continuous = lb.property.bool(key="INIT:CONT")
     output_trigger = lb.property.bool(key="OUTP:TRIG")
-    trigger_source = lb.property.str(key="TRIG:SOUR", case=False, only=TRIGGER_SOURCES)
+    trigger_source = lb.property.str(key="TRIG:SOUR", case=False, only=_TRIGGER_SOURCES)
     trigger_count = lb.property.int(key="TRIG:COUN", min=1, max=200)
     measurement_rate = lb.property.str(
         key="SENS:MRAT", only=("NORM", "DOUB", "FAST"), case=False
@@ -76,29 +76,22 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     Resource strings for connections take the form 'RSNRP::0x00e2::103892::INSTR'.
     """
 
-    FUNCTIONS = ("POW:AVG", "POW:BURS:AVG", "POW:TSL:AVG", "XTIM:POW", "XTIM:POWer")
-    TRIGGER_SOURCES = ("HOLD", "IMM", "INT", "EXT", "EXT1", "EXT2", "BUS", "INT1")
+    _FUNCTIONS = ("POW:AVG", "POW:BURS:AVG", "POW:TSL:AVG", "XTIM:POW", "XTIM:POWer")
+    _TRIGGER_SOURCES = ("HOLD", "IMM", "INT", "EXT", "EXT1", "EXT2", "BUS", "INT1")
 
     # Instrument state traits (pass command arguments and/or implement setter/getter)
-    frequency = lb.property.float(key="SENS:FREQ", min=10e6, step=1e-3, label="Hz")
+    frequency = lb.property.float(key="SENS:FREQ", min=10e6, step=1e-3, label="Hz", help="calibration frequency")
     initiate_continuous = lb.property.bool(key="INIT:CONT")
 
-    @lb.property.str(
-        key="SENS:FUNC",
-        case=False,
-        only=FUNCTIONS,
-    )
+    @lb.property.str(key="SENS:FUNC", case=False, only=_FUNCTIONS)
     def function(self, value):
         # Special case - this message requires quotes around the argument
         self.write(f'SENSe:FUNCtion "{value}"')
 
-    @lb.property.str(
-        key="TRIG:SOUR",
-        case=False,
-        only=TRIGGER_SOURCES,
-    )
+    @lb.property.str(key="TRIG:SOUR", case=False, only=_TRIGGER_SOURCES)
     def trigger_source(self):
         """'HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm"""
+
         # special case - the instrument returns '2' instead of 'EXT2'
         remap = {"2": "EXT2"}
         source = self.query("TRIG:SOUR?")
@@ -187,26 +180,14 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         self.wait()
 
 
+@RohdeSchwarzNRPSeries.frequency.adopt(max=8e9)
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
-    frequency = lb.property.float(
-        key="SENS:FREQ",
-        min=10e6,
-        max=8e9,
-        step=1e-3,
-        label="Hz",
-        help="calibration frequency",
-    )
+    pass
 
 
+@RohdeSchwarzNRPSeries.frequency.adopt(max=18e9)
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
-    frequency = lb.property.float(
-        key="SENS:FREQ",
-        min=10e6,
-        max=18e9,
-        step=1e-3,
-        label="Hz",
-        help="calibration frequency",
-    )
+    pass
 
 
 if __name__ == "__main__":

@@ -15,8 +15,8 @@ else:
     from ._networking import network_interface_info
 
 
-@lb.mutate_trait(lb.ShellBackend.binary_path, default=r"C:\Windows\System32\netsh.exe")
-@lb.mutate_trait(lb.ShellBackend.timeout, default=5)
+@lb.ShellBackend.binary_path.adopt(r"C:\Windows\System32\netsh.exe")
+@lb.ShellBackend.timeout.adopt(5)
 class WLANInfo(lb.ShellBackend):
     """Parse calls to netsh to get information about WLAN interfaces."""
 

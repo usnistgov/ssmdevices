@@ -16,7 +16,7 @@ from xml.etree import ElementTree as ET
 import labbench as lb
 import psutil
 
-@lb.mutate_trait(lb.Win32ComDevice.com_object, default=r"QPSTAtmnServer.Application")
+@lb.Win32ComDevice.com_object.adopt("QPSTAtmnServer.Application")
 class QPST(lb.Win32ComDevice):
     PORT_LIST_CODES = dict(
         ue_mode={
@@ -103,7 +103,7 @@ class QPST(lb.Win32ComDevice):
             raise TimeoutError(f"QXDM disconnect timeout on COM{port}")
 
 
-@lb.mutate_trait(lb.Win32ComDevice.com_object, default=r"QXDM.QXDMAutoApplication")
+@lb.Win32ComDevice.com_object.adopt(r"QXDM.QXDMAutoApplication")
 class QXDM(lb.Win32ComDevice):
     """QXDM software wrapper"""
 
