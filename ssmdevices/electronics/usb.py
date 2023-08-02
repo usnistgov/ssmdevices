@@ -7,7 +7,7 @@ import collections
 import labbench as lb
 
 
-class AcronamePropertyAdapter(lb.BackendPropertyAdapter):
+class AcronamePropertyAdapter(lb.PropertyKeyingBase):
     def set(self, device, key: tuple, value, trait=None):
         """Apply an instrument setting to the instrument. The value ``value''
         will be applied to the trait attriute ``attr'' in type(self).

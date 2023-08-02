@@ -22,7 +22,7 @@ import labbench as lb
 DEFAULT_CHANNEL_NAME = "remote"
 
 
-@lb.property.visa_adapter(
+@lb.property.visa_keying(
     query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
 )
 class RohdeSchwarzFSWBase(lb.VISADevice):
@@ -739,7 +739,7 @@ class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
 
 
 @RohdeSchwarzFSWBase.expected_channel_type.adopt('RTIM')
-@lb.property.visa_adapter(
+@lb.property.visa_keying(
     query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
 )
 class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
@@ -786,7 +786,7 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
         self.write(f"MMEM:STOR:IQ:STAT 1, '{path}'")
 
 
-@lb.property.visa_adapter(
+@lb.property.visa_keying(
     query_fmt="{key}?",
     write_fmt="{key} {value}",
     remap={True: "ON", False: "OFF"}
