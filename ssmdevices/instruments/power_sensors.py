@@ -13,14 +13,16 @@ import numpy as np
 import typing
 
 
+@lb.property.visa_keying(remap={True: "ON", False: "OFF"})
+@lb.VISADevice.identity_pattern.adopt('Keysight Technologies,U204[0-9]X')
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
-    TRIGGER_SOURCES = ("IMM", "INT", "EXT", "BUS", "INT1")
+    _TRIGGER_SOURCES = ("IMM", "INT", "EXT", "BUS", "INT1")
 
     initiate_continuous = lb.property.bool(key="INIT:CONT")
     output_trigger = lb.property.bool(key="OUTP:TRIG")
-    trigger_source = lb.property.str(key="TRIG:SOUR", case=False, only=TRIGGER_SOURCES)
+    trigger_source = lb.property.str(key="TRIG:SOUR", case=False, only=_TRIGGER_SOURCES)
     trigger_count = lb.property.int(key="TRIG:COUN", min=1, max=200)
     measurement_rate = lb.property.str(
         key="SENS:MRAT", only=("NORM", "DOUB", "FAST"), case=False
@@ -35,9 +37,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         step=1e-3,
         help="input signal center frequency (in Hz)",
     )
-    auto_calibration = lb.property.bool(
-        key="CAL:ZERO:AUTO", case=False, remap={False: "OFF", True: "ON"}
-    )
+    auto_calibration = lb.property.bool(key="CAL:ZERO:AUTO", case=False)
 
     def preset(self, wait=True) -> None:
         """restore the instrument to its default state"""
@@ -66,38 +66,32 @@ class KeysightU2000XSeries(lb.VISADevice):
             raise ValueError("calibration failed")
 
 
+@lb.property.visa_keying(
+    query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
+)
 class RohdeSchwarzNRPSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB.
 
-    These require the installation of proprietary drivers from the vendor website. Resource strings for connections take the form
-    'RSNRP::0x00e2::103892::INSTR'.
+    These require the installation of proprietary drivers from the vendor website.
+    Resource strings for connections take the form 'RSNRP::0x00e2::103892::INSTR'.
     """
 
-    FUNCTIONS = ("POW:AVG", "POW:BURS:AVG", "POW:TSL:AVG", "XTIM:POW", "XTIM:POWer")
-    TRIGGER_SOURCES = ("HOLD", "IMM", "INT", "EXT", "EXT1", "EXT2", "BUS", "INT1")
+    _FUNCTIONS = ("POW:AVG", "POW:BURS:AVG", "POW:TSL:AVG", "XTIM:POW", "XTIM:POWer")
+    _TRIGGER_SOURCES = ("HOLD", "IMM", "INT", "EXT", "EXT1", "EXT2", "BUS", "INT1")
 
     # Instrument state traits (pass command arguments and/or implement setter/getter)
-    frequency = lb.property.float(key="SENS:FREQ", min=10e6, step=1e-3, label="Hz")
-    initiate_continuous = lb.property.bool(
-        key="INIT:CONT", remap={False: "OFF", True: "ON"}
-    )
+    frequency = lb.property.float(key="SENS:FREQ", min=10e6, step=1e-3, label="Hz", help="calibration frequency")
+    initiate_continuous = lb.property.bool(key="INIT:CONT")
 
-    @lb.property.str(
-        key="SENS:FUNC",
-        case=False,
-        only=FUNCTIONS,
-    )
+    @lb.property.str(key="SENS:FUNC", case=False, only=_FUNCTIONS)
     def function(self, value):
         # Special case - this message requires quotes around the argument
         self.write(f'SENSe:FUNCtion "{value}"')
 
-    @lb.property.str(
-        key="TRIG:SOUR",
-        case=False,
-        only=TRIGGER_SOURCES,
-    )
+    @lb.property.str(key="TRIG:SOUR", case=False, only=_TRIGGER_SOURCES)
     def trigger_source(self):
         """'HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm"""
+
         # special case - the instrument returns '2' instead of 'EXT2'
         remap = {"2": "EXT2"}
         source = self.query("TRIG:SOUR?")
@@ -111,25 +105,19 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     trace_points = lb.property.int(
         key="SENSe:TRACe:POINTs", min=1, max=8192, gets=False
     )
-    trace_realtime = lb.property.bool(key="TRAC:REAL", remap={False: "OFF", True: "ON"})
+    trace_realtime = lb.property.bool(key="TRAC:REAL")
     trace_time = lb.property.float(key="TRAC:TIME", min=10e-6, max=3)
     trace_offset_time = lb.property.float(key="TRAC:OFFS:TIME", min=-0.5, max=100)
     trace_average_count = lb.property.int(key="TRAC:AVER:COUN", min=1, max=65536)
     trace_average_mode = lb.property.str(
         key="TRAC:AVER:TCON", only=("MOV", "REP"), case=False
     )
-    trace_average_enable = lb.property.bool(
-        key="TRAC:AVER", remap={False: "OFF", True: "ON"}
-    )
+    trace_average_enable = lb.property.bool(key="TRAC:AVER")
 
     average_count = lb.property.int(key="AVER:COUN", min=1, max=65536)
-    average_auto = lb.property.bool(
-        key="AVER:COUN:AUTO", remap={False: "OFF", True: "ON"}
-    )
-    average_enable = lb.property.bool(key="AVER", remap={False: "OFF", True: "ON"})
-    smoothing_enable = lb.property.bool(
-        key="SMO:STAT", remap={False: "OFF", True: "ON"}, gets=False
-    )
+    average_auto = lb.property.bool(key="AVER:COUN:AUTO")
+    average_enable = lb.property.bool(key="AVER")
+    smoothing_enable = lb.property.bool(key="SMO:STAT", gets=False)
 
     # Local settings traits (leave command unset, and do not implement setter/getter)
     read_termination = lb.property.str()
@@ -192,26 +180,14 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         self.wait()
 
 
+@RohdeSchwarzNRPSeries.frequency.adopt(max=8e9)
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
-    frequency = lb.property.float(
-        key="SENS:FREQ",
-        min=10e6,
-        max=8e9,
-        step=1e-3,
-        label="Hz",
-        help="calibration frequency",
-    )
+    pass
 
 
+@RohdeSchwarzNRPSeries.frequency.adopt(max=18e9)
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
-    frequency = lb.property.float(
-        key="SENS:FREQ",
-        min=10e6,
-        max=18e9,
-        step=1e-3,
-        label="Hz",
-        help="calibration frequency",
-    )
+    pass
 
 
 if __name__ == "__main__":

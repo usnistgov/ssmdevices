@@ -3,15 +3,14 @@ import labbench as lb
 __all__ = ["RohdeSchwarzZMBSeries"]
 
 
+@lb.property.visa_keying(remap={True: "ON", False: "OFF"})
 class RohdeSchwarzZMBSeries(lb.VISADevice):
     """A network analyzer.
 
     Author: Audrey Puls
     """
 
-    initiate_continuous = lb.property.bool(
-        key="INITiate1:CONTinuous:ALL", remap={True: "ON", False: "OFF"}, help=""
-    )
+    initiate_continuous = lb.property.bool(key="INITiate1:CONTinuous:ALL", help="")
 
     def clear(self):
         self.write("*CLS")

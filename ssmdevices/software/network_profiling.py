@@ -49,7 +49,8 @@ if "_tcp_port_offset" not in dir():
 perf_counter()
 
 
-class _IPerfBase(lb.ShellBackend, timeout=5):
+@lb.ShellBackend.timeout.adopt(default=5)
+class _IPerfBase(lb.ShellBackend):
     FLAGS = dict(
         resource="-c",
         server="-s",
@@ -198,7 +199,8 @@ class _IPerfBase(lb.ShellBackend, timeout=5):
                 raise ValueError("iperf server does not support the `number` argument")
 
 
-class IPerf3(_IPerfBase, binary_path=ssmdevices.lib.path("iperf3.exe")):
+@_IPerfBase.binary_path.adopt(ssmdevices.lib.path("iperf3.exe"))
+class IPerf3(_IPerfBase):
     """Run an instance of iperf3, collecting output data in a background thread.
     When running as an iperf client (server=False),
     The default value is the path that installs with 64-bit cygwin.
@@ -214,7 +216,8 @@ class IPerf3(_IPerfBase, binary_path=ssmdevices.lib.path("iperf3.exe")):
     zerocopy = lb.value.bool(False, help="use a 'zero copy' method of sending data")
 
 
-class IPerf2(_IPerfBase, binary_path=ssmdevices.lib.path("iperf.exe")):
+@_IPerfBase.binary_path.adopt(ssmdevices.lib.path("iperf.exe"))
+class IPerf2(_IPerfBase):
     """Run an instance of iperf to profile data transfer speed. It can
     operate as a server (listener) or client (sender), operating either
     in the foreground or as a background thread.
@@ -299,7 +302,8 @@ class IPerf2(_IPerfBase, binary_path=ssmdevices.lib.path("iperf.exe")):
         return data
 
 
-class IPerf2OnAndroid(IPerf2, binary_path=ssmdevices.lib.path("adb.exe")):
+@_IPerfBase.binary_path.adopt(ssmdevices.lib.path("adb.exe"))
+class IPerf2OnAndroid(IPerf2):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
     remote_binary_path = lb.value.str("/data/local/tmp/iperf", cache=True)
 

@@ -16,8 +16,8 @@ from xml.etree import ElementTree as ET
 import labbench as lb
 import psutil
 
-
-class QPST(lb.Win32ComDevice, com_object="QPSTAtmnServer.Application"):
+@lb.Win32ComDevice.com_object.adopt("QPSTAtmnServer.Application")
+class QPST(lb.Win32ComDevice):
     PORT_LIST_CODES = dict(
         ue_mode={
             0: "No phone detected",
@@ -103,7 +103,8 @@ class QPST(lb.Win32ComDevice, com_object="QPSTAtmnServer.Application"):
             raise TimeoutError(f"QXDM disconnect timeout on COM{port}")
 
 
-class QXDM(lb.Win32ComDevice, com_object="QXDM.QXDMAutoApplication"):
+@lb.Win32ComDevice.com_object.adopt(r"QXDM.QXDMAutoApplication")
+class QXDM(lb.Win32ComDevice):
     """QXDM software wrapper"""
 
     resource = lb.value.int(min=0, help="serial port number for the handset connection")

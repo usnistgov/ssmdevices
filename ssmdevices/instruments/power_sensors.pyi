@@ -3,14 +3,19 @@ import pandas as pd
 import typing
 from _typeshed import Incomplete
 
+
 class KeysightU2000XSeries(lb.VISADevice):
+
     def __init__(
         self,
-        resource: str = "str",
-        read_termination: str = "str",
-        write_termination: str = "str",
-    ): ...
-    TRIGGER_SOURCES: Incomplete
+        resource: str='str',
+        read_termination: str='str',
+        write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='str',
+        timeout: str='NoneType'
+    ):
+        ...
     initiate_continuous: Incomplete
     output_trigger: Incomplete
     trigger_source: Incomplete
@@ -20,19 +25,35 @@ class KeysightU2000XSeries(lb.VISADevice):
     frequency: Incomplete
     auto_calibration: Incomplete
 
-    def preset(self, wait: bool = ...) -> None: ...
-    def fetch(self) -> typing.Union[float, pd.Series]: ...
-    def calibrate(self) -> None: ...
+    def preset(self, wait: bool=...) -> None:
+        ...
+
+    def fetch(self) -> typing.Union[float, pd.Series]:
+        ...
+
+    def calibrate(self) -> None:
+        ...
+
 
 class RohdeSchwarzNRPSeries(lb.VISADevice):
-    def __init__(self, resource: str = "str", write_termination: str = "str"): ...
-    FUNCTIONS: Incomplete
-    TRIGGER_SOURCES: Incomplete
+
+    def __init__(
+        self,
+        resource: str='str',
+        write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType'
+    ):
+        ...
     frequency: Incomplete
     initiate_continuous: Incomplete
 
-    def function(self, value) -> None: ...
-    def trigger_source(self): ...
+    def function(self, value) -> None:
+        ...
+
+    def trigger_source(self):
+        ...
     trigger_delay: Incomplete
     trigger_count: Incomplete
     trigger_holdoff: Incomplete
@@ -50,10 +71,18 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     smoothing_enable: Incomplete
     read_termination: Incomplete
 
-    def preset(self) -> None: ...
-    def trigger_single(self) -> None: ...
-    def fetch(self): ...
-    def fetch_buffer(self): ...
+    def preset(self) -> None:
+        ...
+
+    def trigger_single(self) -> None:
+        ...
+
+    def fetch(self):
+        ...
+
+    def fetch_buffer(self):
+        ...
+
     def setup_trace(
         self,
         frequency,
@@ -61,13 +90,34 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         sample_period,
         trigger_level,
         trigger_delay,
-        trigger_source,
-    ) -> None: ...
+        trigger_source
+    ) -> None:
+        ...
+
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
-    def __init__(self, resource: str = "str", write_termination: str = "str"): ...
-    frequency: Incomplete
+
+    def __init__(
+        self,
+        resource: str='str',
+        write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType'
+    ):
+        ...
+    ...
+
 
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
-    def __init__(self, resource: str = "str", write_termination: str = "str"): ...
-    frequency: Incomplete
+
+    def __init__(
+        self,
+        resource: str='str',
+        write_termination: str='str',
+        open_timeout: str='NoneType',
+        identity_pattern: str='NoneType',
+        timeout: str='NoneType'
+    ):
+        ...
+    ...
