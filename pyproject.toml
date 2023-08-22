@@ -1,6 +1,6 @@
 [project]
 name = "ssmdevices"
-version = "0.14"
+version = "0.15"
 description = "a collection of lab automation drivers implemented with labbench"
 
 authors = [
@@ -22,7 +22,7 @@ maintainers = [
 ]
 
 dependencies = [
-    "labbench @ git+https://github.com/usnistgov/labbench@backend-property-decorators",
+    "labbench >= 0.28",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
