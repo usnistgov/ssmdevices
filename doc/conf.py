@@ -34,21 +34,19 @@
 # serve to show the default.
 
 # import traitlets as tl
-import sys
 from pathlib import Path
 import shutil
-import os
 import numpy as np
+from sphinx.domains.python import PythonDomain
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath(".."))
 
-import tomllib
+import toml
 
-with open('../pyproject.toml', 'rb') as fd:
-    project_info = tomllib.load(fd)
+project_info = toml.load('../pyproject.toml')
 
 # -- General configuration ------------------------------------------------
 
@@ -171,6 +169,7 @@ def change_pathto(app, pagename, templatename, context, doctree):
 
     context["pathto"] = gh_pathto
 
+
 # From https://groups.google.com/forum/#!msg/sphinx-users/NYUYffRrE78/MPMa57KN1sEJ
 # to make output paths compatible with github
 def move_private_folders(app, e):
@@ -189,11 +188,135 @@ def move_private_folders(app, e):
 
             shutil.move(item, dest)
 
+import pickle
+
+# From https://github.com/sphinx-doc/sphinx/issues/3866#issuecomment-311181219
+# to avoid clobbering references to builtins
+class PatchedPythonDomain(PythonDomain):   
+    def resolve_xref(self, env, fromdocname, builder, typ, target, node, contnode):
+        import builtins
+        exclude_targets = set(dir(builtins))        
+
+        if 'refspecific' in node:
+            if not node['refspecific'] and node["reftarget"] in exclude_targets:
+                del node['refspecific']
+        
+        
+        with open('debug.pickle', 'wb') as fd:
+            pickle.dump(self.data, fd)
+
+        return super(PatchedPythonDomain, self).resolve_xref(
+            env, fromdocname, builder, typ, target, node, contnode)
+        
+        
+from sphinx.ext import autodoc
+import labbench as lb
+
+
+def process_signature(app, what, name, obj, options, signature, return_annotation):
+    if isinstance(obj, lb._traits.Trait):
+        # return_annotation = obj.type.__qualname__
+        print('process_signature: trait ', locals())
+        return (None, obj.type.__qualname__)
+    elif isinstance(obj, property):
+        print('process_signature: property ', locals())
+
+    return (signature, return_annotation)
+
+def process_docstring(app, what, name, obj, options, lines):
+    if isinstance(obj, lb._traits.Trait):
+        print('process_docstring: ', name, obj.doc(anonymous=True))
+        lines.append(obj.doc(as_argument=True, anonymous=True))
+       
+    elif isinstance(obj, property):
+        print('process_docstring: property ', locals())
+
+class AttributeDocumenter(autodoc.AttributeDocumenter):
+    @staticmethod
+    def _is_lb_value(obj):
+        return isinstance(obj, lb._traits.Trait) and obj.role == lb._traits.Trait.ROLE_VALUE
+
+    @classmethod
+    def can_document_member(cls, member, membername: str, isattr: bool, parent) -> bool:
+        if isinstance(parent, autodoc.ClassDocumenter):
+            if cls._is_lb_value(member):
+                return True
+        return super().can_document_member(member, membername, isattr, parent)
+
+    def add_directive_header(self, sig: str) -> None:
+        if not self._is_lb_value(self.object):
+            return super().add_directive_header(sig)
+        
+        super().add_directive_header(sig)
+        sourcename = self.get_sourcename()
+
+        # if signature.return_annotation is not Parameter.empty:
+        if self.config.autodoc_typehints_format == "short":
+            objrepr = autodoc.stringify_annotation(self.object.type, "smart")
+        else:
+            objrepr = autodoc.stringify_annotation(self.object.type,
+                                            "fully-qualified-except-typing")
+
+        self.add_line('   :type: ' + objrepr, sourcename)      
+        
+
+class PropertyDocumenter(autodoc.PropertyDocumenter):
+    @staticmethod
+    def _is_lb_property(obj):
+        return isinstance(obj, lb._traits.Trait) and obj.role == lb._traits.Trait.ROLE_PROPERTY
+    
+    @classmethod
+    def can_document_member(cls, member, membername: str, isattr: bool, parent) -> bool:
+        if isinstance(parent, autodoc.ClassDocumenter):
+            if cls._is_lb_property(member):
+                return True
+        return super().can_document_member(member, membername, isattr, parent)
+    
+    def import_object(self, raiseerror: bool = False) -> bool:
+        """Check the exisitence of uninitialized instance attribute when failed to import
+        the attribute."""
+        autodoc.ClassLevelDocumenter.import_object(self, raiseerror)
+        if self._is_lb_property(self.object):
+            self.isclassmethod = False
+            return True
+        else:
+            return super().import_object(raiseerror)
+
+    def add_directive_header(self, sig: str) -> None:
+        if not self._is_lb_property(self.object):
+            return super().add_directive_header(sig)
+
+        super().add_directive_header(sig)
+        sourcename = self.get_sourcename()
+        
+        # if signature.return_annotation is not Parameter.empty:
+        if self.config.autodoc_typehints_format == "short":
+            objrepr = autodoc.stringify_annotation(self.object.type, "smart")
+        else:
+            objrepr = autodoc.stringify_annotation(self.object.type,
+                                            "fully-qualified-except-typing")
+            
+        self.add_line('   :type: ' + objrepr, sourcename)
+
+    def format_args(self, **kwargs) -> str:
+        if not self._is_lb_property(self.object):
+            return super().format_args(**kwargs)
+        
+        # update the annotations of the property getter
+        self.env.app.emit('autodoc-before-process-signature', self.object, False)
+        # correctly format the arguments for a property
+        return super().format_args(**kwargs)
+
+    
 def setup(app):
     # app.connect('autodoc-skip-member', maybe_skip_member)
     app.connect("html-page-context", change_pathto)
     app.connect("build-finished", move_private_folders)
-    # app.connect('autodoc-process-signature', resignature)
+    app.add_domain(PatchedPythonDomain, override=True)
+    app.add_autodocumenter(PropertyDocumenter)
+    app.add_autodocumenter(AttributeDocumenter)
+    # app.connect('autodoc-process-signature', process_signature)
+    app.connect('autodoc-process-docstring', process_docstring)
 
 
 # The name of the Pygments (syntax highlighting) style to use.
