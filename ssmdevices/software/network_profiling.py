@@ -379,7 +379,7 @@ class IPerf2OnAndroid(IPerf2):
             if self.remote_binary_path in line.lower():
                 pid = line.split()[1]
                 stdout = self.pipe("shell", "kill", "-9", pid)
-                self._logger.debug("killing zombie iperf: {stdout}")
+                self._logger.debug(f"killing zombie iperf: {stdout}")
 
             lb.sleep(0.1)
             # Wait for any iperf zombie processes to die
@@ -430,7 +430,7 @@ class IPerf2OnAndroid(IPerf2):
             ).stdout
 
             con = re.findall(
-                "mDataConnectionState=([\-0-9]+)", out.decode(errors="replace")
+                r"mDataConnectionState=([\-0-9]+)", out.decode(errors="replace")
             )
 
             if len(con) > 0:
