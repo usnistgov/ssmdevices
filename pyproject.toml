@@ -22,7 +22,7 @@ maintainers = [
 ]
 
 dependencies = [
-    "labbench >= 0.29",
+    "labbench >= 0.29.1",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",

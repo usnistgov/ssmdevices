@@ -6,7 +6,7 @@ groups = ["default", "dev"]
 cross_platform = true
 static_urls = false
 lock_version = "4.3"
-content_hash = "sha256:434de85df793cb317d3015eaa7fad533c9b0cb7625905ae6b0c1b2fe4819361c"
+content_hash = "sha256:718e2ac7ccd05db229bdde2a28dba63bb9dc271db5285167fbd874e43510379d"
 
 [[package]]
 name = "alabaster"
@@ -999,7 +999,7 @@ files = [
 
 [[package]]
 name = "labbench"
-version = "0.28.2"
+version = "0.29.1"
 requires_python = ">=3.8,<3.12"
 summary = "A set of python tools for clear, concise, and explainable laboratory automation. Codethat achieves these goals should read like a pseudocode expression of the experimentalprocedure. The labbench module supports this goal through an object protocol and support functions.These separate repetitive and error-prone boilerplate code, Use of these capabilitiesamong multiple experimental runs also helps to produced data sets with consistentstructure."
 dependencies = [
@@ -1021,8 +1021,8 @@ dependencies = [
     "validators>=0.20.0",
 ]
 files = [
-    {file = "labbench-0.28.2-py3-none-any.whl", hash = "sha256:fe08d2e7d0f429ddcd784ce52371e81aa089297901318aeb55e3dd850e167cf4"},
-    {file = "labbench-0.28.2.tar.gz", hash = "sha256:74ac35e7d3bced41d4343f88a94e524941c6e5698e142beb71f7af54b3c77557"},
+    {file = "labbench-0.29.1-py3-none-any.whl", hash = "sha256:59961449487f502133438578ab505e1de047a82760e29e74ef8e3df89cff7eb1"},
+    {file = "labbench-0.29.1.tar.gz", hash = "sha256:f7c239b334ab53bcc6641d4da84cd4ae0455f929f9a6b63e536e6c8d06623102"},
 ]
 
 [[package]]
