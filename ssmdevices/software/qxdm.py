@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Basic control over the QXDM software.
 
@@ -16,7 +15,8 @@ from xml.etree import ElementTree as ET
 import labbench as lb
 import psutil
 
-@lb.Win32ComDevice.com_object.adopt("QPSTAtmnServer.Application")
+
+@lb.adjusted("com_object", "QPSTAtmnServer.Application")
 class QPST(lb.Win32ComDevice):
     PORT_LIST_CODES = dict(
         ue_mode={
@@ -103,7 +103,7 @@ class QPST(lb.Win32ComDevice):
             raise TimeoutError(f"QXDM disconnect timeout on COM{port}")
 
 
-@lb.Win32ComDevice.com_object.adopt(r"QXDM.QXDMAutoApplication")
+@lb.adjusted("com_object", r"QXDM.QXDMAutoApplication")
 class QXDM(lb.Win32ComDevice):
     """QXDM software wrapper"""
 

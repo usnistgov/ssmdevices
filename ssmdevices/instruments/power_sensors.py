@@ -14,7 +14,7 @@ import typing
 
 
 @lb.property.visa_keying(remap={True: "ON", False: "OFF"})
-@lb.VISADevice.identity_pattern.adopt('Keysight Technologies,U204[0-9]X')
+@lb.adjusted("identity_pattern", "Keysight Technologies,U204[0-9]X")
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
@@ -80,7 +80,9 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     _TRIGGER_SOURCES = ("HOLD", "IMM", "INT", "EXT", "EXT1", "EXT2", "BUS", "INT1")
 
     # Instrument state traits (pass command arguments and/or implement setter/getter)
-    frequency = lb.property.float(key="SENS:FREQ", min=10e6, step=1e-3, label="Hz", help="calibration frequency")
+    frequency = lb.property.float(
+        key="SENS:FREQ", min=10e6, step=1e-3, label="Hz", help="calibration frequency"
+    )
     initiate_continuous = lb.property.bool(key="INIT:CONT")
 
     @lb.property.str(key="SENS:FUNC", case=False, only=_FUNCTIONS)
@@ -180,12 +182,12 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         self.wait()
 
 
-@RohdeSchwarzNRPSeries.frequency.adopt(max=8e9)
+@lb.adjusted("frequency", max=8e9)
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
     pass
 
 
-@RohdeSchwarzNRPSeries.frequency.adopt(max=18e9)
+@lb.adjusted("frequency", max=18e9)
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
     pass
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import time
 import labbench as lb
 import platform

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """ GPS simulator control classes
 
 :author: Duncan McGillivray <duncan.mcgillivray@nist.gov>, Daniel Kuester <daniel.kuester@nist.gov>

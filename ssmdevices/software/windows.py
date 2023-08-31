@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 __all__ = ["WLANInfo", "WLANClient"]
 
 import logging
@@ -15,8 +14,8 @@ else:
     from ._networking import network_interface_info
 
 
-@lb.ShellBackend.binary_path.adopt(r"C:\Windows\System32\netsh.exe")
-@lb.ShellBackend.timeout.adopt(5)
+@lb.adjusted("binary_path", r"C:\Windows\System32\netsh.exe")
+@lb.adjusted("timeout", 5)
 class WLANInfo(lb.ShellBackend):
     """Parse calls to netsh to get information about WLAN interfaces."""
 

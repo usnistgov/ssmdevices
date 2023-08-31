@@ -171,7 +171,6 @@ if __name__ == "__main__":
 
     # now step through to replace __init__ keyword arguments
     for path in root.rglob("*.pyi"):
-
         if str(path).endswith("notebook.py"):
             continue
 

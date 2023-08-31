@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """ Driver classes for signal generators.
 :author: Ryan Jacobs <ryan.jacobs@nist.gov>, Aziz Kord <aziz.kord@nist.gov>, Daniel Kuester <daniel.kuester@nist.gov>
 Paul.Blanchard <paul.blanchard@nist.gov>

@@ -600,7 +600,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self.write(f"OUTPUT:TRIGGER{port}:PULS:IMM")
 
 
-@RohdeSchwarzFSWBase.expected_channel_type.adopt('SAN')
+@lb.adjusted("expected_channel_type", "SAN")
 class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
     def get_marker_band_power(self, marker: int) -> float:
         """Get marker band power measurement
@@ -738,7 +738,7 @@ class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
         return data
 
 
-@RohdeSchwarzFSWBase.expected_channel_type.adopt('RTIM')
+@lb.adjusted("expected_channel_type", "RTIM")
 @lb.property.visa_keying(
     query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
 )
@@ -787,11 +787,9 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
 
 
 @lb.property.visa_keying(
-    query_fmt="{key}?",
-    write_fmt="{key} {value}",
-    remap={True: "ON", False: "OFF"}
+    query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
 )
-@RohdeSchwarzFSWBase.expected_channel_type.adopt('RTIM')
+@lb.adjusted("expected_channel_type", "RTIM")
 class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
     TRIGGER_SOURCES = "IMM", "EXT", "EXT2", "EXT3", "MASK", "TDTR"
     WINDOW_FUNCTIONS = "BLAC", "FLAT", "GAUS", "HAMM", "HANN", "KAIS", "RECT"
@@ -1107,11 +1105,11 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         return {"spectrogram_active_time": time.time() - t0}
 
 
-@RohdeSchwarzFSWBase.frequency_center.adopt(max=26.5e9)
-@RohdeSchwarzFSWBase.frequency_span.adopt(max=26.5e9)
-@RohdeSchwarzFSWBase.frequency_start.adopt(max=26.5e9)
-@RohdeSchwarzFSWBase.frequency_stop.adopt(max=26.5e9)
-@RohdeSchwarzFSWBase.resolution_bandwidth.adopt(min=45e3, max=5.76e6)
+@lb.adjusted("frequency_center", max=26.5e9)
+@lb.adjusted("frequency_span", max=26.5e9)
+@lb.adjusted("frequency_start", max=26.5e9)
+@lb.adjusted("frequency_stop", max=26.5e9)
+@lb.adjusted("resolution_bandwidth", min=45e3, max=5.76e6)
 class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
     pass
 
@@ -1134,11 +1132,11 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base, _RSRealTimeMixIn):
     pass
 
 
-@RohdeSchwarzFSWBase.frequency_center.adopt(max=43.5e9)
-@RohdeSchwarzFSWBase.frequency_span.adopt(max=43.5e9)
-@RohdeSchwarzFSWBase.frequency_start.adopt(max=43.5e9)
-@RohdeSchwarzFSWBase.frequency_stop.adopt(max=43.5e9)
-@RohdeSchwarzFSWBase.resolution_bandwidth.adopt(min=1, max=10e6)
+@lb.adjusted("frequency_center", max=43.5e9)
+@lb.adjusted("frequency_span", max=43.5e9)
+@lb.adjusted("frequency_start", max=43.5e9)
+@lb.adjusted("frequency_stop", max=43.5e9)
+@lb.adjusted("resolution_bandwidth", min=1, max=10e6)
 class RohdeSchwarzFSW43Base(RohdeSchwarzFSWBase):
     pass
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .attenuators import *
 from .gps_simulator import *
 from .networking import *

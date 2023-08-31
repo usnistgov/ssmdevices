@@ -1,21 +1,18 @@
 import labbench as lb
 from _typeshed import Incomplete
 
-
 class RohdeSchwarzFSWBase(lb.VISADevice):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     expected_channel_type: Incomplete
     default_window: Incomplete
     default_trace: Incomplete
@@ -51,188 +48,105 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     sweep_points: Incomplete
     display_update: Incomplete
 
-    def verify_channel_type(self) -> None:
-        ...
-
-    def open(self) -> None:
-        ...
-
-    def acquire_spectrogram(self, acquisition_time_sec):
-        ...
-
-    def close(self) -> None:
-        ...
-
-    def clear_status(self) -> None:
-        ...
-
-    def status_preset(self) -> None:
-        ...
-
-    def save_state(self, name, basedir: Incomplete | None=...) -> None:
-        ...
-
-    def load_state(self, name, basedir: Incomplete | None=...) -> None:
-        ...
-
-    def load_cache(self):
-        ...
-
-    def save_cache(self) -> None:
-        ...
-
-    def mkdir(self, path, recursive: bool=...):
-        ...
-
-    def file_info(self, path):
-        ...
-
-    def remove_window(self, name) -> None:
-        ...
-
-    def trigger_single(self, wait: bool=..., disable_continuous: bool=...) -> None:
-        ...
-
-    def autolevel(self) -> None:
-        ...
-
-    def abort(self) -> None:
-        ...
-
-    def apply_channel_type(self, type_: Incomplete | None=...) -> None:
-        ...
-
-    def channel_preset(self) -> None:
-        ...
-
-    def query_ieee_array(self, msg):
-        ...
-
-    def fetch_horizontal(self, window: Incomplete | None=..., trace: Incomplete | None=...):
-        ...
-
+    def verify_channel_type(self) -> None: ...
+    def open(self) -> None: ...
+    def acquire_spectrogram(self, acquisition_time_sec): ...
+    def close(self) -> None: ...
+    def clear_status(self) -> None: ...
+    def status_preset(self) -> None: ...
+    def save_state(self, name, basedir: Incomplete | None = ...) -> None: ...
+    def load_state(self, name, basedir: Incomplete | None = ...) -> None: ...
+    def load_cache(self): ...
+    def save_cache(self) -> None: ...
+    def mkdir(self, path, recursive: bool = ...): ...
+    def file_info(self, path): ...
+    def remove_window(self, name) -> None: ...
+    def trigger_single(
+        self, wait: bool = ..., disable_continuous: bool = ...
+    ) -> None: ...
+    def autolevel(self) -> None: ...
+    def abort(self) -> None: ...
+    def apply_channel_type(self, type_: Incomplete | None = ...) -> None: ...
+    def channel_preset(self) -> None: ...
+    def query_ieee_array(self, msg): ...
+    def fetch_horizontal(
+        self, window: Incomplete | None = ..., trace: Incomplete | None = ...
+    ): ...
     def fetch_trace(
         self,
-        trace: Incomplete | None=...,
-        horizontal: bool=...,
-        window: Incomplete | None=...
-    ):
-        ...
-
-    def fetch_timestamps(self, window: Incomplete | None=..., all: bool=..., timeout: int=...):
-        ...
-
+        trace: Incomplete | None = ...,
+        horizontal: bool = ...,
+        window: Incomplete | None = ...,
+    ): ...
+    def fetch_timestamps(
+        self, window: Incomplete | None = ..., all: bool = ..., timeout: int = ...
+    ): ...
     def fetch_spectrogram(
         self,
-        window: Incomplete | None=...,
-        freqs: str=...,
-        timestamps: str=...,
-        timeout: Incomplete | None=...
-    ):
-        ...
-
-    def fetch_marker(self, marker, axis):
-        ...
-
-    def get_marker_enables(self):
-        ...
-
-    def get_marker_power(self, marker):
-        ...
-
-    def get_marker_position(self, marker: int) -> float:
-        ...
-
-    def set_marker_position(self, marker: int, position: float):
-        ...
-
-    def trigger_output_pulse(self, port) -> None:
-        ...
-
+        window: Incomplete | None = ...,
+        freqs: str = ...,
+        timestamps: str = ...,
+        timeout: Incomplete | None = ...,
+    ): ...
+    def fetch_marker(self, marker, axis): ...
+    def get_marker_enables(self): ...
+    def get_marker_power(self, marker): ...
+    def get_marker_position(self, marker: int) -> float: ...
+    def set_marker_position(self, marker: int, position: float): ...
+    def trigger_output_pulse(self, port) -> None: ...
 
 class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
-
-    def get_marker_band_power(self, marker: int) -> float:
-        ...
-
-    def get_marker_band_span(self, marker: int) -> float:
-        ...
-
-    def get_marker_power_table(self):
-        ...
-
-    def fetch_marker_bpow(self, marker):
-        ...
-
-    def fetch_marker_bpow_span(self, marker):
-        ...
-
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
+    def get_marker_band_power(self, marker: int) -> float: ...
+    def get_marker_band_span(self, marker: int) -> float: ...
+    def get_marker_power_table(self): ...
+    def fetch_marker_bpow(self, marker): ...
+    def fetch_marker_bpow_span(self, marker): ...
 
 class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     format: Incomplete
 
-    def uplink_sample_rate(self):
-        ...
-
-    def downlink_sample_rate(self):
-        ...
-
-    def open(self) -> None:
-        ...
-
-    def fetch_power_vs_symbol_x_carrier(self, window, trace):
-        ...
-
-    def get_ascii_window_trace(self, window, trace):
-        ...
-
-    def get_binary_window_trace(self, window, trace):
-        ...
-
-    def get_allocation_summary(self, window):
-        ...
-
+    def uplink_sample_rate(self): ...
+    def downlink_sample_rate(self): ...
+    def open(self) -> None: ...
+    def fetch_power_vs_symbol_x_carrier(self, window, trace): ...
+    def get_ascii_window_trace(self, window, trace): ...
+    def get_binary_window_trace(self, window, trace): ...
+    def get_allocation_summary(self, window): ...
 
 class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     iq_simple_enabled: Incomplete
     iq_evaluation_enabled: Incomplete
     iq_mode: Incomplete
@@ -241,27 +155,21 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
     iq_format: Incomplete
     iq_format_window2: Incomplete
 
-    def fetch_trace(self, horizontal: bool=..., trace: Incomplete | None=...):
-        ...
-
-    def store_trace(self, path) -> None:
-        ...
-
+    def fetch_trace(self, horizontal: bool = ..., trace: Incomplete | None = ...): ...
+    def store_trace(self, path) -> None: ...
 
 class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     TRIGGER_SOURCES: Incomplete
     WINDOW_FUNCTIONS: Incomplete
     trigger_source: Incomplete
@@ -275,43 +183,30 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
     sweep_dwell_time: Incomplete
     sweep_window_type: Incomplete
 
-    def store_spectrogram(self, path, window: int=...) -> None:
-        ...
-
-    def clear_spectrogram(self, window: int=...) -> None:
-        ...
-
-    def fetch_horizontal(self, window: int=..., trace: int=...):
-        ...
-
-    def set_detector_type(self, type_, window: Incomplete | None=..., trace: Incomplete | None=...) -> None:
-        ...
-
-    def get_detector_type(self, window: Incomplete | None=..., trace: Incomplete | None=...):
-        ...
-
-    def set_spectrogram_depth(self, depth, window: Incomplete | None=...) -> None:
-        ...
-
-    def get_spectrogram_depth(self, window: Incomplete | None=...):
-        ...
-
+    def store_spectrogram(self, path, window: int = ...) -> None: ...
+    def clear_spectrogram(self, window: int = ...) -> None: ...
+    def fetch_horizontal(self, window: int = ..., trace: int = ...): ...
+    def set_detector_type(
+        self, type_, window: Incomplete | None = ..., trace: Incomplete | None = ...
+    ) -> None: ...
+    def get_detector_type(
+        self, window: Incomplete | None = ..., trace: Incomplete | None = ...
+    ): ...
+    def set_spectrogram_depth(self, depth, window: Incomplete | None = ...) -> None: ...
+    def get_spectrogram_depth(self, window: Incomplete | None = ...): ...
     def set_frequency_mask(
         self,
         thresholds,
-        frequency_offsets: Incomplete | None=...,
-        kind: str=...,
-        window: Incomplete | None=...
-    ) -> None:
-        ...
-
+        frequency_offsets: Incomplete | None = ...,
+        kind: str = ...,
+        window: Incomplete | None = ...,
+    ) -> None: ...
     def get_frequency_mask(
         self,
-        kind: str=...,
-        window: Incomplete | None=...,
-        first_threshold_only: bool=...
-    ):
-        ...
+        kind: str = ...,
+        window: Incomplete | None = ...,
+        first_threshold_only: bool = ...,
+    ): ...
     default_window: int
     default_trace: int
     frequency_center: Incomplete
@@ -334,193 +229,160 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         reference_level,
         time_resolution,
         acquisition_time,
-        input_attenuation: Incomplete | None=...,
-        trigger_threshold: Incomplete | None=...,
-        detector: str=...,
-        analysis_window: Incomplete | None=...
-    ) -> None:
-        ...
-
+        input_attenuation: Incomplete | None = ...,
+        trigger_threshold: Incomplete | None = ...,
+        detector: str = ...,
+        analysis_window: Incomplete | None = ...,
+    ) -> None: ...
     def acquire_spectrogram_sequence(
         self,
-        loop_time: Incomplete | None=...,
-        delay_time: float=...,
-        timestamps: str=...
-    ):
-        ...
-
-    def arm_spectrogram(self) -> None:
-        ...
-
-    def acquire_spectrogram(self):
-        ...
-
+        loop_time: Incomplete | None = ...,
+        delay_time: float = ...,
+        timestamps: str = ...,
+    ): ...
+    def arm_spectrogram(self) -> None: ...
+    def acquire_spectrogram(self): ...
 
 class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     ...
 
-
-class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base, _RSSpectrumAnalyzerMixIn):
-
+class RohdeSchwarzFSW26SpectrumAnalyzer(
+    RohdeSchwarzFSW26Base, _RSSpectrumAnalyzerMixIn
+):
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     ...
-
 
 class RohdeSchwarzFSW26LTEAnalyzer(RohdeSchwarzFSW26Base, _RSLTEAnalyzerMixIn):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     ...
-
 
 class RohdeSchwarzFSW26IQAnalyzer(RohdeSchwarzFSW26Base, _RSIQAnalyzerMixIn):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     ...
-
 
 class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base, _RSRealTimeMixIn):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     ...
-
 
 class RohdeSchwarzFSW43Base(RohdeSchwarzFSWBase):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     ...
 
-
-class RohdeSchwarzFSW43SpectrumAnalyzer(RohdeSchwarzFSW43Base, _RSSpectrumAnalyzerMixIn):
-
+class RohdeSchwarzFSW43SpectrumAnalyzer(
+    RohdeSchwarzFSW43Base, _RSSpectrumAnalyzerMixIn
+):
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     ...
-
 
 class RohdeSchwarzFSW43LTEAnalyzer(RohdeSchwarzFSW43Base, _RSLTEAnalyzerMixIn):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     ...
-
 
 class RohdeSchwarzFSW43IQAnalyzer(RohdeSchwarzFSW43Base, _RSIQAnalyzerMixIn):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     ...
 
-
 class RohdeSchwarzFSW43RealTime(RohdeSchwarzFSW43Base, _RSRealTimeMixIn):
-
     def __init__(
         self,
-        resource: str='str',
-        read_termination: str='str',
-        write_termination: str='str',
-        open_timeout: str='NoneType',
-        identity_pattern: str='NoneType',
-        timeout: str='NoneType',
-        default_window: str='str',
-        default_trace: str='str'
-    ):
-        ...
+        resource: str = "str",
+        read_termination: str = "str",
+        write_termination: str = "str",
+        open_timeout: str = "NoneType",
+        identity_pattern: str = "NoneType",
+        timeout: str = "NoneType",
+        default_window: str = "str",
+        default_trace: str = "str",
+    ): ...
     ...
