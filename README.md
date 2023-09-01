@@ -23,7 +23,6 @@ In many cases the acquired data are returned in tabular form as [pandas](http://
 * [Documentation](https://github.com/usnistgov/ssmdevices/blob/main/doc/ssmdevices-api.pdf)
 * [Examples](https://github.com/usnistgov/ssmdevices/tree/main/examples)
 
-
 ## Contributors
 | Name  |  Contact Info |
 |---|---|
