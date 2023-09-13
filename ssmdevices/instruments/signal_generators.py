@@ -17,6 +17,9 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
         key=":pow", min=-145, max=20, step=1e-2, label="dBm"
     )
     rf_output_enable = lb.property.bool(key="OUTP")
+    options = lb.property.str(
+        key="*OPT", sets=False, cache=True, help="installed license options"
+    )
 
     def save_state(self, FileName, num="4"):
         """Save current state of the device to the default directory.

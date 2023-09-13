@@ -38,6 +38,9 @@ class KeysightU2000XSeries(lb.VISADevice):
         help="input signal center frequency (in Hz)",
     )
     auto_calibration = lb.property.bool(key="CAL:ZERO:AUTO", case=False)
+    options = lb.property.str(
+        key="*OPT", sets=False, cache=True, help="installed license options"
+    )
 
     def preset(self, wait=True) -> None:
         """restore the instrument to its default state"""
@@ -84,6 +87,9 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         key="SENS:FREQ", min=10e6, step=1e-3, label="Hz", help="calibration frequency"
     )
     initiate_continuous = lb.property.bool(key="INIT:CONT")
+    options = lb.property.str(
+        key="*OPT", sets=False, cache=True, help="installed license options"
+    )
 
     @lb.property.str(key="SENS:FUNC", case=False, only=_FUNCTIONS)
     def function(self, value):

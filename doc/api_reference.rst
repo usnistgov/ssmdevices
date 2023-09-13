@@ -7,10 +7,3 @@ API Reference
    ssmdevices.electronics
    ssmdevices.instruments
    ssmdevices.software
-
-
-.. Indices and tables
-.. ==================
-
-.. * :ref:`genindex`
-.. * :ref:`modindex`

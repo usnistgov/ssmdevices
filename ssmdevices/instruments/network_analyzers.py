@@ -12,6 +12,10 @@ class RohdeSchwarzZMBSeries(lb.VISADevice):
 
     initiate_continuous = lb.property.bool(key="INITiate1:CONTinuous:ALL", help="")
 
+    options = lb.property.str(
+        key="*OPT", sets=False, cache=True, help="installed license options"
+    )
+
     def clear(self):
         self.write("*CLS")
 

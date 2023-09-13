@@ -119,6 +119,9 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     sweep_points = lb.property.int(key="SWE:POIN", min=1, max=100001)
 
     display_update = lb.property.bool(key="SYST:DISP:UPD")
+    options = lb.property.str(
+        key="*OPT", sets=False, cache=True, help="installed license options"
+    )
 
     def verify_channel_type(self):
         valid = self.expected_channel_type, DEFAULT_CHANNEL_NAME
