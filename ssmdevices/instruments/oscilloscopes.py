@@ -14,7 +14,7 @@ class RigolOscilloscope(lb.VISADevice):
         self.write(":WAVeform:FORMat ASCii")
 
     def fetch(self):
-        return self.backend.query_asci_values(":WAV:DATA?")
+        return self.backend.query_ascii_values(":WAV:DATA?")
 
     def fetch_rms(self):
         return float(self.backend.query(":MEAS:VRMS?").rstrip().lstrip())
