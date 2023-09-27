@@ -11,11 +11,18 @@ In many cases the acquired data are returned in tabular form as [pandas](http://
 
 ## Getting started with `ssmdevices`
 ### Installation
-1. Ensure python 3.8 or newer is installed
-2. In a command prompt environment for this python interpreter, run
-    ```sh
-    pip install git+https://github.com/usnistgov/ssmdevices
-    ```
+1. Manual prerequisites:
+    * python (supported versions are 3.8–3.11)
+    * [`pip`](https://pypi.org/project/pip/) for package management
+2. Recommended module installation:
+    * For python distributions based on anaconda:
+      ```sh
+      pip --upgrade-strategy only-if-needed install ssmdevices
+      ```
+    * For other python installations:
+      ```sh
+      pip install ssmdevices
+      ```
 
 <!-- _Note: Certain commercial equipment, instruments, and software are identified here in order to help specify experimental procedures.  Such identification is not intended to imply recommendation or endorsement of any product or service by NIST, nor is it intended to imply that the materials or equipment identified are necessarily the best available for the purpose._ -->
 
