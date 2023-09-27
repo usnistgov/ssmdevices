@@ -90,11 +90,7 @@ class KeysightN9951B(lb.VISADevice):
         return self.write(f"CALC:MARK{marker}:X {position}")
 
 
-@lb.property.visa_keying(
-    query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
-)
 class RohdeSchwarzFSWBase(lb.VISADevice):
-    _BOOL_LABELS = {False: "0", True: "1"}
     _DATA_FORMATS = "ASC,0", "REAL,32", "REAL,64", "REAL,16"
     _CHANNEL_TYPES = "SAN", "IQ", "RTIM", DEFAULT_CHANNEL_NAME
     _TRIGGER_OUT_TYPES = "DEV", "TARM", "UDEF"
@@ -810,9 +806,6 @@ class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
 
 
 @lb.adjusted("expected_channel_type", "RTIM")
-@lb.property.visa_keying(
-    query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
-)
 class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
     _IQ_FORMATS = ("FREQ", "MAGN", "MTAB", "PEAK", "RIM", "VECT")
     _IQ_MODES = ("TDOMain", "FDOMain", "IQ")
@@ -857,9 +850,6 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
         self.write(f"MMEM:STOR:IQ:STAT 1, '{path}'")
 
 
-@lb.property.visa_keying(
-    query_fmt="{key}?", write_fmt="{key} {value}", remap={True: "ON", False: "OFF"}
-)
 @lb.adjusted("expected_channel_type", "RTIM")
 class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
     TRIGGER_SOURCES = "IMM", "EXT", "EXT2", "EXT3", "MASK", "TDTR"

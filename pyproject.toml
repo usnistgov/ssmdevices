@@ -1,18 +1,18 @@
 [project]
 name = "ssmdevices"
-version = "0.18"
+version = "0.19"
 description = "a collection of lab automation drivers implemented with labbench"
 
 authors = [
     {name="Dan Kuester", email = "daniel.kuester@nist.gov"},
+    {name="Keith Forsyth", email = "keith.forsyth@nist.gov"},
+    {name="Duncan McGillivray", email = "duncan.a.mcgillivray@nist.gov"},
+    {name="Yao Ma", email = "yao.ma@nist.gov"},
+    {name="John Ladbury", email = "john.ladbury@nist.gov"},
     {name="Paul Blanchard" },
     {name="Alex Curtin" },
-    {name="Keith Forsyth", email = "keith.forsyth@nist.gov"},
-    {name="Ryan Jacobs" },    
-    {name="John Ladbury", email = "john.ladbury@nist.gov" },
-    {name="Yao Ma", email = "yao.ma@nist.gov" },
-    {name="Duncan McGillivray", email = "duncan.a.mcgillivray@nist.gov"  },
-    {name="Andre Rosete", email = "andre.rosete@nist.gov" },
+    {name="Ryan Jacobs" },
+    {name="Andre Rosete"},
     {name="Audrey Puls"},
     {name="Michael Voecks" },
 ]
@@ -22,7 +22,7 @@ maintainers = [
 ]
 
 dependencies = [
-    "labbench >= 0.29.1",
+    "labbench >= 0.31.0",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
