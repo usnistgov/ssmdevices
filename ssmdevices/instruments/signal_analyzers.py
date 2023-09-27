@@ -1,10 +1,14 @@
+# Authors:
+#   Keith Forsyth and Dan Kuester
+
 import os
 import time
-
 import numpy as np
 import pandas as pd
+import labbench as lb
 
 __all__ = [
+    "KeysightN9951B",
     "RohdeSchwarzFSW26Base",
     "RohdeSchwarzFSW26SpectrumAnalyzer",
     "RohdeSchwarzFSW26IQAnalyzer",
@@ -17,9 +21,73 @@ __all__ = [
     "RohdeSchwarzFSW43RealTime",
 ]
 
-import labbench as lb
-
 DEFAULT_CHANNEL_NAME = "remote"
+
+
+@lb.property.visa_keying(remap={False: "0", True: "1"})
+class KeysightN9951B(lb.VISADevice):
+    """A Keysight N9951B FieldFox"""
+
+    frequency_start = lb.property.float(
+        key="FREQ:START", min=1e6, max=43.99e9, label="Hz"
+    )
+    frequency_stop = lb.property.float(key="FREQ:STOP", min=10e6, max=44e9, label="Hz")
+    frequency_span = lb.property.float(key="FREQ:SPAN", min=2, max=44e9, label="Hz")
+    frequency_center = lb.property.float(
+        key="FREQ:CENT", min=2, max=26.5e9, step=1e-9, label="Hz"
+    )
+
+    initiate_continuous = lb.property.bool(key="INIT:CONT")
+    reference_level = lb.property.float(
+        key="DISP:WIND:TRAC1:Y:RLEV", step=1e-3, label="dB"
+    )
+
+    resolution_bandwidth = lb.property.float(
+        key="BAND", min=1e3, max=5.76e6, label="Hz"
+    )
+
+    def grab_data(self):
+        pass
+
+    def fetch_trace(self, trace: int = 1):
+        """Get trace x values and y values using XVAL? and DATA?
+
+
+        :param trace: which trace to pull from the fieldfox
+        :type trace: int"""
+
+        x_data = self.query(f"TRAC{trace}:XVAL?").split(",")
+        y_data = self.query(f"TRAC{trace}:DATA?").split(",")
+        return pd.DataFrame({"Frequency": x_data, "Power": y_data})
+
+    def get_marker_power(self, marker: int) -> float:
+        """Get marker measurement value (on vertical axis)
+
+        Arguments:
+            marker: number on instrument display
+        Returns:
+            position of the marker, in units of the horizontal axis
+        """
+        return float(self.query(f"CALC:MARK{marker}:Y?"))
+
+    def get_marker_position(self, marker: int) -> float:
+        """Get marker position (on horizontal axis)
+        Arguments:
+            marker: marker number on instrument display
+
+        Returns:
+            position of the marker, in units of the horizontal axis
+        """
+        return float(self.query(f"CALC:MARK{marker}:X?"))
+
+    def set_marker_position(self, marker: int, position: float):
+        """Get marker position (on horizontal axis)
+
+        Arguments:
+            marker: marker number on instrument display
+            position: position of the marker, in units of the horizontal axis
+        """
+        return self.write(f"CALC:MARK{marker}:X {position}")
 
 
 @lb.property.visa_keying(
