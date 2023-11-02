@@ -28,23 +28,15 @@ DEFAULT_CHANNEL_NAME = "remote"
 class KeysightN9951B(lb.VISADevice):
     """A Keysight N9951B FieldFox"""
 
-    frequency_start = lb.property.float(
-        key="FREQ:START", min=1e6, max=43.99e9, label="Hz"
-    )
+    frequency_start = lb.property.float(key="FREQ:START", min=1e6, max=43.99e9, label="Hz")
     frequency_stop = lb.property.float(key="FREQ:STOP", min=10e6, max=44e9, label="Hz")
     frequency_span = lb.property.float(key="FREQ:SPAN", min=2, max=44e9, label="Hz")
-    frequency_center = lb.property.float(
-        key="FREQ:CENT", min=2, max=26.5e9, step=1e-9, label="Hz"
-    )
+    frequency_center = lb.property.float(key="FREQ:CENT", min=2, max=26.5e9, step=1e-9, label="Hz")
 
     initiate_continuous = lb.property.bool(key="INIT:CONT")
-    reference_level = lb.property.float(
-        key="DISP:WIND:TRAC1:Y:RLEV", step=1e-3, label="dB"
-    )
+    reference_level = lb.property.float(key="DISP:WIND:TRAC1:Y:RLEV", step=1e-3, label="dB")
 
-    resolution_bandwidth = lb.property.float(
-        key="BAND", min=1e3, max=5.76e6, label="Hz"
-    )
+    resolution_bandwidth = lb.property.float(key="BAND", min=1e3, max=5.76e6, label="Hz")
 
     def grab_data(self):
         pass
@@ -106,12 +98,8 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         cache=True,
         help="which channel type to use",
     )
-    default_window = lb.value.str(
-        "", cache=True, help="data window number to use if unspecified"
-    )
-    default_trace = lb.value.str(
-        "", cache=True, help="data trace number to use if unspecified"
-    )
+    default_window = lb.value.str("", cache=True, help="data window number to use if unspecified")
+    default_trace = lb.value.str("", cache=True, help="data trace number to use if unspecified")
 
     # Set these in subclasses for specific FSW instruments
     frequency_center = lb.property.float(key="FREQ:CENT", min=0, step=1e-9, label="Hz")
@@ -126,40 +114,18 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     initiate_continuous = lb.property.bool(key="INIT:CONT")
 
     reference_level = lb.property.float(key="DISP:TRAC1:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace2 = lb.property.float(
-        key="DISP:TRAC2:Y:RLEV", step=1e-3, label="dB"
-    )
-    reference_level_trace3 = lb.property.float(
-        key="DISP:TRAC3:Y:RLEV", step=1e-3, label="dB"
-    )
-    reference_level_trace4 = lb.property.float(
-        key="DISP:TRAC4:Y:RLEV", step=1e-3, label="dB"
-    )
-    reference_level_trace5 = lb.property.float(
-        key="DISP:TRAC5:Y:RLEV", step=1e-3, label="dB"
-    )
-    reference_level_trace6 = lb.property.float(
-        key="DISP:TRAC6:Y:RLEV", step=1e-3, label="dB"
-    )
+    reference_level_trace2 = lb.property.float(key="DISP:TRAC2:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace3 = lb.property.float(key="DISP:TRAC3:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace4 = lb.property.float(key="DISP:TRAC4:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace5 = lb.property.float(key="DISP:TRAC5:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace6 = lb.property.float(key="DISP:TRAC6:Y:RLEV", step=1e-3, label="dB")
 
-    amplitude_offset = lb.property.float(
-        key="DISP:TRAC1:Y:RLEV:OFFS", step=1e-3, label="dB"
-    )
-    amplitude_offset_trace2 = lb.property.float(
-        key="DISP:TRAC2:Y:RLEV:OFFS", step=1e-3, label="dB"
-    )
-    amplitude_offset_trace3 = lb.property.float(
-        key="DISP:TRAC3:Y:RLEV:OFFS", step=1e-3, label="dB"
-    )
-    amplitude_offset_trace4 = lb.property.float(
-        key="DISP:TRAC4:Y:RLEV:OFFS", step=1e-3, label="dB"
-    )
-    amplitude_offset_trace5 = lb.property.float(
-        key="DISP:TRAC5:Y:RLEV:OFFS", step=1e-3, label="dB"
-    )
-    amplitude_offset_trace6 = lb.property.float(
-        key="DISP:TRAC6:Y:RLEV:OFFS", step=1e-3, label="dB"
-    )
+    amplitude_offset = lb.property.float(key="DISP:TRAC1:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace2 = lb.property.float(key="DISP:TRAC2:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace3 = lb.property.float(key="DISP:TRAC3:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace4 = lb.property.float(key="DISP:TRAC4:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace5 = lb.property.float(key="DISP:TRAC5:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace6 = lb.property.float(key="DISP:TRAC6:Y:RLEV:OFFS", step=1e-3, label="dB")
 
     output_trigger2_direction = lb.property.str(
         key="OUTP:TRIG2:DIR", only=_TRIGGER_DIRECTIONS, case=False
@@ -183,9 +149,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     sweep_points = lb.property.int(key="SWE:POIN", min=1, max=100001)
 
     display_update = lb.property.bool(key="SYST:DISP:UPD")
-    options = lb.property.str(
-        key="*OPT", sets=False, cache=True, help="installed license options"
-    )
+    options = lb.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
 
     def verify_channel_type(self):
         valid = self.expected_channel_type, DEFAULT_CHANNEL_NAME
@@ -279,9 +243,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             path = path + ".dfl"
 
         if self.file_info(path) is None:
-            raise FileNotFoundError(
-                f'there is no file to load on the instrument at path "{path}"'
-            )
+            raise FileNotFoundError(f'there is no file to load on the instrument at path "{path}"')
 
         self.write(f"MMEM:LOAD:STAT 1,'{path}'")
         self.wait()
@@ -396,9 +358,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self.backend.write(msg)
 
         try:
-            with self.backend.ignore_warning(
-                VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
-            ):
+            with self.backend.ignore_warning(VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT):
                 # Reproduce the behavior of pyvisa.util.from_ieee_block without
                 # a priori access to the entire buffer.
                 raw, _ = self.backend.visalib.read(self.backend.session, 2)
@@ -459,9 +419,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         if window is None:
             window = self.default_window
         if hasattr(trace, "__iter__"):
-            return pd.concat(
-                [self.fetch_trace(t, horizontal=horizontal) for t in trace]
-            )
+            return pd.concat([self.fetch_trace(t, horizontal=horizontal) for t in trace])
 
         if horizontal:
             index = self.fetch_horizontal(trace)
@@ -503,9 +461,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         else:
             return ret
 
-    def fetch_spectrogram(
-        self, window=None, freqs="exact", timestamps="exact", timeout=None
-    ):
+    def fetch_spectrogram(self, window=None, freqs="exact", timestamps="exact", timeout=None):
         """
         Fetch a spectrogram without initiating a new trigger. This has been tested in IQ Analyzer and real time
         spectrum analyzer modes. Not all instrument operating modes support trace selection; a choice that is
@@ -572,16 +528,12 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
                 else:
                     sweep_time = getattr(self, "sweep_time_window" + window)
                 ts0 = self.fetch_timestamps(all=False, window=window)
-                t = (ts0 - sweep_time * data.shape[0]) + sweep_time * np.arange(
-                    data.shape[0]
-                )[::-1]
+                t = (ts0 - sweep_time * data.shape[0]) + sweep_time * np.arange(data.shape[0])[::-1]
 
             self.backend.timeout = old_timeout
 
             if data.size > 1:
-                return pd.DataFrame(
-                    data[::-1], columns=f_, index=None if t is None else t[::-1]
-                )
+                return pd.DataFrame(data[::-1], columns=f_, index=None if t is None else t[::-1])
             else:
                 return pd.DataFrame([], columns=f_)
 
@@ -823,22 +775,18 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
         if fmt == "VECT":
             df = RohdeSchwarzFSWBase.fetch_trace(self, horizontal=False, trace=trace)
         else:
-            df = RohdeSchwarzFSWBase.fetch_trace(
-                self, horizontal=horizontal, trace=trace
-            )
+            df = RohdeSchwarzFSWBase.fetch_trace(self, horizontal=horizontal, trace=trace)
 
         if fmt == "RIM":
             if hasattr(df, "columns"):
                 df = pd.DataFrame(
-                    df.iloc[: len(df) // 2].values
-                    + 1j * df.iloc[len(df) // 2 :].values,
+                    df.iloc[: len(df) // 2].values + 1j * df.iloc[len(df) // 2 :].values,
                     index=df.index[: len(df) // 2],
                     columns=df.columns,
                 )
             else:
                 df = pd.Series(
-                    df.iloc[: len(df) // 2].values
-                    + 1j * df.iloc[len(df) // 2 :].values,
+                    df.iloc[: len(df) // 2].values + 1j * df.iloc[len(df) // 2 :].values,
                     index=df.index[: len(df) // 2],
                 )
         if fmt == "VECT":
@@ -867,9 +815,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
 
     sweep_dwell_auto = lb.property.bool(key="SWE:DTIM:AUTO")
     sweep_dwell_time = lb.property.float(key="SWE:DTIM", min=30e-3)
-    sweep_window_type = lb.property.str(
-        key="SWE:FFT:WIND:TYP", case=False, only=WINDOW_FUNCTIONS
-    )
+    sweep_window_type = lb.property.str(key="SWE:FFT:WIND:TYP", case=False, only=WINDOW_FUNCTIONS)
 
     def store_spectrogram(self, path, window=2):
         self.mkdir(os.path.split(path)[0])
@@ -919,9 +865,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
     def trigger_mask_threshold(self):
         return self.get_frequency_mask(first_threshold_only=True)
 
-    def set_frequency_mask(
-        self, thresholds, frequency_offsets=None, kind="upper", window=None
-    ):
+    def set_frequency_mask(self, thresholds, frequency_offsets=None, kind="upper", window=None):
         """Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
         :param thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`), or a scalar to use a constant value across the band
@@ -933,9 +877,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         if window is None:
             window = self.default_window
         if kind.lower() not in ("upper", "lower"):
-            raise ValueError(
-                f'frequency mask is "{kind}" but must be "upper" or "lower"'
-            )
+            raise ValueError(f'frequency mask is "{kind}" but must be "upper" or "lower"')
         if frequency_offsets is None:
             bw = self.iq_bandwidth
             frequency_offsets = -bw / 2, bw / 2
@@ -968,9 +910,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         if window is None:
             window = self.default_window
         if kind.lower() not in ("upper", "lower"):
-            raise ValueError(
-                f'frequency mask is "{kind}" but must be "upper" or "lower"'
-            )
+            raise ValueError(f'frequency mask is "{kind}" but must be "upper" or "lower"')
 
         plist = self.query(f"CALC{window}:MASK:{kind}?")
         plist = np.array(plist.split(",")).astype(np.float64)
@@ -1077,9 +1017,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         with self.overlap_and_block():
             self.spectrogram_depth
 
-    def acquire_spectrogram_sequence(
-        self, loop_time=None, delay_time=0.1, timestamps="fast"
-    ):
+    def acquire_spectrogram_sequence(self, loop_time=None, delay_time=0.1, timestamps="fast"):
         """Trigger and fetch data, optionally in a loop that continues for a specified
         duration.
 
@@ -1115,9 +1053,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
                 active_time += time.time() - t0_active
 
                 self.backend.timeout = 6 * 1e3 * max_trigger_time
-                single = self.fetch_spectrogram(
-                    timeout=self.backend.timeout, timestamps=timestamps
-                )
+                single = self.fetch_spectrogram(timeout=self.backend.timeout, timestamps=timestamps)
                 self.backend.timeout = 1000
                 if single is not None:
                     specs.append(single)
@@ -1175,9 +1111,7 @@ class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
     pass
 
 
-class RohdeSchwarzFSW26SpectrumAnalyzer(
-    RohdeSchwarzFSW26Base, _RSSpectrumAnalyzerMixIn
-):
+class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base, _RSSpectrumAnalyzerMixIn):
     pass
 
 
@@ -1202,9 +1136,7 @@ class RohdeSchwarzFSW43Base(RohdeSchwarzFSWBase):
     pass
 
 
-class RohdeSchwarzFSW43SpectrumAnalyzer(
-    RohdeSchwarzFSW43Base, _RSSpectrumAnalyzerMixIn
-):
+class RohdeSchwarzFSW43SpectrumAnalyzer(RohdeSchwarzFSW43Base, _RSSpectrumAnalyzerMixIn):
     pass
 
 

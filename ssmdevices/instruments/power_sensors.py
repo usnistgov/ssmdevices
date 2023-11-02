@@ -23,9 +23,7 @@ class KeysightU2000XSeries(lb.VISADevice):
     output_trigger = lb.property.bool(key="OUTP:TRIG")
     trigger_source = lb.property.str(key="TRIG:SOUR", case=False, only=_TRIGGER_SOURCES)
     trigger_count = lb.property.int(key="TRIG:COUN", min=1, max=200)
-    measurement_rate = lb.property.str(
-        key="SENS:MRAT", only=("NORM", "DOUB", "FAST"), case=False
-    )
+    measurement_rate = lb.property.str(key="SENS:MRAT", only=("NORM", "DOUB", "FAST"), case=False)
     sweep_aperture = lb.property.float(
         key="SWE:APER", min=20e-6, max=200e-3, help="time", label="s"
     )
@@ -37,9 +35,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         help="input signal center frequency (in Hz)",
     )
     auto_calibration = lb.property.bool(key="CAL:ZERO:AUTO", case=False)
-    options = lb.property.str(
-        key="*OPT", sets=False, cache=True, help="installed license options"
-    )
+    options = lb.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
 
     def preset(self, wait=True) -> None:
         """restore the instrument to its default state"""
@@ -57,9 +53,7 @@ class KeysightU2000XSeries(lb.VISADevice):
             return float(response[0])
         else:
             df = pd.to_numeric(pd.Series(response))
-            df.index = pd.Index(
-                self.sweep_aperture * np.arange(len(df)), name="Time elapsed (s)"
-            )
+            df.index = pd.Index(self.sweep_aperture * np.arange(len(df)), name="Time elapsed (s)")
             df.columns.name = "Power (dBm)"
             return df
 
@@ -83,9 +77,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         key="SENS:FREQ", min=10e6, step=1e-3, label="Hz", help="calibration frequency"
     )
     initiate_continuous = lb.property.bool(key="INIT:CONT")
-    options = lb.property.str(
-        key="*OPT", sets=False, cache=True, help="installed license options"
-    )
+    options = lb.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
 
     @lb.property.str(key="SENS:FUNC", case=False, only=_FUNCTIONS)
     def function(self, value):
@@ -106,16 +98,12 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     trigger_holdoff = lb.property.float(key="TRIG:HOLD", min=0, max=10)
     trigger_level = lb.property.float(key="TRIG:LEV", min=1e-7, max=200e-3)
 
-    trace_points = lb.property.int(
-        key="SENSe:TRACe:POINTs", min=1, max=8192, gets=False
-    )
+    trace_points = lb.property.int(key="SENSe:TRACe:POINTs", min=1, max=8192, gets=False)
     trace_realtime = lb.property.bool(key="TRAC:REAL")
     trace_time = lb.property.float(key="TRAC:TIME", min=10e-6, max=3)
     trace_offset_time = lb.property.float(key="TRAC:OFFS:TIME", min=-0.5, max=100)
     trace_average_count = lb.property.int(key="TRAC:AVER:COUN", min=1, max=65536)
-    trace_average_mode = lb.property.str(
-        key="TRAC:AVER:TCON", only=("MOV", "REP"), case=False
-    )
+    trace_average_mode = lb.property.str(key="TRAC:AVER:TCON", only=("MOV", "REP"), case=False)
     trace_average_enable = lb.property.bool(key="TRAC:AVER")
 
     average_count = lb.property.int(key="AVER:COUN", min=1, max=65536)
@@ -138,9 +126,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         if len(response) == 1:
             return float(response[0])
         else:
-            index = np.arange(len(response)) * (
-                self.trace_time / float(self.trace_points)
-            )
+            index = np.arange(len(response)) * (self.trace_time / float(self.trace_points))
             return pd.to_numeric(pd.Series(response, index=index))
 
     def fetch_buffer(self):
@@ -179,7 +165,9 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         self.trigger_level = 10 ** (trigger_level / 10.0)
         self.trigger_delay = trigger_delay  # self.Ts / 2
         self.trace_realtime = True
-        self.trigger_source = trigger_source  # 'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
+        self.trigger_source = (
+            trigger_source  # 'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
+        )
         self.initiate_continuous = False
         self.wait()
 

@@ -5,8 +5,8 @@ import labbench as lb
 import ssmdevices.lib
 
 
-@lb.adjusted('binary_path',ssmdevices.lib.path("adb.exe"))
-@lb.adjusted('timeout', 6)
+@lb.adjusted("binary_path", ssmdevices.lib.path("adb.exe"))
+@lb.adjusted("timeout", 6)
 class AndroidDebugBridge(lb.ShellBackend):
     def devices(self):
         """This function checks ADB to see if any devices are connected, if
@@ -85,9 +85,7 @@ class AndroidDebugBridge(lb.ShellBackend):
         if self.is_device_connected(deviceId):
             if status not in [0, 1]:
                 # invalid status argument
-                raise Exception(
-                    "The Airplane Mode feature can only be set to a value of 0 or 1"
-                )
+                raise Exception("The Airplane Mode feature can only be set to a value of 0 or 1")
             else:
                 self.foreground(
                     "-s",

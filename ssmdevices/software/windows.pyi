@@ -21,9 +21,7 @@ class WLANInfo(lb.ShellBackend):
     ): ...
 
 class WLANClient(lb.Device):
-    def __init__(
-        self, resource: str = "str", ssid: str = "NoneType", timeout: str = "int"
-    ): ...
+    def __init__(self, resource: str = "str", ssid: str = "NoneType", timeout: str = "int"): ...
     resource: Incomplete
     ssid: Incomplete
     timeout: Incomplete

@@ -93,18 +93,12 @@ class ETSLindgrenAzi2005(lb.VISADevice):
 
     # A bunch of command-keyed states
     speed = lb.property.int(key="S", min=0, max=3, help="speed")
-    cwlimit = lb.property.float(
-        key="UL", min=000.0, max=999.9, step=0.1, help="cwlimit"
-    )
-    cclimit = lb.property.float(
-        key="LL", min=000.0, max=999.9, step=0.1, help="cclimit"
-    )
+    cwlimit = lb.property.float(key="UL", min=000.0, max=999.9, step=0.1, help="cwlimit")
+    cclimit = lb.property.float(key="LL", min=000.0, max=999.9, step=0.1, help="cclimit")
     define_position = lb.property.float(
         key="CP", min=0, max=360, step=0.1, help="rotation (degrees)"
     )
-    position = lb.property.float(
-        key="SK", min=0, max=360, help="rotation (degrees)", gets=False
-    )
+    position = lb.property.float(key="SK", min=0, max=360, help="rotation (degrees)", gets=False)
 
 
 if __name__ == "__main__":

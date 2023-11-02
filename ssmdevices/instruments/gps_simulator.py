@@ -95,9 +95,7 @@ class SpirentGSS8000(lb.SerialDevice):
             return data.group(1)
         if returns.lower() == b"status":
             status = int(
-                re.match(
-                    b".*<status>[\W*]*(\d+)[\W*]</status>.*", response, flags=re.S
-                ).group(1)
+                re.match(b".*<status>[\W*]*(\d+)[\W*]</status>.*", response, flags=re.S).group(1)
             )
             return status_messages[status]
         else:
