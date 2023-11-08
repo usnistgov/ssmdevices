@@ -13,7 +13,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     # SwitchAttenuatorBase uses product ID to connect to USB devices
     _PID = 0x23
 
-    frequency = lb.value.float(
+    frequency: float = lb.value.float(
         default=None,
         allow_none=True,
         min=10e6,
@@ -22,14 +22,14 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         label="Hz",
     )
 
-    output_power_offset = lb.value.float(
+    output_power_offset: float = lb.value.float(
         default=None,
         allow_none=True,
         help="output power level at 0 dB attenuation",
         label="dBm",
     )
 
-    calibration_path = lb.value.str(
+    calibration_path: float = lb.value.str(
         default=None,
         allow_none=True,
         cache=True,
@@ -37,7 +37,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         "(row) and attenuation setting (column)), or None to search ssmdevices",
     )
 
-    channel = lb.value.int(
+    channel: int = lb.value.int(
         default=None,
         allow_none=True,
         min=1,

@@ -11,26 +11,26 @@ usb_command_lock = Lock()
 usb_registry = {}  # serial number: USB path
 
 
+@lb.adjusted('resource',
+    default=None,
+    help="serial number; must be set if more than one device is connected",
+    allow_none=True,
+    cache=True,
+)
 class MiniCircuitsUSBDevice(lb.Device):
     """General control over MiniCircuits USB devices"""
 
     _VID = 0x20CE  # USB HID Vendor ID
 
-    resource = lb.value.str(
-        default=None,
-        help="serial number; must be set if more than one device is connected",
-        allow_none=True,
-        cache=True,
-    )
-
-    usb_path = lb.value.bytes(
+    # annotated values can be passed as constructor arguments
+    usb_path: bytes = lb.value.bytes(
         None,
         allow_none=True,
         help="override `resource` to connect to a specific USB path",
         cache=True,
     )
 
-    timeout = lb.value.float(default=1, min=0.5, label="s", cache=True)
+    timeout: float = lb.value.float(default=1, min=0.5, label="s", cache=True)
 
     def open(self):
         import hid

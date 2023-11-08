@@ -21,6 +21,7 @@ class TM500Error(ValueError):
         self.errcode = errcode
 
 
+@lb.adjusted('timeout', default=1, help="leave the timeout small to allow keyboard interrupts")
 class AeroflexTM500(lb.TelnetDevice):
     """Control an Aeroflex TM500 network tester with a
     telnet connection.
@@ -33,19 +34,18 @@ class AeroflexTM500(lb.TelnetDevice):
     from a file that could be treated as a config file.
     """
 
-    timeout = lb.value.float(1, min=0, help="leave the timeout small to allow keyboard interrupts")
-    ack_timeout = lb.value.float(
+    ack_timeout: float = lb.value.float(
         30,
         min=0.1,
         help="how long to wait for a command acknowledgment from the TM500 (s)",
     )
-    busy_retries = lb.value.int(20, min=0)
-    remote_ip = lb.value.str("10.133.0.203", help="ip address of TM500 backend")
-    remote_ports = lb.value.str("5001 5002 5003", help="port of TM500 backend")
-    min_acquisition_time = lb.value.int(30, min=0, help="minimum time to spend acquiring logs (s)")
-    port = lb.value.int(5003, min=1)
-    config_root = lb.value.str(".", help="path to the command scripts directory")
-    data_root = lb.value.str(".", help="remote save root directory")
+    busy_retries: int = lb.value.int(20, min=0)
+    remote_ip: str = lb.value.str("10.133.0.203", help="ip address of TM500 backend")
+    remote_ports: str = lb.value.str("5001 5002 5003", help="port of TM500 backend")
+    min_acquisition_time: int = lb.value.int(30, min=0, help="minimum time to spend acquiring logs (s)")
+    port: int = lb.value.int(5003, min=1)
+    config_root: str = lb.value.str(".", help="path to the command scripts directory")
+    data_root: str = lb.value.str(".", help="remote save root directory")
     convert_files = lb.value.list(
         [], help="text to match in the filename of data output files to convert"
     )
@@ -62,7 +62,8 @@ class AeroflexTM500(lb.TelnetDevice):
         if force=True. It always runs on the first call after AeroflexTM500
         is instantiated.
 
-        :returns: A list of responses to each command sent
+        Returns:
+            A list of responses to each command sent
         """
         if isinstance(scenario_name, numbers.Number):
             scenario_name = str(scenario_name)

@@ -14,36 +14,18 @@ import labbench as lb
 __all__ = ["ETSLindgrenAzi2005"]
 
 
+@lb.adjusted('read_termination', default='\n')
+@lb.adjusted('write_termination', default='\r')
 @lb.property.visa_keying(write_fmt="{key}{value}")
 class ETSLindgrenAzi2005(lb.VISADevice):
-    timeout = lb.value.float(
-        20,
-        min=0,
-    )
-    baud_rate = lb.value.int(
-        9600,
-        min=1,
-    )
-    parity = lb.value.bytes(
-        b"N",
-    )
-    stopbits = lb.value.float(
-        1,
-        min=1,
-        max=2,
-        step=0.5,
-    )
-    xonxoff = lb.value.bool(
-        False,
-    )
-    rtscts = lb.value.bool(
-        False,
-    )
-    dsrdtr = lb.value.bool(
-        False,
-    )
-    read_termination = lb.value.str("\n")  # this is an acknowledge byte
-    write_termination = lb.value.str("\r")  # this is a carriage return
+    # constructor argument fields
+    timeout: float = lb.value.float(20, min=0, label='s')
+    baud_rate: int = lb.value.int(9600, min=1, label='baud')
+    parity: bytes = lb.value.bytes(b"N")
+    stopbits: float = lb.value.float(1, min=1, max=2, step=0.5)
+    xonxoff: bool = lb.value.bool(False)
+    rtscts: bool = lb.value.bool(False)
+    dsrdtr: bool = lb.value.bool(False)
 
     def config(self, mode):
         if mode in ("CR" or "NCR"):

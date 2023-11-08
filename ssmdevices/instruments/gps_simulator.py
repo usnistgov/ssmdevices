@@ -19,16 +19,13 @@ status_messages = (
 )
 
 
+@lb.adjusted('resource', default='COM17', help="serial port string (COMnn in windows or /dev/xxxx in unix/Linux)")
 class SpirentGSS8000(lb.SerialDevice):
     """Control a Spirent GPS GSS8000 simulator over a serial connection.
 
     Responses from the Spirent seem to be incompatible with
     pyvisa, so this driver uses plain serial.
     """
-
-    resource = lb.value.str(
-        "COM17", help="serial port string (COMnn in windows or /dev/xxxx in unix/Linux)"
-    )
 
     def get_key(self, key, trait_name=None):
         return self.query(key)
