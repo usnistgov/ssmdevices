@@ -67,17 +67,17 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
             raise AttributeError
 
     @attenuation_setting
-    def attenuation_setting(self, value):
+    def attenuation_setting(self, set_value):
         # setter
         CMD_SET_ATTENUATION = 19
 
         if self.channel is None:
-            value1 = int(value)
-            value2 = int((value - value1) * 4.0)
+            value1 = int(set_value)
+            value2 = int((set_value - value1) * 4.0)
             self._cmd(CMD_SET_ATTENUATION, value1, value2, 1)
         elif self.channel in range(1, 5):
-            value1 = int(value)
-            value2 = int((value - value1) * 4.0)
+            value1 = int(set_value)
+            value2 = int((set_value - value1) * 4.0)
             self._cmd(CMD_SET_ATTENUATION, value1, value2, self.channel)
             time.sleep(0.001)  # this prevents collisions for the moment
         else:
