@@ -6,6 +6,7 @@ import time
 import numpy as np
 import pandas as pd
 import labbench as lb
+from labbench import paramattr as param
 
 __all__ = [
     "KeysightN9951B",
@@ -24,19 +25,19 @@ __all__ = [
 DEFAULT_CHANNEL_NAME = "remote"
 
 
-@lb.property.visa_keying(remap={False: "0", True: "1"})
+@param.property.visa_keying(remap={False: "0", True: "1"})
 class KeysightN9951B(lb.VISADevice):
     """A Keysight N9951B FieldFox"""
 
-    frequency_start = lb.property.float(key="FREQ:START", min=1e6, max=43.99e9, label="Hz")
-    frequency_stop = lb.property.float(key="FREQ:STOP", min=10e6, max=44e9, label="Hz")
-    frequency_span = lb.property.float(key="FREQ:SPAN", min=2, max=44e9, label="Hz")
-    frequency_center = lb.property.float(key="FREQ:CENT", min=2, max=26.5e9, step=1e-9, label="Hz")
+    frequency_start = param.property.float(key="FREQ:START", min=1e6, max=43.99e9, label="Hz")
+    frequency_stop = param.property.float(key="FREQ:STOP", min=10e6, max=44e9, label="Hz")
+    frequency_span = param.property.float(key="FREQ:SPAN", min=2, max=44e9, label="Hz")
+    frequency_center = param.property.float(key="FREQ:CENT", min=2, max=26.5e9, step=1e-9, label="Hz")
 
-    initiate_continuous = lb.property.bool(key="INIT:CONT")
-    reference_level = lb.property.float(key="DISP:WIND:TRAC1:Y:RLEV", step=1e-3, label="dB")
+    initiate_continuous = param.property.bool(key="INIT:CONT")
+    reference_level = param.property.float(key="DISP:WIND:TRAC1:Y:RLEV", step=1e-3, label="dB")
 
-    resolution_bandwidth = lb.property.float(key="BAND", min=1e3, max=5.76e6, label="Hz")
+    resolution_bandwidth = param.property.float(key="BAND", min=1e3, max=5.76e6, label="Hz")
 
     def grab_data(self):
         pass
@@ -90,65 +91,65 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     _CHANNEL_TYPES = None, "SAN", "IQ", "RTIM"
     _CACHE_DIR = r"c:\temp\remote-cache"
 
-    expected_channel_type = lb.value.str(
+    expected_channel_type = param.value.str(
         allow_none=True,
         only=_CHANNEL_TYPES,
         sets=False,
         cache=True,
         help="which channel type to use",
     )
-    default_window = lb.value.str(default="", cache=True, help="data window number to use if unspecified")
-    default_trace = lb.value.str(default="", cache=True, help="data trace number to use if unspecified")
+    default_window = param.value.str(default="", cache=True, help="data window number to use if unspecified")
+    default_trace = param.value.str(default="", cache=True, help="data trace number to use if unspecified")
 
     # Set these in subclasses for specific FSW instruments
-    frequency_center = lb.property.float(key="FREQ:CENT", min=0, step=1e-9, label="Hz")
-    frequency_span = lb.property.float(key="FREQ:SPAN", min=0, step=1e-9, label="Hz")
-    frequency_start = lb.property.float(key="FREQ:START", min=0, step=1e-9, label="Hz")
-    frequency_stop = lb.property.float(key="FREQ:STOP", min=0, step=1e-9, label="Hz")
-    resolution_bandwidth = lb.property.float(key="BAND", min=0, label="Hz")
+    frequency_center = param.property.float(key="FREQ:CENT", min=0, step=1e-9, label="Hz")
+    frequency_span = param.property.float(key="FREQ:SPAN", min=0, step=1e-9, label="Hz")
+    frequency_start = param.property.float(key="FREQ:START", min=0, step=1e-9, label="Hz")
+    frequency_stop = param.property.float(key="FREQ:STOP", min=0, step=1e-9, label="Hz")
+    resolution_bandwidth = param.property.float(key="BAND", min=0, label="Hz")
 
-    sweep_time = lb.property.float(key="SWE:TIME", label="Hz")
-    sweep_time_window2 = lb.property.float(key="SENS2:SWE:TIME", label="Hz")
+    sweep_time = param.property.float(key="SWE:TIME", label="Hz")
+    sweep_time_window2 = param.property.float(key="SENS2:SWE:TIME", label="Hz")
 
-    initiate_continuous = lb.property.bool(key="INIT:CONT")
+    initiate_continuous = param.property.bool(key="INIT:CONT")
 
-    reference_level = lb.property.float(key="DISP:TRAC1:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace2 = lb.property.float(key="DISP:TRAC2:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace3 = lb.property.float(key="DISP:TRAC3:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace4 = lb.property.float(key="DISP:TRAC4:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace5 = lb.property.float(key="DISP:TRAC5:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace6 = lb.property.float(key="DISP:TRAC6:Y:RLEV", step=1e-3, label="dB")
+    reference_level = param.property.float(key="DISP:TRAC1:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace2 = param.property.float(key="DISP:TRAC2:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace3 = param.property.float(key="DISP:TRAC3:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace4 = param.property.float(key="DISP:TRAC4:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace5 = param.property.float(key="DISP:TRAC5:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace6 = param.property.float(key="DISP:TRAC6:Y:RLEV", step=1e-3, label="dB")
 
-    amplitude_offset = lb.property.float(key="DISP:TRAC1:Y:RLEV:OFFS", step=1e-3, label="dB")
-    amplitude_offset_trace2 = lb.property.float(key="DISP:TRAC2:Y:RLEV:OFFS", step=1e-3, label="dB")
-    amplitude_offset_trace3 = lb.property.float(key="DISP:TRAC3:Y:RLEV:OFFS", step=1e-3, label="dB")
-    amplitude_offset_trace4 = lb.property.float(key="DISP:TRAC4:Y:RLEV:OFFS", step=1e-3, label="dB")
-    amplitude_offset_trace5 = lb.property.float(key="DISP:TRAC5:Y:RLEV:OFFS", step=1e-3, label="dB")
-    amplitude_offset_trace6 = lb.property.float(key="DISP:TRAC6:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset = param.property.float(key="DISP:TRAC1:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace2 = param.property.float(key="DISP:TRAC2:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace3 = param.property.float(key="DISP:TRAC3:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace4 = param.property.float(key="DISP:TRAC4:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace5 = param.property.float(key="DISP:TRAC5:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace6 = param.property.float(key="DISP:TRAC6:Y:RLEV:OFFS", step=1e-3, label="dB")
 
-    output_trigger2_direction = lb.property.str(
+    output_trigger2_direction = param.property.str(
         key="OUTP:TRIG2:DIR", only=_TRIGGER_DIRECTIONS, case=False
     )
-    output_trigger3_direction = lb.property.str(
+    output_trigger3_direction = param.property.str(
         key="OUTP:TRIG3:DIR", only=_TRIGGER_DIRECTIONS, case=False
     )
-    output_trigger2_type = lb.property.str(
+    output_trigger2_type = param.property.str(
         key="OUTP:TRIG2:OTYP", only=_TRIGGER_OUT_TYPES, case=False
     )
-    output_trigger3_type = lb.property.str(
+    output_trigger3_type = param.property.str(
         key="OUTP:TRIG3:OTYP", only=_TRIGGER_OUT_TYPES, case=False
     )
 
-    input_preamplifier_enabled = lb.property.bool(key="INP:GAIN:STATE")
-    input_attenuation_auto = lb.property.bool(key="INP:ATT:AUTO")
-    input_attenuation = lb.property.float(key="INP:ATT", step=1, min=0, max=79)
+    input_preamplifier_enabled = param.property.bool(key="INP:GAIN:STATE")
+    input_attenuation_auto = param.property.bool(key="INP:ATT:AUTO")
+    input_attenuation = param.property.float(key="INP:ATT", step=1, min=0, max=79)
 
-    channel_type = lb.property.str(key="INST", only=_CHANNEL_TYPES, case=False)
-    format = lb.property.str(key="FORM", only=_DATA_FORMATS, case=False)
-    sweep_points = lb.property.int(key="SWE:POIN", min=1, max=100001)
+    channel_type = param.property.str(key="INST", only=_CHANNEL_TYPES, case=False)
+    format = param.property.str(key="FORM", only=_DATA_FORMATS, case=False)
+    sweep_points = param.property.int(key="SWE:POIN", min=1, max=100001)
 
-    display_update = lb.property.bool(key="SYST:DISP:UPD")
-    options = lb.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
+    display_update = param.property.bool(key="SYST:DISP:UPD")
+    options = param.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
 
     def verify_channel_type(self):
         valid = self.expected_channel_type, DEFAULT_CHANNEL_NAME
@@ -697,14 +698,14 @@ class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
 
 
 class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
-    format = lb.property.str(key="FORM", only=("REAL", "ASCII"), case=False)
+    format = param.property.str(key="FORM", only=("REAL", "ASCII"), case=False)
 
-    @lb.property.float(min=0)
+    @param.property.float(min=0)
     def uplink_sample_rate(self):
         response = self.query("CONF:LTE:UL:BW?")
         return float(response[2:].replace("_", ".")) * 1e6
 
-    @lb.property.float(min=0)
+    @param.property.float(min=0)
     def downlink_sample_rate(self):
         response = self.query("CONF:LTE:DL:BW?")
         return float(response[2:].replace("_", ".")) * 1e6
@@ -761,13 +762,13 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
     _IQ_FORMATS = ("FREQ", "MAGN", "MTAB", "PEAK", "RIM", "VECT")
     _IQ_MODES = ("TDOMain", "FDOMain", "IQ")
 
-    iq_simple_enabled = lb.property.bool(key="CALC:IQ")
-    iq_evaluation_enabled = lb.property.bool(key="CALC:IQ:EVAL")
-    iq_mode = lb.property.str(key="CALC:IQ:MODE", only=_IQ_MODES, case=False)
-    iq_record_length = lb.property.int(key="TRAC:IQ:RLEN", min=1, max=461373440)
-    iq_sample_rate = lb.property.float(key="TRAC:IQ:SRAT", min=1e-9, max=160e6)
-    iq_format = lb.property.str(key="CALC:FORM", only=_IQ_FORMATS, case=False)
-    iq_format_window2 = lb.property.str(key="CALC2:FORM", case=False, only=_IQ_FORMATS)
+    iq_simple_enabled = param.property.bool(key="CALC:IQ")
+    iq_evaluation_enabled = param.property.bool(key="CALC:IQ:EVAL")
+    iq_mode = param.property.str(key="CALC:IQ:MODE", only=_IQ_MODES, case=False)
+    iq_record_length = param.property.int(key="TRAC:IQ:RLEN", min=1, max=461373440)
+    iq_sample_rate = param.property.float(key="TRAC:IQ:SRAT", min=1e-9, max=160e6)
+    iq_format = param.property.str(key="CALC:FORM", only=_IQ_FORMATS, case=False)
+    iq_format_window2 = param.property.str(key="CALC2:FORM", case=False, only=_IQ_FORMATS)
 
     def fetch_trace(self, horizontal=False, trace=None):
         fmt = self.iq_format
@@ -803,18 +804,18 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
     WINDOW_FUNCTIONS = "BLAC", "FLAT", "GAUS", "HAMM", "HANN", "KAIS", "RECT"
     _BOOL_LABELS = {False: "0", True: "1"}
 
-    trigger_source = lb.property.str(key="TRIG:SOUR", only=TRIGGER_SOURCES, case=False)
-    trigger_post_time = lb.property.float(key="TRIG:POST", min=0)
-    trigger_pre_time = lb.property.float(key="TRIG:PRET", min=0)
+    trigger_source = param.property.str(key="TRIG:SOUR", only=TRIGGER_SOURCES, case=False)
+    trigger_post_time = param.property.float(key="TRIG:POST", min=0)
+    trigger_pre_time = param.property.float(key="TRIG:PRET", min=0)
 
-    iq_fft_length = lb.property.int(key="IQ:FFT:LENG", sets=False)
-    iq_bandwidth = lb.property.float(key="TRAC:IQ:BWID", sets=False)
-    iq_sample_rate = lb.property.float(key="TRACe:IQ:SRAT", sets=False)
-    iq_trigger_position = lb.property.float(key="TRAC:IQ:TPIS", sets=False)
+    iq_fft_length = param.property.int(key="IQ:FFT:LENG", sets=False)
+    iq_bandwidth = param.property.float(key="TRAC:IQ:BWID", sets=False)
+    iq_sample_rate = param.property.float(key="TRACe:IQ:SRAT", sets=False)
+    iq_trigger_position = param.property.float(key="TRAC:IQ:TPIS", sets=False)
 
-    sweep_dwell_auto = lb.property.bool(key="SWE:DTIM:AUTO")
-    sweep_dwell_time = lb.property.float(key="SWE:DTIM", min=30e-3)
-    sweep_window_type = lb.property.str(key="SWE:FFT:WIND:TYP", case=False, only=WINDOW_FUNCTIONS)
+    sweep_dwell_auto = param.property.bool(key="SWE:DTIM:AUTO")
+    sweep_dwell_time = param.property.float(key="SWE:DTIM", min=30e-3)
+    sweep_window_type = param.property.str(key="SWE:FFT:WIND:TYP", case=False, only=WINDOW_FUNCTIONS)
 
     def store_spectrogram(self, path, window=2):
         self.mkdir(os.path.split(path)[0])
@@ -855,7 +856,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
 
         return self.query(f"CALC{window}:SPEC:HDEP?")
 
-    @lb.property.float(max=0)
+    @param.property.float(max=0)
     def trigger_mask_threshold(self, thresholds):
         """'defined in dB relative to the reference level"""
         self.set_frequency_mask(thresholds, None)

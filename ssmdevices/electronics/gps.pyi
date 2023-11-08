@@ -1,4 +1,5 @@
 import labbench as lb
+from labbench import paramattr as param
 from _typeshed import Incomplete
 
 class SwiftNavPiksi(lb.SerialLoggingDevice):

@@ -1,5 +1,6 @@
 import time
 import labbench as lb
+from labbench import paramattr as param
 import platform
 import numpy as np
 from threading import Lock
@@ -23,14 +24,14 @@ class MiniCircuitsUSBDevice(lb.Device):
     _VID = 0x20CE  # USB HID Vendor ID
 
     # annotated values can be passed as constructor arguments
-    usb_path: bytes = lb.value.bytes(
+    usb_path: bytes = param.value.bytes(
         default=None,
         allow_none=True,
         help="override `resource` to connect to a specific USB path",
         cache=True,
     )
 
-    timeout: float = lb.value.float(default=1, min=0.5, label="s", cache=True)
+    timeout: float = param.value.float(default=1, min=0.5, label="s", cache=True)
 
     def open(self):
         import hid
@@ -222,12 +223,12 @@ class SwitchAttenuatorBase(MiniCircuitsUSBDevice):
         device._logger.logger.disabled = True
         return device
 
-    @lb.property.str(sets=False, cache=True)
+    @param.property.str(sets=False, cache=True)
     def model(self):
         d = self._cmd(self.CMD_GET_PART_NUMBER)
         return self._parse_str(d)
 
-    @lb.property.str(sets=False, cache=True)
+    @param.property.str(sets=False, cache=True)
     def serial_number(self):
         d = self._cmd(self.CMD_GET_SERIAL_NUMBER)
         return self._parse_str(d)

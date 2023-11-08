@@ -5,6 +5,7 @@ Drivers for USB peripherals
 """
 import collections
 import labbench as lb
+from labbench import paramattr as param
 
 
 class AcronamePropertyAdapter(lb.PropertyKeyingBase):
@@ -60,17 +61,17 @@ class AcronameUSBHub2x4(lb.Device):
     def _get_data_enable(self, port: int):
         return self._hub.usb.getDataEnable(port)
 
-    data0_enabled = lb.property.bool(key=("data", 0))
-    data1_enabled = lb.property.bool(key=("data", 1))
-    data2_enabled = lb.property.bool(key=("data", 2))
-    data3_enabled = lb.property.bool(key=("data", 3))
+    data0_enabled = param.property.bool(key=("data", 0))
+    data1_enabled = param.property.bool(key=("data", 1))
+    data2_enabled = param.property.bool(key=("data", 2))
+    data3_enabled = param.property.bool(key=("data", 3))
 
-    power0_enabled = lb.property.bool(key=("power", 0))
-    power1_enabled = lb.property.bool(key=("power", 1))
-    power2_enabled = lb.property.bool(key=("power", 2))
-    power3_enabled = lb.property.bool(key=("power", 3))
+    power0_enabled = param.property.bool(key=("power", 0))
+    power1_enabled = param.property.bool(key=("power", 1))
+    power2_enabled = param.property.bool(key=("power", 2))
+    power3_enabled = param.property.bool(key=("power", 3))
 
-    resource = lb.value.str(
+    resource = param.value.str(
         allow_none=True,
         cache=True,
         help="None to autodetect, or a serial number string",

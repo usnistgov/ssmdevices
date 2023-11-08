@@ -11,6 +11,7 @@ import re
 import time
 
 import labbench as lb
+from labbench import paramattr as param
 
 __all__ = ["AeroflexTM500"]
 
@@ -34,19 +35,19 @@ class AeroflexTM500(lb.TelnetDevice):
     from a file that could be treated as a config file.
     """
 
-    ack_timeout: float = lb.value.float(
+    ack_timeout: float = param.value.float(
         default=30,
         min=0.1,
         help="how long to wait for a command acknowledgment from the TM500 (s)",
     )
-    busy_retries: int = lb.value.int(default=20, min=0)
-    remote_ip: str = lb.value.str(default="10.133.0.203", help="ip address of TM500 backend")
-    remote_ports: str = lb.value.str(default="5001 5002 5003", help="port of TM500 backend")
-    min_acquisition_time: int = lb.value.int(default=30, min=0, help="minimum time to spend acquiring logs (s)")
-    port: int = lb.value.int(default=5003, min=1)
-    config_root: str = lb.value.str(default=".", help="path to the command scripts directory")
-    data_root: str = lb.value.str(default=".", help="remote save root directory")
-    convert_files = lb.value.list(
+    busy_retries: int = param.value.int(default=20, min=0)
+    remote_ip: str = param.value.str(default="10.133.0.203", help="ip address of TM500 backend")
+    remote_ports: str = param.value.str(default="5001 5002 5003", help="port of TM500 backend")
+    min_acquisition_time: int = param.value.int(default=30, min=0, help="minimum time to spend acquiring logs (s)")
+    port: int = param.value.int(default=5003, min=1)
+    config_root: str = param.value.str(default=".", help="path to the command scripts directory")
+    data_root: str = param.value.str(default=".", help="remote save root directory")
+    convert_files = param.value.list(
         default=[], help="text to match in the filename of data output files to convert"
     )
 
@@ -431,6 +432,7 @@ class AeroflexTM500(lb.TelnetDevice):
 
 if __name__ == "__main__":
     import labbench as lb
+from labbench import paramattr as param
 
     # AeroflexTM500.key_log_to_script(r'C:\Users\dkuester\Desktop\TM500_2Sec_8UEs_withTime.txt')
 

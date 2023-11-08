@@ -6,6 +6,7 @@ __all__ = ["SpirentGSS8000"]
 
 import time, re
 import labbench as lb
+from labbench import paramattr as param
 
 status_messages = (
     b"no scenario",
@@ -135,7 +136,7 @@ class SpirentGSS8000(lb.SerialDevice):
 
         self.rewind()
 
-    @lb.property.bytes(sets=False)
+    @param.property.bytes(sets=False)
     def utc_time(self):
         """UTC time of the running scenario"""
         utc_unformatted = self.query(b"-,UTC_TIME")
@@ -148,12 +149,12 @@ class SpirentGSS8000(lb.SerialDevice):
 
         return time.strftime("%Y-%m-%d %H:%M:%S", utc_struct) + "." + frac
 
-    @lb.property.bool(sets=False)
+    @param.property.bool(sets=False)
     def running(self):
         """`True` if a scenario is running."""
         return self.status == b"running"
 
-    @lb.property.bytes(sets=False, only=status_messages, case=False)
+    @param.property.bytes(sets=False, only=status_messages, case=False)
     def status(self):
         """UTC time of the current running scenario."""
         return self.write(b"NULL", returns=b"status")

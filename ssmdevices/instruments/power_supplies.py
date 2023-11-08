@@ -1,9 +1,10 @@
 import labbench as lb
+from labbench import paramattr as param
 
 __all__ = ["RigolDP800Series"]
 
 
-class dp800_property_adapter(lb.property.visa_keying):
+class dp800_property_adapter(param.property.visa_keying):
     def get(self, device: lb.Device, scpi_key: str, trait_name=None):
         """This instrument expects keys to have syntax ":COMMAND? PARAM",
         instead of ":COMMAND PARAM?" as implemented in lb.VISADevice.
@@ -32,37 +33,37 @@ class dp800_property_adapter(lb.property.visa_keying):
 @dp800_property_adapter(remap={True: "ON", False: "OFF"})
 class RigolDP800Series(lb.VISADevice):
     # properties accept the "key" argument and/or decorators for custom implementation
-    enable1 = lb.property.bool(key=":OUTP CH1", help="enable channel 1 output")
-    enable2 = lb.property.bool(key=":OUTP CH2", help="enable channel 2 output")
-    enable3 = lb.property.bool(key=":OUTP CH3", help="enable channel 3 output")
+    enable1 = param.property.bool(key=":OUTP CH1", help="enable channel 1 output")
+    enable2 = param.property.bool(key=":OUTP CH2", help="enable channel 2 output")
+    enable3 = param.property.bool(key=":OUTP CH3", help="enable channel 3 output")
 
-    voltage_setting1 = lb.property.float(
+    voltage_setting1 = param.property.float(
         key=":SOUR1:VOLT", help="output voltage setting on channel 1"
     )
-    voltage_setting2 = lb.property.float(
+    voltage_setting2 = param.property.float(
         key=":SOUR2:VOLT", help="output voltage setting on channel 2"
     )
-    voltage_setting3 = lb.property.float(
+    voltage_setting3 = param.property.float(
         key=":SOUR3:VOLT", help="output voltage setting on channel 3"
     )
 
-    voltage1 = lb.property.float(
+    voltage1 = param.property.float(
         key=":MEAS:VOLT CH1", sets=False, help="output voltage reading on channel 1"
     )
-    voltage2 = lb.property.float(
+    voltage2 = param.property.float(
         key=":MEAS:VOLT CH2", sets=False, help="output voltage reading channel 2"
     )
-    voltage3 = lb.property.float(
+    voltage3 = param.property.float(
         key=":MEAS:VOLT CH3", sets=False, help="output voltage reading channel 3"
     )
 
-    current1 = lb.property.float(
+    current1 = param.property.float(
         key=":MEAS:CURR CH1", sets=False, help="current draw reading on channel 1"
     )
-    current2 = lb.property.float(
+    current2 = param.property.float(
         key=":MEAS:CURR CH2", sets=False, help="current draw reading on channel 2"
     )
-    current3 = lb.property.float(
+    current3 = param.property.float(
         key=":MEAS:CURR CH3", sets=False, help="current draw reading on channel 3"
     )
 

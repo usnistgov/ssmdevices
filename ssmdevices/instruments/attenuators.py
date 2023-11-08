@@ -2,6 +2,7 @@ __all__ = ["MiniCircuitsRCDAT"]
 
 import time
 import labbench as lb
+from labbench import paramattr as param
 
 if __name__ == "__main__":
     from _minicircuits_usb import SwitchAttenuatorBase
@@ -13,7 +14,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     # SwitchAttenuatorBase uses product ID to connect to USB devices
     _PID = 0x23
 
-    frequency: float = lb.value.float(
+    frequency: float = param.value.float(
         allow_none=True,
         min=10e6,
         max=6e9,
@@ -21,20 +22,20 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         label="Hz",
     )
 
-    output_power_offset: float = lb.value.float(
+    output_power_offset: float = param.value.float(
         allow_none=True,
         help="output power level at 0 dB attenuation",
         label="dBm",
     )
 
-    calibration_path: float = lb.value.str(
+    calibration_path: float = param.value.str(
         allow_none=True,
         cache=True,
         help="path to the calibration table csv file (containing frequency "
         "(row) and attenuation setting (column)), or None to search ssmdevices",
     )
 
-    channel: int = lb.value.int(
+    channel: int = param.value.int(
         allow_none=True,
         min=1,
         max=4,
@@ -43,7 +44,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     )
 
     # the only property that directly sets attenuation in the device
-    @lb.property.float(min=0, max=115, step=0.25, label="dB", help="uncalibrated attenuation")
+    @param.property.float(min=0, max=115, step=0.25, label="dB", help="uncalibrated attenuation")
     def attenuation_setting(self):
         # getter
         CMD_GET_ATTENUATION = 18

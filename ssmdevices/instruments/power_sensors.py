@@ -8,6 +8,7 @@ __all__ = [
 ]
 
 import labbench as lb
+from labbench import paramattr as param
 import pandas as pd
 import numpy as np
 import typing
@@ -19,23 +20,23 @@ class KeysightU2000XSeries(lb.VISADevice):
 
     _TRIGGER_SOURCES = ("IMM", "INT", "EXT", "BUS", "INT1")
 
-    initiate_continuous = lb.property.bool(key="INIT:CONT")
-    output_trigger = lb.property.bool(key="OUTP:TRIG")
-    trigger_source = lb.property.str(key="TRIG:SOUR", case=False, only=_TRIGGER_SOURCES)
-    trigger_count = lb.property.int(key="TRIG:COUN", min=1, max=200)
-    measurement_rate = lb.property.str(key="SENS:MRAT", only=("NORM", "DOUB", "FAST"), case=False)
-    sweep_aperture = lb.property.float(
+    initiate_continuous = param.property.bool(key="INIT:CONT")
+    output_trigger = param.property.bool(key="OUTP:TRIG")
+    trigger_source = param.property.str(key="TRIG:SOUR", case=False, only=_TRIGGER_SOURCES)
+    trigger_count = param.property.int(key="TRIG:COUN", min=1, max=200)
+    measurement_rate = param.property.str(key="SENS:MRAT", only=("NORM", "DOUB", "FAST"), case=False)
+    sweep_aperture = param.property.float(
         key="SWE:APER", min=20e-6, max=200e-3, help="time", label="s"
     )
-    frequency = lb.property.float(
+    frequency = param.property.float(
         key="SENS:FREQ",
         min=10e6,
         max=18e9,
         step=1e-3,
         help="input signal center frequency (in Hz)",
     )
-    auto_calibration = lb.property.bool(key="CAL:ZERO:AUTO", case=False)
-    options = lb.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
+    auto_calibration = param.property.bool(key="CAL:ZERO:AUTO", case=False)
+    options = param.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
 
     def preset(self, wait=True) -> None:
         """restore the instrument to its default state"""
@@ -73,18 +74,18 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     _TRIGGER_SOURCES = ("HOLD", "IMM", "INT", "EXT", "EXT1", "EXT2", "BUS", "INT1")
 
     # Instrument state traits (pass command arguments and/or implement setter/getter)
-    frequency = lb.property.float(
+    frequency = param.property.float(
         key="SENS:FREQ", min=10e6, step=1e-3, label="Hz", help="calibration frequency"
     )
-    initiate_continuous = lb.property.bool(key="INIT:CONT")
-    options = lb.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
+    initiate_continuous = param.property.bool(key="INIT:CONT")
+    options = param.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
 
-    @lb.property.str(key="SENS:FUNC", case=False, only=_FUNCTIONS)
+    @param.property.str(key="SENS:FUNC", case=False, only=_FUNCTIONS)
     def function(self, value):
         # Special case - this message requires quotes around the argument
         self.write(f'SENSe:FUNCtion "{value}"')
 
-    @lb.property.str(key="TRIG:SOUR", case=False, only=_TRIGGER_SOURCES)
+    @param.property.str(key="TRIG:SOUR", case=False, only=_TRIGGER_SOURCES)
     def trigger_source(self):
         """'HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm"""
 
@@ -93,26 +94,26 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         source = self.query("TRIG:SOUR?")
         return remap.get(source, default=source)
 
-    trigger_delay = lb.property.float(key="TRIG:DELAY", min=-5, max=10)
-    trigger_count = lb.property.int(key="TRIG:COUN", min=1, max=8192, help="help me")
-    trigger_holdoff = lb.property.float(key="TRIG:HOLD", min=0, max=10)
-    trigger_level = lb.property.float(key="TRIG:LEV", min=1e-7, max=200e-3)
+    trigger_delay = param.property.float(key="TRIG:DELAY", min=-5, max=10)
+    trigger_count = param.property.int(key="TRIG:COUN", min=1, max=8192, help="help me")
+    trigger_holdoff = param.property.float(key="TRIG:HOLD", min=0, max=10)
+    trigger_level = param.property.float(key="TRIG:LEV", min=1e-7, max=200e-3)
 
-    trace_points = lb.property.int(key="SENSe:TRACe:POINTs", min=1, max=8192, gets=False)
-    trace_realtime = lb.property.bool(key="TRAC:REAL")
-    trace_time = lb.property.float(key="TRAC:TIME", min=10e-6, max=3)
-    trace_offset_time = lb.property.float(key="TRAC:OFFS:TIME", min=-0.5, max=100)
-    trace_average_count = lb.property.int(key="TRAC:AVER:COUN", min=1, max=65536)
-    trace_average_mode = lb.property.str(key="TRAC:AVER:TCON", only=("MOV", "REP"), case=False)
-    trace_average_enable = lb.property.bool(key="TRAC:AVER")
+    trace_points = param.property.int(key="SENSe:TRACe:POINTs", min=1, max=8192, gets=False)
+    trace_realtime = param.property.bool(key="TRAC:REAL")
+    trace_time = param.property.float(key="TRAC:TIME", min=10e-6, max=3)
+    trace_offset_time = param.property.float(key="TRAC:OFFS:TIME", min=-0.5, max=100)
+    trace_average_count = param.property.int(key="TRAC:AVER:COUN", min=1, max=65536)
+    trace_average_mode = param.property.str(key="TRAC:AVER:TCON", only=("MOV", "REP"), case=False)
+    trace_average_enable = param.property.bool(key="TRAC:AVER")
 
-    average_count = lb.property.int(key="AVER:COUN", min=1, max=65536)
-    average_auto = lb.property.bool(key="AVER:COUN:AUTO")
-    average_enable = lb.property.bool(key="AVER")
-    smoothing_enable = lb.property.bool(key="SMO:STAT", gets=False)
+    average_count = param.property.int(key="AVER:COUN", min=1, max=65536)
+    average_auto = param.property.bool(key="AVER:COUN:AUTO")
+    average_enable = param.property.bool(key="AVER")
+    smoothing_enable = param.property.bool(key="SMO:STAT", gets=False)
 
     # Local settings traits (leave command unset, and do not implement setter/getter)
-    read_termination = lb.property.str()
+    read_termination = param.property.str()
 
     def preset(self):
         self.write("*PRE")

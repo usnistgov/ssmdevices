@@ -3,6 +3,7 @@ __all__ = ["MiniCircuitsUSBSwitch"]
 from labbench import DotNetDevice
 import ssmdevices.lib
 import labbench as lb
+from labbench import paramattr as param
 
 if __name__ == "__main__":
     # allow relative imports for the __main__ block below
@@ -17,7 +18,7 @@ class MiniCircuitsUSBSwitch(SwitchAttenuatorBase):
     # Mini-Circuits USB-SP4T-63
     _PID = 0x22
 
-    @lb.property.int(min=1, max=4)
+    @param.property.int(min=1, max=4)
     def port(self, port):
         """the RF port connected to the COM port"""
         if port not in (1, 2, 3, 4):

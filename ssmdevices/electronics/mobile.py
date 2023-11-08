@@ -2,6 +2,7 @@
 Made by Michael Voecks
 """
 import labbench as lb
+from labbench import paramattr as param
 import ssmdevices.lib
 
 

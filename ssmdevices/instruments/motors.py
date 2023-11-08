@@ -10,22 +10,23 @@ This is where we drive things that move:
 """
 
 import labbench as lb
+from labbench import paramattr as param
 
 __all__ = ["ETSLindgrenAzi2005"]
 
 
 @lb.adjusted('read_termination', default='\n')
 @lb.adjusted('write_termination', default='\r')
-@lb.property.visa_keying(write_fmt="{key}{value}")
+@param.property.visa_keying(write_fmt="{key}{value}")
 class ETSLindgrenAzi2005(lb.VISADevice):
     # constructor argument fields
-    timeout: float = lb.value.float(default=20, min=0, label='s')
-    baud_rate: int = lb.value.int(default=9600, min=1, label='baud')
-    parity: bytes = lb.value.bytes(default=b"N")
-    stopbits: float = lb.value.float(default=1, min=1, max=2, step=0.5)
-    xonxoff: bool = lb.value.bool(default=False)
-    rtscts: bool = lb.value.bool(default=False)
-    dsrdtr: bool = lb.value.bool(default=False)
+    timeout: float = param.value.float(default=20, min=0, label='s')
+    baud_rate: int = param.value.int(default=9600, min=1, label='baud')
+    parity: bytes = param.value.bytes(default=b"N")
+    stopbits: float = param.value.float(default=1, min=1, max=2, step=0.5)
+    xonxoff: bool = param.value.bool(default=False)
+    rtscts: bool = param.value.bool(default=False)
+    dsrdtr: bool = param.value.bool(default=False)
 
     def config(self, mode):
         if mode in ("CR" or "NCR"):
@@ -74,13 +75,13 @@ class ETSLindgrenAzi2005(lb.VISADevice):
         #   print('oops still moving!')
 
     # A bunch of command-keyed states
-    speed = lb.property.int(key="S", min=0, max=3, help="speed")
-    cwlimit = lb.property.float(key="UL", min=000.0, max=999.9, step=0.1, help="cwlimit")
-    cclimit = lb.property.float(key="LL", min=000.0, max=999.9, step=0.1, help="cclimit")
-    define_position = lb.property.float(
+    speed = param.property.int(key="S", min=0, max=3, help="speed")
+    cwlimit = param.property.float(key="UL", min=000.0, max=999.9, step=0.1, help="cwlimit")
+    cclimit = param.property.float(key="LL", min=000.0, max=999.9, step=0.1, help="cclimit")
+    define_position = param.property.float(
         key="CP", min=0, max=360, step=0.1, help="rotation (degrees)"
     )
-    position = lb.property.float(key="SK", min=0, max=360, help="rotation (degrees)", gets=False)
+    position = param.property.float(key="SK", min=0, max=360, help="rotation (degrees)", gets=False)
 
 
 if __name__ == "__main__":
