@@ -19,13 +19,13 @@ __all__ = ["ETSLindgrenAzi2005"]
 @lb.property.visa_keying(write_fmt="{key}{value}")
 class ETSLindgrenAzi2005(lb.VISADevice):
     # constructor argument fields
-    timeout: float = lb.value.float(20, min=0, label='s')
-    baud_rate: int = lb.value.int(9600, min=1, label='baud')
-    parity: bytes = lb.value.bytes(b"N")
-    stopbits: float = lb.value.float(1, min=1, max=2, step=0.5)
-    xonxoff: bool = lb.value.bool(False)
-    rtscts: bool = lb.value.bool(False)
-    dsrdtr: bool = lb.value.bool(False)
+    timeout: float = lb.value.float(default=20, min=0, label='s')
+    baud_rate: int = lb.value.int(default=9600, min=1, label='baud')
+    parity: bytes = lb.value.bytes(default=b"N")
+    stopbits: float = lb.value.float(default=1, min=1, max=2, step=0.5)
+    xonxoff: bool = lb.value.bool(default=False)
+    rtscts: bool = lb.value.bool(default=False)
+    dsrdtr: bool = lb.value.bool(default=False)
 
     def config(self, mode):
         if mode in ("CR" or "NCR"):

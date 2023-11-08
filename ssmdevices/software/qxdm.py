@@ -106,8 +106,8 @@ class QXDM(lb.Win32ComDevice):
     """QXDM software wrapper"""
 
     resource = lb.value.int(min=0, help="serial port number for the handset connection")
-    cache_path = lb.value.str("temp", help="directory for auto-saved isf files")
-    connection_timeout = lb.value.float(2, min=0.5, help="connection timeout (s)")
+    cache_path = lb.value.str(default="temp", help="directory for auto-saved isf files")
+    connection_timeout = lb.value.float(default=2, min=0.5, help="connection timeout (s)")
 
     def open(self):
         #

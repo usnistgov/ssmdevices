@@ -73,13 +73,13 @@ class _IPerfBase(lb.ShellBackend):
         allow_none=True,
         help="client host address (set None if server=True)",
     )
-    server = lb.value.bool(False, help="True to run as a server")
-    port = lb.value.int(5201, min=0, help="network port")
-    bind = lb.value.str(None, allow_none=True, help="bind connection to specified IP")
+    server = lb.value.bool(default=False, help="True to run as a server")
+    port = lb.value.int(default=5201, min=0, help="network port")
+    bind = lb.value.str(default=None, allow_none=True, help="bind connection to specified IP")
 
     format = lb.value.str(
-        None,
-        only=("k", "m", "g", "K", "M", "G"),
+        default=None,
+        only=(None, "k", "m", "g", "K", "M", "G"),
         allow_none=True,
         help="data unit prefix in bits (k, m, g), bytes (K, M, G), or None for auto",
     )
@@ -87,21 +87,18 @@ class _IPerfBase(lb.ShellBackend):
     # timing and duration
     # (for time, default=None even though we know the default, because setting 10s conflicts with `number`)
     time = lb.value.float(
-        None,
         min=0,
         max=16535,
         allow_none=True,
         help="send duration (s) before quitting (default: 10)",
     )
     number = lb.value.int(
-        None,
         min=-1,
         allow_none=True,
         help="the number of bytes to transmit before quitting",
     )
 
     interval = lb.value.float(
-        None,
         min=0.01,
         allow_none=True,
         label="s",
@@ -109,15 +106,13 @@ class _IPerfBase(lb.ShellBackend):
     )
 
     # high level buffer commands
-    udp = lb.value.bool(False, help="if True, to use UDP instead of TCP")
+    udp = lb.value.bool(default=False, help="if True, to use UDP instead of TCP")
     bit_rate = lb.value.str(
-        None,
         allow_none=True,
         label="bits/s",
         help="maximum bit rate, accepts KMG unit suffix; defaults 1Mbit/s UDP, no limit for TCP",
     )
     buffer_size = lb.value.int(
-        None,
         min=1,
         allow_none=True,
         help="buffer size when generating traffic",
@@ -126,15 +121,13 @@ class _IPerfBase(lb.ShellBackend):
 
     # TCP parameters
     tcp_window_size = lb.value.int(
-        None,
         min=1,
         allow_none=True,
         help="window / socket size (default OS dependent?)",
         label="bytes",
     )
-    nodelay = lb.value.bool(False, help="set True to use nodelay (TCP traffic only)")
+    nodelay = lb.value.bool(default=False, help="set True to use nodelay (TCP traffic only)")
     mss = lb.value.int(
-        None,
         min=10,
         allow_none=True,
         help="minimum segment size=MTU-40, TCP only",
@@ -206,9 +199,9 @@ class IPerf3(_IPerfBase):
     FLAGS = dict(_IPerfBase.FLAGS, json="-J", reverse="-R", zerocopy="-Z")
 
     # IPerf3 only
-    reverse = lb.value.bool(False, help="run in reverse mode (server sends, client receives)")
-    json = lb.value.bool(False, help="output data in JSON format")
-    zerocopy = lb.value.bool(False, help="use a 'zero copy' method of sending data")
+    reverse = lb.value.bool(default=False, help="run in reverse mode (server sends, client receives)")
+    json = lb.value.bool(default=False, help="output data in JSON format")
+    zerocopy = lb.value.bool(default=False, help="use a 'zero copy' method of sending data")
 
 
 @lb.adjusted("binary_path", ssmdevices.lib.path("iperf.exe"))
@@ -233,9 +226,9 @@ class IPerf2(_IPerfBase):
         "datagrams_out_of_order",
     )
 
-    bidirectional = lb.value.bool(False, key="-d", help="send and receive simultaneously")
+    bidirectional = lb.value.bool(default=False, key="-d", help="send and receive simultaneously")
     report_style = lb.value.str(
-        "C",
+        default="C",
         only=("C", None),
         allow_none=True,
         help='"C" for DataFrame table output, None for formatted text',
@@ -294,7 +287,7 @@ class IPerf2(_IPerfBase):
 @lb.adjusted("binary_path", ssmdevices.lib.path("adb.exe"))
 class IPerf2OnAndroid(IPerf2):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
-    remote_binary_path = lb.value.str("/data/local/tmp/iperf", cache=True)
+    remote_binary_path = lb.value.str(default="/data/local/tmp/iperf", cache=True)
 
     def profile(self, block=True):
         self._validate_flags()
@@ -599,19 +592,19 @@ class TrafficProfiler_ClosedLoop(lb.Device):
         only=("server", "client"),
     )
     port = lb.value.int(
-        0,
+        default=0,
         min=0,
         help="TCP or UDP port for networking, or 0 to let the operating system choose",
     )
     resource = lb.value.str(help="skipd - use sender and receiver instead", cache=True)
-    timeout = lb.value.float(2, min=1e-3, help="timeout before aborting the test", cache=True)
-    tcp_nodelay = lb.value.bool(True, help="set True to disable Nagle's algorithm")
+    timeout = lb.value.float(default=2, min=1e-3, help="timeout before aborting the test", cache=True)
+    tcp_nodelay = lb.value.bool(default=True, help="set True to disable Nagle's algorithm")
     sync_each = lb.value.bool(
-        False,
+        default=False,
         help="synchronize the start times of the send and receive threads for each buffer at the cost of throughput",
     )
 
-    delay = lb.value.float(0, min=0, help="wait time before profiling", cache=True)
+    delay = lb.value.float(default=0, min=0, help="wait time before profiling", cache=True)
 
     def __repr__(self):
         return "{name}(server='{server}',client='{client}')".format(

@@ -24,7 +24,7 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     # annotated values can be passed as constructor arguments
     usb_path: bytes = lb.value.bytes(
-        None,
+        default=None,
         allow_none=True,
         help="override `resource` to connect to a specific USB path",
         cache=True,

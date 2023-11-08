@@ -35,19 +35,19 @@ class AeroflexTM500(lb.TelnetDevice):
     """
 
     ack_timeout: float = lb.value.float(
-        30,
+        default=30,
         min=0.1,
         help="how long to wait for a command acknowledgment from the TM500 (s)",
     )
-    busy_retries: int = lb.value.int(20, min=0)
-    remote_ip: str = lb.value.str("10.133.0.203", help="ip address of TM500 backend")
-    remote_ports: str = lb.value.str("5001 5002 5003", help="port of TM500 backend")
-    min_acquisition_time: int = lb.value.int(30, min=0, help="minimum time to spend acquiring logs (s)")
-    port: int = lb.value.int(5003, min=1)
-    config_root: str = lb.value.str(".", help="path to the command scripts directory")
-    data_root: str = lb.value.str(".", help="remote save root directory")
+    busy_retries: int = lb.value.int(default=20, min=0)
+    remote_ip: str = lb.value.str(default="10.133.0.203", help="ip address of TM500 backend")
+    remote_ports: str = lb.value.str(default="5001 5002 5003", help="port of TM500 backend")
+    min_acquisition_time: int = lb.value.int(default=30, min=0, help="minimum time to spend acquiring logs (s)")
+    port: int = lb.value.int(default=5003, min=1)
+    config_root: str = lb.value.str(default=".", help="path to the command scripts directory")
+    data_root: str = lb.value.str(default=".", help="remote save root directory")
     convert_files = lb.value.list(
-        [], help="text to match in the filename of data output files to convert"
+        default=[], help="text to match in the filename of data output files to convert"
     )
 
     def arm(self, scenario_name):

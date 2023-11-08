@@ -10,7 +10,7 @@ __all__ = ["SwiftNavPiksi"]
 
 class SwiftNavPiksi(lb.SerialLoggingDevice):
     baud_rate = lb.value.int(
-        1000000,
+        default=1000000,
         min=1,
     )
 

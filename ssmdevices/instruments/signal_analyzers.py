@@ -91,15 +91,14 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     _CACHE_DIR = r"c:\temp\remote-cache"
 
     expected_channel_type = lb.value.str(
-        None,
         allow_none=True,
         only=_CHANNEL_TYPES,
         sets=False,
         cache=True,
         help="which channel type to use",
     )
-    default_window = lb.value.str("", cache=True, help="data window number to use if unspecified")
-    default_trace = lb.value.str("", cache=True, help="data trace number to use if unspecified")
+    default_window = lb.value.str(default="", cache=True, help="data window number to use if unspecified")
+    default_trace = lb.value.str(default="", cache=True, help="data trace number to use if unspecified")
 
     # Set these in subclasses for specific FSW instruments
     frequency_center = lb.property.float(key="FREQ:CENT", min=0, step=1e-9, label="Hz")
