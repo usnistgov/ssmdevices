@@ -18,7 +18,7 @@ class SwiftNavPiksi(lb.SerialLoggingDevice):
 
 if __name__ == "__main__":
     import labbench as lb
-from labbench import paramattr as param
+    from labbench import paramattr as param
     import time
 
     lb.debug_to_screen(lb.DEBUG)

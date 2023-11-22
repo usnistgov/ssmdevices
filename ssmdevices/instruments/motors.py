@@ -17,7 +17,7 @@ __all__ = ["ETSLindgrenAzi2005"]
 
 @lb.adjusted('read_termination', default='\n')
 @lb.adjusted('write_termination', default='\r')
-@param.property.visa_keying(write_fmt="{key}{value}")
+@param.visa_keying(write_fmt="{key}{value}")
 class ETSLindgrenAzi2005(lb.VISADevice):
     # constructor argument fields
     timeout: float = param.value.float(default=20, min=0, label='s')

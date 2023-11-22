@@ -1,6 +1,6 @@
 [project]
 name = "ssmdevices"
-version = "0.19"
+version = "0.20"
 description = "a collection of lab automation drivers implemented with labbench"
 
 authors = [
@@ -22,13 +22,14 @@ maintainers = [
 ]
 
 dependencies = [
-    "labbench >= 0.31.0",
+    # "labbench >= 0.32.0",
+    "labbench @ git+https://github.com/usnistgov/labbench@overhaul-device-api",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
 ]
 
-requires-python = ">=3.8,<3.12"
+requires-python = ">=3.9,<3.12"
 readme = "README.md"
 license = {file = "LICENSE.md"}
 

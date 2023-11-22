@@ -25,7 +25,7 @@ __all__ = [
 DEFAULT_CHANNEL_NAME = "remote"
 
 
-@param.property.visa_keying(remap={False: "0", True: "1"})
+@param.visa_keying(remap={False: "0", True: "1"})
 class KeysightN9951B(lb.VISADevice):
     """A Keysight N9951B FieldFox"""
 
@@ -849,7 +849,6 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
 
         self.write(f"CALC{window}:SPEC:HDEP {depth}")
 
-    @lb.datareturn.int(min=781, max=100000)
     def get_spectrogram_depth(self, window=None):
         if window is None:
             window = self.default_window
@@ -897,7 +896,6 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
 
         self.write(f"CALC{window}:MASK:{kind} {plist}")
 
-    @lb.datareturn.dict()
     def get_frequency_mask(self, kind="upper", window=None, first_threshold_only=False):
         """Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 

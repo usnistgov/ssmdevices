@@ -4,7 +4,7 @@ from labbench import paramattr as param
 __all__ = ["RigolDP800Series"]
 
 
-class dp800_property_adapter(param.property.visa_keying):
+class dp800_property_adapter(param.visa_keying):
     def get(self, device: lb.Device, scpi_key: str, trait_name=None):
         """This instrument expects keys to have syntax ":COMMAND? PARAM",
         instead of ":COMMAND PARAM?" as implemented in lb.VISADevice.

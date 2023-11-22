@@ -8,7 +8,7 @@ import labbench as lb
 from labbench import paramattr as param
 
 
-class AcronamePropertyAdapter(lb.PropertyKeyingBase):
+class AcronamePropertyAdapter(param.KeyAdapterBase):
     def set(self, device, key: tuple, value, trait=None):
         """Apply an instrument setting to the instrument. The value ``value''
         will be applied to the trait attriute ``attr'' in type(self).
@@ -36,7 +36,7 @@ class AcronamePropertyAdapter(lb.PropertyKeyingBase):
             raise ValueError('first element in command key must be one of "data" or "power"')
 
 
-@AcronamePropertyAdapter
+@AcronamePropertyAdapter()
 @lb.adjusted("resource", None)
 class AcronameUSBHub2x4(lb.Device):
     """A USB hub with control over each port."""

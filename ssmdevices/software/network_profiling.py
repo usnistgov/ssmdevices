@@ -70,7 +70,7 @@ class _IPerfBase(lb.ShellBackend):
     # address and network interface parameters
     resource = param.value.NetworkAddress(
         None,
-        allow_port=False,
+        accept_port=False,
         allow_none=True,
         help="client host address (set None if server=True)",
     )
@@ -445,10 +445,10 @@ class IPerf2BoundPair(IPerf2):
     resource = param.value.str(help="unused - use sender and receiver instead", sets=False)
 
     server = param.value.NetworkAddress(
-        accepts_ports=False, help="the ip address where the server listens"
+        accept_port=False, help="the ip address where the server listens"
     )
     client = param.value.NetworkAddress(
-        accepts_ports=False, help="the ip address from which the client sends data"
+        accept_port=False, help="the ip address from which the client sends data"
     )
 
     children = {}

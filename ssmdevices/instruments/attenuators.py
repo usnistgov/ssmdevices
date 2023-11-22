@@ -82,8 +82,8 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
 
     # the remaining traits are calibration corrections for attenuation_setting
     attenuation = attenuation_setting.calibrate_from_table(
-        path_trait=calibration_path,
-        index_lookup_trait=frequency,
+        path_attr=calibration_path,
+        index_lookup_attr=frequency,
         table_index_column="Frequency(Hz)",
         help="calibrated attenuation",
     )

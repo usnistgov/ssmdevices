@@ -35,7 +35,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         step=1e-3,
         help="input signal center frequency (in Hz)",
     )
-    auto_calibration = param.property.bool(key="CAL:ZERO:AUTO", case=False)
+    auto_calibration = param.property.bool(key="CAL:ZERO:AUTO")
     options = param.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
 
     def preset(self, wait=True) -> None:
@@ -113,7 +113,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     smoothing_enable = param.property.bool(key="SMO:STAT", gets=False)
 
     # Local settings traits (leave command unset, and do not implement setter/getter)
-    read_termination = param.property.str()
+    read_termination = param.value.str('\n')
 
     def preset(self):
         self.write("*PRE")
