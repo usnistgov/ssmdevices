@@ -23,13 +23,13 @@ maintainers = [
 
 dependencies = [
     # "labbench >= 0.32.0",
-    "labbench @ git+https://github.com/usnistgov/labbench@overhaul-device-api",
+    "labbench[hislip-discovery] @ git+https://github.com/usnistgov/labbench@overhaul-device-api",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
 ]
 
-requires-python = ">=3.9,<3.13"
+requires-python = ">=3.9,<3.12"
 readme = "README.md"
 license = {file = "LICENSE.md"}
 

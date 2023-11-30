@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:38e31752e3683fb0a9fd68e112a7b368780b168345df41692603115d83259bd5"
+content_hash = "sha256:821cbcd88391748fe3c47c99c134eefea0c6b23e799cad033c1126dfcdd712da"
 
 [[package]]
 name = "alabaster"
@@ -49,6 +49,16 @@ files = [
 ]
 
 [[package]]
+name = "async-timeout"
+version = "4.0.3"
+requires_python = ">=3.7"
+summary = "Timeout context manager for asyncio programs"
+files = [
+    {file = "async-timeout-4.0.3.tar.gz", hash = "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f"},
+    {file = "async_timeout-4.0.3-py3-none-any.whl", hash = "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"},
+]
+
+[[package]]
 name = "attrs"
 version = "23.1.0"
 requires_python = ">=3.7"
@@ -63,9 +73,6 @@ name = "babel"
 version = "2.13.1"
 requires_python = ">=3.7"
 summary = "Internationalization utilities"
-dependencies = [
-    "setuptools; python_version >= \"3.12\"",
-]
 files = [
     {file = "Babel-2.13.1-py3-none-any.whl", hash = "sha256:7077a4984b02b6727ac10f1f7294484f737443d7e2e66c5e4380e41a3ae0b4ed"},
     {file = "Babel-2.13.1.tar.gz", hash = "sha256:33e0952d7dd6374af8dbf6768cc4ddf3ccfefc244f9986d4074704f2fbd18900"},
@@ -701,13 +708,6 @@ files = [
     {file = "hidapi-0.14.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2906ad143ec40009c33348ab4b3f7a9bdaa87b65bdc55983399bed47ee90a818"},
     {file = "hidapi-0.14.0-cp311-cp311-win32.whl", hash = "sha256:651c2382e974e866d78334cdde3c290a04fcbab4cec940c0d3586d77d11b9566"},
     {file = "hidapi-0.14.0-cp311-cp311-win_amd64.whl", hash = "sha256:de293e7291b1ec813a97e42625c2c0a41b0d25d495b3dc5864bbb3dbbb5a719d"},
-    {file = "hidapi-0.14.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:fc9ec2321bf3b0b4953910aa87c0c8ab5f93b1f113a9d3d4f18845ce54708d13"},
-    {file = "hidapi-0.14.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:a68820a5de54a54d145d88f31c74257965bd03ae454263eda054f02bf34dcc9c"},
-    {file = "hidapi-0.14.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:86752ca0db00e5a5e991ebc5854400ff16d3812d6d9a156fea4de7d5f10ba801"},
-    {file = "hidapi-0.14.0-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4b65cc159fcf1839d078d3de196146626c1a865bd9136fda5fa490f689e904c9"},
-    {file = "hidapi-0.14.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9ab1b1dc8b915a0faa7b976ed8291142cf93c2acecf533db8c748fc64be1a004"},
-    {file = "hidapi-0.14.0-cp312-cp312-win32.whl", hash = "sha256:5e3318f0e66c4d46977fc8ba73a2ad33c2de367d133b70b243051283d0ecdaca"},
-    {file = "hidapi-0.14.0-cp312-cp312-win_amd64.whl", hash = "sha256:b4f3a4e41886a19dcb9ea872a6f75ef42baba124a150b5b0a03379da174e1f70"},
     {file = "hidapi-0.14.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:5299d74d96bdc9eaa83496c972048db0027d012a08440b33bdb6dd10a7491da9"},
     {file = "hidapi-0.14.0-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:4c78ff5c46128bdf68b2c4e4b08fac7765ef79f6ee7e17c8a2f7d3090a591d97"},
     {file = "hidapi-0.14.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2e635c037d28e1ceded2043d81b879d81348a278d1ae668954a5a7a7d383f7d7"},
@@ -739,6 +739,15 @@ summary = "Internationalized Domain Names in Applications (IDNA)"
 files = [
     {file = "idna-3.6-py3-none-any.whl", hash = "sha256:c05567e9c24a6b9faaa835c4821bad0590fbb9d5779e7caa6e1cc4978e7eb24f"},
     {file = "idna-3.6.tar.gz", hash = "sha256:9ecdbbd083b06798ae1e86adcbfe8ab1479cf864e4ee30fe4e46a003d12491ca"},
+]
+
+[[package]]
+name = "ifaddr"
+version = "0.2.0"
+summary = "Cross-platform network interface and IP address enumeration library"
+files = [
+    {file = "ifaddr-0.2.0-py3-none-any.whl", hash = "sha256:085e0305cfe6f16ab12d72e2024030f5d52674afad6911bb1eee207177b8a748"},
+    {file = "ifaddr-0.2.0.tar.gz", hash = "sha256:cc0cbfcaabf765d44595825fb96a99bb12c79716b73b44330ea38ee2b0c4aed4"},
 ]
 
 [[package]]
@@ -1059,10 +1068,10 @@ files = [
 [[package]]
 name = "labbench"
 version = "0.33.0"
-requires_python = ">=3.9,<3.13"
+requires_python = ">=3.9,<3.12"
 git = "https://github.com/usnistgov/labbench"
 ref = "overhaul-device-api"
-revision = "a7b7c664de5597db839847a4b122685005200aae"
+revision = "0d23b8a4097f0252c9fea80d54fdf60ddbb39b8d"
 summary = "The `labbench` module provides API tools to support python scripting for laboratory automation.The goal is to simplify the process of developing an experimental procedure into clear, concise, explainable, and reusable code."
 dependencies = [
     "GitPython>=2.0",
@@ -1085,6 +1094,22 @@ dependencies = [
     "sqlalchemy>=2.0.1",
     "typing-extensions>=4.8.0",
     "validators>=0.20.0",
+]
+
+[[package]]
+name = "labbench"
+version = "0.33.0"
+extras = ["hislip-discovery"]
+requires_python = ">=3.9,<3.12"
+git = "https://github.com/usnistgov/labbench"
+ref = "overhaul-device-api"
+revision = "0d23b8a4097f0252c9fea80d54fdf60ddbb39b8d"
+summary = "The `labbench` module provides API tools to support python scripting for laboratory automation.The goal is to simplify the process of developing an experimental procedure into clear, concise, explainable, and reusable code."
+dependencies = [
+    "labbench @ git+https://github.com/usnistgov/labbench@overhaul-device-api",
+    "zeroconf",
+    "zeroconf",
+    "zeroconf",
 ]
 
 [[package]]
@@ -1169,12 +1194,6 @@ files = [
     {file = "matplotlib-3.8.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5ba9cbd8ac6cf422f3102622b20f8552d601bf8837e49a3afed188d560152788"},
     {file = "matplotlib-3.8.2-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:03f9d160a29e0b65c0790bb07f4f45d6a181b1ac33eb1bb0dd225986450148f0"},
     {file = "matplotlib-3.8.2-cp311-cp311-win_amd64.whl", hash = "sha256:3773002da767f0a9323ba1a9b9b5d00d6257dbd2a93107233167cfb581f64717"},
-    {file = "matplotlib-3.8.2-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:4c318c1e95e2f5926fba326f68177dee364aa791d6df022ceb91b8221bd0a627"},
-    {file = "matplotlib-3.8.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:091275d18d942cf1ee9609c830a1bc36610607d8223b1b981c37d5c9fc3e46a4"},
-    {file = "matplotlib-3.8.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1b0f3b8ea0e99e233a4bcc44590f01604840d833c280ebb8fe5554fd3e6cfe8d"},
-    {file = "matplotlib-3.8.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d7b1704a530395aaf73912be741c04d181f82ca78084fbd80bc737be04848331"},
-    {file = "matplotlib-3.8.2-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:533b0e3b0c6768eef8cbe4b583731ce25a91ab54a22f830db2b031e83cca9213"},
-    {file = "matplotlib-3.8.2-cp312-cp312-win_amd64.whl", hash = "sha256:0f4fc5d72b75e2c18e55eb32292659cf731d9d5b312a6eb036506304f4675630"},
     {file = "matplotlib-3.8.2-cp39-cp39-macosx_10_12_x86_64.whl", hash = "sha256:deaed9ad4da0b1aea77fe0aa0cebb9ef611c70b3177be936a95e5d01fa05094f"},
     {file = "matplotlib-3.8.2-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:172f4d0fbac3383d39164c6caafd3255ce6fa58f08fc392513a0b1d3b89c4f89"},
     {file = "matplotlib-3.8.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c7d36c2209d9136cd8e02fab1c0ddc185ce79bc914c45054a9f514e44c787917"},
@@ -1254,11 +1273,6 @@ files = [
     {file = "mypy-1.7.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:944bdc21ebd620eafefc090cdf83158393ec2b1391578359776c00de00e8907a"},
     {file = "mypy-1.7.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:9c7ac372232c928fff0645d85f273a726970c014749b924ce5710d7d89763a28"},
     {file = "mypy-1.7.1-cp311-cp311-win_amd64.whl", hash = "sha256:f6efc9bd72258f89a3816e3a98c09d36f079c223aa345c659622f056b760ab42"},
-    {file = "mypy-1.7.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:6dbdec441c60699288adf051f51a5d512b0d818526d1dcfff5a41f8cd8b4aaf1"},
-    {file = "mypy-1.7.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:4fc3d14ee80cd22367caaaf6e014494415bf440980a3045bf5045b525680ac33"},
-    {file = "mypy-1.7.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2c6e4464ed5f01dc44dc9821caf67b60a4e5c3b04278286a85c067010653a0eb"},
-    {file = "mypy-1.7.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:d9b338c19fa2412f76e17525c1b4f2c687a55b156320acb588df79f2e6fa9fea"},
-    {file = "mypy-1.7.1-cp312-cp312-win_amd64.whl", hash = "sha256:204e0d6de5fd2317394a4eff62065614c4892d5a4d1a7ee55b765d7a3d9e3f82"},
     {file = "mypy-1.7.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:75c4d2a6effd015786c87774e04331b6da863fc3fc4e8adfc3b40aa55ab516fe"},
     {file = "mypy-1.7.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:2643d145af5292ee956aa0a83c2ce1038a3bdb26e033dadeb2f7066fb0c9abce"},
     {file = "mypy-1.7.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:75aa828610b67462ffe3057d4d8a4112105ed211596b750b53cbfe182f44777a"},
@@ -2446,6 +2460,54 @@ summary = "Jupyter interactive widgets for Jupyter Notebook"
 files = [
     {file = "widgetsnbextension-4.0.9-py3-none-any.whl", hash = "sha256:91452ca8445beb805792f206e560c1769284267a30ceb1cec9f5bcc887d15175"},
     {file = "widgetsnbextension-4.0.9.tar.gz", hash = "sha256:3c1f5e46dc1166dfd40a42d685e6a51396fd34ff878742a3e47c6f0cc4a2a385"},
+]
+
+[[package]]
+name = "zeroconf"
+version = "0.127.0"
+requires_python = ">=3.7,<4.0"
+summary = "A pure python implementation of multicast DNS service discovery"
+dependencies = [
+    "async-timeout>=3.0.0; python_version < \"3.11\"",
+    "ifaddr>=0.1.7",
+]
+files = [
+    {file = "zeroconf-0.127.0-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:785073067e804e0f4e4e830d5c710b6d69c90f15a1e66a7de361458bc984b2a8"},
+    {file = "zeroconf-0.127.0-cp310-cp310-manylinux_2_17_i686.manylinux_2_5_i686.manylinux1_i686.manylinux2014_i686.whl", hash = "sha256:27347463815f64ac7813a8559e4977dfb359d259f6588c5d89ea54ce5b81b42b"},
+    {file = "zeroconf-0.127.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0ba8b0e10cc3edf8f41d37f81812241a51187506877c84fc1aa7a29cc1c74d59"},
+    {file = "zeroconf-0.127.0-cp310-cp310-manylinux_2_31_x86_64.whl", hash = "sha256:b7cb92ab960b78318370f17b3737ceb1817cd4f2358eca5ce0925d9c6adfb9f4"},
+    {file = "zeroconf-0.127.0-cp310-cp310-musllinux_1_1_i686.whl", hash = "sha256:9a00dccd3df7a2697fb3937885ea0a4f61ea9147413dbd74be4b724e9f093dc8"},
+    {file = "zeroconf-0.127.0-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:f9bdbc5cc53481bdc7013778ed425b37405ac6939853a544dbe9eaa08ccf2d7a"},
+    {file = "zeroconf-0.127.0-cp310-cp310-win32.whl", hash = "sha256:cebd946586ceb0896a0318b89a3483700cb64975ada15bb80b19a154a766eea7"},
+    {file = "zeroconf-0.127.0-cp310-cp310-win_amd64.whl", hash = "sha256:f1dba53fa5f2f9acf3363eaaf3ad5ded2b953f0468cf9793eb8ca516e8eac127"},
+    {file = "zeroconf-0.127.0-cp311-cp311-macosx_11_0_x86_64.whl", hash = "sha256:cca232b9a4521770b82144715a6e3c6468ae392a2533182b885155cc41d23504"},
+    {file = "zeroconf-0.127.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:004f25ccc658608b6ae8a8f3c8fd0923b2c5b6256b5a2f0fd0ed8891e45735d9"},
+    {file = "zeroconf-0.127.0-cp311-cp311-manylinux_2_17_i686.manylinux_2_5_i686.manylinux1_i686.manylinux2014_i686.whl", hash = "sha256:fdcc771f08694963491816b4d97538297007468f9f21345c161073aeafad4118"},
+    {file = "zeroconf-0.127.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f66556292389c1e6c6669468774b65f63e0a1ccd3baa39807bd7e606b7e966c4"},
+    {file = "zeroconf-0.127.0-cp311-cp311-musllinux_1_1_i686.whl", hash = "sha256:6c84355ee9f5c111c4fe03c699d09d7cbaf91fd343e2affe1d4c715b7224e554"},
+    {file = "zeroconf-0.127.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:c1d2a43b3133be7deabb0be160e1e70a8a378a1834c307e144e2ce89ff73e038"},
+    {file = "zeroconf-0.127.0-cp311-cp311-win32.whl", hash = "sha256:b3e49ae5aecff8835578be71a73b6a074b84874ed7f014339507ab8248c437e1"},
+    {file = "zeroconf-0.127.0-cp311-cp311-win_amd64.whl", hash = "sha256:008115f6ffcecfdae8d0e6185cbd0a78968fdb8ba63f2a85df35200263fc5025"},
+    {file = "zeroconf-0.127.0-cp39-cp39-macosx_11_0_x86_64.whl", hash = "sha256:983c953b667d1404e450cae6c87117345d7db8db43f757c102941d63c7243c99"},
+    {file = "zeroconf-0.127.0-cp39-cp39-manylinux_2_17_i686.manylinux_2_5_i686.manylinux1_i686.manylinux2014_i686.whl", hash = "sha256:3ff537643fdd7766c79a015a077fa6c43bd945bea48fd9ea4aaa27de2473afed"},
+    {file = "zeroconf-0.127.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1614c596780e9ce00a498a681ba4ddac4f08b85815f6314c2e4daa4f26265e60"},
+    {file = "zeroconf-0.127.0-cp39-cp39-musllinux_1_1_i686.whl", hash = "sha256:a98899dd6b3baafce1abcb76cfd46f2264c81068e301e87b76e8941dc66e166d"},
+    {file = "zeroconf-0.127.0-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:d8daf97b0d5b40c6a892e3b4ae7820408e001a68b2f9a028fd8844f864f76971"},
+    {file = "zeroconf-0.127.0-cp39-cp39-win32.whl", hash = "sha256:a02b70eb195f51c458ba51f03f8b0ee99f25cec2e278acee145f41ddb9e3c10a"},
+    {file = "zeroconf-0.127.0-cp39-cp39-win_amd64.whl", hash = "sha256:d5a4362bbb1f163470bec0e426f9e453e6265a77f97cd8d08fb903f6d750eb51"},
+    {file = "zeroconf-0.127.0-pp310-pypy310_pp73-macosx_11_0_x86_64.whl", hash = "sha256:0b589ef00f54c996951f62d8d40b76e0b228c6fe37991318966fa3e2d5f671b7"},
+    {file = "zeroconf-0.127.0-pp310-pypy310_pp73-manylinux_2_17_i686.manylinux_2_5_i686.manylinux1_i686.manylinux2014_i686.whl", hash = "sha256:bf3537adf379770f9ef3a38257e627b595e6b54836678f580813e0cfb7769d18"},
+    {file = "zeroconf-0.127.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c9ecf336edbdb647bee0cf477be5b0725bf6e07842368c8125c1785ad51d510c"},
+    {file = "zeroconf-0.127.0-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:42f51d4675b2867212355b24246d23d0191688b6695bcee9af640941ca5f739d"},
+    {file = "zeroconf-0.127.0-pp38-pypy38_pp73-macosx_11_0_x86_64.whl", hash = "sha256:a0c9ea153c21f1210434f2abaa3c23d507396ead91934f4256240a01bbbbbfcd"},
+    {file = "zeroconf-0.127.0-pp38-pypy38_pp73-manylinux_2_17_i686.manylinux_2_5_i686.manylinux1_i686.manylinux2014_i686.whl", hash = "sha256:ad5b712ecce31b13bab41b92a48aa11d545adf773e0d2e7cac90c55b1e5cde7e"},
+    {file = "zeroconf-0.127.0-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c2e463dd4d8fd4687765abf1e3bc39188f94725c78c1f949427213b1462e9125"},
+    {file = "zeroconf-0.127.0-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:82d2964d45d47934f201030f85261dbecea55a2931ec9cba42c65febbc26d6e1"},
+    {file = "zeroconf-0.127.0-pp39-pypy39_pp73-macosx_11_0_x86_64.whl", hash = "sha256:1d3b521e0f652acac71d63389913109c920500aed9257bb7f10033639269af9f"},
+    {file = "zeroconf-0.127.0-pp39-pypy39_pp73-manylinux_2_17_i686.manylinux_2_5_i686.manylinux1_i686.manylinux2014_i686.whl", hash = "sha256:2b77d11f9a90864c03f8239a769c8635e909ef048b1b3777eda3fa3ec1e858a8"},
+    {file = "zeroconf-0.127.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a30533c948861f943c3191d87c0727af9840f657bf9ece3760724c6e0734413d"},
+    {file = "zeroconf-0.127.0-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:82fd810e990e5bc8b41e2d4f1dfa11be0ee80409e94b54659b2e18cd93ed9525"},
+    {file = "zeroconf-0.127.0.tar.gz", hash = "sha256:1ec001989666be7f76630d6bb8b07fb3928d655fa79a1484674a776778c9a1b3"},
 ]
 
 [[package]]
