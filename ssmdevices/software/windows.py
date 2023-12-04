@@ -6,7 +6,7 @@ import subprocess as sp
 import time
 
 import labbench as lb
-from labbench import paramattr as param
+from labbench import paramattr as attr
 import psutil
 
 if __name__ == "__main__":
@@ -25,8 +25,8 @@ class WLANInfo(lb.ShellBackend):
         only_bssid="mode=bssid",
     )
 
-    only_bssid = param.value.bool(default=False, help="gather only BSSID information")
-    interface = param.value.str(help="name of the interface to query")
+    only_bssid: bool = attr.value.bool(default=False, help="gather only BSSID information")
+    interface: str = attr.value.str(help="name of the interface to query")
 
     def wait(self):
         try:
@@ -86,11 +86,11 @@ class WLANInfo(lb.ShellBackend):
 
 
 class WLANClient(lb.Device):
-    resource = param.value.str(
+    resource: str = attr.value.str(
         help="interface name (from the OS) or MAC address (nn:nn:nn:nn:nn)", cache=True
     )
-    ssid = param.value.str(help="SSID of the AP for connection")
-    timeout = param.value.float(
+    ssid: str = attr.value.str(help="SSID of the AP for connection")
+    timeout: float = attr.value.float(
         default=10,
         min=0,
         help="attempt AP connection for this long before raising ConnectionError",
@@ -280,25 +280,25 @@ class WLANClient(lb.Device):
         self.interface_disconnect()
         return self.interface_connect()
 
-    @param.property.str(sets=False)
+    @attr.property.str(sets=False)
     def state(self):
         """`True` if psutil reports that the interface is up"""
         return self._status_lookup[self.backend.status()]
 
-    @param.property.bool(sets=False)
+    @attr.property.bool(sets=False)
     def isup(self):
         """`True` if psutil reports that the interface is up"""
         stats = psutil.net_if_stats()
         iface_name = network_interface_info(self.resource)["interface"]
         return stats[iface_name].isup
 
-    @param.property.int(sets=False, allow_none=True)
+    @attr.property.int(sets=False, allow_none=True)
     def transmit_rate_mbps(self):
         stats = psutil.net_if_stats()
         iface_name = network_interface_info(self.resource)["interface"]
         return stats[iface_name].speed
 
-    @param.property.int(allow_none=True, max=100, sets=False)
+    @attr.property.int(allow_none=True, max=100, sets=False)
     def signal(self):
         def attempt():
             for result in self.backend.scan_results():
@@ -318,11 +318,11 @@ class WLANClient(lb.Device):
 
         return lb.until_timeout(TimeoutError, 2 * self.timeout)(attempt)()
 
-    @param.property.str(sets=False, cache=True)
+    @attr.property.str(sets=False, cache=True)
     def description(self):
         return self.backend.name()
 
-    @param.property.int(allow_none=True)
+    @attr.property.int(allow_none=True)
     def channel(self):
         def attempt():
             for result in self.backend.scan_results():

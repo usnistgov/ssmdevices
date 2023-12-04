@@ -24,7 +24,7 @@ from contextlib import AbstractContextManager, suppress
 from ._networking import find_free_port
 
 import labbench as lb
-from labbench import paramattr as param
+from labbench import paramattr as attr
 import pandas as pd
 import psutil
 import ssmdevices.lib
@@ -68,17 +68,19 @@ class _IPerfBase(lb.ShellBackend):
     )
 
     # address and network interface parameters
-    resource = param.value.NetworkAddress(
+    resource: str = attr.value.NetworkAddress(
         None,
         accept_port=False,
         allow_none=True,
         help="client host address (set None if server=True)",
     )
-    server = param.value.bool(default=False, help="True to run as a server")
-    port = param.value.int(default=5201, min=0, help="network port")
-    bind = param.value.str(default=None, allow_none=True, help="bind connection to specified IP")
+    server: bool = attr.value.bool(default=False, help="True to run as a server")
+    port: int = attr.value.int(default=5201, min=0, help="network port")
+    bind: str = attr.value.str(
+        default=None, allow_none=True, help="bind connection to specified IP"
+    )
 
-    format = param.value.str(
+    format: str = attr.value.str(
         default=None,
         only=(None, "k", "m", "g", "K", "M", "G"),
         allow_none=True,
@@ -87,19 +89,19 @@ class _IPerfBase(lb.ShellBackend):
 
     # timing and duration
     # (for time, default=None even though we know the default, because setting 10s conflicts with `number`)
-    time = param.value.float(
+    time: float = attr.value.float(
         min=0,
         max=16535,
         allow_none=True,
         help="send duration (s) before quitting (default: 10)",
     )
-    number = param.value.int(
+    number: int = attr.value.int(
         min=-1,
         allow_none=True,
         help="the number of bytes to transmit before quitting",
     )
 
-    interval = param.value.float(
+    interval: float = attr.value.float(
         min=0.01,
         allow_none=True,
         label="s",
@@ -107,13 +109,13 @@ class _IPerfBase(lb.ShellBackend):
     )
 
     # high level buffer commands
-    udp = param.value.bool(default=False, help="if True, to use UDP instead of TCP")
-    bit_rate = param.value.str(
+    udp: bool = attr.value.bool(default=False, help="if True, to use UDP instead of TCP")
+    bit_rate: str = attr.value.str(
         allow_none=True,
         label="bits/s",
         help="maximum bit rate, accepts KMG unit suffix; defaults 1Mbit/s UDP, no limit for TCP",
     )
-    buffer_size = param.value.int(
+    buffer_size: int = attr.value.int(
         min=1,
         allow_none=True,
         help="buffer size when generating traffic",
@@ -121,14 +123,16 @@ class _IPerfBase(lb.ShellBackend):
     )
 
     # TCP parameters
-    tcp_window_size = param.value.int(
+    tcp_window_size: int = attr.value.int(
         min=1,
         allow_none=True,
         help="window / socket size (default OS dependent?)",
         label="bytes",
     )
-    nodelay = param.value.bool(default=False, help="set True to use nodelay (TCP traffic only)")
-    mss = param.value.int(
+    nodelay: bool = attr.value.bool(
+        default=False, help="set True to use nodelay (TCP traffic only)"
+    )
+    mss: int = attr.value.int(
         min=10,
         allow_none=True,
         help="minimum segment size=MTU-40, TCP only",
@@ -200,9 +204,11 @@ class IPerf3(_IPerfBase):
     FLAGS = dict(_IPerfBase.FLAGS, json="-J", reverse="-R", zerocopy="-Z")
 
     # IPerf3 only
-    reverse = param.value.bool(default=False, help="run in reverse mode (server sends, client receives)")
-    json = param.value.bool(default=False, help="output data in JSON format")
-    zerocopy = param.value.bool(default=False, help="use a 'zero copy' method of sending data")
+    reverse: bool = attr.value.bool(
+        default=False, help="run in reverse mode (server sends, client receives)"
+    )
+    json: bool = attr.value.bool(default=False, help="output data in JSON format")
+    zerocopy: bool = attr.value.bool(default=False, help="use a 'zero copy' method of sending data")
 
 
 @lb.adjusted("binary_path", ssmdevices.lib.path("iperf.exe"))
@@ -227,8 +233,10 @@ class IPerf2(_IPerfBase):
         "datagrams_out_of_order",
     )
 
-    bidirectional = param.value.bool(default=False, key="-d", help="send and receive simultaneously")
-    report_style = param.value.str(
+    bidirectional: bool = attr.value.bool(
+        default=False, key="-d", help="send and receive simultaneously"
+    )
+    report_style: str = attr.value.str(
         default="C",
         only=("C", None),
         allow_none=True,
@@ -288,7 +296,7 @@ class IPerf2(_IPerfBase):
 @lb.adjusted("binary_path", ssmdevices.lib.path("adb.exe"))
 class IPerf2OnAndroid(IPerf2):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
-    remote_binary_path = param.value.str(default="/data/local/tmp/iperf", cache=True)
+    remote_binary_path: str = attr.value.str(default="/data/local/tmp/iperf", cache=True)
 
     def profile(self, block=True):
         self._validate_flags()
@@ -442,12 +450,12 @@ class IPerf2BoundPair(IPerf2):
     """
 
     # add other settings
-    resource = param.value.str(help="unused - use sender and receiver instead", sets=False)
+    resource: str = attr.value.str(help="unused - use sender and receiver instead", sets=False)
 
-    server = param.value.NetworkAddress(
+    server: str = attr.value.NetworkAddress(
         accept_port=False, help="the ip address where the server listens"
     )
-    client = param.value.NetworkAddress(
+    client: str = attr.value.NetworkAddress(
         accept_port=False, help="the ip address from which the client sends data"
     )
 
@@ -586,26 +594,28 @@ class TrafficProfiler_ClosedLoop(lb.Device):
     equal to the system time resolution.
     """
 
-    server = param.value.str(help="the name of the network interface that will send data")
-    client = param.value.str(help="the name of the network interface that will receive data")
-    receive_side = param.value.str(
+    server: str = attr.value.str(help="the name of the network interface that will send data")
+    client: str = attr.value.str(help="the name of the network interface that will receive data")
+    receive_side: str = attr.value.str(
         help="which of the server or the client does the receiving",
         only=("server", "client"),
     )
-    port = param.value.int(
+    port: int = attr.value.int(
         default=0,
         min=0,
         help="TCP or UDP port for networking, or 0 to let the operating system choose",
     )
-    resource = param.value.str(help="skipd - use sender and receiver instead", cache=True)
-    timeout = param.value.float(default=2, min=1e-3, help="timeout before aborting the test", cache=True)
-    tcp_nodelay = param.value.bool(default=True, help="set True to disable Nagle's algorithm")
-    sync_each = param.value.bool(
+    resource: str = attr.value.str(help="skipd - use sender and receiver instead", cache=True)
+    timeout: float = attr.value.float(
+        default=2, min=1e-3, help="timeout before aborting the test", cache=True
+    )
+    tcp_nodelay: bool = attr.value.bool(default=True, help="set True to disable Nagle's algorithm")
+    sync_each: bool = attr.value.bool(
         default=False,
         help="synchronize the start times of the send and receive threads for each buffer at the cost of throughput",
     )
 
-    delay = param.value.float(default=0, min=0, help="wait time before profiling", cache=True)
+    delay: float = attr.value.float(default=0, min=0, help="wait time before profiling", cache=True)
 
     def __repr__(self):
         return "{name}(server='{server}',client='{client}')".format(

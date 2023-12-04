@@ -1,5 +1,5 @@
 import labbench as lb
-from labbench import paramattr as param
+from labbench import paramattr as attr
 
 class AndroidDebugBridge(lb.ShellBackend):
     def __init__(self, resource: str = "str", binary_path: str = "str", timeout: str = "int"): ...

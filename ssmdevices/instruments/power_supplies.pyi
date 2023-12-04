@@ -1,8 +1,8 @@
 import labbench as lb
-from labbench import paramattr as param
+from labbench import paramattr as attr
 from _typeshed import Incomplete
 
-class rigol_property_adapter(param.property.visa_keying):
+class rigol_property_adapter(attr.property.visa_keying):
     def get(self, device: lb.Device, scpi_key: str, trait_name: Incomplete | None = ...): ...
     def set(
         self,

@@ -5,10 +5,10 @@ Drivers for USB peripherals
 """
 import collections
 import labbench as lb
-from labbench import paramattr as param
+from labbench import paramattr as attr
 
 
-class AcronamePropertyAdapter(param.KeyAdapterBase):
+class AcronamePropertyAdapter(attr.KeyAdapterBase):
     def set(self, device, key: tuple, value, trait=None):
         """Apply an instrument setting to the instrument. The value ``value''
         will be applied to the trait attriute ``attr'' in type(self).
@@ -61,17 +61,17 @@ class AcronameUSBHub2x4(lb.Device):
     def _get_data_enable(self, port: int):
         return self._hub.usb.getDataEnable(port)
 
-    data0_enabled = param.property.bool(key=("data", 0))
-    data1_enabled = param.property.bool(key=("data", 1))
-    data2_enabled = param.property.bool(key=("data", 2))
-    data3_enabled = param.property.bool(key=("data", 3))
+    data0_enabled = attr.property.bool(key=("data", 0))
+    data1_enabled = attr.property.bool(key=("data", 1))
+    data2_enabled = attr.property.bool(key=("data", 2))
+    data3_enabled = attr.property.bool(key=("data", 3))
 
-    power0_enabled = param.property.bool(key=("power", 0))
-    power1_enabled = param.property.bool(key=("power", 1))
-    power2_enabled = param.property.bool(key=("power", 2))
-    power3_enabled = param.property.bool(key=("power", 3))
+    power0_enabled = attr.property.bool(key=("power", 0))
+    power1_enabled = attr.property.bool(key=("power", 1))
+    power2_enabled = attr.property.bool(key=("power", 2))
+    power3_enabled = attr.property.bool(key=("power", 3))
 
-    resource = param.value.str(
+    resource: str = attr.value.str(
         allow_none=True,
         cache=True,
         help="None to autodetect, or a serial number string",

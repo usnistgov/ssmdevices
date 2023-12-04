@@ -1,5 +1,5 @@
 import labbench as lb
-from labbench import paramattr as param
+from labbench import paramattr as attr
 from _typeshed import Incomplete
 
 class WLANInfo(lb.ShellBackend):

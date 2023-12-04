@@ -1,5 +1,5 @@
 import labbench as lb
-from labbench import paramattr as param
+from labbench import paramattr as attr
 import pandas as pd
 import typing
 from _typeshed import Incomplete
