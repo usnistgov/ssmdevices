@@ -3,8 +3,9 @@ __all__ = ["RigolOscilloscope"]
 import labbench as lb
 from labbench import paramattr as attr
 
-
-class RigolOscilloscope(lb.VISADevice):
+@lb.adjusted('make', default='RIGOL TECHNOLOGIES')
+@lb.adjusted('model', default='MSO4014')
+class RigolTechnologiesMSO4014(lb.VISADevice):
     time_offset = attr.property.float(key=":TIM:OFFS", label="s")
     time_scale = attr.property.float(key=":TIM:SCAL", label="s")
     options = attr.property.str(
