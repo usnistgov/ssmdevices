@@ -14,8 +14,8 @@ import numpy as np
 import typing
 
 
-@lb.adjusted("make", "Keysight Technologies")
-@lb.adjusted("model", "U204")
+@attr.adjust("make", "Keysight Technologies")
+@attr.adjust("model", "U204")
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
@@ -178,12 +178,12 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         self.wait()
 
 
-@lb.adjusted("frequency", max=8e9)
+@attr.adjust("frequency", max=8e9)
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
     pass
 
 
-@lb.adjusted("frequency", max=18e9)
+@attr.adjust("frequency", max=18e9)
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
     pass
 

@@ -20,7 +20,7 @@ status_messages = (
 )
 
 
-@lb.adjusted(
+@attr.adjust(
     "resource",
     default="COM17",
     help="serial port string (COMnn in windows or /dev/xxxx in unix/Linux)",

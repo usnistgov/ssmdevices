@@ -15,8 +15,8 @@ from labbench import paramattr as attr
 __all__ = ["ETSLindgrenAzi2005"]
 
 
-@lb.adjusted("read_termination", default="\n")
-@lb.adjusted("write_termination", default="\r")
+@attr.adjust("read_termination", default="\n")
+@attr.adjust("write_termination", default="\r")
 @attr.visa_keying(write_fmt="{key}{value}")
 class ETSLindgrenAzi2005(lb.VISADevice):
     # constructor argument fields

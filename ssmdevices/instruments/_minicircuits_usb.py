@@ -12,7 +12,7 @@ usb_command_lock = Lock()
 usb_registry = {}  # serial number: USB path
 
 
-@lb.adjusted(
+@attr.adjust(
     "resource",
     default=None,
     help="serial number; must be set if more than one device is connected",

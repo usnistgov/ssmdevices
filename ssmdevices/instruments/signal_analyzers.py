@@ -637,7 +637,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self.write(f"OUTPUT:TRIGGER{port}:PULS:IMM")
 
 
-@lb.adjusted("expected_channel_type", "SAN")
+@attr.adjust("expected_channel_type", "SAN")
 class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
     def get_marker_band_power(self, marker: int) -> float:
         """Get marker band power measurement
@@ -775,7 +775,7 @@ class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
         return data
 
 
-@lb.adjusted("expected_channel_type", "RTIM")
+@attr.adjust("expected_channel_type", "RTIM")
 class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
     _IQ_FORMATS = ("FREQ", "MAGN", "MTAB", "PEAK", "RIM", "VECT")
     _IQ_MODES = ("TDOMain", "FDOMain", "IQ")
@@ -816,7 +816,7 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
         self.write(f"MMEM:STOR:IQ:STAT 1, '{path}'")
 
 
-@lb.adjusted("expected_channel_type", "RTIM")
+@attr.adjust("expected_channel_type", "RTIM")
 class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
     TRIGGER_SOURCES = "IMM", "EXT", "EXT2", "EXT3", "MASK", "TDTR"
     WINDOW_FUNCTIONS = "BLAC", "FLAT", "GAUS", "HAMM", "HANN", "KAIS", "RECT"
@@ -1118,11 +1118,11 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         return {"spectrogram_active_time": time.time() - t0}
 
 
-@lb.adjusted("frequency_center", max=26.5e9)
-@lb.adjusted("frequency_span", max=26.5e9)
-@lb.adjusted("frequency_start", max=26.5e9)
-@lb.adjusted("frequency_stop", max=26.5e9)
-@lb.adjusted("resolution_bandwidth", min=45e3, max=5.76e6)
+@attr.adjust("frequency_center", max=26.5e9)
+@attr.adjust("frequency_span", max=26.5e9)
+@attr.adjust("frequency_start", max=26.5e9)
+@attr.adjust("frequency_stop", max=26.5e9)
+@attr.adjust("resolution_bandwidth", min=45e3, max=5.76e6)
 class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
     pass
 
@@ -1143,11 +1143,11 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base, _RSRealTimeMixIn):
     pass
 
 
-@lb.adjusted("frequency_center", max=43.5e9)
-@lb.adjusted("frequency_span", max=43.5e9)
-@lb.adjusted("frequency_start", max=43.5e9)
-@lb.adjusted("frequency_stop", max=43.5e9)
-@lb.adjusted("resolution_bandwidth", min=1, max=10e6)
+@attr.adjust("frequency_center", max=43.5e9)
+@attr.adjust("frequency_span", max=43.5e9)
+@attr.adjust("frequency_start", max=43.5e9)
+@attr.adjust("frequency_stop", max=43.5e9)
+@attr.adjust("resolution_bandwidth", min=1, max=10e6)
 class RohdeSchwarzFSW43Base(RohdeSchwarzFSWBase):
     pass
 

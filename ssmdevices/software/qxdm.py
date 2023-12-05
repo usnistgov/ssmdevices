@@ -17,7 +17,7 @@ from labbench import paramattr as attr
 import psutil
 
 
-@lb.adjusted("com_object", "QPSTAtmnServer.Application")
+@attr.adjust("com_object", "QPSTAtmnServer.Application")
 class QPST(lb.Win32ComDevice):
     PORT_LIST_CODES = dict(
         ue_mode={
@@ -102,7 +102,7 @@ class QPST(lb.Win32ComDevice):
             raise TimeoutError(f"QXDM disconnect timeout on COM{port}")
 
 
-@lb.adjusted("com_object", r"QXDM.QXDMAutoApplication")
+@attr.adjust("com_object", r"QXDM.QXDMAutoApplication")
 class QXDM(lb.Win32ComDevice):
     """QXDM software wrapper"""
 

@@ -49,7 +49,7 @@ if "_tcp_port_offset" not in dir():
 perf_counter()
 
 
-@lb.adjusted("timeout", default=5)
+@attr.adjust("timeout", default=5)
 class _IPerfBase(lb.ShellBackend):
     FLAGS = dict(
         resource="-c",
@@ -194,7 +194,7 @@ class _IPerfBase(lb.ShellBackend):
                 raise ValueError("iperf server does not support the `number` argument")
 
 
-@lb.adjusted("binary_path", ssmdevices.lib.path("iperf3.exe"))
+@attr.adjust("binary_path", ssmdevices.lib.path("iperf3.exe"))
 class IPerf3(_IPerfBase):
     """Run an instance of iperf3, collecting output data in a background thread.
     When running as an iperf client (server=False),
@@ -211,7 +211,7 @@ class IPerf3(_IPerfBase):
     zerocopy: bool = attr.value.bool(default=False, help="use a 'zero copy' method of sending data")
 
 
-@lb.adjusted("binary_path", ssmdevices.lib.path("iperf.exe"))
+@attr.adjust("binary_path", ssmdevices.lib.path("iperf.exe"))
 class IPerf2(_IPerfBase):
     """Run an instance of iperf to profile data transfer speed. It can
     operate as a server (listener) or client (sender), operating either
@@ -293,7 +293,7 @@ class IPerf2(_IPerfBase):
         return data
 
 
-@lb.adjusted("binary_path", ssmdevices.lib.path("adb.exe"))
+@attr.adjust("binary_path", ssmdevices.lib.path("adb.exe"))
 class IPerf2OnAndroid(IPerf2):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
     remote_binary_path: str = attr.value.str(default="/data/local/tmp/iperf", cache=True)

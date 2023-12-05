@@ -22,7 +22,7 @@ class TM500Error(ValueError):
         self.errcode = errcode
 
 
-@lb.adjusted('timeout', default=1, help="leave the timeout small to allow keyboard interrupts")
+@attr.adjust('timeout', default=1, help="leave the timeout small to allow keyboard interrupts")
 class AeroflexTM500(lb.TelnetDevice):
     """Control an Aeroflex TM500 network tester with a
     telnet connection.
