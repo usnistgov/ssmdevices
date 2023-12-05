@@ -1,4 +1,4 @@
-__all__ = ["RigolOscilloscope"]
+__all__ = ["RigolTechnologiesMSO4014"]
 
 import labbench as lb
 from labbench import paramattr as attr

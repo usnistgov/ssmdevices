@@ -22,8 +22,8 @@ maintainers = [
 ]
 
 dependencies = [
-    # "labbench >= 0.32.0",
-    "labbench[hislip-discovery] @ git+https://github.com/usnistgov/labbench@overhaul-device-api",
+    # "labbench >= 0.33.0",
+    "labbench[pyvisa-py-extras] @ git+https://github.com/usnistgov/labbench@overhaul-device-api",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
