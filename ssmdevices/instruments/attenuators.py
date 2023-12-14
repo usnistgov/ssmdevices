@@ -15,6 +15,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     _PID = 0x23
 
     frequency: float = attr.value.float(
+        default=None,
         allow_none=True,
         min=10e6,
         max=6e9,
@@ -23,12 +24,14 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     )
 
     output_power_offset: float = attr.value.float(
+        default=None,
         allow_none=True,
         help="output power level at 0 dB attenuation",
         label="dBm",
     )
 
     calibration_path: float = attr.value.str(
+        default=None,
         allow_none=True,
         cache=True,
         help="path to the calibration table csv file (containing frequency "
@@ -36,6 +39,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     )
 
     channel: int = attr.value.int(
+        default=1,
         allow_none=True,
         min=1,
         max=4,
@@ -82,6 +86,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
 
     # the remaining traits are calibration corrections for attenuation_setting
     attenuation = attenuation_setting.calibrate_from_table(
+        allow_none=True,
         path_attr=calibration_path,
         index_lookup_attr=frequency,
         table_index_column="Frequency(Hz)",

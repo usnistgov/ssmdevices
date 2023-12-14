@@ -141,7 +141,8 @@ class MiniCircuitsUSBDevice(lb.Device):
 
         if serial is None:
             if len(found) == 1:
-                ret = next(iter(found.values()))
+                ret = list(found.values())[0]
+                return ret
             else:
                 raise ConnectionError(
                     f"specify one of the available {cls.__name__} resources: {names}"
