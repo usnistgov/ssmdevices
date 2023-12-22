@@ -10,7 +10,6 @@ from labbench import paramattr as attr
 
 __all__ = [
     "KeysightN9951B",
-    "RohdeSchwarzFSW26Base",
     "RohdeSchwarzFSW26SpectrumAnalyzer",
     "RohdeSchwarzFSW26IQAnalyzer",
     "RohdeSchwarzFSW26LTEAnalyzer",
@@ -27,7 +26,11 @@ DEFAULT_CHANNEL_NAME = "remote"
 
 @attr.visa_keying(remap={False: "0", True: "1"})
 class KeysightN9951B(lb.VISADevice):
-    """A Keysight N9951B FieldFox"""
+    """ A Keysight N9951B "Field Fox".
+    
+    Attributes:
+        frequency_start (int): the sweep start
+    """
 
     frequency_start = attr.property.float(key="FREQ:START", min=1e6, max=43.99e9, label="Hz")
     frequency_stop = attr.property.float(key="FREQ:STOP", min=10e6, max=44e9, label="Hz")
@@ -86,6 +89,7 @@ class KeysightN9951B(lb.VISADevice):
 
 
 class RohdeSchwarzFSWBase(lb.VISADevice):
+
     _DATA_FORMATS = "ASC,0", "REAL,32", "REAL,64", "REAL,16"
     _CHANNEL_TYPES = "SAN", "IQ", "RTIM", DEFAULT_CHANNEL_NAME
     _TRIGGER_OUT_TYPES = "DEV", "TARM", "UDEF"
