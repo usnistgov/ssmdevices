@@ -141,7 +141,6 @@ class PatchedPythonDomain(PythonDomain):
 
 
 def process_docstring(app, what, name, obj, options, lines):
-    # print(f'process_docstring({obj})')
     if isinstance(obj, lb.paramattr.ParamAttr):
         lines.append(obj.doc(as_argument=True, anonymous=True))
 
@@ -157,22 +156,28 @@ class AttributeDocumenter(autodoc.AttributeDocumenter):
         return super().can_document_member(member, membername, isattr, parent)
 
     def add_directive_header(self, sig: str) -> None:
-        if not isinstance(self.object, lb.paramattr.value.Value):
-            return super().add_directive_header(sig)
-
+        start_directives = set(self.directive.result)
         super().add_directive_header(sig)
+
+        if not isinstance(self.object, lb.paramattr.value.Value):
+            return
+        
         sourcename = self.get_sourcename()
 
-        # if signature.return_annotation is not Parameter.empty:
-        if self.config.autodoc_typehints_format == "short":
-            print(self.object)
-            objrepr = autodoc.stringify_annotation(self.object._type, "smart")
-        else:
-            objrepr = autodoc.stringify_annotation(
-                self.object._type, "fully-qualified-except-typing"
-            )
+        new_directives = set(self.directive.result) - start_directives
+        if not any(':type:' in line for line in new_directives):
+            # if signature.return_annotation is not Parameter.empty:
+            if self.config.autodoc_typehints_format == "short":
+                typerepr = autodoc.stringify_annotation(self.object._type, "smart")
+            else:
+                typerepr = autodoc.stringify_annotation(
+                    self.object._type, "fully-qualified-except-typing"
+                )
+            self.add_line("   :type: " + typerepr, sourcename)
 
-        self.add_line("   :type: " + objrepr, sourcename)
+        if self.object.default is not lb.Undefined:
+            defaultrepr = autodoc.object_description(self.object.default)
+            self.add_line("   :value: " + defaultrepr, sourcename)
 
 class PropertyDocumenter(autodoc.PropertyDocumenter):
     """Document lb.property traits in the style of python properties"""
@@ -201,22 +206,24 @@ class PropertyDocumenter(autodoc.PropertyDocumenter):
             return super().import_object(raiseerror)
 
     def add_directive_header(self, sig: str) -> None:
-        if isinstance(self.object, lb.paramattr.property.Property):
-            return super().add_directive_header(sig)
-
+        start_directives = set(self.directive.result)
         super().add_directive_header(sig)
+        if not isinstance(self.object, lb.paramattr.property.Property):
+            return 
+
         sourcename = self.get_sourcename()
 
         # if signature.return_annotation is not Parameter.empty:
-        if self.config.autodoc_typehints_format == "short":
-            objrepr = autodoc.stringify_annotation(self.object._type, "smart")
-        else:
-            objrepr = autodoc.stringify_annotation(
-                self.object._type, "fully-qualified-except-typing"
-            )
-        print('objectrepr: ', objrepr)
-
-        self.add_line("   :type: " + objrepr, sourcename)
+        new_directives = set(self.directive.result) - start_directives
+        if not any(':type:' in line for line in new_directives):
+            # if signature.return_annotation is not Parameter.empty:
+            if self.config.autodoc_typehints_format == "short":
+                typerepr = autodoc.stringify_annotation(self.object._type, "smart")
+            else:
+                typerepr = autodoc.stringify_annotation(
+                    self.object._type, "fully-qualified-except-typing"
+                )
+            self.add_line("   :type: " + typerepr, sourcename)
 
     def format_args(self, **kwargs) -> str:
         if isinstance(self.object, lb.paramattr.property.Property):
@@ -228,16 +235,11 @@ class PropertyDocumenter(autodoc.PropertyDocumenter):
 
 class ClassDocumenter(autodoc.ClassDocumenter):
     def get_object_members(self, want_all: bool):
-        if 'N9951B' not in self.object.__name__:
-            return super().get_object_members(True)
-
         _, members = super().get_object_members(True)
         members = self.filter_members(members, want_all)
-        for membername, member, isattr in members:
-            print(membername, member, isattr)
 
         return super().get_object_members(True)
-        
+
 
 def setup(app):
     app.add_domain(PatchedPythonDomain, override=True)
