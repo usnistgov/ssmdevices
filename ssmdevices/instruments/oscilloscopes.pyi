@@ -1,20 +1,32 @@
+__all__ = ['RigolTechnologiesMSO4014']
 import labbench as lb
 from labbench import paramattr as attr
-from _typeshed import Incomplete
 
-class RigolOscilloscope(lb.VISADevice):
+
+@attr.adjust('make', default='RIGOL TECHNOLOGIES')
+@attr.adjust('model', default='MSO4014')
+class RigolTechnologiesMSO4014(lb.VISADevice):
+
     def __init__(
         self,
-        resource: str = "str",
-        read_termination: str = "str",
-        write_termination: str = "str",
-        open_timeout: str = "NoneType",
-        identity_pattern: str = "NoneType",
-        timeout: str = "NoneType",
-    ): ...
-    time_offset: Incomplete
-    time_scale: Incomplete
+        resource: str='NoneType',
+        read_termination: str='str',
+        write_termination: str='str',
+        open_timeout: str='NoneType',
+        timeout: str='NoneType',
+        make: str='str',
+        model: str='str'
+    ):
+        ...
+    time_offset = attr.property.float(key=':TIM:OFFS', label='s')
+    time_scale = attr.property.float(key=':TIM:SCAL', label='s')
+    options = attr.property.str(key='*OPT', sets=False, cache=True, help='installed license options')
 
-    def open(self, horizontal: bool = ...) -> None: ...
-    def fetch(self): ...
-    def fetch_rms(self): ...
+    def open(self, horizontal=False):
+        self.write(':WAVeform:FORMat ASCii')
+
+    def fetch(self):
+        return self.backend.query_ascii_values(':WAV:DATA?')
+
+    def fetch_rms(self):
+        return float(self.backend.query(':MEAS:VRMS?').rstrip().lstrip())
