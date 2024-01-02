@@ -79,7 +79,7 @@ def ast_signature(args, defaults, annotations):
         args=[ast_arg(a, annotations.get(a, None)) for a in args],
         vararg=None,
         kwarg=None,  # ast.arg(arg='values', annotation=ast.Name(id='Any', ctx=ast.Load())),
-        defaults=[ast_name(repr(d)) for d in defaults],
+        defaults=[ast_name(repr(d)) for d in defaults if d is not lb.Undefined],
     )
 
 def ast_function_stub(name, args, defaults, annotations, decorator_list = []):
@@ -152,7 +152,7 @@ def update_stubs(path, mod_name, sub_name):
             })
 
             args = list(attrs.keys())
-            defaults = {trait.name: nameit(trait.default) for trait in attrs.values()}
+            defaults = {trait.name: nameit(trait.default) for trait in attrs.values() if trait.default is not Undefined}
             annotations = {name: nameit(trait._type) for name, trait in attrs.items()}
 
         elif issubclass(cls, (ParamAttr, Rack)):
