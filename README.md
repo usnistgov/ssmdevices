@@ -27,8 +27,11 @@ In many cases the acquired data are returned in tabular form as [pandas](http://
 <!-- _Note: Certain commercial equipment, instruments, and software are identified here in order to help specify experimental procedures.  Such identification is not intended to imply recommendation or endorsement of any product or service by NIST, nor is it intended to imply that the materials or equipment identified are necessarily the best available for the purpose._ -->
 
 ## Resources
-* [Documentation](https://github.com/usnistgov/ssmdevices/blob/main/doc/ssmdevices-api.pdf)
+* [Source code](http://github.com/usnistgov/ssmdevices)
+* [Documentation](http://pages.nist.gov/ssmdevices)
+* [PyPI](https://pypi.org/project/labbench/) module page
 * [Examples](https://github.com/usnistgov/ssmdevices/tree/main/examples)
+* [labbench](https://github.com/usnistgov/labbench), the underlying API library
 
 ## Contributors
 | Name  |  Contact Info |

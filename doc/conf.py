@@ -6,6 +6,9 @@ from sphinx.domains.python import PythonDomain
 from sphinx.ext import autodoc
 from pathlib import Path
 import labbench as lb
+from typing_extensions import Union, Literal
+
+lb.util.force_full_traceback(False)
 
 # load and validate the project definition from pyproject.toml
 project_info = toml.load("../pyproject.toml")
@@ -140,11 +143,6 @@ class PatchedPythonDomain(PythonDomain):
         )
 
 
-def process_docstring(app, what, name, obj, options, lines):
-    if isinstance(obj, lb.paramattr.ParamAttr):
-        lines.append(obj.doc(as_argument=True, anonymous=True))
-
-
 class AttributeDocumenter(autodoc.AttributeDocumenter):
     """Document lb.value trait class attributes in the style of python class attributes"""
 
@@ -156,37 +154,40 @@ class AttributeDocumenter(autodoc.AttributeDocumenter):
         return super().can_document_member(member, membername, isattr, parent)
 
     def add_directive_header(self, sig: str) -> None:
-        start_directives = set(self.directive.result)
+        if isinstance(self.object, lb.paramattr.value.Value):
+            # if self.object.only:
+            #     type_ = Union[*self.object.only, *list()]
+            # else:
+            type_ = self.object._type
+            if self.object.allow_none:
+                type_ = Union[type_, None]
+
+            self.parent.__annotations__[self.object.name] = type_
+            self.options.no_value = True
+            sig = ''
+
         super().add_directive_header(sig)
 
         if not isinstance(self.object, lb.paramattr.value.Value):
             return
-        
+
         sourcename = self.get_sourcename()
-
-        new_directives = set(self.directive.result) - start_directives
-        if not any(':type:' in line for line in new_directives):
-            # if signature.return_annotation is not Parameter.empty:
-            if self.config.autodoc_typehints_format == "short":
-                typerepr = autodoc.stringify_annotation(self.object._type, "smart")
-            else:
-                typerepr = autodoc.stringify_annotation(
-                    self.object._type, "fully-qualified-except-typing"
-                )
-            self.add_line("   :type: " + typerepr, sourcename)
-
         if self.object.default is not lb.Undefined:
             defaultrepr = autodoc.object_description(self.object.default)
             self.add_line("   :value: " + defaultrepr, sourcename)
 
+
+    def get_doc(self):
+        if isinstance(self.object, lb.paramattr.value.Value):
+            self.config.autodoc_inherit_docstrings = False
+            tab_width = self.directive.state.document.settings.tab_width
+            docstring = self.object.doc() + '\n'
+            return [autodoc.prepare_docstring(docstring, tab_width)]
+        else:
+            return super().get_doc()
+
 class PropertyDocumenter(autodoc.PropertyDocumenter):
     """Document lb.property traits in the style of python properties"""
-
-    # def get_attr(self, obj, name: str, *defargs):
-    #     """getattr() override for types such as Zope interfaces."""
-
-    #     print(obj, name)
-    #     return super().get_attr(obj, name, *defargs)
 
     @classmethod
     def can_document_member(cls, member, membername: str, isattr: bool, parent) -> bool:
@@ -207,9 +208,15 @@ class PropertyDocumenter(autodoc.PropertyDocumenter):
 
     def add_directive_header(self, sig: str) -> None:
         start_directives = set(self.directive.result)
+        if isinstance(self.object, lb.paramattr.property.Property):
+            type_ = self.object._type
+            if self.object.allow_none:
+                type_ = Union[type_, None]
+            self.parent.__annotations__[self.object.name] = type_
+            self.options.no_value = True
+            sig = ''
+
         super().add_directive_header(sig)
-        if not isinstance(self.object, lb.paramattr.property.Property):
-            return 
 
         sourcename = self.get_sourcename()
 
@@ -232,6 +239,15 @@ class PropertyDocumenter(autodoc.PropertyDocumenter):
             self.env.app.emit("autodoc-before-process-signature", self.object, False)
             return super().format_args(**kwargs)
 
+    def get_doc(self):
+        if isinstance(self.object, lb.paramattr.property.Property):
+            self.config.autodoc_inherit_docstrings = False
+            tab_width = self.directive.state.document.settings.tab_width
+            docstring = self.object.doc() + '\n'
+            return [autodoc.prepare_docstring(docstring, tab_width)]
+        else:
+            return super().get_doc()
+
 
 class ClassDocumenter(autodoc.ClassDocumenter):
     def get_object_members(self, want_all: bool):
@@ -244,6 +260,5 @@ class ClassDocumenter(autodoc.ClassDocumenter):
 def setup(app):
     app.add_domain(PatchedPythonDomain, override=True)
     app.add_autodocumenter(PropertyDocumenter, override=True)
-    app.add_autodocumenter(AttributeDocumenter)
+    app.add_autodocumenter(AttributeDocumenter, override=True)
     app.add_autodocumenter(ClassDocumenter, override=True)
-    app.connect("autodoc-process-docstring", process_docstring)
