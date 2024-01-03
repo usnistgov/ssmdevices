@@ -38,6 +38,9 @@ homepage = "https://github.com/usnistgov/ssmdevices"
 repository = "https://github.com/usnistgov/ssmdevices"
 documentation = "https://pages.nist.gov/ssmdevices"
 
+[project.optional-dependencies]
+dev = ["labbench[dev] @ git+https://github.com/usnistgov/labbench@overhaul-device-api"]
+
 [build-system]
 requires = [
     "pdm-pep517>=1.0",
@@ -51,36 +54,6 @@ build-backend = "pdm.pep517.api"
 source = "scm"
 write_to = "ssmdevices/_version.py"
 write_template = "__version__ = '{}'"
-
-[tool.pdm.dev-dependencies]
-dev = [
-    # python kernel bells and whistles
-    "ipykernel",
-    "pip",
-    "ipython",
-    "ipywidgets",
-    # linting
-    "black[jupyter]",
-    "flake8",
-    "ipywidgets",
-    "matplotlib>=3.6.0",
-    "seaborn>=0.11",
-    # introspection
-    "ast_decompiler",
-    # testing
-    "pytest",
-    "pytest-cov",
-    # documentation
-    "sphinx>=7",
-    "twine",
-    "toml",
-    "jupytext>=1.6.0",
-    "myst-nb>=1.0",
-    "pyperf>=2.6.2",
-    "mypy-extensions>=1.0.0",
-    "mypy>=1.7.0",
-    "astor>=0.8.1",
-]
 
 [tool.black]
 line-length = 100
