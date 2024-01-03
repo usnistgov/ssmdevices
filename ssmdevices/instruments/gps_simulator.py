@@ -87,7 +87,7 @@ class SpirentGSS8000(lb.SerialDevice):
         self.backend.read(self.backend.inWaiting())  # Clear out any remaining data
 
         # Pull the data/error message payload
-        data = re.match(b".*<data>[\W*]*(.*)[\W*]</data>.*", response, flags=re.S)
+        data = re.match(br".*<data>[\W*]*(.*)[\W*]</data>.*", response, flags=re.S)
 
         if returns is None:
             if data is not None:
@@ -97,7 +97,7 @@ class SpirentGSS8000(lb.SerialDevice):
             return data.group(1)
         if returns.lower() == b"status":
             status = int(
-                re.match(b".*<status>[\W*]*(\d+)[\W*]</status>.*", response, flags=re.S).group(1)
+                re.match(rb".*<status>[\W*]*(\d+)[\W*]</status>.*", response, flags=re.S).group(1)
             )
             return status_messages[status]
         else:
