@@ -1093,7 +1093,7 @@ version = "0.33.0"
 requires_python = ">=3.9,<3.13"
 git = "https://github.com/usnistgov/labbench"
 ref = "overhaul-device-api"
-revision = "a2ea79d85c2baa4554d1414edccfa332803ddff4"
+revision = "9cf683bfb5e92952f1c7db744d10ca3098ae0e28"
 summary = "The `labbench` module provides API tools to support python scripting for laboratory automation.The goal is to simplify the process of developing an experimental procedure into clear, concise, explainable, and reusable code."
 groups = ["default", "dev"]
 dependencies = [
@@ -1126,7 +1126,7 @@ extras = ["dev"]
 requires_python = ">=3.9,<3.13"
 git = "https://github.com/usnistgov/labbench"
 ref = "overhaul-device-api"
-revision = "a2ea79d85c2baa4554d1414edccfa332803ddff4"
+revision = "9cf683bfb5e92952f1c7db744d10ca3098ae0e28"
 summary = "The `labbench` module provides API tools to support python scripting for laboratory automation.The goal is to simplify the process of developing an experimental procedure into clear, concise, explainable, and reusable code."
 groups = ["dev"]
 dependencies = [
@@ -1197,7 +1197,7 @@ extras = ["pyvisa-py-extras"]
 requires_python = ">=3.9,<3.13"
 git = "https://github.com/usnistgov/labbench"
 ref = "overhaul-device-api"
-revision = "a2ea79d85c2baa4554d1414edccfa332803ddff4"
+revision = "9cf683bfb5e92952f1c7db744d10ca3098ae0e28"
 summary = "The `labbench` module provides API tools to support python scripting for laboratory automation.The goal is to simplify the process of developing an experimental procedure into clear, concise, explainable, and reusable code."
 groups = ["default"]
 dependencies = [
