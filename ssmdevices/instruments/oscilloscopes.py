@@ -124,14 +124,18 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
 
 if __name__ == '__main__':
     scope = TektronixMSO64BSpectrogram()
-    
+
     with scope:
+        scope.spectrogram_enabled(channel=1)
+
+        scope.resolution_bandwidth = 10e3
+        scope.span = 2e9
+
         scope.coupling('AC', channel=1)
         scope.bandwidth(8e9, channel=1)
         scope.input_termination(50, channel=1)
         scope.center_frequency(3e9, channel=1)
         scope.vertical_scale(0.05, channel=1)
-        scope.spectrogram_enabled(channel=1)
 
     # def configure_channel(self, channel: int, center_frequency: float = None, vertical_scale: float = None, enabled=None):
     #     setattr(self, f'channel_{channel}_center_frequency', center_frequency)
