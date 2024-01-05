@@ -1,6 +1,6 @@
 [project]
 name = "ssmdevices"
-version = "0.20"
+version = "0.20.1"
 description = "a collection of lab automation drivers implemented with labbench"
 
 authors = [
@@ -22,8 +22,7 @@ maintainers = [
 ]
 
 dependencies = [
-    # "labbench >= 0.33.0",
-    "labbench[pyvisa-py-extras] @ git+https://github.com/usnistgov/labbench@overhaul-device-api",
+    "labbench >= 0.33.0",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
@@ -39,7 +38,7 @@ repository = "https://github.com/usnistgov/ssmdevices"
 documentation = "https://pages.nist.gov/ssmdevices"
 
 [project.optional-dependencies]
-dev = ["labbench[dev] @ git+https://github.com/usnistgov/labbench@overhaul-device-api"]
+dev = ["labbench[dev]"]
 
 [build-system]
 requires = [
