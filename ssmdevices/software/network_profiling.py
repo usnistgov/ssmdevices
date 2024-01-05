@@ -90,18 +90,21 @@ class _IPerfBase(lb.ShellBackend):
     # timing and duration
     # (for time, default=None even though we know the default, because setting 10s conflicts with `number`)
     time: float = attr.value.float(
+        None,
         min=0,
         max=16535,
         allow_none=True,
         help="send duration (s) before quitting (default: 10)",
     )
     number: int = attr.value.int(
+        None,
         min=-1,
         allow_none=True,
         help="the number of bytes to transmit before quitting",
     )
 
     interval: float = attr.value.float(
+        None,
         min=0.01,
         allow_none=True,
         label="s",
@@ -111,11 +114,13 @@ class _IPerfBase(lb.ShellBackend):
     # high level buffer commands
     udp: bool = attr.value.bool(default=False, help="if True, to use UDP instead of TCP")
     bit_rate: str = attr.value.str(
+        None,
         allow_none=True,
         label="bits/s",
         help="maximum bit rate, accepts KMG unit suffix; defaults 1Mbit/s UDP, no limit for TCP",
     )
     buffer_size: int = attr.value.int(
+        None,
         min=1,
         allow_none=True,
         help="buffer size when generating traffic",
@@ -124,15 +129,17 @@ class _IPerfBase(lb.ShellBackend):
 
     # TCP parameters
     tcp_window_size: int = attr.value.int(
+        None,
         min=1,
         allow_none=True,
         help="window / socket size (default OS dependent?)",
         label="bytes",
     )
     nodelay: bool = attr.value.bool(
-        default=False, help="set True to use nodelay (TCP traffic only)"
+        None, default=False, help="set True to use nodelay (TCP traffic only)"
     )
     mss: int = attr.value.int(
+        None,
         min=10,
         allow_none=True,
         help="minimum segment size=MTU-40, TCP only",
@@ -450,13 +457,13 @@ class IPerf2BoundPair(IPerf2):
     """
 
     # add other settings
-    resource: str = attr.value.str(help="unused - use sender and receiver instead", sets=False)
+    resource: str = attr.value.str(None, help="unused - use sender and receiver instead")
 
     server: str = attr.value.NetworkAddress(
-        accept_port=False, help="the ip address where the server listens"
+        None, accept_port=False, help="the ip address where the server listens"
     )
     client: str = attr.value.NetworkAddress(
-        accept_port=False, help="the ip address from which the client sends data"
+        None, accept_port=False, help="the ip address from which the client sends data"
     )
 
     children = {}
@@ -594,28 +601,31 @@ class TrafficProfiler_ClosedLoop(lb.Device):
     equal to the system time resolution.
     """
 
-    server: str = attr.value.str(help="the name of the network interface that will send data")
-    client: str = attr.value.str(help="the name of the network interface that will receive data")
+    server: str = attr.value.str(None, help="the name of the network interface that will send data")
+    client: str = attr.value.str(
+        None, help="the name of the network interface that will receive data"
+    )
     receive_side: str = attr.value.str(
-        help="which of the server or the client does the receiving",
+        None,
         only=("server", "client"),
+        help="which of the server or the client does the receiving",
     )
     port: int = attr.value.int(
-        default=0,
+        0,
         min=0,
         help="TCP or UDP port for networking, or 0 to let the operating system choose",
     )
-    resource: str = attr.value.str(help="skipd - use sender and receiver instead", cache=True)
+    resource: str = attr.value.str(help="skipped - use sender and receiver instead", cache=True)
     timeout: float = attr.value.float(
-        default=2, min=1e-3, help="timeout before aborting the test", cache=True
+        2, min=1e-3, help="timeout before aborting the test", cache=True
     )
-    tcp_nodelay: bool = attr.value.bool(default=True, help="set True to disable Nagle's algorithm")
+    tcp_nodelay: bool = attr.value.bool(True, help="set True to disable Nagle's algorithm")
     sync_each: bool = attr.value.bool(
-        default=False,
+        False,
         help="synchronize the start times of the send and receive threads for each buffer at the cost of throughput",
     )
 
-    delay: float = attr.value.float(default=0, min=0, help="wait time before profiling", cache=True)
+    delay: float = attr.value.float(0, min=0, help="wait time before profiling", cache=True)
 
     def __repr__(self):
         return "{name}(server='{server}',client='{client}')".format(

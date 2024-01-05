@@ -60,9 +60,7 @@ else:
     thru_vector_mean = thrus
 
 if thru_vector_mean.index[1] - thru_vector_mean.index[0] < vector_mean_bw:
-    thru_vector_mean["averaging_group"] = (thru_vector_mean.index / mag_mean_bw).astype(
-        int
-    )
+    thru_vector_mean["averaging_group"] = (thru_vector_mean.index / mag_mean_bw).astype(int)
     thru_mag_mean = (
         np.abs(thru_vector_mean)
         .reset_index()

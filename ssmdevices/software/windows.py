@@ -25,8 +25,8 @@ class WLANInfo(lb.ShellBackend):
         only_bssid="mode=bssid",
     )
 
-    only_bssid: bool = attr.value.bool(default=False, help="gather only BSSID information")
-    interface: str = attr.value.str(help="name of the interface to query")
+    only_bssid: bool = attr.value.bool(False, help="gather only BSSID information")
+    interface: str = attr.value.str(None, help="name of the interface to query")
 
     def wait(self):
         try:
@@ -87,15 +87,15 @@ class WLANInfo(lb.ShellBackend):
 
 class WLANClient(lb.Device):
     resource: str = attr.value.str(
-        help="interface name (from the OS) or MAC address (nn:nn:nn:nn:nn)", cache=True
+        None, help="interface name (from the OS) or MAC address (nn:nn:nn:nn:nn)", cache=True
     )
-    ssid: str = attr.value.str(help="SSID of the AP for connection")
+    ssid: str = attr.value.str(None, help="SSID of the AP for connection")
     timeout: float = attr.value.float(
-        default=10,
+        10,
         min=0,
+        cache=True,
         help="attempt AP connection for this long before raising ConnectionError",
         label="s",
-        cache=True,
     )
 
     def open(self):

@@ -15,9 +15,7 @@ import numpy as np
 import time
 
 #############################SETUP CONNECTIONS#####################
-atten = MiniCircuitsRCDAT(
-    "11604210008", frequency=5.3e9
-)  # Set the attenuator serial number here
+atten = MiniCircuitsRCDAT("11604210008", frequency=5.3e9)  # Set the attenuator serial number here
 na = RohdeSchwarzZMB("TCPIP0::132.163.202.153::inst0::INSTR")
 
 lb.show_messages("debug")
