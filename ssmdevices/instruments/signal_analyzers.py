@@ -26,8 +26,8 @@ DEFAULT_CHANNEL_NAME = "remote"
 
 @attr.visa_keying(remap={False: "0", True: "1"})
 class KeysightN9951B(lb.VISADevice):
-    """ A Keysight N9951B "Field Fox".
-    
+    """A Keysight N9951B "Field Fox".
+
     Attributes:
         frequency_start (int): the sweep start
     """
@@ -89,7 +89,6 @@ class KeysightN9951B(lb.VISADevice):
 
 
 class RohdeSchwarzFSWBase(lb.VISADevice):
-
     _DATA_FORMATS = "ASC,0", "REAL,32", "REAL,64", "REAL,16"
     _CHANNEL_TYPES = "SAN", "IQ", "RTIM", DEFAULT_CHANNEL_NAME
     _TRIGGER_OUT_TYPES = "DEV", "TARM", "UDEF"
@@ -98,6 +97,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     _CACHE_DIR = r"c:\temp\remote-cache"
 
     expected_channel_type: str = attr.value.str(
+        None,
         allow_none=True,
         only=_CHANNEL_TYPES,
         sets=False,
@@ -105,10 +105,10 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         help="which channel type to use",
     )
     default_window: str = attr.value.str(
-        default="", cache=True, help="data window number to use if unspecified"
+        "", cache=True, help="data window number to use if unspecified"
     )
     default_trace: str = attr.value.str(
-        default="", cache=True, help="data trace number to use if unspecified"
+        "", cache=True, help="data trace number to use if unspecified"
     )
 
     # Set these in subclasses for specific FSW instruments

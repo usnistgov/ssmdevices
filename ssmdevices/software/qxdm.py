@@ -106,7 +106,7 @@ class QPST(lb.Win32ComDevice):
 class QXDM(lb.Win32ComDevice):
     """QXDM software wrapper"""
 
-    resource: int = attr.value.int(min=0, help="serial port number for the handset connection")
+    resource: int = attr.value.int(0, min=0, help="serial port number for the handset connection")
     cache_path: str = attr.value.str(default="temp", help="directory for auto-saved isf files")
     connection_timeout: float = attr.value.float(default=2, min=0.5, help="connection timeout (s)")
 
