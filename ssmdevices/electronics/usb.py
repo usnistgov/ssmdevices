@@ -5,9 +5,10 @@ Drivers for USB peripherals
 """
 import collections
 import labbench as lb
+from labbench import paramattr as attr
 
 
-class AcronamePropertyAdapter(lb.PropertyKeyingBase):
+class AcronamePropertyAdapter(attr.KeyAdapterBase):
     def set(self, device, key: tuple, value, trait=None):
         """Apply an instrument setting to the instrument. The value ``value''
         will be applied to the trait attriute ``attr'' in type(self).
@@ -35,8 +36,8 @@ class AcronamePropertyAdapter(lb.PropertyKeyingBase):
             raise ValueError('first element in command key must be one of "data" or "power"')
 
 
-@AcronamePropertyAdapter
-@lb.adjusted("resource", None)
+@AcronamePropertyAdapter()
+@attr.adjust("resource", None)
 class AcronameUSBHub2x4(lb.Device):
     """A USB hub with control over each port."""
 
@@ -60,17 +61,17 @@ class AcronameUSBHub2x4(lb.Device):
     def _get_data_enable(self, port: int):
         return self._hub.usb.getDataEnable(port)
 
-    data0_enabled = lb.property.bool(key=("data", 0))
-    data1_enabled = lb.property.bool(key=("data", 1))
-    data2_enabled = lb.property.bool(key=("data", 2))
-    data3_enabled = lb.property.bool(key=("data", 3))
+    data0_enabled = attr.property.bool(key=("data", 0))
+    data1_enabled = attr.property.bool(key=("data", 1))
+    data2_enabled = attr.property.bool(key=("data", 2))
+    data3_enabled = attr.property.bool(key=("data", 3))
 
-    power0_enabled = lb.property.bool(key=("power", 0))
-    power1_enabled = lb.property.bool(key=("power", 1))
-    power2_enabled = lb.property.bool(key=("power", 2))
-    power3_enabled = lb.property.bool(key=("power", 3))
+    power0_enabled = attr.property.bool(key=("power", 0))
+    power1_enabled = attr.property.bool(key=("power", 1))
+    power2_enabled = attr.property.bool(key=("power", 2))
+    power3_enabled = attr.property.bool(key=("power", 3))
 
-    resource = lb.value.str(
+    resource: str = attr.value.str(
         allow_none=True,
         cache=True,
         help="None to autodetect, or a serial number string",

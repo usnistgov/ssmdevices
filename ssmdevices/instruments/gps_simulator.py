@@ -6,6 +6,7 @@ __all__ = ["SpirentGSS8000"]
 
 import time, re
 import labbench as lb
+from labbench import paramattr as attr
 
 status_messages = (
     b"no scenario",
@@ -19,16 +20,17 @@ status_messages = (
 )
 
 
+@attr.adjust(
+    "resource",
+    default="COM17",
+    help="serial port string (COMnn in windows or /dev/xxxx in unix/Linux)",
+)
 class SpirentGSS8000(lb.SerialDevice):
     """Control a Spirent GPS GSS8000 simulator over a serial connection.
 
     Responses from the Spirent seem to be incompatible with
     pyvisa, so this driver uses plain serial.
     """
-
-    resource = lb.value.str(
-        "COM17", help="serial port string (COMnn in windows or /dev/xxxx in unix/Linux)"
-    )
 
     def get_key(self, key, trait_name=None):
         return self.query(key)
@@ -85,7 +87,7 @@ class SpirentGSS8000(lb.SerialDevice):
         self.backend.read(self.backend.inWaiting())  # Clear out any remaining data
 
         # Pull the data/error message payload
-        data = re.match(b".*<data>[\W*]*(.*)[\W*]</data>.*", response, flags=re.S)
+        data = re.match(br".*<data>[\W*]*(.*)[\W*]</data>.*", response, flags=re.S)
 
         if returns is None:
             if data is not None:
@@ -95,7 +97,7 @@ class SpirentGSS8000(lb.SerialDevice):
             return data.group(1)
         if returns.lower() == b"status":
             status = int(
-                re.match(b".*<status>[\W*]*(\d+)[\W*]</status>.*", response, flags=re.S).group(1)
+                re.match(rb".*<status>[\W*]*(\d+)[\W*]</status>.*", response, flags=re.S).group(1)
             )
             return status_messages[status]
         else:
@@ -138,7 +140,7 @@ class SpirentGSS8000(lb.SerialDevice):
 
         self.rewind()
 
-    @lb.property.bytes(sets=False)
+    @attr.property.bytes(sets=False)
     def utc_time(self):
         """UTC time of the running scenario"""
         utc_unformatted = self.query(b"-,UTC_TIME")
@@ -151,12 +153,12 @@ class SpirentGSS8000(lb.SerialDevice):
 
         return time.strftime("%Y-%m-%d %H:%M:%S", utc_struct) + "." + frac
 
-    @lb.property.bool(sets=False)
+    @attr.property.bool(sets=False)
     def running(self):
         """`True` if a scenario is running."""
         return self.status == b"running"
 
-    @lb.property.bytes(sets=False, only=status_messages, case=False)
+    @attr.property.bytes(sets=False, only=status_messages, case=False)
     def status(self):
         """UTC time of the current running scenario."""
         return self.write(b"NULL", returns=b"status")

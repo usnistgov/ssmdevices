@@ -13,10 +13,11 @@ import time
 from xml.etree import ElementTree as ET
 
 import labbench as lb
+from labbench import paramattr as attr
 import psutil
 
 
-@lb.adjusted("com_object", "QPSTAtmnServer.Application")
+@attr.adjust("com_object", "QPSTAtmnServer.Application")
 class QPST(lb.Win32ComDevice):
     PORT_LIST_CODES = dict(
         ue_mode={
@@ -101,13 +102,13 @@ class QPST(lb.Win32ComDevice):
             raise TimeoutError(f"QXDM disconnect timeout on COM{port}")
 
 
-@lb.adjusted("com_object", r"QXDM.QXDMAutoApplication")
+@attr.adjust("com_object", r"QXDM.QXDMAutoApplication")
 class QXDM(lb.Win32ComDevice):
     """QXDM software wrapper"""
 
-    resource = lb.value.int(min=0, help="serial port number for the handset connection")
-    cache_path = lb.value.str("temp", help="directory for auto-saved isf files")
-    connection_timeout = lb.value.float(2, min=0.5, help="connection timeout (s)")
+    resource: int = attr.value.int(min=0, help="serial port number for the handset connection")
+    cache_path: str = attr.value.str(default="temp", help="directory for auto-saved isf files")
+    connection_timeout: float = attr.value.float(default=2, min=0.5, help="connection timeout (s)")
 
     def open(self):
         #
@@ -133,11 +134,11 @@ class QXDM(lb.Win32ComDevice):
             raise Exception("could not disable UE; does QXDM work if you start it manually?")
 
     # State traits implemented by command key
-    ue_model_number = lb.property.str(help="model number code", key="ue_model_number")
-    ue_mode = lb.property.str(help="current state of the phone", key="ue_mode")
-    ue_imei = lb.property.str(help="Phone IMEI", key="ue_imei")
-    ue_esn = lb.property.str(help="Phone ESN", key="ue_esn")
-    ue_build_id = lb.property.str(help="Build ID of software on the phone", key="ue_build_id")
+    ue_model_number = attr.property.str(help="model number code", key="ue_model_number")
+    ue_mode = attr.property.str(help="current state of the phone", key="ue_mode")
+    ue_imei = attr.property.str(help="Phone IMEI", key="ue_imei")
+    ue_esn = attr.property.str(help="Phone ESN", key="ue_esn")
+    ue_build_id = attr.property.str(help="Build ID of software on the phone", key="ue_build_id")
 
     def get_key(self, key, trait_name=None):
         try:
@@ -258,7 +259,7 @@ class QXDM(lb.Win32ComDevice):
     def _load_config(self, path):
         self._window.LoadConfig(path)
 
-    @lb.property.str(sets=False, cache=True)
+    @attr.property.str(sets=False, cache=True)
     def version(self):
         """QXDM application version"""
         _window = self.backend.GetAutomationWindow()
@@ -417,6 +418,8 @@ class QXDM(lb.Win32ComDevice):
 
 # if __name__ == '__main__':
 #    import labbench as lb
+from labbench import paramattr as attr
+
 #
 #    lb.show_messages('debug')
 #

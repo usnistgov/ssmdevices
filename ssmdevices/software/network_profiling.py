@@ -24,6 +24,7 @@ from contextlib import AbstractContextManager, suppress
 from ._networking import find_free_port
 
 import labbench as lb
+from labbench import paramattr as attr
 import pandas as pd
 import psutil
 import ssmdevices.lib
@@ -48,7 +49,7 @@ if "_tcp_port_offset" not in dir():
 perf_counter()
 
 
-@lb.adjusted("timeout", default=5)
+@attr.adjust("timeout", default=5)
 class _IPerfBase(lb.ShellBackend):
     FLAGS = dict(
         resource="-c",
@@ -67,41 +68,40 @@ class _IPerfBase(lb.ShellBackend):
     )
 
     # address and network interface parameters
-    resource = lb.value.NetworkAddress(
+    resource: str = attr.value.NetworkAddress(
         None,
-        allow_port=False,
+        accept_port=False,
         allow_none=True,
         help="client host address (set None if server=True)",
     )
-    server = lb.value.bool(False, help="True to run as a server")
-    port = lb.value.int(5201, min=0, help="network port")
-    bind = lb.value.str(None, allow_none=True, help="bind connection to specified IP")
+    server: bool = attr.value.bool(default=False, help="True to run as a server")
+    port: int = attr.value.int(default=5201, min=0, help="network port")
+    bind: str = attr.value.str(
+        default=None, allow_none=True, help="bind connection to specified IP"
+    )
 
-    format = lb.value.str(
-        None,
-        only=("k", "m", "g", "K", "M", "G"),
+    format: str = attr.value.str(
+        default=None,
+        only=(None, "k", "m", "g", "K", "M", "G"),
         allow_none=True,
         help="data unit prefix in bits (k, m, g), bytes (K, M, G), or None for auto",
     )
 
     # timing and duration
     # (for time, default=None even though we know the default, because setting 10s conflicts with `number`)
-    time = lb.value.float(
-        None,
+    time: float = attr.value.float(
         min=0,
         max=16535,
         allow_none=True,
         help="send duration (s) before quitting (default: 10)",
     )
-    number = lb.value.int(
-        None,
+    number: int = attr.value.int(
         min=-1,
         allow_none=True,
         help="the number of bytes to transmit before quitting",
     )
 
-    interval = lb.value.float(
-        None,
+    interval: float = attr.value.float(
         min=0.01,
         allow_none=True,
         label="s",
@@ -109,15 +109,13 @@ class _IPerfBase(lb.ShellBackend):
     )
 
     # high level buffer commands
-    udp = lb.value.bool(False, help="if True, to use UDP instead of TCP")
-    bit_rate = lb.value.str(
-        None,
+    udp: bool = attr.value.bool(default=False, help="if True, to use UDP instead of TCP")
+    bit_rate: str = attr.value.str(
         allow_none=True,
         label="bits/s",
         help="maximum bit rate, accepts KMG unit suffix; defaults 1Mbit/s UDP, no limit for TCP",
     )
-    buffer_size = lb.value.int(
-        None,
+    buffer_size: int = attr.value.int(
         min=1,
         allow_none=True,
         help="buffer size when generating traffic",
@@ -125,16 +123,16 @@ class _IPerfBase(lb.ShellBackend):
     )
 
     # TCP parameters
-    tcp_window_size = lb.value.int(
-        None,
+    tcp_window_size: int = attr.value.int(
         min=1,
         allow_none=True,
         help="window / socket size (default OS dependent?)",
         label="bytes",
     )
-    nodelay = lb.value.bool(False, help="set True to use nodelay (TCP traffic only)")
-    mss = lb.value.int(
-        None,
+    nodelay: bool = attr.value.bool(
+        default=False, help="set True to use nodelay (TCP traffic only)"
+    )
+    mss: int = attr.value.int(
         min=10,
         allow_none=True,
         help="minimum segment size=MTU-40, TCP only",
@@ -196,7 +194,7 @@ class _IPerfBase(lb.ShellBackend):
                 raise ValueError("iperf server does not support the `number` argument")
 
 
-@lb.adjusted("binary_path", ssmdevices.lib.path("iperf3.exe"))
+@attr.adjust("binary_path", ssmdevices.lib.path("iperf3.exe"))
 class IPerf3(_IPerfBase):
     """Run an instance of iperf3, collecting output data in a background thread.
     When running as an iperf client (server=False),
@@ -206,12 +204,14 @@ class IPerf3(_IPerfBase):
     FLAGS = dict(_IPerfBase.FLAGS, json="-J", reverse="-R", zerocopy="-Z")
 
     # IPerf3 only
-    reverse = lb.value.bool(False, help="run in reverse mode (server sends, client receives)")
-    json = lb.value.bool(False, help="output data in JSON format")
-    zerocopy = lb.value.bool(False, help="use a 'zero copy' method of sending data")
+    reverse: bool = attr.value.bool(
+        default=False, help="run in reverse mode (server sends, client receives)"
+    )
+    json: bool = attr.value.bool(default=False, help="output data in JSON format")
+    zerocopy: bool = attr.value.bool(default=False, help="use a 'zero copy' method of sending data")
 
 
-@lb.adjusted("binary_path", ssmdevices.lib.path("iperf.exe"))
+@attr.adjust("binary_path", ssmdevices.lib.path("iperf.exe"))
 class IPerf2(_IPerfBase):
     """Run an instance of iperf to profile data transfer speed. It can
     operate as a server (listener) or client (sender), operating either
@@ -233,9 +233,11 @@ class IPerf2(_IPerfBase):
         "datagrams_out_of_order",
     )
 
-    bidirectional = lb.value.bool(False, key="-d", help="send and receive simultaneously")
-    report_style = lb.value.str(
-        "C",
+    bidirectional: bool = attr.value.bool(
+        default=False, key="-d", help="send and receive simultaneously"
+    )
+    report_style: str = attr.value.str(
+        default="C",
         only=("C", None),
         allow_none=True,
         help='"C" for DataFrame table output, None for formatted text',
@@ -291,10 +293,10 @@ class IPerf2(_IPerfBase):
         return data
 
 
-@lb.adjusted("binary_path", ssmdevices.lib.path("adb.exe"))
+@attr.adjust("binary_path", ssmdevices.lib.path("adb.exe"))
 class IPerf2OnAndroid(IPerf2):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
-    remote_binary_path = lb.value.str("/data/local/tmp/iperf", cache=True)
+    remote_binary_path: str = attr.value.str(default="/data/local/tmp/iperf", cache=True)
 
     def profile(self, block=True):
         self._validate_flags()
@@ -448,13 +450,13 @@ class IPerf2BoundPair(IPerf2):
     """
 
     # add other settings
-    resource = lb.value.str(help="unused - use sender and receiver instead", sets=False)
+    resource: str = attr.value.str(help="unused - use sender and receiver instead", sets=False)
 
-    server = lb.value.NetworkAddress(
-        accepts_ports=False, help="the ip address where the server listens"
+    server: str = attr.value.NetworkAddress(
+        accept_port=False, help="the ip address where the server listens"
     )
-    client = lb.value.NetworkAddress(
-        accepts_ports=False, help="the ip address from which the client sends data"
+    client: str = attr.value.NetworkAddress(
+        accept_port=False, help="the ip address from which the client sends data"
     )
 
     children = {}
@@ -592,26 +594,28 @@ class TrafficProfiler_ClosedLoop(lb.Device):
     equal to the system time resolution.
     """
 
-    server = lb.value.str(help="the name of the network interface that will send data")
-    client = lb.value.str(help="the name of the network interface that will receive data")
-    receive_side = lb.value.str(
+    server: str = attr.value.str(help="the name of the network interface that will send data")
+    client: str = attr.value.str(help="the name of the network interface that will receive data")
+    receive_side: str = attr.value.str(
         help="which of the server or the client does the receiving",
         only=("server", "client"),
     )
-    port = lb.value.int(
-        0,
+    port: int = attr.value.int(
+        default=0,
         min=0,
         help="TCP or UDP port for networking, or 0 to let the operating system choose",
     )
-    resource = lb.value.str(help="skipd - use sender and receiver instead", cache=True)
-    timeout = lb.value.float(2, min=1e-3, help="timeout before aborting the test", cache=True)
-    tcp_nodelay = lb.value.bool(True, help="set True to disable Nagle's algorithm")
-    sync_each = lb.value.bool(
-        False,
+    resource: str = attr.value.str(help="skipd - use sender and receiver instead", cache=True)
+    timeout: float = attr.value.float(
+        default=2, min=1e-3, help="timeout before aborting the test", cache=True
+    )
+    tcp_nodelay: bool = attr.value.bool(default=True, help="set True to disable Nagle's algorithm")
+    sync_each: bool = attr.value.bool(
+        default=False,
         help="synchronize the start times of the send and receive threads for each buffer at the cost of throughput",
     )
 
-    delay = lb.value.float(0, min=0, help="wait time before profiling", cache=True)
+    delay: float = attr.value.float(default=0, min=0, help="wait time before profiling", cache=True)
 
     def __repr__(self):
         return "{name}(server='{server}',client='{client}')".format(

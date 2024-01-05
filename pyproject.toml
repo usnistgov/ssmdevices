@@ -1,6 +1,6 @@
 [project]
 name = "ssmdevices"
-version = "0.19"
+version = "0.20"
 description = "a collection of lab automation drivers implemented with labbench"
 
 authors = [
@@ -22,13 +22,14 @@ maintainers = [
 ]
 
 dependencies = [
-    "labbench >= 0.31.0",
+    # "labbench >= 0.33.0",
+    "labbench[pyvisa-py-extras] @ git+https://github.com/usnistgov/labbench@overhaul-device-api",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
 ]
 
-requires-python = ">=3.8,<3.12"
+requires-python = ">=3.9,<3.13"
 readme = "README.md"
 license = {file = "LICENSE.md"}
 
@@ -36,6 +37,9 @@ license = {file = "LICENSE.md"}
 homepage = "https://github.com/usnistgov/ssmdevices"
 repository = "https://github.com/usnistgov/ssmdevices"
 documentation = "https://pages.nist.gov/ssmdevices"
+
+[project.optional-dependencies]
+dev = ["labbench[dev] @ git+https://github.com/usnistgov/labbench@overhaul-device-api"]
 
 [build-system]
 requires = [
@@ -51,31 +55,13 @@ source = "scm"
 write_to = "ssmdevices/_version.py"
 write_template = "__version__ = '{}'"
 
-[tool.pdm.dev-dependencies]
-dev = [
-    "black[jupyter]",
-    "ipython",
-    "flake8",
-    "ast_decompiler",
-    "mypy",
-    "pytest",
-    "pytest-cov",
-    "sphinx>=7",
-    "ipywidgets",
-    "matplotlib>=3.6.0",
-    "seaborn>=0.11",
-    "toml>=0.10",
-    "jupytext>=1.6.0",
-    "myst-nb @ git+https://github.com/executablebooks/MyST-NB@master",
-]
-
 [tool.black]
 line-length = 100
-target-version = ["py38", "py39", "py310", "py311"]
+target-version = ["py39", "py310", "py311", "py312"]
 include = '\.pyi?$'
 
 [tool.pdm.scripts]
 doc-html = {cmd = "sphinx-build -b html doc doc/html"}
 doc-latex = {cmd = "sphinx-build -b latex doc doc/latex"}
 doc-pdf = {cmd = "pdflatex doc/latex/ssmdevices-api.tex --output-directory=doc", env = {"TEXINPUTS" = "doc/latex"}}
-doc-rst = {cmd = "sphinx-apidoc -F . -o doc"}
+doc-rst = {cmd = "sphinx-apidoc -F . -o doc/rst"}

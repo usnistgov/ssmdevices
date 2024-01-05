@@ -11,6 +11,7 @@ import re
 import time
 
 import labbench as lb
+from labbench import paramattr as attr
 
 __all__ = ["AeroflexTM500"]
 
@@ -21,6 +22,7 @@ class TM500Error(ValueError):
         self.errcode = errcode
 
 
+@attr.adjust('timeout', default=1, help="leave the timeout small to allow keyboard interrupts")
 class AeroflexTM500(lb.TelnetDevice):
     """Control an Aeroflex TM500 network tester with a
     telnet connection.
@@ -33,21 +35,20 @@ class AeroflexTM500(lb.TelnetDevice):
     from a file that could be treated as a config file.
     """
 
-    timeout = lb.value.float(1, min=0, help="leave the timeout small to allow keyboard interrupts")
-    ack_timeout = lb.value.float(
-        30,
+    ack_timeout: float = attr.value.float(
+        default=30,
         min=0.1,
         help="how long to wait for a command acknowledgment from the TM500 (s)",
     )
-    busy_retries = lb.value.int(20, min=0)
-    remote_ip = lb.value.str("10.133.0.203", help="ip address of TM500 backend")
-    remote_ports = lb.value.str("5001 5002 5003", help="port of TM500 backend")
-    min_acquisition_time = lb.value.int(30, min=0, help="minimum time to spend acquiring logs (s)")
-    port = lb.value.int(5003, min=1)
-    config_root = lb.value.str(".", help="path to the command scripts directory")
-    data_root = lb.value.str(".", help="remote save root directory")
-    convert_files = lb.value.list(
-        [], help="text to match in the filename of data output files to convert"
+    busy_retries: int = attr.value.int(default=20, min=0)
+    remote_ip: str = attr.value.str(default="10.133.0.203", help="ip address of TM500 backend")
+    remote_ports: str = attr.value.str(default="5001 5002 5003", help="port of TM500 backend")
+    min_acquisition_time: int = attr.value.int(default=30, min=0, help="minimum time to spend acquiring logs (s)")
+    port: int = attr.value.int(default=5003, min=1)
+    config_root: str = attr.value.str(default=".", help="path to the command scripts directory")
+    data_root: str = attr.value.str(default=".", help="remote save root directory")
+    convert_files = attr.value.list(
+        default=[], help="text to match in the filename of data output files to convert"
     )
 
     def arm(self, scenario_name):
@@ -62,7 +63,8 @@ class AeroflexTM500(lb.TelnetDevice):
         if force=True. It always runs on the first call after AeroflexTM500
         is instantiated.
 
-        :returns: A list of responses to each command sent
+        Returns:
+            A list of responses to each command sent
         """
         if isinstance(scenario_name, numbers.Number):
             scenario_name = str(scenario_name)
@@ -430,6 +432,7 @@ class AeroflexTM500(lb.TelnetDevice):
 
 if __name__ == "__main__":
     import labbench as lb
+from labbench import paramattr as attr
 
     # AeroflexTM500.key_log_to_script(r'C:\Users\dkuester\Desktop\TM500_2Sec_8UEs_withTime.txt')
 

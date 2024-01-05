@@ -6,10 +6,10 @@ import time
 import numpy as np
 import pandas as pd
 import labbench as lb
+from labbench import paramattr as attr
 
 __all__ = [
     "KeysightN9951B",
-    "RohdeSchwarzFSW26Base",
     "RohdeSchwarzFSW26SpectrumAnalyzer",
     "RohdeSchwarzFSW26IQAnalyzer",
     "RohdeSchwarzFSW26LTEAnalyzer",
@@ -24,19 +24,25 @@ __all__ = [
 DEFAULT_CHANNEL_NAME = "remote"
 
 
-@lb.property.visa_keying(remap={False: "0", True: "1"})
+@attr.visa_keying(remap={False: "0", True: "1"})
 class KeysightN9951B(lb.VISADevice):
-    """A Keysight N9951B FieldFox"""
+    """ A Keysight N9951B "Field Fox".
+    
+    Attributes:
+        frequency_start (int): the sweep start
+    """
 
-    frequency_start = lb.property.float(key="FREQ:START", min=1e6, max=43.99e9, label="Hz")
-    frequency_stop = lb.property.float(key="FREQ:STOP", min=10e6, max=44e9, label="Hz")
-    frequency_span = lb.property.float(key="FREQ:SPAN", min=2, max=44e9, label="Hz")
-    frequency_center = lb.property.float(key="FREQ:CENT", min=2, max=26.5e9, step=1e-9, label="Hz")
+    frequency_start = attr.property.float(key="FREQ:START", min=1e6, max=43.99e9, label="Hz")
+    frequency_stop = attr.property.float(key="FREQ:STOP", min=10e6, max=44e9, label="Hz")
+    frequency_span = attr.property.float(key="FREQ:SPAN", min=2, max=44e9, label="Hz")
+    frequency_center = attr.property.float(
+        key="FREQ:CENT", min=2, max=26.5e9, step=1e-9, label="Hz"
+    )
 
-    initiate_continuous = lb.property.bool(key="INIT:CONT")
-    reference_level = lb.property.float(key="DISP:WIND:TRAC1:Y:RLEV", step=1e-3, label="dB")
+    initiate_continuous = attr.property.bool(key="INIT:CONT")
+    reference_level = attr.property.float(key="DISP:WIND:TRAC1:Y:RLEV", step=1e-3, label="dB")
 
-    resolution_bandwidth = lb.property.float(key="BAND", min=1e3, max=5.76e6, label="Hz")
+    resolution_bandwidth = attr.property.float(key="BAND", min=1e3, max=5.76e6, label="Hz")
 
     def grab_data(self):
         pass
@@ -83,6 +89,7 @@ class KeysightN9951B(lb.VISADevice):
 
 
 class RohdeSchwarzFSWBase(lb.VISADevice):
+
     _DATA_FORMATS = "ASC,0", "REAL,32", "REAL,64", "REAL,16"
     _CHANNEL_TYPES = "SAN", "IQ", "RTIM", DEFAULT_CHANNEL_NAME
     _TRIGGER_OUT_TYPES = "DEV", "TARM", "UDEF"
@@ -90,66 +97,81 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     _CHANNEL_TYPES = None, "SAN", "IQ", "RTIM"
     _CACHE_DIR = r"c:\temp\remote-cache"
 
-    expected_channel_type = lb.value.str(
-        None,
+    expected_channel_type: str = attr.value.str(
         allow_none=True,
         only=_CHANNEL_TYPES,
         sets=False,
         cache=True,
         help="which channel type to use",
     )
-    default_window = lb.value.str("", cache=True, help="data window number to use if unspecified")
-    default_trace = lb.value.str("", cache=True, help="data trace number to use if unspecified")
+    default_window: str = attr.value.str(
+        default="", cache=True, help="data window number to use if unspecified"
+    )
+    default_trace: str = attr.value.str(
+        default="", cache=True, help="data trace number to use if unspecified"
+    )
 
     # Set these in subclasses for specific FSW instruments
-    frequency_center = lb.property.float(key="FREQ:CENT", min=0, step=1e-9, label="Hz")
-    frequency_span = lb.property.float(key="FREQ:SPAN", min=0, step=1e-9, label="Hz")
-    frequency_start = lb.property.float(key="FREQ:START", min=0, step=1e-9, label="Hz")
-    frequency_stop = lb.property.float(key="FREQ:STOP", min=0, step=1e-9, label="Hz")
-    resolution_bandwidth = lb.property.float(key="BAND", min=0, label="Hz")
+    frequency_center = attr.property.float(key="FREQ:CENT", min=0, step=1e-9, label="Hz")
+    frequency_span = attr.property.float(key="FREQ:SPAN", min=0, step=1e-9, label="Hz")
+    frequency_start = attr.property.float(key="FREQ:START", min=0, step=1e-9, label="Hz")
+    frequency_stop = attr.property.float(key="FREQ:STOP", min=0, step=1e-9, label="Hz")
+    resolution_bandwidth = attr.property.float(key="BAND", min=0, label="Hz")
 
-    sweep_time = lb.property.float(key="SWE:TIME", label="Hz")
-    sweep_time_window2 = lb.property.float(key="SENS2:SWE:TIME", label="Hz")
+    sweep_time = attr.property.float(key="SWE:TIME", label="Hz")
+    sweep_time_window2 = attr.property.float(key="SENS2:SWE:TIME", label="Hz")
 
-    initiate_continuous = lb.property.bool(key="INIT:CONT")
+    initiate_continuous = attr.property.bool(key="INIT:CONT")
 
-    reference_level = lb.property.float(key="DISP:TRAC1:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace2 = lb.property.float(key="DISP:TRAC2:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace3 = lb.property.float(key="DISP:TRAC3:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace4 = lb.property.float(key="DISP:TRAC4:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace5 = lb.property.float(key="DISP:TRAC5:Y:RLEV", step=1e-3, label="dB")
-    reference_level_trace6 = lb.property.float(key="DISP:TRAC6:Y:RLEV", step=1e-3, label="dB")
+    reference_level = attr.property.float(key="DISP:TRAC1:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace2 = attr.property.float(key="DISP:TRAC2:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace3 = attr.property.float(key="DISP:TRAC3:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace4 = attr.property.float(key="DISP:TRAC4:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace5 = attr.property.float(key="DISP:TRAC5:Y:RLEV", step=1e-3, label="dB")
+    reference_level_trace6 = attr.property.float(key="DISP:TRAC6:Y:RLEV", step=1e-3, label="dB")
 
-    amplitude_offset = lb.property.float(key="DISP:TRAC1:Y:RLEV:OFFS", step=1e-3, label="dB")
-    amplitude_offset_trace2 = lb.property.float(key="DISP:TRAC2:Y:RLEV:OFFS", step=1e-3, label="dB")
-    amplitude_offset_trace3 = lb.property.float(key="DISP:TRAC3:Y:RLEV:OFFS", step=1e-3, label="dB")
-    amplitude_offset_trace4 = lb.property.float(key="DISP:TRAC4:Y:RLEV:OFFS", step=1e-3, label="dB")
-    amplitude_offset_trace5 = lb.property.float(key="DISP:TRAC5:Y:RLEV:OFFS", step=1e-3, label="dB")
-    amplitude_offset_trace6 = lb.property.float(key="DISP:TRAC6:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset = attr.property.float(key="DISP:TRAC1:Y:RLEV:OFFS", step=1e-3, label="dB")
+    amplitude_offset_trace2 = attr.property.float(
+        key="DISP:TRAC2:Y:RLEV:OFFS", step=1e-3, label="dB"
+    )
+    amplitude_offset_trace3 = attr.property.float(
+        key="DISP:TRAC3:Y:RLEV:OFFS", step=1e-3, label="dB"
+    )
+    amplitude_offset_trace4 = attr.property.float(
+        key="DISP:TRAC4:Y:RLEV:OFFS", step=1e-3, label="dB"
+    )
+    amplitude_offset_trace5 = attr.property.float(
+        key="DISP:TRAC5:Y:RLEV:OFFS", step=1e-3, label="dB"
+    )
+    amplitude_offset_trace6 = attr.property.float(
+        key="DISP:TRAC6:Y:RLEV:OFFS", step=1e-3, label="dB"
+    )
 
-    output_trigger2_direction = lb.property.str(
+    output_trigger2_direction = attr.property.str(
         key="OUTP:TRIG2:DIR", only=_TRIGGER_DIRECTIONS, case=False
     )
-    output_trigger3_direction = lb.property.str(
+    output_trigger3_direction = attr.property.str(
         key="OUTP:TRIG3:DIR", only=_TRIGGER_DIRECTIONS, case=False
     )
-    output_trigger2_type = lb.property.str(
+    output_trigger2_type = attr.property.str(
         key="OUTP:TRIG2:OTYP", only=_TRIGGER_OUT_TYPES, case=False
     )
-    output_trigger3_type = lb.property.str(
+    output_trigger3_type = attr.property.str(
         key="OUTP:TRIG3:OTYP", only=_TRIGGER_OUT_TYPES, case=False
     )
 
-    input_preamplifier_enabled = lb.property.bool(key="INP:GAIN:STATE")
-    input_attenuation_auto = lb.property.bool(key="INP:ATT:AUTO")
-    input_attenuation = lb.property.float(key="INP:ATT", step=1, min=0, max=79)
+    input_preamplifier_enabled = attr.property.bool(key="INP:GAIN:STATE")
+    input_attenuation_auto = attr.property.bool(key="INP:ATT:AUTO")
+    input_attenuation = attr.property.float(key="INP:ATT", step=1, min=0, max=79)
 
-    channel_type = lb.property.str(key="INST", only=_CHANNEL_TYPES, case=False)
-    format = lb.property.str(key="FORM", only=_DATA_FORMATS, case=False)
-    sweep_points = lb.property.int(key="SWE:POIN", min=1, max=100001)
+    channel_type = attr.property.str(key="INST", only=_CHANNEL_TYPES, case=False)
+    format = attr.property.str(key="FORM", only=_DATA_FORMATS, case=False)
+    sweep_points = attr.property.int(key="SWE:POIN", min=1, max=100001)
 
-    display_update = lb.property.bool(key="SYST:DISP:UPD")
-    options = lb.property.str(key="*OPT", sets=False, cache=True, help="installed license options")
+    display_update = attr.property.bool(key="SYST:DISP:UPD")
+    options = attr.property.str(
+        key="*OPT", sets=False, cache=True, help="installed license options"
+    )
 
     def verify_channel_type(self):
         valid = self.expected_channel_type, DEFAULT_CHANNEL_NAME
@@ -619,7 +641,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self.write(f"OUTPUT:TRIGGER{port}:PULS:IMM")
 
 
-@lb.adjusted("expected_channel_type", "SAN")
+@attr.adjust("expected_channel_type", "SAN")
 class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
     def get_marker_band_power(self, marker: int) -> float:
         """Get marker band power measurement
@@ -698,14 +720,14 @@ class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
 
 
 class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
-    format = lb.property.str(key="FORM", only=("REAL", "ASCII"), case=False)
+    format = attr.property.str(key="FORM", only=("REAL", "ASCII"), case=False)
 
-    @lb.property.float(min=0)
+    @attr.property.float(min=0)
     def uplink_sample_rate(self):
         response = self.query("CONF:LTE:UL:BW?")
         return float(response[2:].replace("_", ".")) * 1e6
 
-    @lb.property.float(min=0)
+    @attr.property.float(min=0)
     def downlink_sample_rate(self):
         response = self.query("CONF:LTE:DL:BW?")
         return float(response[2:].replace("_", ".")) * 1e6
@@ -757,18 +779,18 @@ class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
         return data
 
 
-@lb.adjusted("expected_channel_type", "RTIM")
+@attr.adjust("expected_channel_type", "RTIM")
 class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
     _IQ_FORMATS = ("FREQ", "MAGN", "MTAB", "PEAK", "RIM", "VECT")
     _IQ_MODES = ("TDOMain", "FDOMain", "IQ")
 
-    iq_simple_enabled = lb.property.bool(key="CALC:IQ")
-    iq_evaluation_enabled = lb.property.bool(key="CALC:IQ:EVAL")
-    iq_mode = lb.property.str(key="CALC:IQ:MODE", only=_IQ_MODES, case=False)
-    iq_record_length = lb.property.int(key="TRAC:IQ:RLEN", min=1, max=461373440)
-    iq_sample_rate = lb.property.float(key="TRAC:IQ:SRAT", min=1e-9, max=160e6)
-    iq_format = lb.property.str(key="CALC:FORM", only=_IQ_FORMATS, case=False)
-    iq_format_window2 = lb.property.str(key="CALC2:FORM", case=False, only=_IQ_FORMATS)
+    iq_simple_enabled = attr.property.bool(key="CALC:IQ")
+    iq_evaluation_enabled = attr.property.bool(key="CALC:IQ:EVAL")
+    iq_mode = attr.property.str(key="CALC:IQ:MODE", only=_IQ_MODES, case=False)
+    iq_record_length = attr.property.int(key="TRAC:IQ:RLEN", min=1, max=461373440)
+    iq_sample_rate = attr.property.float(key="TRAC:IQ:SRAT", min=1e-9, max=160e6)
+    iq_format = attr.property.str(key="CALC:FORM", only=_IQ_FORMATS, case=False)
+    iq_format_window2 = attr.property.str(key="CALC2:FORM", case=False, only=_IQ_FORMATS)
 
     def fetch_trace(self, horizontal=False, trace=None):
         fmt = self.iq_format
@@ -798,24 +820,24 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
         self.write(f"MMEM:STOR:IQ:STAT 1, '{path}'")
 
 
-@lb.adjusted("expected_channel_type", "RTIM")
+@attr.adjust("expected_channel_type", "RTIM")
 class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
     TRIGGER_SOURCES = "IMM", "EXT", "EXT2", "EXT3", "MASK", "TDTR"
     WINDOW_FUNCTIONS = "BLAC", "FLAT", "GAUS", "HAMM", "HANN", "KAIS", "RECT"
     _BOOL_LABELS = {False: "0", True: "1"}
 
-    trigger_source = lb.property.str(key="TRIG:SOUR", only=TRIGGER_SOURCES, case=False)
-    trigger_post_time = lb.property.float(key="TRIG:POST", min=0)
-    trigger_pre_time = lb.property.float(key="TRIG:PRET", min=0)
+    trigger_source = attr.property.str(key="TRIG:SOUR", only=TRIGGER_SOURCES, case=False)
+    trigger_post_time = attr.property.float(key="TRIG:POST", min=0)
+    trigger_pre_time = attr.property.float(key="TRIG:PRET", min=0)
 
-    iq_fft_length = lb.property.int(key="IQ:FFT:LENG", sets=False)
-    iq_bandwidth = lb.property.float(key="TRAC:IQ:BWID", sets=False)
-    iq_sample_rate = lb.property.float(key="TRACe:IQ:SRAT", sets=False)
-    iq_trigger_position = lb.property.float(key="TRAC:IQ:TPIS", sets=False)
+    iq_fft_length = attr.property.int(key="IQ:FFT:LENG", sets=False)
+    iq_bandwidth = attr.property.float(key="TRAC:IQ:BWID", sets=False)
+    iq_sample_rate = attr.property.float(key="TRACe:IQ:SRAT", sets=False)
+    iq_trigger_position = attr.property.float(key="TRAC:IQ:TPIS", sets=False)
 
-    sweep_dwell_auto = lb.property.bool(key="SWE:DTIM:AUTO")
-    sweep_dwell_time = lb.property.float(key="SWE:DTIM", min=30e-3)
-    sweep_window_type = lb.property.str(key="SWE:FFT:WIND:TYP", case=False, only=WINDOW_FUNCTIONS)
+    sweep_dwell_auto = attr.property.bool(key="SWE:DTIM:AUTO")
+    sweep_dwell_time = attr.property.float(key="SWE:DTIM", min=30e-3)
+    sweep_window_type = attr.property.str(key="SWE:FFT:WIND:TYP", case=False, only=WINDOW_FUNCTIONS)
 
     def store_spectrogram(self, path, window=2):
         self.mkdir(os.path.split(path)[0])
@@ -849,14 +871,13 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
 
         self.write(f"CALC{window}:SPEC:HDEP {depth}")
 
-    @lb.datareturn.int(min=781, max=100000)
     def get_spectrogram_depth(self, window=None):
         if window is None:
             window = self.default_window
 
         return self.query(f"CALC{window}:SPEC:HDEP?")
 
-    @lb.property.float(max=0)
+    @attr.property.float(max=0)
     def trigger_mask_threshold(self, thresholds):
         """'defined in dB relative to the reference level"""
         self.set_frequency_mask(thresholds, None)
@@ -897,7 +918,6 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
 
         self.write(f"CALC{window}:MASK:{kind} {plist}")
 
-    @lb.datareturn.dict()
     def get_frequency_mask(self, kind="upper", window=None, first_threshold_only=False):
         """Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
@@ -1102,11 +1122,11 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         return {"spectrogram_active_time": time.time() - t0}
 
 
-@lb.adjusted("frequency_center", max=26.5e9)
-@lb.adjusted("frequency_span", max=26.5e9)
-@lb.adjusted("frequency_start", max=26.5e9)
-@lb.adjusted("frequency_stop", max=26.5e9)
-@lb.adjusted("resolution_bandwidth", min=45e3, max=5.76e6)
+@attr.adjust("frequency_center", max=26.5e9)
+@attr.adjust("frequency_span", max=26.5e9)
+@attr.adjust("frequency_start", max=26.5e9)
+@attr.adjust("frequency_stop", max=26.5e9)
+@attr.adjust("resolution_bandwidth", min=45e3, max=5.76e6)
 class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
     pass
 
@@ -1127,11 +1147,11 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base, _RSRealTimeMixIn):
     pass
 
 
-@lb.adjusted("frequency_center", max=43.5e9)
-@lb.adjusted("frequency_span", max=43.5e9)
-@lb.adjusted("frequency_start", max=43.5e9)
-@lb.adjusted("frequency_stop", max=43.5e9)
-@lb.adjusted("resolution_bandwidth", min=1, max=10e6)
+@attr.adjust("frequency_center", max=43.5e9)
+@attr.adjust("frequency_span", max=43.5e9)
+@attr.adjust("frequency_start", max=43.5e9)
+@attr.adjust("frequency_stop", max=43.5e9)
+@attr.adjust("resolution_bandwidth", min=1, max=10e6)
 class RohdeSchwarzFSW43Base(RohdeSchwarzFSWBase):
     pass
 

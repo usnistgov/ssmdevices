@@ -2,6 +2,7 @@ __all__ = ["MiniCircuitsRCDAT"]
 
 import time
 import labbench as lb
+from labbench import paramattr as attr
 
 if __name__ == "__main__":
     from _minicircuits_usb import SwitchAttenuatorBase
@@ -13,7 +14,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     # SwitchAttenuatorBase uses product ID to connect to USB devices
     _PID = 0x23
 
-    frequency = lb.value.float(
+    frequency: float = attr.value.float(
         default=None,
         allow_none=True,
         min=10e6,
@@ -22,14 +23,14 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         label="Hz",
     )
 
-    output_power_offset = lb.value.float(
+    output_power_offset: float = attr.value.float(
         default=None,
         allow_none=True,
         help="output power level at 0 dB attenuation",
         label="dBm",
     )
 
-    calibration_path = lb.value.str(
+    calibration_path: float = attr.value.str(
         default=None,
         allow_none=True,
         cache=True,
@@ -37,8 +38,8 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         "(row) and attenuation setting (column)), or None to search ssmdevices",
     )
 
-    channel = lb.value.int(
-        default=None,
+    channel: int = attr.value.int(
+        default=1,
         allow_none=True,
         min=1,
         max=4,
@@ -47,7 +48,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     )
 
     # the only property that directly sets attenuation in the device
-    @lb.property.float(min=0, max=115, step=0.25, label="dB", help="uncalibrated attenuation")
+    @attr.property.float(min=0, max=115, step=0.25, label="dB", help="uncalibrated attenuation")
     def attenuation_setting(self):
         # getter
         CMD_GET_ATTENUATION = 18
@@ -85,8 +86,9 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
 
     # the remaining traits are calibration corrections for attenuation_setting
     attenuation = attenuation_setting.calibrate_from_table(
-        path_trait=calibration_path,
-        index_lookup_trait=frequency,
+        allow_none=True,
+        path_attr=calibration_path,
+        index_lookup_attr=frequency,
         table_index_column="Frequency(Hz)",
         help="calibrated attenuation",
     )

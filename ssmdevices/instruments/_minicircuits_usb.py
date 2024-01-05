@@ -1,5 +1,6 @@
 import time
 import labbench as lb
+from labbench import paramattr as attr
 import platform
 import numpy as np
 from threading import Lock
@@ -11,26 +12,27 @@ usb_command_lock = Lock()
 usb_registry = {}  # serial number: USB path
 
 
+@attr.adjust(
+    "resource",
+    default=None,
+    help="serial number; must be set if more than one device is connected",
+    allow_none=True,
+    cache=True,
+)
 class MiniCircuitsUSBDevice(lb.Device):
     """General control over MiniCircuits USB devices"""
 
     _VID = 0x20CE  # USB HID Vendor ID
 
-    resource = lb.value.str(
+    # annotated values can be passed as constructor arguments
+    usb_path: bytes = attr.value.bytes(
         default=None,
-        help="serial number; must be set if more than one device is connected",
-        allow_none=True,
-        cache=True,
-    )
-
-    usb_path = lb.value.bytes(
-        None,
         allow_none=True,
         help="override `resource` to connect to a specific USB path",
         cache=True,
     )
 
-    timeout = lb.value.float(default=1, min=0.5, label="s", cache=True)
+    timeout: float = attr.value.float(default=1, min=0.5, label="s", cache=True)
 
     def open(self):
         import hid
@@ -139,7 +141,8 @@ class MiniCircuitsUSBDevice(lb.Device):
 
         if serial is None:
             if len(found) == 1:
-                ret = next(iter(found.values()))
+                ret = list(found.values())[0]
+                return ret
             else:
                 raise ConnectionError(
                     f"specify one of the available {cls.__name__} resources: {names}"
@@ -222,12 +225,12 @@ class SwitchAttenuatorBase(MiniCircuitsUSBDevice):
         device._logger.logger.disabled = True
         return device
 
-    @lb.property.str(sets=False, cache=True)
+    @attr.property.str(sets=False, cache=True)
     def model(self):
         d = self._cmd(self.CMD_GET_PART_NUMBER)
         return self._parse_str(d)
 
-    @lb.property.str(sets=False, cache=True)
+    @attr.property.str(sets=False, cache=True)
     def serial_number(self):
         d = self._cmd(self.CMD_GET_SERIAL_NUMBER)
         return self._parse_str(d)
