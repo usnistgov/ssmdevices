@@ -32,7 +32,7 @@ class WLANInfo(lb.ShellBackend):
         try:
             while self.running():
                 pass
-        except:
+        except BaseException:
             pass
 
     @lb.retry(sp.TimeoutExpired, tries=5)
@@ -343,8 +343,8 @@ class WLANClient(lb.Device):
         return lb.until_timeout(TimeoutError, 2 * self.timeout)(attempt)()
 
     def refresh(self):
-        for attr in self._property_attrs:
-            getattr(self, attr)
+        for attr_def in self._property_attrs:
+            getattr(self, attr_def)
 
 
 if __name__ == "__main__":

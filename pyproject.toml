@@ -1,6 +1,6 @@
 [project]
 name = "ssmdevices"
-version = "0.20.1"
+version = "0.21.0"
 description = "a collection of lab automation drivers implemented with labbench"
 
 authors = [
@@ -22,7 +22,7 @@ maintainers = [
 ]
 
 dependencies = [
-    "labbench >= 0.33.0",
+    "labbench >= 0.34.1",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
@@ -39,6 +39,7 @@ documentation = "https://pages.nist.gov/ssmdevices"
 
 [project.optional-dependencies]
 dev = ["labbench[dev]"]
+
 
 [build-system]
 requires = [

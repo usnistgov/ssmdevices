@@ -878,13 +878,14 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         return self.query(f"CALC{window}:SPEC:HDEP?")
 
     @attr.property.float(max=0)
-    def trigger_mask_threshold(self, thresholds):
+    def trigger_mask_threshold(self):
+        return self.get_frequency_mask(first_threshold_only=True)
+
+    @trigger_mask_threshold.setter
+    def _(self, thresholds):
         """'defined in dB relative to the reference level"""
         self.set_frequency_mask(thresholds, None)
 
-    @trigger_mask_threshold
-    def trigger_mask_threshold(self):
-        return self.get_frequency_mask(first_threshold_only=True)
 
     def set_frequency_mask(self, thresholds, frequency_offsets=None, kind="upper", window=None):
         """Define the frequency-dependent trigger threshold values for a frequency mask trigger.

@@ -3,12 +3,12 @@ __all__ = ["RigolTechnologiesMSO4014", "TektronixMSO64B", "TektronixMSO64BSpectr
 import labbench as lb
 from labbench import paramattr as attr
 
-scope_channel_argument = attr.kwarg.int("channel", min=1, max=4, help="hardware input port")
+scope_channel_kwarg = attr.method_kwarg.int("channel", min=1, max=4, help="hardware input port")
 
 
 @attr.adjust("make", default="RIGOL TECHNOLOGIES")
 @attr.adjust("model", default="MSO4014")
-@attr.register_key_argument(scope_channel_argument)
+@scope_channel_kwarg
 class RigolTechnologiesMSO4014(lb.VISADevice):
     time_offset = attr.property.float(key=":TIM:OFFS", label="s")
     time_scale = attr.property.float(key=":TIM:SCAL", label="s")
@@ -30,7 +30,7 @@ class RigolTechnologiesMSO4014(lb.VISADevice):
 @attr.adjust("model", "MSO64B")
 @attr.adjust("open_timeout", 3)
 @attr.visa_keying(remap={True: "1", False: "0"})
-@attr.register_key_argument(scope_channel_argument)
+@scope_channel_kwarg
 class TektronixMSO64B(lb.VISADevice):
     # horizontal acquisition
     record_length = attr.property.int(
@@ -88,12 +88,12 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
     )
     span = attr.property.float(key="SV:SPAN", max=2e9, label="Hz", help="analysis bandwidth per channel")
 
-    # don't log instrument front-end display settings that don't impact the data (notify=False)
+    # don't log instrument front-end display settings that don't impact the data (log=False)
     _power_scale_min = attr.property.float(
         key="SV:SPECtrogram:CSCale:MIN",
         min=-170,
         max=99,
-        notify=False,
+        log=False,
         label="dBm",
         help="spectrogram display power scale minimum",
     )
@@ -101,7 +101,7 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
         key="SV:SPECtrogram:CSCale:MAX",
         min=-170,
         max=99,
-        notify=False,
+        log=False,
         label="dBm",
         help="spectrogram display power scale maximum",
     )
@@ -136,21 +136,21 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
         help="channel analysis bandwidth",
     )
 
-    # notify=False here since we intend usage of spectrogram_enabled
+    # log=False here since we intend usage of spectrogram_enabled
     _only_spectrogram_enabled = attr.method.bool(
         key="SV:CH{channel}:SEL:SPEC",
-        notify=False,
+        log=False,
         help="enable channel spectrogram analysis",
     )
 
     _only_spectrumview_enabled = attr.method.bool(
         key="CH{channel}:SV:STATE",
-        notify=False,
+        log=False,
         help="enable channel spectrum view mode",
     )
 
     @attr.method.bool(help="channel center frequency")
-    @scope_channel_argument
+    @scope_channel_kwarg
     def spectrogram_enabled(self, enabled: bool = lb.Undefined, /, *, channel: int):
         return all(
             [
@@ -164,19 +164,15 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
         self._resolution_bandwidth_mode = "MANUAL"
         self._sync_center_frequencies = False
 
-    something: int = attr.value.int(default=5, min=100)
-
 if __name__ == "__main__":
-    with TektronixMSO64BSpectrogram(something=1000) as scope:
-        # scope.spectrogram_enabled(channel=1)
+    with TektronixMSO64BSpectrogram(something=1) as scope:
+        scope.spectrogram_enabled(channel=1)
 
-        # scope.resolution_bandwidth = 10e3
-        # scope.span = 2e9
+        scope.resolution_bandwidth = 10e3
+        scope.span = 2e9
 
-        # scope.coupling("AC", channel=1)
-        # scope.bandwidth(8e9, channel=1)
-        # scope.input_termination(50, channel=1)
-        # scope.center_frequency(3e9, channel=1)
-        # scope.vertical_scale(0.05, channel=1)
-
-        pass
+        scope.coupling("AC", channel=1)
+        scope.bandwidth(8e9, channel=1)
+        scope.input_termination(50, channel=1)
+        scope.center_frequency(3e9, channel=1)
+        scope.vertical_scale(0.05, channel=1)

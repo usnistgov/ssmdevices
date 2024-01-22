@@ -85,7 +85,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         key="*OPT", sets=False, cache=True, help="installed license options"
     )
 
-    @attr.property.str(key="SENS:FUNC", case=False, only=_FUNCTIONS)
+    @attr.property.str(key="SENS:FUNC", case=False, only=_FUNCTIONS).setter
     def function(self, value):
         # Special case - this message requires quotes around the argument
         self.write(f'SENSe:FUNCtion "{value}"')

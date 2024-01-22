@@ -30,10 +30,11 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         label="dBm",
     )
 
-    calibration_path: float = attr.value.str(
+    calibration_path: float = attr.value.Path(
         default=None,
         allow_none=True,
         cache=True,
+        must_exist=True,
         help="path to the calibration table csv file (containing frequency "
         "(row) and attenuation setting (column)), or None to search ssmdevices",
     )
@@ -47,7 +48,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         help="a port selector for 4 port attenuators None is a single attenuator",
     )
 
-    # the only property that directly sets attenuation in the device
+    # this is the only property that directly sets attenuation in the device
     @attr.property.float(min=0, max=115, step=0.25, label="dB", help="uncalibrated attenuation")
     def attenuation_setting(self):
         # getter
@@ -67,8 +68,8 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         else:
             raise AttributeError
 
-    @attenuation_setting
-    def attenuation_setting(self, set_value):
+    @attenuation_setting.setter
+    def _(self, set_value):
         # setter
         CMD_SET_ATTENUATION = 19
 
@@ -85,7 +86,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
             raise AttributeError
 
     # the remaining traits are calibration corrections for attenuation_setting
-    attenuation = attenuation_setting.calibrate_from_table(
+    attenuation = attenuation_setting.corrected_from_table(
         allow_none=True,
         path_attr=calibration_path,
         index_lookup_attr=frequency,
@@ -93,7 +94,7 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
         help="calibrated attenuation",
     )
 
-    output_power = attenuation.calibrate_from_expression(
+    output_power = attenuation.corrected_from_expression(
         -attenuation + output_power_offset,
         help="calibrated output power level",
         label="dBm",
