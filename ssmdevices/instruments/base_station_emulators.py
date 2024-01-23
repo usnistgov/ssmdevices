@@ -20,7 +20,6 @@ default_cmw_address = "TCPIP0::10.0.0.3::inst0::INSTR"
 @attr.visa_keying(remap={False: 'OFF', True: 'ON'})
 class RohdeSchwarzCMW500(lb.VISADevice):
     """CMW base station emulator driver.  Manual can be found here:
-    https://gitlab.nist.gov/gitlab/nasctn/common/manual_repository/-/blob/master/cmw500_usermanual_v3-0-14.pdf
     """
 
     UPDATE_RATE = 20
