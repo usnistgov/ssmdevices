@@ -1,7 +1,5 @@
 __all__ = ["MiniCircuitsUSBSwitch"]
 
-import ssmdevices.lib
-import labbench as lb
 from labbench import paramattr as attr
 
 if __name__ == "__main__":
@@ -31,4 +29,3 @@ class MiniCircuitsUSBSwitch(SwitchAttenuatorBase):
         if port not in (1, 2, 3, 4):
             raise ValueError("Invalid switch port: %s" % port)
         self._cmd(port)
-

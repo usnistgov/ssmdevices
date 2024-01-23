@@ -51,7 +51,9 @@ class WLANInfo(lb.ShellBackend):
             return d
 
         # Execute the binary
-        txt = self.run("wlan", "show", "networks", self.FLAGS, check_return=True).decode()
+        txt = self.run(
+            "wlan", "show", "networks", self.FLAGS, check_return=True
+        ).decode()
 
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r"^\s*(.*?)\s*:\s*(.*?)\s*$", txt, flags=re.MULTILINE)
@@ -77,7 +79,9 @@ class WLANInfo(lb.ShellBackend):
 
         # Execute the binary
 
-        txt = self.run("wlan", "show", "interfaces", self.FLAGS, check_return=True).decode()
+        txt = self.run(
+            "wlan", "show", "interfaces", self.FLAGS, check_return=True
+        ).decode()
 
         # Parse into (key, value) pairs separated by whitespace and a colon
         lines = re.findall(r"^\s*(\S+.*?)\s+:\s+(\S+.*?)\s*$", txt, flags=re.MULTILINE)
@@ -87,7 +91,9 @@ class WLANInfo(lb.ShellBackend):
 
 class WLANClient(lb.Device):
     resource: str = attr.value.str(
-        None, help="interface name (from the OS) or MAC address (nn:nn:nn:nn:nn)", cache=True
+        None,
+        help="interface name (from the OS) or MAC address (nn:nn:nn:nn:nn)",
+        cache=True,
     )
     ssid: str = attr.value.str(None, help="SSID of the AP for connection")
     timeout: float = attr.value.float(
@@ -220,7 +226,9 @@ class WLANClient(lb.Device):
             lb.sleep(0.05)
         else:
             self._logger.debug(f"failed to connect to AP with SSID {repr(self.ssid)}")
-            raise TimeoutError("tried to connect but only achieved the {} state ".format(repr(s)))
+            raise TimeoutError(
+                "tried to connect but only achieved the {} state ".format(repr(s))
+            )
 
         t2 = time.perf_counter()
         while time.perf_counter() - t2 < self.timeout:

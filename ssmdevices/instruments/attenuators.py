@@ -49,7 +49,9 @@ class MiniCircuitsRCDAT(SwitchAttenuatorBase):
     )
 
     # this is the only property that directly sets attenuation in the device
-    @attr.property.float(min=0, max=115, step=0.25, label="dB", help="uncalibrated attenuation")
+    @attr.property.float(
+        min=0, max=115, step=0.25, label="dB", help="uncalibrated attenuation"
+    )
     def attenuation_setting(self):
         # getter
         CMD_GET_ATTENUATION = 18

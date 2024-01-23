@@ -76,19 +76,23 @@ class ETSLindgrenAzi2005(lb.VISADevice):
 
     # A bunch of command-keyed states
     speed = attr.property.int(key="S", min=0, max=3, help="speed")
-    cwlimit = attr.property.float(key="UL", min=000.0, max=999.9, step=0.1, help="cwlimit")
-    cclimit = attr.property.float(key="LL", min=000.0, max=999.9, step=0.1, help="cclimit")
+    cwlimit = attr.property.float(
+        key="UL", min=000.0, max=999.9, step=0.1, help="cwlimit"
+    )
+    cclimit = attr.property.float(
+        key="LL", min=000.0, max=999.9, step=0.1, help="cclimit"
+    )
     define_position = attr.property.float(
         key="CP", min=0, max=360, step=0.1, help="rotation (degrees)"
     )
-    position = attr.property.float(key="SK", min=0, max=360, help="rotation (degrees)", gets=False)
+    position = attr.property.float(
+        key="SK", min=0, max=360, help="rotation (degrees)", gets=False
+    )
 
 
 if __name__ == "__main__":
     from pylab import *
     import seaborn as sns
-
-    import time
 
     sns.set(style="ticks")
 

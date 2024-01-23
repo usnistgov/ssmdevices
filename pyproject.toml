@@ -39,6 +39,7 @@ documentation = "https://pages.nist.gov/ssmdevices"
 
 [project.optional-dependencies]
 dev = ["labbench[dev]"]
+doc = ["labbench[doc]"]
 
 
 [build-system]

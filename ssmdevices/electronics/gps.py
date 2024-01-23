@@ -19,7 +19,6 @@ class SwiftNavPiksi(lb.SerialLoggingDevice):
 if __name__ == "__main__":
     import labbench as lb
     from labbench import paramattr as attr
-    import time
 
     lb.debug_to_screen(lb.DEBUG)
     with SwiftNavPiksi.from_hwid(r"USB VID:PID=0403:6014 SER=5") as piksi:

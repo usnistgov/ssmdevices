@@ -65,7 +65,9 @@ class QPST(lb.Win32ComDevice):
                             port_code = func(i)
 
                             # Remap codes into strings
-                            label = self.PORT_LIST_CODES.get(key, {}).get(port_code, port_code)
+                            label = self.PORT_LIST_CODES.get(key, {}).get(
+                                port_code, port_code
+                            )
                             ret[key] = label
                         break
 
@@ -106,9 +108,15 @@ class QPST(lb.Win32ComDevice):
 class QXDM(lb.Win32ComDevice):
     """QXDM software wrapper"""
 
-    resource: int = attr.value.int(0, min=0, help="serial port number for the handset connection")
-    cache_path: str = attr.value.str(default="temp", help="directory for auto-saved isf files")
-    connection_timeout: float = attr.value.float(default=2, min=0.5, help="connection timeout (s)")
+    resource: int = attr.value.int(
+        0, min=0, help="serial port number for the handset connection"
+    )
+    cache_path: str = attr.value.str(
+        default="temp", help="directory for auto-saved isf files"
+    )
+    connection_timeout: float = attr.value.float(
+        default=2, min=0.5, help="connection timeout (s)"
+    )
 
     def open(self):
         #
@@ -131,14 +139,18 @@ class QXDM(lb.Win32ComDevice):
         try:
             self._set_com_port(None)
         except TimeoutError:
-            raise Exception("could not disable UE; does QXDM work if you start it manually?")
+            raise Exception(
+                "could not disable UE; does QXDM work if you start it manually?"
+            )
 
     # State traits implemented by command key
     ue_model_number = attr.property.str(help="model number code", key="ue_model_number")
     ue_mode = attr.property.str(help="current state of the phone", key="ue_mode")
     ue_imei = attr.property.str(help="Phone IMEI", key="ue_imei")
     ue_esn = attr.property.str(help="Phone ESN", key="ue_esn")
-    ue_build_id = attr.property.str(help="Build ID of software on the phone", key="ue_build_id")
+    ue_build_id = attr.property.str(
+        help="Build ID of software on the phone", key="ue_build_id"
+    )
 
     def get_key(self, key, trait_name=None):
         try:
@@ -221,7 +233,9 @@ class QXDM(lb.Win32ComDevice):
             fmt = lb.Host.time_format.replace(" ", "_").replace(":", "")
             timestamp = "{}.{}".format(now.strftime(fmt), now.microsecond)
             if saveNm is not None:
-                path = os.path.join(self.cache_path, "{}-{}.isf".format(saveNm, timestamp))
+                path = os.path.join(
+                    self.cache_path, "{}-{}.isf".format(saveNm, timestamp)
+                )
             else:
                 path = os.path.join(self.cache_path, "qxdm-{}.isf".format(timestamp))
         else:
@@ -284,7 +298,9 @@ class QXDM(lb.Win32ComDevice):
                 proc = psutil.Process(pid)
                 for target in "qpst", "qxdm", "atmnserver":
                     if proc.name().lower().startswith(target.lower()):
-                        self._logger.debug("killing zombie process {}".format(proc.name()))
+                        self._logger.debug(
+                            "killing zombie process {}".format(proc.name())
+                        )
                         proc.kill()
             except psutil.NoSuchProcess:
                 pass
@@ -334,7 +350,9 @@ class QXDM(lb.Win32ComDevice):
             if int(com_port) > 0:
                 self._logger.debug(f"connect to port {actual} took {elapsed:0.2f}s")
             else:
-                self._logger.debug(f"disconnect from port {actual} took {elapsed:0.2f}s")
+                self._logger.debug(
+                    f"disconnect from port {actual} took {elapsed:0.2f}s"
+                )
 
         finally:
             if int(com_port) == 0:
@@ -365,7 +383,9 @@ class QXDM(lb.Win32ComDevice):
             lb.sleep(0.05)
         else:
             remaining = self._get_item_count()
-            raise TimeoutError(f"QXDM item store clear timed out with {remaining} items")
+            raise TimeoutError(
+                f"QXDM item store clear timed out with {remaining} items"
+            )
 
         self._logger.debug(f"cleared item store buffer in {elapsed:0.2f}s")
 

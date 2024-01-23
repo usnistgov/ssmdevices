@@ -3,7 +3,9 @@ __all__ = ["RigolTechnologiesMSO4014", "TektronixMSO64B", "TektronixMSO64BSpectr
 import labbench as lb
 from labbench import paramattr as attr
 
-scope_channel_kwarg = attr.method_kwarg.int("channel", min=1, max=4, help="hardware input port")
+scope_channel_kwarg = attr.method_kwarg.int(
+    "channel", min=1, max=4, help="hardware input port"
+)
 
 
 @attr.adjust("make", default="RIGOL TECHNOLOGIES")
@@ -73,7 +75,9 @@ class TektronixMSO64B(lb.VISADevice):
 
     # vertical acquisition
     vertical_scale = attr.property.float(
-        key="CH{channel}:SCALE", label="V", help="vertical scale of the specified channel"
+        key="CH{channel}:SCALE",
+        label="V",
+        help="vertical scale of the specified channel",
     )
 
     def open(self):
@@ -86,7 +90,9 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
     resolution_bandwidth = attr.property.float(
         key="SV:RBW", label="Hz", help="resolution bandwidth of all channels"
     )
-    span = attr.property.float(key="SV:SPAN", max=2e9, label="Hz", help="analysis bandwidth per channel")
+    span = attr.property.float(
+        key="SV:SPAN", max=2e9, label="Hz", help="analysis bandwidth per channel"
+    )
 
     # don't log instrument front-end display settings that don't impact the data (log=False)
     _power_scale_min = attr.property.float(
@@ -163,6 +169,7 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
     def open(self):
         self._resolution_bandwidth_mode = "MANUAL"
         self._sync_center_frequencies = False
+
 
 if __name__ == "__main__":
     with TektronixMSO64BSpectrogram(something=1) as scope:
