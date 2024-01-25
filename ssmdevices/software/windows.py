@@ -15,8 +15,6 @@ else:
     from ._networking import network_interface_info
 
 
-@attr.adjust("binary_path", r"C:\Windows\System32\netsh.exe")
-@attr.adjust("timeout", 5)
 class WLANInfo(lb.ShellBackend):
     """Parse calls to netsh to get information about WLAN interfaces."""
 
@@ -25,6 +23,8 @@ class WLANInfo(lb.ShellBackend):
         only_bssid="mode=bssid",
     )
 
+    timeout = attr.copy(lb.ShellBackend.timeout, default=5)
+    binary_path = attr.copy(lb.ShellBackend.binary_path, default=r"C:\Windows\System32\netsh.exe")
     only_bssid: bool = attr.value.bool(False, help="gather only BSSID information")
     interface: str = attr.value.str(None, help="name of the interface to query")
 

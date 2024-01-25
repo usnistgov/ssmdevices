@@ -6,9 +6,10 @@ from labbench import paramattr as attr
 import ssmdevices.lib
 
 
-@attr.adjust("binary_path", ssmdevices.lib.path("adb.exe"))
-@attr.adjust("timeout", 6)
 class AndroidDebugBridge(lb.ShellBackend):
+    binary_path = attr.copy(lb.ShellBackend.binary_path, default=ssmdevices.lib.path("adb.exe"))
+    timeout = attr.copy(lb.ShellBackend.timeout, default=6)
+
     def devices(self):
         """This function checks ADB to see if any devices are connected, if
         none are, it raises an exception, if there is at least one device

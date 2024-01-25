@@ -679,8 +679,9 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self.write(f"OUTPUT:TRIGGER{port}:PULS:IMM")
 
 
-@attr.adjust("expected_channel_type", "SAN")
 class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
+    expected_channel_type = attr.copy(RohdeSchwarzFSWBase.expected_channel_type, default='SAN')
+
     def get_marker_band_power(self, marker: int) -> float:
         """Get marker band power measurement
 
@@ -817,10 +818,11 @@ class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
         return data
 
 
-@attr.adjust("expected_channel_type", "RTIM")
 class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
     _IQ_FORMATS = ("FREQ", "MAGN", "MTAB", "PEAK", "RIM", "VECT")
     _IQ_MODES = ("TDOMain", "FDOMain", "IQ")
+
+    expected_channel_type = attr.copy(RohdeSchwarzFSWBase.expected_channel_type, default='RTIM')
 
     iq_simple_enabled = attr.property.bool(key="CALC:IQ")
     iq_evaluation_enabled = attr.property.bool(key="CALC:IQ:EVAL")
@@ -864,11 +866,11 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
         self.write(f"MMEM:STOR:IQ:STAT 1, '{path}'")
 
 
-@attr.adjust("expected_channel_type", "RTIM")
 class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
     TRIGGER_SOURCES = "IMM", "EXT", "EXT2", "EXT3", "MASK", "TDTR"
     WINDOW_FUNCTIONS = "BLAC", "FLAT", "GAUS", "HAMM", "HANN", "KAIS", "RECT"
     _BOOL_LABELS = {False: "0", True: "1"}
+    expected_channel_type = attr.copy(RohdeSchwarzFSWBase.expected_channel_type, default='RTIM')
 
     trigger_source = attr.property.str(
         key="TRIG:SOUR", only=TRIGGER_SOURCES, case=False
@@ -1180,13 +1182,12 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         return {"spectrogram_active_time": time.time() - t0}
 
 
-@attr.adjust("frequency_center", max=26.5e9)
-@attr.adjust("frequency_span", max=26.5e9)
-@attr.adjust("frequency_start", max=26.5e9)
-@attr.adjust("frequency_stop", max=26.5e9)
-@attr.adjust("resolution_bandwidth", min=45e3, max=5.76e6)
 class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
-    pass
+    frequency_center = attr.copy(RohdeSchwarzFSWBase.frequency_center, max=26.5e9)
+    frequency_span = attr.copy(RohdeSchwarzFSWBase.frequency_span, max=26.5e9)
+    frequency_start = attr.copy(RohdeSchwarzFSWBase.frequency_start, max=26.5e9)
+    frequency_stop = attr.copy(RohdeSchwarzFSWBase.frequency_stop, max=26.5e9)
+    frequency_bandwidth = attr.copy(RohdeSchwarzFSWBase.frequency_bandwidth, min=45e3, max=26.5e9)
 
 
 class RohdeSchwarzFSW26SpectrumAnalyzer(
@@ -1207,13 +1208,12 @@ class RohdeSchwarzFSW26RealTime(RohdeSchwarzFSW26Base, _RSRealTimeMixIn):
     pass
 
 
-@attr.adjust("frequency_center", max=43.5e9)
-@attr.adjust("frequency_span", max=43.5e9)
-@attr.adjust("frequency_start", max=43.5e9)
-@attr.adjust("frequency_stop", max=43.5e9)
-@attr.adjust("resolution_bandwidth", min=1, max=10e6)
 class RohdeSchwarzFSW43Base(RohdeSchwarzFSWBase):
-    pass
+    frequency_center = attr.copy(RohdeSchwarzFSWBase.frequency_center, max=43.5e9)
+    frequency_span = attr.copy(RohdeSchwarzFSWBase.frequency_span, max=43.5e9)
+    frequency_start = attr.copy(RohdeSchwarzFSWBase.frequency_start, max=43.5e9)
+    frequency_stop = attr.copy(RohdeSchwarzFSWBase.frequency_stop, max=43.5e9)
+    frequency_bandwidth = attr.copy(RohdeSchwarzFSWBase.frequency_bandwidth, min=45e3, max=43.5e9)
 
 
 class RohdeSchwarzFSW43SpectrumAnalyzer(

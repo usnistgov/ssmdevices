@@ -15,8 +15,6 @@ from labbench import paramattr as attr
 __all__ = ["ETSLindgrenAzi2005"]
 
 
-@attr.adjust("read_termination", default="\n")
-@attr.adjust("write_termination", default="\r")
 @attr.visa_keying(write_fmt="{key}{value}")
 class ETSLindgrenAzi2005(lb.VISADevice):
     # constructor argument fields
@@ -27,6 +25,9 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     xonxoff = attr.value.bool(default=False)
     rtscts = attr.value.bool(default=False)
     dsrdtr = attr.value.bool(default=False)
+
+    read_termination = attr.copy(lb.VISADevice.read_termination, default='\n')
+    write_termination = attr.copy(lb.VISADevice.write_termination, default="\r")
 
     def config(self, mode):
         if mode in ("CR" or "NCR"):

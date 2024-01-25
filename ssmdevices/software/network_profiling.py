@@ -49,7 +49,6 @@ if "_tcp_port_offset" not in dir():
 perf_counter()
 
 
-@attr.adjust("timeout", default=5)
 class _IPerfBase(lb.ShellBackend):
     FLAGS = dict(
         resource="-c",
@@ -74,6 +73,7 @@ class _IPerfBase(lb.ShellBackend):
         allow_none=True,
         help="client host address (set None if server=True)",
     )
+    timeout = attr.copy(lb.ShellBackend.timeout, default=5)
     server: bool = attr.value.bool(default=False, help="True to run as a server")
     port: int = attr.value.int(default=5201, min=0, help="network port")
     bind: str = attr.value.str(
@@ -205,12 +205,13 @@ class _IPerfBase(lb.ShellBackend):
                 raise ValueError("iperf server does not support the `number` argument")
 
 
-@attr.adjust("binary_path", ssmdevices.lib.path("iperf3.exe"))
 class IPerf3(_IPerfBase):
     """Run an instance of iperf3, collecting output data in a background thread.
     When running as an iperf client (server=False),
     The default value is the path that installs with 64-bit cygwin.
     """
+
+    binary_path = attr.copy(_IPerfBase.binary_path, default=ssmdevices.lib.path("iperf3.exe"))
 
     FLAGS = dict(_IPerfBase.FLAGS, json="-J", reverse="-R", zerocopy="-Z")
 
@@ -224,7 +225,6 @@ class IPerf3(_IPerfBase):
     )
 
 
-@attr.adjust("binary_path", ssmdevices.lib.path("iperf.exe"))
 class IPerf2(_IPerfBase):
     """Run an instance of iperf to profile data transfer speed. It can
     operate as a server (listener) or client (sender), operating either
@@ -245,6 +245,8 @@ class IPerf2(_IPerfBase):
         "datagrams_loss_percentage",
         "datagrams_out_of_order",
     )
+
+    binary_path = attr.copy(_IPerfBase.binary_path, default=ssmdevices.lib.path("iperf.exe"))
 
     bidirectional: bool = attr.value.bool(
         default=False, key="-d", help="send and receive simultaneously"
@@ -310,9 +312,10 @@ class IPerf2(_IPerfBase):
         return data
 
 
-@attr.adjust("binary_path", ssmdevices.lib.path("adb.exe"))
 class IPerf2OnAndroid(IPerf2):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
+    binary_path = attr.copy(_IPerfBase.binary_path, default=ssmdevices.lib.path("adb.exe"))
+    
     remote_binary_path: str = attr.value.str(
         default="/data/local/tmp/iperf", cache=True
     )

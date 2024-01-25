@@ -41,7 +41,6 @@ class AcronamePropertyAdapter(attr.KeyAdapterBase):
 
 
 @AcronamePropertyAdapter()
-@attr.adjust("resource", None)
 class AcronameUSBHub2x4(lb.Device):
     """A USB hub with control over each port."""
 

@@ -12,17 +12,16 @@ usb_command_lock = Lock()
 usb_registry = {}  # serial number: USB path
 
 
-@attr.adjust(
-    "resource",
-    default=None,
-    help="serial number; must be set if more than one device is connected",
-    allow_none=True,
-    cache=True,
-)
 class MiniCircuitsUSBDevice(lb.Device):
     """General control over MiniCircuits USB devices"""
 
     _VID = 0x20CE  # USB HID Vendor ID
+
+    resource = attr.copy(
+        lb.Device.resource, 
+        help="serial number; must be set if more than one device is connected",
+        cache=True
+    )
 
     # annotated values can be passed as constructor arguments
     usb_path: bytes = attr.value.bytes(

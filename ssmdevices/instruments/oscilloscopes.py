@@ -7,11 +7,11 @@ scope_channel_kwarg = attr.method_kwarg.int(
     "channel", min=1, max=4, help="hardware input port"
 )
 
-
-@attr.adjust("make", default="RIGOL TECHNOLOGIES")
-@attr.adjust("model", default="MSO4014")
 @scope_channel_kwarg
 class RigolTechnologiesMSO4014(lb.VISADevice):
+    make = attr.copy(lb.VISADevice.make, default='RIGOL TECHNOLOGIES')
+    model = attr.copy(lb.VISADevice.model, default='MSO4014')
+
     time_offset = attr.property.float(key=":TIM:OFFS", label="s")
     time_scale = attr.property.float(key=":TIM:SCAL", label="s")
     options = attr.property.str(
@@ -28,12 +28,13 @@ class RigolTechnologiesMSO4014(lb.VISADevice):
         return float(self.backend.query(":MEAS:VRMS?").rstrip().lstrip())
 
 
-@attr.adjust("make", "TEKTRONIX")
-@attr.adjust("model", "MSO64B")
-@attr.adjust("open_timeout", 3)
 @attr.visa_keying(remap={True: "1", False: "0"})
 @scope_channel_kwarg
 class TektronixMSO64B(lb.VISADevice):
+    make = attr.copy(lb.VISADevice.make, default='TEKTRONIX')
+    model = attr.copy(lb.VISADevice.model, default='MSO64B')
+    timeout = attr.copy(lb.VISADevice.open_timeout, default=3)
+
     # horizontal acquisition
     record_length = attr.property.int(
         key="HORIZONTAL:RECORDLENGTH", label="samples", help="acquisition record length"

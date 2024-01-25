@@ -14,10 +14,11 @@ import numpy as np
 import typing
 
 
-@attr.adjust("make", "Keysight Technologies")
-@attr.adjust("model", "U204")
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
+
+    make = attr.copy(lb.VISADevice.make, default='Keysight Technologies')
+    model = attr.copy(lb.VISADevice.model, default='U204')    
 
     _TRIGGER_SOURCES = ("IMM", "INT", "EXT", "BUS", "INT1")
 
@@ -188,14 +189,12 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         self.wait()
 
 
-@attr.adjust("frequency", max=8e9)
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
-    pass
+    frequency = attr.copy(RohdeSchwarzNRPSeries.frequency, max=8e9)
 
 
-@attr.adjust("frequency", max=18e9)
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
-    pass
+    frequency = attr.copy(RohdeSchwarzNRPSeries.frequency, max=18e9)
 
 
 if __name__ == "__main__":

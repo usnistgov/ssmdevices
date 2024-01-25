@@ -22,9 +22,6 @@ class TM500Error(ValueError):
         self.errcode = errcode
 
 
-@attr.adjust(
-    "timeout", default=1, help="leave the timeout small to allow keyboard interrupts"
-)
 class AeroflexTM500(lb.TelnetDevice):
     """Control an Aeroflex TM500 network tester with a
     telnet connection.
@@ -37,6 +34,11 @@ class AeroflexTM500(lb.TelnetDevice):
     from a file that could be treated as a config file.
     """
 
+    timeout = attr.copy(
+        lb.TelnetDevice.timeout,
+        default=1, 
+        help="leave the timeout small to allow keyboard interrupts"
+    )
     ack_timeout: float = attr.value.float(
         default=30,
         min=0.1,

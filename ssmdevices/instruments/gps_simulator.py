@@ -20,11 +20,6 @@ status_messages = (
 )
 
 
-@attr.adjust(
-    "resource",
-    default="COM17",
-    help="serial port string (COMnn in windows or /dev/xxxx in unix/Linux)",
-)
 class SpirentGSS8000(lb.SerialDevice):
     """Control a Spirent GPS GSS8000 simulator over a serial connection.
 
@@ -32,10 +27,14 @@ class SpirentGSS8000(lb.SerialDevice):
     pyvisa, so this driver uses plain serial.
     """
 
-    def get_key(self, key, trait_name=None):
-        return self.query(key)
+    resource = attr.copy(
+        lb.SerialDevice.resource,
+        help="serial port string (e.g, COMnn in windows, /dev/xxxx in linux)",
+    )
 
-    "Status messages that may be received from the instrument"
+    def get_key(self, key, trait_name=None):
+        "Status messages that may be received from the instrument"
+        return self.query(key)
 
     def load_scenario(self, path):
         """Load a GPS scenario from a file stored on the instrument.

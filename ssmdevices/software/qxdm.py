@@ -17,7 +17,6 @@ from labbench import paramattr as attr
 import psutil
 
 
-@attr.adjust("com_object", "QPSTAtmnServer.Application")
 class QPST(lb.Win32ComDevice):
     PORT_LIST_CODES = dict(
         ue_mode={
@@ -36,6 +35,8 @@ class QPST(lb.Win32ComDevice):
         ue_esn="ESN",
         ue_build_id="BuildId",
     )
+
+    com_object = attr.copy(lb.Win32ComDevice.com_object, default='QPSTAtmnServer.Application')
 
     def open(self):
         # have to do this for every method we want to call
@@ -104,9 +105,10 @@ class QPST(lb.Win32ComDevice):
             raise TimeoutError(f"QXDM disconnect timeout on COM{port}")
 
 
-@attr.adjust("com_object", r"QXDM.QXDMAutoApplication")
 class QXDM(lb.Win32ComDevice):
     """QXDM software wrapper"""
+
+    com_object = attr.copy(lb.Win32ComDevice.com_object, default='QXDM.QXDMAutoApplication')
 
     resource: int = attr.value.int(
         0, min=0, help="serial port number for the handset connection"
