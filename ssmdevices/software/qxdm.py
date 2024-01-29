@@ -36,7 +36,7 @@ class QPST(lb.Win32ComDevice):
         ue_build_id="BuildId",
     )
 
-    com_object = attr.copy(lb.Win32ComDevice.com_object, default='QPSTAtmnServer.Application')
+    com_object = attr.value.str('QPSTAtmnServer.Application', inherit=True)
 
     def open(self):
         # have to do this for every method we want to call
@@ -108,7 +108,7 @@ class QPST(lb.Win32ComDevice):
 class QXDM(lb.Win32ComDevice):
     """QXDM software wrapper"""
 
-    com_object = attr.copy(lb.Win32ComDevice.com_object, default='QXDM.QXDMAutoApplication')
+    com_object = attr.value.str('QXDM.QXDMAutoApplication', inherit=True)
 
     resource: int = attr.value.int(
         0, min=0, help="serial port number for the handset connection"

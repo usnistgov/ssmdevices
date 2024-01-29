@@ -34,11 +34,7 @@ class AeroflexTM500(lb.TelnetDevice):
     from a file that could be treated as a config file.
     """
 
-    timeout = attr.copy(
-        lb.TelnetDevice.timeout,
-        default=1, 
-        help="leave the timeout small to allow keyboard interrupts"
-    )
+    timeout: float = attr.value.float(1)
     ack_timeout: float = attr.value.float(
         default=30,
         min=0.1,

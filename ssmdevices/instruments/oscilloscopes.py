@@ -9,8 +9,8 @@ scope_channel_kwarg = attr.method_kwarg.int(
 
 @scope_channel_kwarg
 class RigolTechnologiesMSO4014(lb.VISADevice):
-    make = attr.copy(lb.VISADevice.make, default='RIGOL TECHNOLOGIES')
-    model = attr.copy(lb.VISADevice.model, default='MSO4014')
+    make = attr.value.str('RIGOL TECHNOLOGIES')
+    model = attr.value.str('MSO4014')
 
     time_offset = attr.property.float(key=":TIM:OFFS", label="s")
     time_scale = attr.property.float(key=":TIM:SCAL", label="s")
@@ -31,9 +31,9 @@ class RigolTechnologiesMSO4014(lb.VISADevice):
 @attr.visa_keying(remap={True: "1", False: "0"})
 @scope_channel_kwarg
 class TektronixMSO64B(lb.VISADevice):
-    make = attr.copy(lb.VISADevice.make, default='TEKTRONIX')
-    model = attr.copy(lb.VISADevice.model, default='MSO64B')
-    timeout = attr.copy(lb.VISADevice.open_timeout, default=3)
+    make = attr.value.str('TEKTRONIX')
+    model = attr.value.str('MSO64B')
+    timeout: float = attr.value.float(3)
 
     # horizontal acquisition
     record_length = attr.property.int(

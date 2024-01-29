@@ -7,8 +7,8 @@ import ssmdevices.lib
 
 
 class AndroidDebugBridge(lb.ShellBackend):
-    binary_path = attr.copy(lb.ShellBackend.binary_path, default=ssmdevices.lib.path("adb.exe"))
-    timeout = attr.copy(lb.ShellBackend.timeout, default=6)
+    binary_path = attr.value.str(ssmdevices.lib.path("adb.exe"), inherit=True)
+    timeout = attr.value.float(6, inherit=True)
 
     def devices(self):
         """This function checks ADB to see if any devices are connected, if

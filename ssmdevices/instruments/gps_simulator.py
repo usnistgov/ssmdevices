@@ -27,9 +27,8 @@ class SpirentGSS8000(lb.SerialDevice):
     pyvisa, so this driver uses plain serial.
     """
 
-    resource = attr.copy(
-        lb.SerialDevice.resource,
-        help="serial port string (e.g, COMnn in windows, /dev/xxxx in linux)",
+    resource = attr.value.str(
+        help="serial port address ('COM<nn>' in windows, '/dev/<xxxx>' in linux, etc.)",
     )
 
     def get_key(self, key, trait_name=None):

@@ -17,8 +17,8 @@ import typing
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
-    make = attr.copy(lb.VISADevice.make, default='Keysight Technologies')
-    model = attr.copy(lb.VISADevice.model, default='U204')    
+    make = attr.value.str('Keysight Technologies')
+    model = attr.value.str('U204')    
 
     _TRIGGER_SOURCES = ("IMM", "INT", "EXT", "BUS", "INT1")
 
@@ -190,11 +190,11 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
-    frequency = attr.copy(RohdeSchwarzNRPSeries.frequency, max=8e9)
+    frequency = attr.value.float(inherit=True, max=8e9)
 
 
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
-    frequency = attr.copy(RohdeSchwarzNRPSeries.frequency, max=18e9)
+    frequency = attr.value.float(inherit=True, max=18e9)
 
 
 if __name__ == "__main__":

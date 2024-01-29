@@ -26,8 +26,8 @@ class ETSLindgrenAzi2005(lb.VISADevice):
     rtscts = attr.value.bool(default=False)
     dsrdtr = attr.value.bool(default=False)
 
-    read_termination = attr.copy(lb.VISADevice.read_termination, default='\n')
-    write_termination = attr.copy(lb.VISADevice.write_termination, default="\r")
+    read_termination: str = attr.value.str('\n')
+    write_termination: str = attr.value.str("\r")
 
     def config(self, mode):
         if mode in ("CR" or "NCR"):

@@ -17,8 +17,8 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     _VID = 0x20CE  # USB HID Vendor ID
 
-    resource = attr.copy(
-        lb.Device.resource, 
+    resource: str = attr.value.str(
+        default=None,
         help="serial number; must be set if more than one device is connected",
         cache=True
     )
