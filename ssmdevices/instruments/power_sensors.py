@@ -190,11 +190,11 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
 
 class RohdeSchwarzNRP8s(RohdeSchwarzNRPSeries):
-    frequency = attr.value.float(inherit=True, max=8e9)
+    frequency = attr.property.float(inherit=True, max=8e9)
 
 
 class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
-    frequency = attr.value.float(inherit=True, max=18e9)
+    frequency = attr.property.float(inherit=True, max=18e9)
 
 
 if __name__ == "__main__":

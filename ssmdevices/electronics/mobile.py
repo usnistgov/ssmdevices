@@ -7,7 +7,7 @@ import ssmdevices.lib
 
 
 class AndroidDebugBridge(lb.ShellBackend):
-    binary_path = attr.value.str(ssmdevices.lib.path("adb.exe"), inherit=True)
+    binary_path = attr.value.Path(ssmdevices.lib.path("adb.exe"), inherit=True)
     timeout = attr.value.float(6, inherit=True)
 
     def devices(self):

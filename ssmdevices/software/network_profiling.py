@@ -212,7 +212,7 @@ class IPerf3(_IPerfBase):
     The default value is the path that installs with 64-bit cygwin.
     """
 
-    binary_path = attr.value.str(ssmdevices.lib.path("iperf3.exe"), inherit=True)
+    binary_path = attr.value.Path(ssmdevices.lib.path("iperf3.exe"), inherit=True)
 
     FLAGS = dict(_IPerfBase.FLAGS, json="-J", reverse="-R", zerocopy="-Z")
 
@@ -247,7 +247,7 @@ class IPerf2(_IPerfBase):
         "datagrams_out_of_order",
     )
 
-    binary_path = attr.value.str(ssmdevices.lib.path("iperf.exe"), inherit=True)
+    binary_path = attr.value.Path(ssmdevices.lib.path("iperf.exe"), inherit=True)
 
     bidirectional: bool = attr.value.bool(
         default=False, key="-d", help="send and receive simultaneously"
@@ -315,7 +315,7 @@ class IPerf2(_IPerfBase):
 
 class IPerf2OnAndroid(IPerf2):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
-    binary_path = attr.value.str(ssmdevices.lib.path("adb.exe"), inherit=True)
+    binary_path = attr.value.Path(ssmdevices.lib.path("adb.exe"), inherit=True)
     
     remote_binary_path: str = attr.value.str(
         default="/data/local/tmp/iperf", cache=True

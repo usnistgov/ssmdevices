@@ -24,7 +24,7 @@ class WLANInfo(lb.ShellBackend):
     )
 
     timeout = attr.value.float(5, inherit=True)
-    binary_path = attr.value.str(r"C:\Windows\System32\netsh.exe", inherit=True)
+    binary_path = attr.value.Path(r"C:\Windows\System32\netsh.exe", inherit=True)
 
     only_bssid: bool = attr.value.bool(False, help="gather only BSSID information")
     interface: str = attr.value.str(None, help="name of the interface to query")

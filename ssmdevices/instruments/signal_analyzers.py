@@ -120,13 +120,9 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     )
 
     # Set these in subclasses for specific FSW instruments
-    frequency_center = attr.property.float(
-        key="FREQ:CENT", min=0, step=1e-9, label="Hz"
-    )
+    frequency_center = attr.property.float(key="FREQ:CENT", min=0, step=1e-9, label="Hz")
     frequency_span = attr.property.float(key="FREQ:SPAN", min=0, step=1e-9, label="Hz")
-    frequency_start = attr.property.float(
-        key="FREQ:START", min=0, step=1e-9, label="Hz"
-    )
+    frequency_start = attr.property.float(key="FREQ:START", min=0, step=1e-9, label="Hz")
     frequency_stop = attr.property.float(key="FREQ:STOP", min=0, step=1e-9, label="Hz")
     resolution_bandwidth = attr.property.float(key="BAND", min=0, label="Hz")
 
@@ -1187,7 +1183,6 @@ class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
     frequency_span = attr.property.float(max=26.5e9, inherit=True)
     frequency_start = attr.property.float(max=26.5e9, inherit=True)
     frequency_stop = attr.property.float(max=26.5e9, inherit=True)
-    frequency_bandwidth = attr.property.float(min=45e3, max=26.5e9, inherit=True)
 
 
 class RohdeSchwarzFSW26SpectrumAnalyzer(
@@ -1213,7 +1208,6 @@ class RohdeSchwarzFSW43Base(RohdeSchwarzFSWBase):
     frequency_span = attr.property.float(max=43.5e9, inherit=True)
     frequency_start = attr.property.float(max=43.5e9, inherit=True)
     frequency_stop = attr.property.float(max=43.5e9, inherit=True)
-    frequency_bandwidth = attr.property.float(min=45e3, max=43.5e9, inherit=True)
 
 
 class RohdeSchwarzFSW43SpectrumAnalyzer(
