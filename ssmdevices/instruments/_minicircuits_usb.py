@@ -46,7 +46,9 @@ class MiniCircuitsUSBDevice(lb.Device):
         usb_registry[self.usb_path] = self.serial_number
 
         if self.usb_path is None:
-            self._logger.info('connected to {self.model} with serial {self.serial_number}')
+            self._logger.info(
+                'connected to {self.model} with serial {self.serial_number}'
+            )
 
     def close(self):
         if self.backend:

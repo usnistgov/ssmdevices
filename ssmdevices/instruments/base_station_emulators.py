@@ -37,10 +37,16 @@ class RohdeSchwarzCMW500(lb.VISADevice):
     # channel_band             = attr.method.str(key=NEED TO FIND COMMAND,values =[NEED TO FIND BAND CODES'OB66'])
     ue_attached = attr.method.bool(key='SENS:LTE:SIGN1:RRCS?')
     ulrmc_num_rbs = attr.method.int(key='CONF:LTE:SIGN1:CONN:PCC:RMCUL', min=1, max=100)
-    ulrmc_modulation = attr.method.str(key='CONF:LTE:SIGN1:CONN:PCC:RMC:UL', only=['QPSK', 'Q16'])
-    ulrmc_transblocksize = attr.method.int(key='CONF:LTE:SIGN1:CONN:PCC:RMC:UL', min=-1, max=100)
+    ulrmc_modulation = attr.method.str(
+        key='CONF:LTE:SIGN1:CONN:PCC:RMC:UL', only=['QPSK', 'Q16']
+    )
+    ulrmc_transblocksize = attr.method.int(
+        key='CONF:LTE:SIGN1:CONN:PCC:RMC:UL', min=-1, max=100
+    )
     ul_chan_freq = attr.method.float(key='CONF:LTE:SIGN1:RFS:PCC:CHAN:UL', sets=False)
-    ue_target_power = attr.method.float(key='CONF:LTE:SIGN1:UL:PCC:PUSC:TPC:CLTP', min=-50, max=-20)
+    ue_target_power = attr.method.float(
+        key='CONF:LTE:SIGN1:UL:PCC:PUSC:TPC:CLTP', min=-50, max=-20
+    )
     ue_rsrp = attr.method.float(key='SENS:LTE:SIGN1:UER:PCC:RSRP?', sets=False)
     ue_rsrq = attr.method.float(key='SENS:LTE:SIGN1:UER:PCC:RSRQ?', sets=False)
     # spectrogram_num_avg      = attr.method.int(key='NEED TO FIND COMMAND',min=1,max=100)

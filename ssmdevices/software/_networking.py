@@ -31,7 +31,9 @@ def list_network_interfaces(by='interface'):
                 iface['ipv6_netmask'] = family_info.netmask
                 iface['ipv6_broadcast'] = family_info.broadcast
             elif family_info.family is psutil.AF_LINK:
-                iface['physical_address'] = family_info.address.replace('-', ':').lower()
+                iface['physical_address'] = family_info.address.replace(
+                    '-', ':'
+                ).lower()
 
         if by in iface:
             ret[iface[by]] = iface
@@ -60,14 +62,20 @@ def network_interface_info(resource):
     # Check whether the interface exists
     if resource not in addrs:
         available = ', '.join(addrs.keys())
-        msg = f'requested interface for "{resource}" but only ({available}) are available'
+        msg = (
+            f'requested interface for "{resource}" but only ({available}) are available'
+        )
         raise ConnectionError(msg)
 
     return addrs[resource]
 
 
 def get_ipv4_occupied_ports(ip):
-    return {conn.laddr[1] for conn in psutil.net_connections(kind='inet4') if ip in conn.laddr}
+    return {
+        conn.laddr[1]
+        for conn in psutil.net_connections(kind='inet4')
+        if ip in conn.laddr
+    }
 
 
 def get_ipv4_address(resource):

@@ -49,7 +49,10 @@ class KeysightU2000XSeries(lb.VISADevice):
         help='the number of contiguous power samples to acquire per trigger',
     )
     measurement_rate = attr.property.str(
-        key='SENS:MRAT', only=('NORM', 'DOUB', 'FAST'), case=False, help='measurement speed'
+        key='SENS:MRAT',
+        only=('NORM', 'DOUB', 'FAST'),
+        case=False,
+        help='measurement speed',
     )
     sweep_aperture = attr.property.float(
         key='SWE:APER',
@@ -90,7 +93,9 @@ class KeysightU2000XSeries(lb.VISADevice):
         df = self.query_values('FETC?', container=pd.Series)
         if len(df) == 1:
             return df.iloc[0]
-        df.index = pd.Index(self.sweep_aperture * np.arange(len(df)), name='Time elapsed (s)')
+        df.index = pd.Index(
+            self.sweep_aperture * np.arange(len(df)), name='Time elapsed (s)'
+        )
         df.columns.name = 'Power (dBm)'
         return df
 
@@ -114,7 +119,8 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         key='SENS:FREQ', min=10e6, step=1e-3, label='Hz', help='calibration frequency'
     )
     initiate_continuous = attr.property.bool(
-        key='INIT:CONT', help='whether to enable triggering, enabling measurement acquisition'
+        key='INIT:CONT',
+        help='whether to enable triggering, enabling measurement acquisition',
     )
     options = attr.property.str(
         key='*OPT', sets=False, cache=True, help='installed license options'
@@ -138,15 +144,39 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
     trigger_delay = attr.property.float(key='TRIG:DELAY', min=-5, max=10, label='s')
     trigger_count = attr.property.int(key='TRIG:COUN', min=1, max=8192)
-    trigger_holdoff = attr.property.float(key='TRIG:HOLD', min=0, max=10, label='s', help='wait time after trigger before acquisition')
-    trigger_level = attr.property.float(key='TRIG:LEV', min=1e-7, max=200e-3, label='dBm?', help='threshold for power triggering')
+    trigger_holdoff = attr.property.float(
+        key='TRIG:HOLD',
+        min=0,
+        max=10,
+        label='s',
+        help='wait time after trigger before acquisition',
+    )
+    trigger_level = attr.property.float(
+        key='TRIG:LEV',
+        min=1e-7,
+        max=200e-3,
+        label='dBm?',
+        help='threshold for power triggering',
+    )
 
-    trace_points = attr.property.int(key='SENSe:TRACe:POINTs', min=1, max=8192, gets=False, help='number of contiguous power samples to acquire per trigger')
+    trace_points = attr.property.int(
+        key='SENSe:TRACe:POINTs',
+        min=1,
+        max=8192,
+        gets=False,
+        help='number of contiguous power samples to acquire per trigger',
+    )
     trace_realtime = attr.property.bool(key='TRAC:REAL')
     trace_time = attr.property.float(key='TRAC:TIME', min=10e-6, max=3, label='s')
-    trace_offset_time = attr.property.float(key='TRAC:OFFS:TIME', min=-0.5, max=100, label='s')
-    trace_average_count = attr.property.int(key='TRAC:AVER:COUN', min=1, max=65536, label='samples')
-    trace_average_mode = attr.property.str(key='TRAC:AVER:TCON', only=('MOV', 'REP'), case=False)
+    trace_offset_time = attr.property.float(
+        key='TRAC:OFFS:TIME', min=-0.5, max=100, label='s'
+    )
+    trace_average_count = attr.property.int(
+        key='TRAC:AVER:COUN', min=1, max=65536, label='samples'
+    )
+    trace_average_mode = attr.property.str(
+        key='TRAC:AVER:TCON', only=('MOV', 'REP'), case=False
+    )
     trace_average_enable = attr.property.bool(key='TRAC:AVER')
 
     average_count = attr.property.int(key='AVER:COUN', min=1, max=65536)
@@ -163,7 +193,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     def trigger_single(self):
         self.write('INIT')
 
-    def fetch(self) -> typing.Union[SeriesType,float]:
+    def fetch(self) -> typing.Union[SeriesType, float]:
         """Return a single number or pandas Series containing the power readings"""
         df = self.query_values('FETC?', container=pd.Series)
         if len(df) == 1:
@@ -207,9 +237,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         self.trigger_level = 10 ** (trigger_level / 10.0)
         self.trigger_delay = trigger_delay  # self.Ts / 2
         self.trace_realtime = True
-        self.trigger_source = (
-            trigger_source  # 'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
-        )
+        self.trigger_source = trigger_source  # 'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
         self.initiate_continuous = False
         self.wait()
 

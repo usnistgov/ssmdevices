@@ -21,7 +21,9 @@ class AcronamePropertyAdapter(attr.KeyAdapterBase):
         elif op == 'power':
             device._set_power_enabled(channel, value)
         else:
-            raise ValueError('first element in command key must be one of "data" or "power"')
+            raise ValueError(
+                'first element in command key must be one of "data" or "power"'
+            )
 
     def get(self, device, key: tuple, trait=None):
         """Apply an instrument setting to the instrument. The value ``value''
@@ -34,7 +36,9 @@ class AcronamePropertyAdapter(attr.KeyAdapterBase):
         elif op == 'power':
             device._get_power_enabled(channel)
         else:
-            raise ValueError('first element in command key must be one of "data" or "power"')
+            raise ValueError(
+                'first element in command key must be one of "data" or "power"'
+            )
 
 
 @AcronamePropertyAdapter()

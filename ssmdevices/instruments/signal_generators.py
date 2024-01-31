@@ -11,8 +11,12 @@ __all__ = ['RohdeSchwarzSMW200A']
 
 @attr.visa_keying(remap={True: '0', False: '1'})
 class RohdeSchwarzSMW200A(lb.VISADevice):
-    frequency_center = attr.property.float(key=':freq', min=2e3, max=26.5e9, step=1e3, label='Hz')
-    rf_output_power = attr.property.float(key=':pow', min=-145, max=20, step=1e-2, label='dBm')
+    frequency_center = attr.property.float(
+        key=':freq', min=2e3, max=26.5e9, step=1e3, label='Hz'
+    )
+    rf_output_power = attr.property.float(
+        key=':pow', min=-145, max=20, step=1e-2, label='dBm'
+    )
     rf_output_enable = attr.property.bool(key='OUTP')
     options = attr.property.str(
         key='*OPT', sets=False, cache=True, help='installed license options'

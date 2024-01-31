@@ -3,7 +3,9 @@ __all__ = ['RigolTechnologiesMSO4014', 'TektronixMSO64B', 'TektronixMSO64BSpectr
 import labbench as lb
 from labbench import paramattr as attr
 
-scope_channel_kwarg = attr.method_kwarg.int('channel', min=1, max=4, help='hardware input port')
+scope_channel_kwarg = attr.method_kwarg.int(
+    'channel', min=1, max=4, help='hardware input port'
+)
 
 
 @scope_channel_kwarg
@@ -13,7 +15,9 @@ class RigolTechnologiesMSO4014(lb.VISADevice):
     model = attr.value.str('MSO4014', inherit=True)
 
     time_offset = attr.property.float(
-        key=':TIM:OFFS', label='s', help='acquisition time offset relative to the trigger'
+        key=':TIM:OFFS',
+        label='s',
+        help='acquisition time offset relative to the trigger',
     )
     time_scale = attr.property.float(
         key=':TIM:SCAL', label='s', help='acquisition time per division'

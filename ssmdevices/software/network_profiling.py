@@ -125,7 +125,9 @@ class _IPerfBase(lb.ShellBackend):
     )
 
     # high level buffer commands
-    udp: bool = attr.value.bool(default=False, help='if True, to use UDP instead of TCP')
+    udp: bool = attr.value.bool(
+        default=False, help='if True, to use UDP instead of TCP'
+    )
     bit_rate: str = attr.value.str(
         None,
         allow_none=True,
@@ -186,7 +188,9 @@ class _IPerfBase(lb.ShellBackend):
                     self.port = self._traits['port'].min
                 else:
                     self.port = self.port + 1
-                self._logger.info(f'requested port {prev_port} is in use - changing to {self.port}')
+                self._logger.info(
+                    f'requested port {prev_port} is in use - changing to {self.port}'
+                )
 
         # parameter conflict checks
         if self.resource is not None and self.server:
@@ -229,7 +233,9 @@ class IPerf3(_IPerfBase):
         default=False, help='run in reverse mode (server sends, client receives)'
     )
     json: bool = attr.value.bool(default=False, help='output data in JSON format')
-    zerocopy: bool = attr.value.bool(default=False, help="use a 'zero copy' method of sending data")
+    zerocopy: bool = attr.value.bool(
+        default=False, help="use a 'zero copy' method of sending data"
+    )
 
 
 class IPerf2(_IPerfBase):
@@ -300,13 +306,17 @@ class IPerf2(_IPerfBase):
 
         if isinstance(stdout, bytes):
             stdout = stdout.decode()
-        data = pd.read_csv(StringIO(stdout), header=None, index_col=False, names=columns)
+        data = pd.read_csv(
+            StringIO(stdout), header=None, index_col=False, names=columns
+        )
 
         # throw out the last row (potantially a summary of the previous rows)
         # if len(data) == 0:
         #     data = data.append([None])
         if data.shape[1] > 0:
-            data.drop(['interval', 'transferred_bytes', 'test_id'], inplace=True, axis=1)
+            data.drop(
+                ['interval', 'transferred_bytes', 'test_id'], inplace=True, axis=1
+            )
         data['timestamp'] = pd.to_datetime(data['timestamp'], format='%Y%m%d%H%M%S')
         data['timestamp'] = data['timestamp'] + pd.TimedeltaIndex(
             (data.index * self.interval) % 1, 's'
@@ -319,7 +329,9 @@ class IPerf2OnAndroid(IPerf2):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
     binary_path = attr.value.Path(ssmdevices.lib.path('adb.exe'), inherit=True)
 
-    remote_binary_path: str = attr.value.str(default='/data/local/tmp/iperf', cache=True)
+    remote_binary_path: str = attr.value.str(
+        default='/data/local/tmp/iperf', cache=True
+    )
 
     def profile(self, block=True):
         self._validate_flags()
@@ -361,13 +373,17 @@ class IPerf2OnAndroid(IPerf2):
 
         lb.sleep(0.1)
         self._logger.debug('copying iperf onto phone')
-        self.run('push', ssmdevices.lib.path('android', 'iperf'), self.remote_binary_path)
+        self.run(
+            'push', ssmdevices.lib.path('android', 'iperf'), self.remote_binary_path
+        )
         self.wait_for_device(2)
         self.run('shell', 'chmod', '777', self.remote_binary_path, check=False)
         self.wait_for_device(2)
 
         # Check that it's executable
-        stdout = self.run('shell', self.remote_binary_path, '--help', timeout=2, pipe=True)
+        stdout = self.run(
+            'shell', self.remote_binary_path, '--help', timeout=2, pipe=True
+        )
         if stdout.startswith(b'/system/bin/sh'):
             # adb dumps both stderr and stdout from the handset into stdout, so we get little
             # from monitoring. if iperf ran correctly, however, there is no message from sh
@@ -401,7 +417,9 @@ class IPerf2OnAndroid(IPerf2):
                     break
                 lb.sleep(0.25)
             else:
-                raise TimeoutError('timeout waiting for iperf process termination on UE')
+                raise TimeoutError(
+                    'timeout waiting for iperf process termination on UE'
+                )
 
     def read_stdout(self):
         """adb seems to forward stderr as stdout. Filter out some undesired
@@ -438,14 +456,18 @@ class IPerf2OnAndroid(IPerf2):
                 timeout=timeout,
             ).stdout
 
-            con = re.findall(r'mDataConnectionState=([\-0-9]+)', out.decode(errors='replace'))
+            con = re.findall(
+                r'mDataConnectionState=([\-0-9]+)', out.decode(errors='replace')
+            )
 
             if len(con) > 0:
                 if con[0] == '2':
                     break
         else:
             raise TimeoutError('phone did not connect for cellular data before timeout')
-        self._logger.debug('cellular data available after {} s'.format(time.time() - t0))
+        self._logger.debug(
+            'cellular data available after {} s'.format(time.time() - t0)
+        )
 
     def reboot(self, block=True):
         """Reboot the device.
@@ -473,7 +495,9 @@ class IPerf2BoundPair(IPerf2):
     """
 
     # add other settings
-    resource: str = attr.value.str(None, help='unused - use sender and receiver instead')
+    resource: str = attr.value.str(
+        None, help='unused - use sender and receiver instead'
+    )
 
     server: str = attr.value.NetworkAddress(
         None, accept_port=False, help='the ip address where the server listens'
@@ -542,9 +566,13 @@ class IPerf2BoundPair(IPerf2):
             return dict(client=client, server=server)
 
     def _merge_dataframes(self, client, server):
-        client.columns = [('client_' if n != 'timestamp' else '') + str(n) for n in client.columns]
+        client.columns = [
+            ('client_' if n != 'timestamp' else '') + str(n) for n in client.columns
+        ]
 
-        server.columns = [('server_' if n != 'timestamp' else '') + str(n) for n in server.columns]
+        server.columns = [
+            ('server_' if n != 'timestamp' else '') + str(n) for n in server.columns
+        ]
 
         return client.merge(server, how='outer', on='timestamp')
 
@@ -584,7 +612,9 @@ class IPerf2BoundPair(IPerf2):
         self.children['client']._validate_flags()
         self.children['server']._validate_flags()
 
-        self.backend = lb.sequentially(self.children['server'], self.children['client']).__enter__()
+        self.backend = lb.sequentially(
+            self.children['server'], self.children['client']
+        ).__enter__()
 
 
 m1 = 0x5555555555555555
@@ -617,7 +647,9 @@ class TrafficProfiler_ClosedLoop(lb.Device):
     equal to the system time resolution.
     """
 
-    server: str = attr.value.str(None, help='the name of the network interface that will send data')
+    server: str = attr.value.str(
+        None, help='the name of the network interface that will send data'
+    )
     client: str = attr.value.str(
         None, help='the name of the network interface that will receive data'
     )
@@ -631,17 +663,23 @@ class TrafficProfiler_ClosedLoop(lb.Device):
         min=0,
         help='TCP or UDP port for networking, or 0 to let the operating system choose',
     )
-    resource: str = attr.value.str(help='skipped - use sender and receiver instead', cache=True)
+    resource: str = attr.value.str(
+        help='skipped - use sender and receiver instead', cache=True
+    )
     timeout: float = attr.value.float(
         2, min=1e-3, help='timeout before aborting the test', cache=True
     )
-    tcp_nodelay: bool = attr.value.bool(True, help="set True to disable Nagle's algorithm")
+    tcp_nodelay: bool = attr.value.bool(
+        True, help="set True to disable Nagle's algorithm"
+    )
     sync_each: bool = attr.value.bool(
         False,
         help='synchronize the start times of the send and receive threads for each buffer at the cost of throughput',
     )
 
-    delay: float = attr.value.float(0, min=0, help='wait time before profiling', cache=True)
+    delay: float = attr.value.float(
+        0, min=0, help='wait time before profiling', cache=True
+    )
 
     def __repr__(self):
         return "{name}(server='{server}',client='{client}')".format(
@@ -678,7 +716,9 @@ class TrafficProfiler_ClosedLoop(lb.Device):
             raise
 
     def is_running(self):
-        return hasattr(self, '_background_event') and not self._background_event.is_set()
+        return (
+            hasattr(self, '_background_event') and not self._background_event.is_set()
+        )
 
     def get(self):
         if not hasattr(self, '_background_queue'):
@@ -819,10 +859,14 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
 
                 # Set the size of the buffer for this socket
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, bytes_)
-                self._logger.info(f'created server socket with recv buffer size {bytes_}')
+                self._logger.info(
+                    f'created server socket with recv buffer size {bytes_}'
+                )
                 bufsize = sock.getsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF)
                 if bufsize < bytes_:
-                    msg = f'recv buffer size is {bufsize}, but need at least {self.bytes}'
+                    msg = (
+                        f'recv buffer size is {bufsize}, but need at least {self.bytes}'
+                    )
                     raise OSError(msg)
                 self._logger.info(f'binding listener to {server_ip}:{port}')
                 sock.bind((server_ip, port))
@@ -1167,7 +1211,9 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
             #                single()
 
             except lb.util.ThreadEndedByMaster:
-                self._logger.debug(f'{self.__class__.__name__}() ended by master thread')
+                self._logger.debug(
+                    f'{self.__class__.__name__}() ended by master thread'
+                )
                 except_event.set()
             except BaseException:
                 if not (end_event is not None and end_event.is_set()):
@@ -1242,7 +1288,9 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
             #                single()
 
             except lb.util.ThreadEndedByMaster:
-                self._logger.debug(f'{self.__class__.__name__}() ended by master thread')
+                self._logger.debug(
+                    f'{self.__class__.__name__}() ended by master thread'
+                )
                 except_event.set()
             except BaseException as e:
                 if not (end_event is not None and end_event.is_set()):
@@ -1264,14 +1312,18 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
                     ret = lb.concurrently(sender, receiver, traceback_delay=True)
                     self._background_queue.put(ret)
                     i += 1
-                self._logger.debug(f'finished traffic test of {i} buffers of {bytes_} bytes')
+                self._logger.debug(
+                    f'finished traffic test of {i} buffers of {bytes_} bytes'
+                )
             except BaseException as e:
                 if not self._background_event.is_set():
                     self._logger.warning(
                         f'background thread exception - traceback: {traceback.format_exc()}'
                     )
                     self._background_queue.put(e)
-                self._close_sockets(send_sock, recv_sock, listen_sock, bytes_=buffer_size)
+                self._close_sockets(
+                    send_sock, recv_sock, listen_sock, bytes_=buffer_size
+                )
             finally:
                 self._logger.debug('background thread finished')
 
@@ -1280,11 +1332,15 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
             thread.start()
             tx_ready.wait_for_device(timeout=self.timeout)
             rx_ready.wait_for_device(timeout=self.timeout)
-            self._logger.debug(f'first buffer sent after {perf_counter() - t_start:0.3f}s')
+            self._logger.debug(
+                f'first buffer sent after {perf_counter() - t_start:0.3f}s'
+            )
         else:
             ret = lb.concurrently(sender, receiver, traceback_delay=True)
             i = len(ret['t_tx_start'])
-            self._logger.debug(f'finished traffic test of {i} buffers of {bytes_} bytes')
+            self._logger.debug(
+                f'finished traffic test of {i} buffers of {bytes_} bytes'
+            )
             return ret
 
     def profile_count(self, buffer_size: int, count: int):
@@ -1368,7 +1424,9 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
         duration = ret.t_rx_end - ret.t_rx_start
 
         # The average data rate after the first partial receive buffer
-        late_rate = (buffer_size - ret.rx_buffer0_size) / (ret.t_rx_end - ret.t_rx_end_buffer0)
+        late_rate = (buffer_size - ret.rx_buffer0_size) / (
+            ret.t_rx_end - ret.t_rx_end_buffer0
+        )
 
         # Estimate the clock value immediately before the data arrived at the
         # receive socket based on the remainder of the data
@@ -1377,7 +1435,8 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
         ret = pd.DataFrame({
             'bits_per_second': 8 * buffer_size / duration,
             'duration': duration,
-            'delay': est_rx_buffer0_start - ret.t_tx_start,  # ret.t_rx_start-ret.t_tx_start,
+            'delay': est_rx_buffer0_start
+            - ret.t_tx_start,  # ret.t_rx_start-ret.t_tx_start,
             'queuing_duration': ret.t_tx_end - ret.t_tx_start,
             'rx_buffer_count': ret.rx_buffer_count,
             't_rx_end_buffer0': ret.t_rx_end_buffer0,
@@ -1390,7 +1449,9 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
         return self.mtu() - 40
 
     def mtu(self):
-        iface = list_network_interfaces('interface')[self._receive_interface]['interface']
+        iface = list_network_interfaces('interface')[self._receive_interface][
+            'interface'
+        ]
         return psutil.net_if_stats()[iface].mtu
 
     def wait_for_interfaces(self, timeout):
