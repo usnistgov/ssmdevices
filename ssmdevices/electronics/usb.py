@@ -3,6 +3,7 @@ Drivers for USB peripherals
 
 :author: Dan Kuester <daniel.kuester@nist.gov>, Andre Rosete <andre.rosete@nist.gov>
 """
+
 import collections
 import labbench as lb
 from labbench import paramattr as attr
@@ -15,14 +16,12 @@ class AcronamePropertyAdapter(attr.KeyAdapterBase):
         """
         op, channel = key
 
-        if op == "data":
+        if op == 'data':
             device._set_data_enabled(channel, value)
-        elif op == "power":
+        elif op == 'power':
             device._set_power_enabled(channel, value)
         else:
-            raise ValueError(
-                'first element in command key must be one of "data" or "power"'
-            )
+            raise ValueError('first element in command key must be one of "data" or "power"')
 
     def get(self, device, key: tuple, trait=None):
         """Apply an instrument setting to the instrument. The value ``value''
@@ -30,14 +29,12 @@ class AcronamePropertyAdapter(attr.KeyAdapterBase):
         """
         op, channel = key
 
-        if op == "data":
+        if op == 'data':
             device._get_data_enabled(channel)
-        elif op == "power":
+        elif op == 'power':
             device._get_power_enabled(channel)
         else:
-            raise ValueError(
-                'first element in command key must be one of "data" or "power"'
-            )
+            raise ValueError('first element in command key must be one of "data" or "power"')
 
 
 @AcronamePropertyAdapter()
@@ -64,20 +61,20 @@ class AcronameUSBHub2x4(lb.Device):
     def _get_data_enable(self, port: int):
         return self._hub.usb.getDataEnable(port)
 
-    data0_enabled = attr.property.bool(key=("data", 0))
-    data1_enabled = attr.property.bool(key=("data", 1))
-    data2_enabled = attr.property.bool(key=("data", 2))
-    data3_enabled = attr.property.bool(key=("data", 3))
+    data0_enabled = attr.property.bool(key=('data', 0))
+    data1_enabled = attr.property.bool(key=('data', 1))
+    data2_enabled = attr.property.bool(key=('data', 2))
+    data3_enabled = attr.property.bool(key=('data', 3))
 
-    power0_enabled = attr.property.bool(key=("power", 0))
-    power1_enabled = attr.property.bool(key=("power", 1))
-    power2_enabled = attr.property.bool(key=("power", 2))
-    power3_enabled = attr.property.bool(key=("power", 3))
+    power0_enabled = attr.property.bool(key=('power', 0))
+    power1_enabled = attr.property.bool(key=('power', 1))
+    power2_enabled = attr.property.bool(key=('power', 2))
+    power3_enabled = attr.property.bool(key=('power', 3))
 
     resource: str = attr.value.str(
         allow_none=True,
         cache=True,
-        help="None to autodetect, or a serial number string",
+        help='None to autodetect, or a serial number string',
     )
 
     def open(self):
@@ -92,22 +89,22 @@ class AcronameUSBHub2x4(lb.Device):
         if len(specs) > 1:
             if self.resource is None:
                 raise Exception(
-                    "More than one connected USB device matches model "
+                    'More than one connected USB device matches model '
                     + str(self.MODEL)
-                    + " - provide serial number?"
+                    + ' - provide serial number?'
                 )
             else:
                 raise Exception(
-                    "More than one connected USB device match model "
+                    'More than one connected USB device match model '
                     + str(self.MODEL)
-                    + " and serial "
+                    + ' and serial '
                     + str(self.resource)
                 )
         elif len(specs) == 0:
             raise Exception(
-                "No USB devices connected that match model "
+                'No USB devices connected that match model '
                 + str(self.MODEL)
-                + " and serial "
+                + ' and serial '
                 + str(self.resource)
             )
 
@@ -129,7 +126,7 @@ class AcronameUSBHub2x4(lb.Device):
          otherwise 'all' (the default) applies the port settings to all
          ports on the hub.
         """
-        if channel == "all":
+        if channel == 'all':
             channels = list(range(4))
         elif isinstance(channel, collections.Iterable):
             channels = channel
@@ -153,7 +150,7 @@ class AcronameUSBHub2x4(lb.Device):
          otherwise 'all' (the default) applies the port settings to all
          ports on the hub.
         """
-        if channel == "all":
+        if channel == 'all':
             channels = list(range(4))
         elif isinstance(channel, collections.Iterable):
             channels = channel

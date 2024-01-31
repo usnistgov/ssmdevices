@@ -1,14 +1,14 @@
-__all__ = ["MiniCircuitsUSBSwitch"]
+__all__ = ['MiniCircuitsUSBSwitch']
 
 from labbench import paramattr as attr
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # allow relative imports for the __main__ block below
     from _minicircuits_usb import SwitchAttenuatorBase
 else:
     from ._minicircuits_usb import SwitchAttenuatorBase
 
-__all__ = ["MiniCircuitsUSBSwitch"]
+__all__ = ['MiniCircuitsUSBSwitch']
 
 
 class MiniCircuitsUSBSwitch(SwitchAttenuatorBase):
@@ -27,5 +27,5 @@ class MiniCircuitsUSBSwitch(SwitchAttenuatorBase):
     def _(self, port):
         """the RF port connected to the COM port"""
         if port not in (1, 2, 3, 4):
-            raise ValueError("Invalid switch port: %s" % port)
+            raise ValueError('Invalid switch port: %s' % port)
         self._cmd(port)

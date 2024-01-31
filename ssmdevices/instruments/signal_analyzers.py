@@ -3,28 +3,38 @@
 
 import os
 import time
-import numpy as np
-import pandas as pd
 import labbench as lb
 from labbench import paramattr as attr
+import typing
+
+if typing.TYPE_CHECKING:
+    import pandas as pd
+    import numpy as np
+else:
+    # delayed import for speed
+    pd = lb.util.lazy_import('pandas')
+    np = lb.util.lazy_import('numpy')
+
+DataFrameType: typing.TypeAlias = 'pd.DataFrame'
+SeriesType: typing.TypeAlias = 'pd.Series'
 
 __all__ = [
-    "KeysightN9951B",
-    "RohdeSchwarzFSW26SpectrumAnalyzer",
-    "RohdeSchwarzFSW26IQAnalyzer",
-    "RohdeSchwarzFSW26LTEAnalyzer",
-    "RohdeSchwarzFSW26RealTime",
-    "RohdeSchwarzFSW43Base",
-    "RohdeSchwarzFSW43SpectrumAnalyzer",
-    "RohdeSchwarzFSW43IQAnalyzer",
-    "RohdeSchwarzFSW43LTEAnalyzer",
-    "RohdeSchwarzFSW43RealTime",
+    'KeysightN9951B',
+    'RohdeSchwarzFSW26SpectrumAnalyzer',
+    'RohdeSchwarzFSW26IQAnalyzer',
+    'RohdeSchwarzFSW26LTEAnalyzer',
+    'RohdeSchwarzFSW26RealTime',
+    'RohdeSchwarzFSW43Base',
+    'RohdeSchwarzFSW43SpectrumAnalyzer',
+    'RohdeSchwarzFSW43IQAnalyzer',
+    'RohdeSchwarzFSW43LTEAnalyzer',
+    'RohdeSchwarzFSW43RealTime',
 ]
 
-DEFAULT_CHANNEL_NAME = "remote"
+DEFAULT_CHANNEL_NAME = 'remote'
 
 
-@attr.visa_keying(remap={False: "0", True: "1"})
+@attr.visa_keying(remap={False: '0', True: '1'})
 class KeysightN9951B(lb.VISADevice):
     """A Keysight N9951B "Field Fox".
 
@@ -32,25 +42,17 @@ class KeysightN9951B(lb.VISADevice):
         frequency_start (int): the sweep start
     """
 
-    frequency_start = attr.property.float(
-        key="FREQ:START", min=1e6, max=43.99e9, label="Hz"
-    )
-    frequency_stop = attr.property.float(
-        key="FREQ:STOP", min=10e6, max=44e9, label="Hz"
-    )
-    frequency_span = attr.property.float(key="FREQ:SPAN", min=2, max=44e9, label="Hz")
+    frequency_start = attr.property.float(key='FREQ:START', min=1e6, max=43.99e9, label='Hz')
+    frequency_stop = attr.property.float(key='FREQ:STOP', min=10e6, max=44e9, label='Hz')
+    frequency_span = attr.property.float(key='FREQ:SPAN', min=2, max=44e9, label='Hz')
     frequency_center = attr.property.float(
-        key="FREQ:CENT", min=2, max=26.5e9, step=1e-9, label="Hz"
+        key='FREQ:CENT', min=2, max=26.5e9, step=1e-9, label='Hz'
     )
 
-    initiate_continuous = attr.property.bool(key="INIT:CONT")
-    reference_level = attr.property.float(
-        key="DISP:WIND:TRAC1:Y:RLEV", step=1e-3, label="dB"
-    )
+    initiate_continuous = attr.property.bool(key='INIT:CONT')
+    reference_level = attr.property.float(key='DISP:WIND:TRAC1:Y:RLEV', step=1e-3, label='dB')
 
-    resolution_bandwidth = attr.property.float(
-        key="BAND", min=1e3, max=5.76e6, label="Hz"
-    )
+    resolution_bandwidth = attr.property.float(key='BAND', min=1e3, max=5.76e6, label='Hz')
 
     def grab_data(self):
         pass
@@ -62,9 +64,9 @@ class KeysightN9951B(lb.VISADevice):
         :param trace: which trace to pull from the fieldfox
         :type trace: int"""
 
-        x_data = self.query(f"TRAC{trace}:XVAL?").split(",")
-        y_data = self.query(f"TRAC{trace}:DATA?").split(",")
-        return pd.DataFrame({"Frequency": x_data, "Power": y_data})
+        x_data = self.query(f'TRAC{trace}:XVAL?').split(',')
+        y_data = self.query(f'TRAC{trace}:DATA?').split(',')
+        return pd.DataFrame({'Frequency': x_data, 'Power': y_data})
 
     def get_marker_power(self, marker: int) -> float:
         """Get marker measurement value (on vertical axis)
@@ -74,7 +76,7 @@ class KeysightN9951B(lb.VISADevice):
         Returns:
             position of the marker, in units of the horizontal axis
         """
-        return float(self.query(f"CALC:MARK{marker}:Y?"))
+        return float(self.query(f'CALC:MARK{marker}:Y?'))
 
     def get_marker_position(self, marker: int) -> float:
         """Get marker position (on horizontal axis)
@@ -84,7 +86,7 @@ class KeysightN9951B(lb.VISADevice):
         Returns:
             position of the marker, in units of the horizontal axis
         """
-        return float(self.query(f"CALC:MARK{marker}:X?"))
+        return float(self.query(f'CALC:MARK{marker}:X?'))
 
     def set_marker_position(self, marker: int, position: float):
         """Get marker position (on horizontal axis)
@@ -93,16 +95,16 @@ class KeysightN9951B(lb.VISADevice):
             marker: marker number on instrument display
             position: position of the marker, in units of the horizontal axis
         """
-        return self.write(f"CALC:MARK{marker}:X {position}")
+        return self.write(f'CALC:MARK{marker}:X {position}')
 
 
 class RohdeSchwarzFSWBase(lb.VISADevice):
-    _DATA_FORMATS = "ASC,0", "REAL,32", "REAL,64", "REAL,16"
-    _CHANNEL_TYPES = "SAN", "IQ", "RTIM", DEFAULT_CHANNEL_NAME
-    _TRIGGER_OUT_TYPES = "DEV", "TARM", "UDEF"
-    _TRIGGER_DIRECTIONS = "INP", "OUTP"
-    _CHANNEL_TYPES = None, "SAN", "IQ", "RTIM"
-    _CACHE_DIR = r"c:\temp\remote-cache"
+    _DATA_FORMATS = 'ASC,0', 'REAL,32', 'REAL,64', 'REAL,16'
+    _CHANNEL_TYPES = 'SAN', 'IQ', 'RTIM', DEFAULT_CHANNEL_NAME
+    _TRIGGER_OUT_TYPES = 'DEV', 'TARM', 'UDEF'
+    _TRIGGER_DIRECTIONS = 'INP', 'OUTP'
+    _CHANNEL_TYPES = None, 'SAN', 'IQ', 'RTIM'
+    _CACHE_DIR = r'c:\temp\remote-cache'
 
     expected_channel_type: str = attr.value.str(
         None,
@@ -110,101 +112,87 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         only=_CHANNEL_TYPES,
         sets=False,
         cache=True,
-        help="which channel type to use",
+        help='which channel type to use',
     )
     default_window: str = attr.value.str(
-        "", cache=True, help="data window number to use if unspecified"
+        '', cache=True, help='data window number to use if unspecified'
     )
     default_trace: str = attr.value.str(
-        "", cache=True, help="data trace number to use if unspecified"
+        '', cache=True, help='data trace number to use if unspecified'
     )
 
     # Set these in subclasses for specific FSW instruments
-    frequency_center = attr.property.float(key="FREQ:CENT", min=0, step=1e-9, label="Hz")
-    frequency_span = attr.property.float(key="FREQ:SPAN", min=0, step=1e-9, label="Hz")
-    frequency_start = attr.property.float(key="FREQ:START", min=0, step=1e-9, label="Hz")
-    frequency_stop = attr.property.float(key="FREQ:STOP", min=0, step=1e-9, label="Hz")
-    resolution_bandwidth = attr.property.float(key="BAND", min=0, label="Hz")
+    frequency_center = attr.property.float(key='FREQ:CENT', min=0, step=1e-9, label='Hz')
+    frequency_span = attr.property.float(key='FREQ:SPAN', min=0, step=1e-9, label='Hz')
+    frequency_start = attr.property.float(key='FREQ:START', min=0, step=1e-9, label='Hz')
+    frequency_stop = attr.property.float(key='FREQ:STOP', min=0, step=1e-9, label='Hz')
+    resolution_bandwidth = attr.property.float(key='BAND', min=0, label='Hz')
 
-    sweep_time = attr.property.float(key="SWE:TIME", label="Hz")
-    sweep_time_window2 = attr.property.float(key="SENS2:SWE:TIME", label="Hz")
+    sweep_time = attr.property.float(key='SWE:TIME', label='Hz')
+    sweep_time_window2 = attr.property.float(key='SENS2:SWE:TIME', label='Hz')
 
-    initiate_continuous = attr.property.bool(key="INIT:CONT")
+    initiate_continuous = attr.property.bool(key='INIT:CONT')
 
-    reference_level = attr.property.float(
-        key="DISP:TRAC1:Y:RLEV", step=1e-3, label="dB"
-    )
-    reference_level_trace2 = attr.property.float(
-        key="DISP:TRAC2:Y:RLEV", step=1e-3, label="dB"
-    )
-    reference_level_trace3 = attr.property.float(
-        key="DISP:TRAC3:Y:RLEV", step=1e-3, label="dB"
-    )
-    reference_level_trace4 = attr.property.float(
-        key="DISP:TRAC4:Y:RLEV", step=1e-3, label="dB"
-    )
-    reference_level_trace5 = attr.property.float(
-        key="DISP:TRAC5:Y:RLEV", step=1e-3, label="dB"
-    )
-    reference_level_trace6 = attr.property.float(
-        key="DISP:TRAC6:Y:RLEV", step=1e-3, label="dB"
-    )
+    reference_level = attr.property.float(key='DISP:TRAC1:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace2 = attr.property.float(key='DISP:TRAC2:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace3 = attr.property.float(key='DISP:TRAC3:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace4 = attr.property.float(key='DISP:TRAC4:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace5 = attr.property.float(key='DISP:TRAC5:Y:RLEV', step=1e-3, label='dB')
+    reference_level_trace6 = attr.property.float(key='DISP:TRAC6:Y:RLEV', step=1e-3, label='dB')
 
-    amplitude_offset = attr.property.float(
-        key="DISP:TRAC1:Y:RLEV:OFFS", step=1e-3, label="dB"
-    )
+    amplitude_offset = attr.property.float(key='DISP:TRAC1:Y:RLEV:OFFS', step=1e-3, label='dB')
     amplitude_offset_trace2 = attr.property.float(
-        key="DISP:TRAC2:Y:RLEV:OFFS", step=1e-3, label="dB"
+        key='DISP:TRAC2:Y:RLEV:OFFS', step=1e-3, label='dB'
     )
     amplitude_offset_trace3 = attr.property.float(
-        key="DISP:TRAC3:Y:RLEV:OFFS", step=1e-3, label="dB"
+        key='DISP:TRAC3:Y:RLEV:OFFS', step=1e-3, label='dB'
     )
     amplitude_offset_trace4 = attr.property.float(
-        key="DISP:TRAC4:Y:RLEV:OFFS", step=1e-3, label="dB"
+        key='DISP:TRAC4:Y:RLEV:OFFS', step=1e-3, label='dB'
     )
     amplitude_offset_trace5 = attr.property.float(
-        key="DISP:TRAC5:Y:RLEV:OFFS", step=1e-3, label="dB"
+        key='DISP:TRAC5:Y:RLEV:OFFS', step=1e-3, label='dB'
     )
     amplitude_offset_trace6 = attr.property.float(
-        key="DISP:TRAC6:Y:RLEV:OFFS", step=1e-3, label="dB"
+        key='DISP:TRAC6:Y:RLEV:OFFS', step=1e-3, label='dB'
     )
 
     output_trigger2_direction = attr.property.str(
-        key="OUTP:TRIG2:DIR", only=_TRIGGER_DIRECTIONS, case=False
+        key='OUTP:TRIG2:DIR', only=_TRIGGER_DIRECTIONS, case=False
     )
     output_trigger3_direction = attr.property.str(
-        key="OUTP:TRIG3:DIR", only=_TRIGGER_DIRECTIONS, case=False
+        key='OUTP:TRIG3:DIR', only=_TRIGGER_DIRECTIONS, case=False
     )
     output_trigger2_type = attr.property.str(
-        key="OUTP:TRIG2:OTYP", only=_TRIGGER_OUT_TYPES, case=False
+        key='OUTP:TRIG2:OTYP', only=_TRIGGER_OUT_TYPES, case=False
     )
     output_trigger3_type = attr.property.str(
-        key="OUTP:TRIG3:OTYP", only=_TRIGGER_OUT_TYPES, case=False
+        key='OUTP:TRIG3:OTYP', only=_TRIGGER_OUT_TYPES, case=False
     )
 
-    input_preamplifier_enabled = attr.property.bool(key="INP:GAIN:STATE")
-    input_attenuation_auto = attr.property.bool(key="INP:ATT:AUTO")
-    input_attenuation = attr.property.float(key="INP:ATT", step=1, min=0, max=79)
+    input_preamplifier_enabled = attr.property.bool(key='INP:GAIN:STATE')
+    input_attenuation_auto = attr.property.bool(key='INP:ATT:AUTO')
+    input_attenuation = attr.property.float(key='INP:ATT', step=1, min=0, max=79)
 
-    channel_type = attr.property.str(key="INST", only=_CHANNEL_TYPES, case=False)
-    format = attr.property.str(key="FORM", only=_DATA_FORMATS, case=False)
-    sweep_points = attr.property.int(key="SWE:POIN", min=1, max=100001)
+    channel_type = attr.property.str(key='INST', only=_CHANNEL_TYPES, case=False)
+    format = attr.property.str(key='FORM', only=_DATA_FORMATS, case=False)
+    sweep_points = attr.property.int(key='SWE:POIN', min=1, max=100001)
 
-    display_update = attr.property.bool(key="SYST:DISP:UPD")
+    display_update = attr.property.bool(key='SYST:DISP:UPD')
     options = attr.property.str(
-        key="*OPT", sets=False, cache=True, help="installed license options"
+        key='*OPT', sets=False, cache=True, help='installed license options'
     )
 
     def verify_channel_type(self):
         valid = self.expected_channel_type, DEFAULT_CHANNEL_NAME
         if self.expected_channel_type is not None and self.channel_type not in valid:
             self._logger.warning(
-                f"expected {self.expected_channel_type} mode, but got {self.channel_type}"
+                f'expected {self.expected_channel_type} mode, but got {self.channel_type}'
             )
 
     def open(self):
         # self.verify_channel_type()
-        self.format = "REAL,32"
+        self.format = 'REAL,32'
 
     def acquire_spectrogram(self, acquisition_time_sec):
         t0 = time.time()
@@ -229,7 +217,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             #             self.abort()
 
             self.backend.timeout = 50000
-            single = self.fetch_spectrogram(timeout=50000, timestamps="fast")
+            single = self.fetch_spectrogram(timeout=50000, timestamps='fast')
             self.backend.timeout = 1000
 
             if single is not None:
@@ -239,26 +227,26 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
         specs = pd.concat(specs, axis=0) if specs else pd.DataFrame()
         return {
-            "sa_spectrogram": specs,
-            "sa_spectrogram_acquisition_time": time.time() - t0,
-            "sa_spectrogram_active_time": active_time,
+            'sa_spectrogram': specs,
+            'sa_spectrogram_acquisition_time': time.time() - t0,
+            'sa_spectrogram_active_time': active_time,
         }
 
     def close(self):
         try:
             self.abort()
-        except:
+        except BaseException:
             pass
         try:
             self.clear_status()
-        except:
+        except BaseException:
             pass
 
     def clear_status(self):
-        self.write("*CLS")
+        self.write('*CLS')
 
     def status_preset(self):
-        self.write("STAT:PRES")
+        self.write('STAT:PRES')
 
     def save_state(self, name, basedir=None):
         """Save current state of the device to the default directory.
@@ -270,7 +258,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             path = name
         else:
             self.mkdir(basedir)
-            path = basedir + "\\" + name
+            path = basedir + '\\' + name
 
         self.write(f"MMEMory:STORe:STATe 1,'{path}'")
         self.wait()
@@ -282,14 +270,12 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         :type path: string
         """
         if basedir is not None:
-            path = basedir + "\\" + name
-        if not path.endswith(".dfl"):
-            path = path + ".dfl"
+            path = basedir + '\\' + name
+        if not path.endswith('.dfl'):
+            path = path + '.dfl'
 
         if self.file_info(path) is None:
-            raise FileNotFoundError(
-                f'there is no file to load on the instrument at path "{path}"'
-            )
+            raise FileNotFoundError(f'there is no file to load on the instrument at path "{path}"')
 
         self.write(f"MMEM:LOAD:STAT 1,'{path}'")
         self.wait()
@@ -302,7 +288,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         except FileNotFoundError:
             return False
         else:
-            self._logger.debug("Successfully loaded cached save file")
+            self._logger.debug('Successfully loaded cached save file')
             return True
 
     def save_cache(self):
@@ -320,9 +306,9 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             self.__prev_dirs = set()
 
         if recursive:
-            subs = path.replace("/", "\\").split("\\")
+            subs = path.replace('/', '\\').split('\\')
             for i in range(1, len(subs) + 1):
-                self.mkdir("\\".join(subs[:i]), recursive=False)
+                self.mkdir('\\'.join(subs[:i]), recursive=False)
         else:
             with self.overlap_and_block():
                 self.write(f"MMEM:MDIR '{path}'")
@@ -342,7 +328,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         """Trigger once."""
         if disable_continuous:
             self.initiate_continuous = False
-        self.write("INIT")
+        self.write('INIT')
         if wait:
             self.wait()
 
@@ -350,17 +336,17 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         """Try to automatically set the reference level on the instrument, which sets the
         internal attenuation and preamplifier enable settings.
         """
-        self.write("ADJ:LEV")
+        self.write('ADJ:LEV')
 
     def abort(self):
-        self.write("ABORT")
+        self.write('ABORT')
 
     def apply_channel_type(self, type_=None):
         """Setup a channel with name DEFAULT_CHANNEL_NAME, that has measurement type self.channel_type
 
         :return:
         """
-        channel_list = self.query("INST:LIST?").replace("'", "").split(",")[1::2]
+        channel_list = self.query('INST:LIST?').replace("'", '').split(',')[1::2]
         if DEFAULT_CHANNEL_NAME in channel_list:
             self.write(
                 f"INST:CRE:REPL '{DEFAULT_CHANNEL_NAME}',"
@@ -370,7 +356,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             self.write(f"INST:CRE {self.channel_type},'{DEFAULT_CHANNEL_NAME}'")
 
     def channel_preset(self):
-        self.write("SYST:PRES:CHAN")
+        self.write('SYST:PRES:CHAN')
 
     def query_ieee_array(self, msg):
         """An alternative to self.backend.query_binary_values for fetching block data. This
@@ -394,7 +380,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
         from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
 
-        self._logger.debug(f"query {msg}")
+        self._logger.debug(f'query {msg}')
 
         # The read_termination seems to cause unwanted behavior in self.backend.visalib.read
         self.backend.read_termination, old_read_term = (
@@ -404,15 +390,13 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self.backend.write(msg)
 
         try:
-            with self.backend.ignore_warning(
-                VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
-            ):
+            with self.backend.ignore_warning(VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT):
                 # Reproduce the behavior of pyvisa.util.from_ieee_block without
                 # a priori access to the entire buffer.
                 raw, _ = self.backend.visalib.read(self.backend.session, 2)
-                digits = int(raw.decode("ascii")[1])
+                digits = int(raw.decode('ascii')[1])
                 raw, _ = self.backend.visalib.read(self.backend.session, digits)
-                data_size = int(raw.decode("ascii"))
+                data_size = int(raw.decode('ascii'))
 
                 # Read the actual data
                 raw, _ = self.backend.visalib.read(self.backend.session, data_size)
@@ -424,7 +408,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             self.backend.read_termination = old_read_term
 
         data = np.frombuffer(raw, np.float32)
-        self._logger.debug("      -> {} bytes ({} values)".format(data_size, data.size))
+        self._logger.debug('      -> {} bytes ({} values)'.format(data_size, data.size))
         return data
 
     def fetch_horizontal(self, window=None, trace=None):
@@ -433,7 +417,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         if trace is None:
             trace = self.default_trace
 
-        return self.query_ieee_array(f"TRAC{window}:DATA:X? TRACE{trace}")
+        return self.query_ieee_array(f'TRAC{window}:DATA:X? TRACE{trace}')
 
     def fetch_trace(self, trace=None, horizontal=False, window=None):
         """Fetch trace data with 'TRAC:DATA TRACE?' and return the result in
@@ -454,8 +438,8 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         then set the count back, and read again like this:
 
         ::
-            count = inst.query("SENSE:SWEEP:COUNT?")
-            self.write("SENSE:SWEEP:COUNT 1")
+            count = inst.query('SENSE:SWEEP:COUNT?')
+            self.write('SENSE:SWEEP:COUNT 1')
 
         :param trace: The trace number to query (or None, the default, to use self.default_trace)
         :param horizontal: Set the index of the returned Series by a call to :method:`fetch_horizontal`
@@ -466,17 +450,15 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             trace = self.default_trace
         if window is None:
             window = self.default_window
-        if hasattr(trace, "__iter__"):
-            return pd.concat(
-                [self.fetch_trace(t, horizontal=horizontal) for t in trace]
-            )
+        if hasattr(trace, '__iter__'):
+            return pd.concat([self.fetch_trace(t, horizontal=horizontal) for t in trace])
 
         if horizontal:
             index = self.fetch_horizontal(trace)
-            values = self.query_ieee_array(f"TRAC{window}:DATA? TRACE{trace}")
-            return pd.DataFrame(values, columns=["Trace " + trace], index=index)
+            values = self.query_ieee_array(f'TRAC{window}:DATA? TRACE{trace}')
+            return pd.DataFrame(values, columns=['Trace ' + trace], index=index)
         else:
-            values = self.query_ieee_array(f"TRAC{window}:DATA? TRACE{trace}")
+            values = self.query_ieee_array(f'TRAC{window}:DATA? TRACE{trace}')
             return pd.DataFrame(values)
 
     def fetch_timestamps(self, window=None, all=True, timeout=50000):
@@ -496,9 +478,9 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             _to, self.backend.timeout = self.backend.timeout, timeout
 
         try:
-            scope = "ALL" if all else "CURR"
+            scope = 'ALL' if all else 'CURR'
             timestamps = self.backend.query_ascii_values(
-                f"CALC{window}:SGR:TST:DATA? {scope}", container=np.array
+                f'CALC{window}:SGR:TST:DATA? {scope}', container=np.array
             )
             timestamps = timestamps.reshape((timestamps.shape[0] // 4, 4))[:, :2]
             ret = timestamps[:, 0] + 1e-9 * timestamps[:, 1]
@@ -511,9 +493,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         else:
             return ret
 
-    def fetch_spectrogram(
-        self, window=None, freqs="exact", timestamps="exact", timeout=None
-    ):
+    def fetch_spectrogram(self, window=None, freqs='exact', timestamps='exact', timeout=None):
         """
         Fetch a spectrogram without initiating a new trigger. This has been tested in IQ Analyzer and real time
         spectrum analyzer modes. Not all instrument operating modes support trace selection; a choice that is
@@ -525,7 +505,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         :return: a pandas DataFrame containing the acquired data
         """
         if timeout is None:
-            if self.trigger_source.lower() == "mask":
+            if self.trigger_source.lower() == 'mask':
                 max_trigger_time = self.trigger_post_time
             else:
                 max_trigger_time = self.sweep_dwell_time
@@ -541,18 +521,18 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             if window is None:
                 window = self.default_window
 
-            data = self.query_ieee_array(f"TRAC{window}:DATA? SPEC")
+            data = self.query_ieee_array(f'TRAC{window}:DATA? SPEC')
 
             # Fetch time axis
-            if timestamps not in ("fast", "exact", None):
+            if timestamps not in ('fast', 'exact', None):
                 raise ValueError("timestamps argument must be 'fast', 'exact', or None")
-            elif timestamps == "exact":
+            elif timestamps == 'exact':
                 t = self.fetch_timestamps(all=True, window=window, timeout=timeout)
             elif timestamps is None:
                 t = None
 
             # Fetch frequency axis
-            if freqs == "fast":
+            if freqs == 'fast':
                 fc = self.frequency_center
                 fsamp = self.iq_sample_rate
                 Nfreqs = self.sweep_points
@@ -561,7 +541,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
                     +fsamp * (1.0 - 1.0 / Nfreqs) / 2,
                     Nfreqs,
                 )
-            if freqs == "exact":
+            if freqs == 'exact':
                 f_ = self.fetch_horizontal(window)
                 Nfreqs = len(f_)
             elif freqs is None:
@@ -574,22 +554,18 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
                 data = data.reshape((data.size // Nfreqs, Nfreqs))
 
             # Generate timestamps if we're going to guesstimate
-            if timestamps == "fast":
+            if timestamps == 'fast':
                 if window == 1:
                     sweep_time = self.sweep_time
                 else:
-                    sweep_time = getattr(self, "sweep_time_window" + window)
+                    sweep_time = getattr(self, 'sweep_time_window' + window)
                 ts0 = self.fetch_timestamps(all=False, window=window)
-                t = (ts0 - sweep_time * data.shape[0]) + sweep_time * np.arange(
-                    data.shape[0]
-                )[::-1]
+                t = (ts0 - sweep_time * data.shape[0]) + sweep_time * np.arange(data.shape[0])[::-1]
 
             self.backend.timeout = old_timeout
 
             if data.size > 1:
-                return pd.DataFrame(
-                    data[::-1], columns=f_, index=None if t is None else t[::-1]
-                )
+                return pd.DataFrame(data[::-1], columns=f_, index=None if t is None else t[::-1])
             else:
                 return pd.DataFrame([], columns=f_)
 
@@ -614,21 +590,21 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         :param axis: 'X' for x axis or 'Y' for y axis
         :type axis: str
         """
-        return float(self.query(f"CALC:MARK{marker}:{axis}?"))
+        return float(self.query(f'CALC:MARK{marker}:{axis}?'))
 
     def get_marker_enables(self):
         markers = list(range(1, 17))
         states = [
             [
-                self.query(f"CALC:MARK{m}:STATE?"),
-                self.query(f"CALC:MARK{m}:FUNC:BPOW:STATE?"),
+                self.query(f'CALC:MARK{m}:STATE?'),
+                self.query(f'CALC:MARK{m}:FUNC:BPOW:STATE?'),
             ]
             for m in markers
         ]
 
-        df = pd.DataFrame(states, columns=["Marker", "Band"], index=markers)
+        df = pd.DataFrame(states, columns=['Marker', 'Band'], index=markers)
 
-        df.index.name = "Marker"
+        df.index.name = 'Marker'
 
         return df.astype(int).astype(bool)
 
@@ -643,7 +619,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
         :type axis: str
         """
-        return float(self.query(f"CALC:MARK{marker}:Y?"))
+        return float(self.query(f'CALC:MARK{marker}:Y?'))
 
     def get_marker_position(self, marker: int) -> float:
         """Get marker position (on horizontal axis)
@@ -654,7 +630,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         Returns:
             position of the marker, in units of the horizontal axis
         """
-        return float(self.query(f"CALC:MARK{marker}:X?"))
+        return float(self.query(f'CALC:MARK{marker}:X?'))
 
     def set_marker_position(self, marker: int, position: float):
         """Get marker position (on horizontal axis)
@@ -663,7 +639,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             marker: marker number on instrument display
             position: position of the marker, in units of the horizontal axis
         """
-        return self.write(f"CALC:MARK{marker}:X {position}")
+        return self.write(f'CALC:MARK{marker}:X {position}')
 
     def trigger_output_pulse(self, port):
         """
@@ -672,7 +648,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
         :return: None
         """
-        self.write(f"OUTPUT:TRIGGER{port}:PULS:IMM")
+        self.write(f'OUTPUT:TRIGGER{port}:PULS:IMM')
 
 
 class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
@@ -688,7 +664,7 @@ class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
             power in dBm
         """
 
-        return float(self.query(f"CALC:MARK{marker}:FUNC:BPOW:RES?"))
+        return float(self.query(f'CALC:MARK{marker}:FUNC:BPOW:RES?'))
 
     def get_marker_band_span(self, marker: int) -> float:
         """Get span of marker band power measurement
@@ -699,28 +675,28 @@ class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
         Returns:
             bandwidth in Hz
         """
-        return float(self.query(f"CALC:MARK{marker}:FUNC:BPOW:SPAN?"))
+        return float(self.query(f'CALC:MARK{marker}:FUNC:BPOW:SPAN?'))
 
     def get_marker_power_table(self):
         """Get the values of all markers."""
         enables = self.get_marker_enables()
 
         values = pd.DataFrame(
-            columns=["Frequency"] + enables.columns.values.tolist(),
+            columns=['Frequency'] + enables.columns.values.tolist(),
             index=enables.index,
             dtype=float,
             copy=True,
         )
 
         for m in enables.index:
-            if enables.loc[m, "Marker"]:
-                values.loc[m, "Marker"] = self.get_marker_power(m)
-                values.loc[m, "Frequency"] = self.get_marker_position(m)
+            if enables.loc[m, 'Marker']:
+                values.loc[m, 'Marker'] = self.get_marker_power(m)
+                values.loc[m, 'Frequency'] = self.get_marker_position(m)
 
-                if enables.loc[m, "Band"]:
-                    values.loc[m, "Band"] = self.get_marker_band_power(m)
+                if enables.loc[m, 'Band']:
+                    values.loc[m, 'Band'] = self.get_marker_band_power(m)
 
-        values.dropna(how="all", inplace=True)
+        values.dropna(how='all', inplace=True)
         return values
 
     def fetch_marker_bpow(self, marker):
@@ -735,7 +711,7 @@ class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
         :rtype: float
         """
 
-        mark_cmd = "CALC:MARK" + str(marker) + ":FUNC:BPOW:RES?"
+        mark_cmd = 'CALC:MARK' + str(marker) + ':FUNC:BPOW:RES?'
         marker_val = float(self.query(mark_cmd))
         return marker_val
 
@@ -751,26 +727,26 @@ class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
         :rtype: float
         """
 
-        return float(self.query(f"CALC:MARK{marker}:FUNC:BPOW:SPAN?"))
+        return float(self.query(f'CALC:MARK{marker}:FUNC:BPOW:SPAN?'))
 
 
 class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
-    format = attr.property.str(key="FORM", only=("REAL", "ASCII"), case=False)
+    format = attr.property.str(key='FORM', only=('REAL', 'ASCII'), case=False)
 
     @attr.property.float(min=0)
     def uplink_sample_rate(self):
-        response = self.query("CONF:LTE:UL:BW?")
-        return float(response[2:].replace("_", ".")) * 1e6
+        response = self.query('CONF:LTE:UL:BW?')
+        return float(response[2:].replace('_', '.')) * 1e6
 
     @attr.property.float(min=0)
     def downlink_sample_rate(self):
-        response = self.query("CONF:LTE:DL:BW?")
-        return float(response[2:].replace("_", ".")) * 1e6
+        response = self.query('CONF:LTE:DL:BW?')
+        return float(response[2:].replace('_', '.')) * 1e6
 
     def open(self):
         lb.VISADevice.open(self)
         # self.verify_channel_type()
-        self.format = "REAL"
+        self.format = 'REAL'
 
     def fetch_power_vs_symbol_x_carrier(self, window, trace):
         data = self.fetch_trace(window=window, trace=trace)
@@ -785,75 +761,69 @@ class _RSLTEAnalyzerMixIn(RohdeSchwarzFSWBase):
 
         data = data.values.reshape((Nsymbol, Nsubcarrier))
         data = pd.DataFrame(data)
-        data.index.name = "Symbol"
-        data.columns.name = "Subcarrier"
+        data.index.name = 'Symbol'
+        data.columns.name = 'Subcarrier'
         return data
 
     # The methods should be deprecatable now, since the base fetch_trace() should work fine now that format is set
     # in the connect() method and the window parameter is supported by fetch_trace()
     def get_ascii_window_trace(self, window, trace):
-        self.write("FORM ASCII")
+        self.write('FORM ASCII')
         data = self.backend.query_ascii_values(
-            f"TRAC{window}:DATA? TRACE{trace}", container=pd.Series
+            f'TRAC{window}:DATA? TRACE{trace}', container=pd.Series
         )
         return data
 
     def get_binary_window_trace(self, window, trace):
-        self.write("FORM REAL")
+        self.write('FORM REAL')
         data = self.backend.query_binary_values(
-            f"TRAC{window}:DATA? TRACE{trace}",
-            datatype="f",
+            f'TRAC{window}:DATA? TRACE{trace}',
+            datatype='f',
             is_big_endian=False,
             container=pd.Series,
         )
         return data
 
     def get_allocation_summary(self, window):
-        self.write("FORM ASCII")
-        data = self.query(f"TRAC{window}:DATA? TRACE1").split(",")
+        self.write('FORM ASCII')
+        data = self.query(f'TRAC{window}:DATA? TRACE1').split(',')
         return data
 
 
 class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
-    _IQ_FORMATS = ("FREQ", "MAGN", "MTAB", "PEAK", "RIM", "VECT")
-    _IQ_MODES = ("TDOMain", "FDOMain", "IQ")
+    _IQ_FORMATS = ('FREQ', 'MAGN', 'MTAB', 'PEAK', 'RIM', 'VECT')
+    _IQ_MODES = ('TDOMain', 'FDOMain', 'IQ')
 
     expected_channel_type = attr.value.str('RTIM', inherit=True)
 
-    iq_simple_enabled = attr.property.bool(key="CALC:IQ")
-    iq_evaluation_enabled = attr.property.bool(key="CALC:IQ:EVAL")
-    iq_mode = attr.property.str(key="CALC:IQ:MODE", only=_IQ_MODES, case=False)
-    iq_record_length = attr.property.int(key="TRAC:IQ:RLEN", min=1, max=461373440)
-    iq_sample_rate = attr.property.float(key="TRAC:IQ:SRAT", min=1e-9, max=160e6)
-    iq_format = attr.property.str(key="CALC:FORM", only=_IQ_FORMATS, case=False)
-    iq_format_window2 = attr.property.str(
-        key="CALC2:FORM", case=False, only=_IQ_FORMATS
-    )
+    iq_simple_enabled = attr.property.bool(key='CALC:IQ')
+    iq_evaluation_enabled = attr.property.bool(key='CALC:IQ:EVAL')
+    iq_mode = attr.property.str(key='CALC:IQ:MODE', only=_IQ_MODES, case=False)
+    iq_record_length = attr.property.int(key='TRAC:IQ:RLEN', min=1, max=461373440)
+    iq_sample_rate = attr.property.float(key='TRAC:IQ:SRAT', min=1e-9, max=160e6)
+    iq_format = attr.property.str(key='CALC:FORM', only=_IQ_FORMATS, case=False)
+    iq_format_window2 = attr.property.str(key='CALC2:FORM', case=False, only=_IQ_FORMATS)
 
     def fetch_trace(self, horizontal=False, trace=None):
         fmt = self.iq_format
-        if fmt == "VECT":
+        if fmt == 'VECT':
             df = RohdeSchwarzFSWBase.fetch_trace(self, horizontal=False, trace=trace)
         else:
-            df = RohdeSchwarzFSWBase.fetch_trace(
-                self, horizontal=horizontal, trace=trace
-            )
+            df = RohdeSchwarzFSWBase.fetch_trace(self, horizontal=horizontal, trace=trace)
 
-        if fmt == "RIM":
-            if hasattr(df, "columns"):
+        if fmt == 'RIM':
+            if hasattr(df, 'columns'):
                 df = pd.DataFrame(
-                    df.iloc[: len(df) // 2].values
-                    + 1j * df.iloc[len(df) // 2 :].values,
+                    df.iloc[: len(df) // 2].values + 1j * df.iloc[len(df) // 2 :].values,
                     index=df.index[: len(df) // 2],
                     columns=df.columns,
                 )
             else:
                 df = pd.Series(
-                    df.iloc[: len(df) // 2].values
-                    + 1j * df.iloc[len(df) // 2 :].values,
+                    df.iloc[: len(df) // 2].values + 1j * df.iloc[len(df) // 2 :].values,
                     index=df.index[: len(df) // 2],
                 )
-        if fmt == "VECT":
+        if fmt == 'VECT':
             df = pd.DataFrame(df.iloc[1::2].values, index=df.iloc[::2].values)
 
         return df
@@ -863,38 +833,34 @@ class _RSIQAnalyzerMixIn(RohdeSchwarzFSWBase):
 
 
 class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
-    TRIGGER_SOURCES = "IMM", "EXT", "EXT2", "EXT3", "MASK", "TDTR"
-    WINDOW_FUNCTIONS = "BLAC", "FLAT", "GAUS", "HAMM", "HANN", "KAIS", "RECT"
-    _BOOL_LABELS = {False: "0", True: "1"}
+    TRIGGER_SOURCES = 'IMM', 'EXT', 'EXT2', 'EXT3', 'MASK', 'TDTR'
+    WINDOW_FUNCTIONS = 'BLAC', 'FLAT', 'GAUS', 'HAMM', 'HANN', 'KAIS', 'RECT'
+    _BOOL_LABELS = {False: '0', True: '1'}
     expected_channel_type = attr.value.str('RTIM', inherit=True)
 
-    trigger_source = attr.property.str(
-        key="TRIG:SOUR", only=TRIGGER_SOURCES, case=False
-    )
-    trigger_post_time = attr.property.float(key="TRIG:POST", min=0)
-    trigger_pre_time = attr.property.float(key="TRIG:PRET", min=0)
+    trigger_source = attr.property.str(key='TRIG:SOUR', only=TRIGGER_SOURCES, case=False)
+    trigger_post_time = attr.property.float(key='TRIG:POST', min=0)
+    trigger_pre_time = attr.property.float(key='TRIG:PRET', min=0)
 
-    iq_fft_length = attr.property.int(key="IQ:FFT:LENG", sets=False)
-    iq_bandwidth = attr.property.float(key="TRAC:IQ:BWID", sets=False)
-    iq_sample_rate = attr.property.float(key="TRACe:IQ:SRAT", sets=False)
-    iq_trigger_position = attr.property.float(key="TRAC:IQ:TPIS", sets=False)
+    iq_fft_length = attr.property.int(key='IQ:FFT:LENG', sets=False)
+    iq_bandwidth = attr.property.float(key='TRAC:IQ:BWID', sets=False)
+    iq_sample_rate = attr.property.float(key='TRACe:IQ:SRAT', sets=False)
+    iq_trigger_position = attr.property.float(key='TRAC:IQ:TPIS', sets=False)
 
-    sweep_dwell_auto = attr.property.bool(key="SWE:DTIM:AUTO")
-    sweep_dwell_time = attr.property.float(key="SWE:DTIM", min=30e-3)
-    sweep_window_type = attr.property.str(
-        key="SWE:FFT:WIND:TYP", case=False, only=WINDOW_FUNCTIONS
-    )
+    sweep_dwell_auto = attr.property.bool(key='SWE:DTIM:AUTO')
+    sweep_dwell_time = attr.property.float(key='SWE:DTIM', min=30e-3)
+    sweep_window_type = attr.property.str(key='SWE:FFT:WIND:TYP', case=False, only=WINDOW_FUNCTIONS)
 
     def store_spectrogram(self, path, window=2):
         self.mkdir(os.path.split(path)[0])
         self.write(f"MMEM:STOR{window}:SGR '{path}'")
 
     def clear_spectrogram(self, window=2):
-        self.write(f"CALC{window}:SGR:CLE")
+        self.write(f'CALC{window}:SGR:CLE')
 
     def fetch_horizontal(self, window=2, trace=1):
         return self.backend.query_binary_values(
-            f"TRAC{window}:X? TRACE{trace}", datatype="f", container=np.array
+            f'TRAC{window}:X? TRACE{trace}', datatype='f', container=np.array
         )
 
     def set_detector_type(self, type_, window=None, trace=None):
@@ -902,26 +868,26 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
             window = self.default_window
         if trace is None:
             trace = self.default_trace
-        self.write(f"WIND{window}:DET{trace} {type_}")
+        self.write(f'WIND{window}:DET{trace} {type_}')
 
     def get_detector_type(self, window=None, trace=None):
         if window is None:
             window = self.default_window
         if trace is None:
             trace = self.default_trace
-        return self.query("WIND{window}:DET{trace}?")
+        return self.query('WIND{window}:DET{trace}?')
 
     def set_spectrogram_depth(self, depth, window=None):
         if window is None:
             window = self.default_window
 
-        self.write(f"CALC{window}:SPEC:HDEP {depth}")
+        self.write(f'CALC{window}:SPEC:HDEP {depth}')
 
     def get_spectrogram_depth(self, window=None):
         if window is None:
             window = self.default_window
 
-        return self.query(f"CALC{window}:SPEC:HDEP?")
+        return self.query(f'CALC{window}:SPEC:HDEP?')
 
     @attr.property.float(max=0)
     def trigger_mask_threshold(self):
@@ -932,9 +898,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         """'defined in dB relative to the reference level"""
         self.set_frequency_mask(thresholds, None)
 
-    def set_frequency_mask(
-        self, thresholds, frequency_offsets=None, kind="upper", window=None
-    ):
+    def set_frequency_mask(self, thresholds, frequency_offsets=None, kind='upper', window=None):
         """Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
         :param thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`), or a scalar to use a constant value across the band
@@ -945,30 +909,28 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         """
         if window is None:
             window = self.default_window
-        if kind.lower() not in ("upper", "lower"):
-            raise ValueError(
-                f'frequency mask is "{kind}" but must be "upper" or "lower"'
-            )
+        if kind.lower() not in ('upper', 'lower'):
+            raise ValueError(f'frequency mask is "{kind}" but must be "upper" or "lower"')
         if frequency_offsets is None:
             bw = self.iq_bandwidth
             frequency_offsets = -bw / 2, bw / 2
 
-            if not hasattr(thresholds, "__iter__"):
+            if not hasattr(thresholds, '__iter__'):
                 thresholds = len(frequency_offsets) * [thresholds]
             elif len(thresholds) != 2:
                 raise ValueError(
-                    "with frequency_offsets=None, thresholds must be a scalar or have length 2"
+                    'with frequency_offsets=None, thresholds must be a scalar or have length 2'
                 )
 
         self.write(f"CALC{window}:MASK:CDIR '.'")
         self.write(f"CALC{window}:MASK:NAME '{DEFAULT_CHANNEL_NAME}'")
         flat = np.array([frequency_offsets, thresholds]).T.flatten()
 
-        plist = ",".join(flat.astype(str))
+        plist = ','.join(flat.astype(str))
 
-        self.write(f"CALC{window}:MASK:{kind} {plist}")
+        self.write(f'CALC{window}:MASK:{kind} {plist}')
 
-    def get_frequency_mask(self, kind="upper", window=None, first_threshold_only=False):
+    def get_frequency_mask(self, kind='upper', window=None, first_threshold_only=False):
         """Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
         :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
@@ -979,18 +941,16 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
 
         if window is None:
             window = self.default_window
-        if kind.lower() not in ("upper", "lower"):
-            raise ValueError(
-                f'frequency mask is "{kind}" but must be "upper" or "lower"'
-            )
+        if kind.lower() not in ('upper', 'lower'):
+            raise ValueError(f'frequency mask is "{kind}" but must be "upper" or "lower"')
 
-        plist = self.query(f"CALC{window}:MASK:{kind}?")
-        plist = np.array(plist.split(",")).astype(np.float64)
+        plist = self.query(f'CALC{window}:MASK:{kind}?')
+        plist = np.array(plist.split(',')).astype(np.float64)
 
         if first_threshold_only:
             return plist[1]
         else:
-            return {"frequency_offsets": plist[::2], "thresholds": plist[1::2]}
+            return {'frequency_offsets': plist[::2], 'thresholds': plist[1::2]}
 
     def setup_spectrogram(
         self,
@@ -1001,7 +961,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         acquisition_time,
         input_attenuation=None,
         trigger_threshold=None,
-        detector="SAMP",
+        detector='SAMP',
         analysis_window=None,
     ):
         """Quick setup for a spectrogram measurement in RTSA mode.
@@ -1027,13 +987,13 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         # Work around an apparent SCPI bug by setting
         # frequency parameters in spectrum analyzer mode
         with self.overlap_and_block(timeout=10000):
-            self.apply_channel_type("SAN")
+            self.apply_channel_type('SAN')
         self.channel_preset()
         self.wait()
         self.frequency_center = center_frequency
         self.wait()
         with self.overlap_and_block(timeout=10000):
-            self.apply_channel_type("RTIM")
+            self.apply_channel_type('RTIM')
         self.wait()
         self.initiate_continuous = False
         self.frequency_span = analysis_bandwidth
@@ -1055,14 +1015,14 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         self.sweep_time_window2 = time_resolution
         if self.sweep_time_window2 != time_resolution:
             self._logger.warning(
-                f"requested time resolution {time_resolution}, "
-                f"but instrument adjusted to {self.sweep_time_window2}"
+                f'requested time resolution {time_resolution}, '
+                f'but instrument adjusted to {self.sweep_time_window2}'
             )
         self.spectrogram_depth = 100000
 
         # Triggering
         if trigger_threshold is not None:
-            self.trigger_source = "MASK"
+            self.trigger_source = 'MASK'
             th = 2 * [trigger_threshold] + [0] + 2 * [trigger_threshold]
             rbw = 2 * self.resolution_bandwidth
             fr = [-analysis_bandwidth / 2, -rbw, 0, rbw, analysis_bandwidth / 2]
@@ -1075,12 +1035,12 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
             self.sweep_dwell_time = acquisition_time
 
         # TODO: Parameterize somehow
-        self.output_trigger2_direction = "OUTP"
-        self.output_trigger2_type = "DEV"
-        self.output_trigger3_direction = "OUTP"
-        self.output_trigger3_type = "DEV"
+        self.output_trigger2_direction = 'OUTP'
+        self.output_trigger2_type = 'DEV'
+        self.output_trigger3_direction = 'OUTP'
+        self.output_trigger3_type = 'DEV'
         if analysis_window is not None:
-            self.sweep_window_type = "BLAC"
+            self.sweep_window_type = 'BLAC'
 
         with self.overlap_and_block(timeout=2500):
             self.save_cache()
@@ -1089,9 +1049,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         with self.overlap_and_block():
             self.spectrogram_depth
 
-    def acquire_spectrogram_sequence(
-        self, loop_time=None, delay_time=0.1, timestamps="fast"
-    ):
+    def acquire_spectrogram_sequence(self, loop_time=None, delay_time=0.1, timestamps='fast'):
         """Trigger and fetch data, optionally in a loop that continues for a specified
         duration.
 
@@ -1102,7 +1060,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         """
         specs = []
 
-        if self.trigger_source.lower() == "mask":
+        if self.trigger_source.lower() == 'mask':
             max_trigger_time = self.trigger_post_time
         else:
             max_trigger_time = self.sweep_dwell_time
@@ -1127,9 +1085,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
                 active_time += time.time() - t0_active
 
                 self.backend.timeout = 6 * 1e3 * max_trigger_time
-                single = self.fetch_spectrogram(
-                    timeout=self.backend.timeout, timestamps=timestamps
-                )
+                single = self.fetch_spectrogram(timeout=self.backend.timeout, timestamps=timestamps)
                 self.backend.timeout = 1000
                 if single is not None:
                     specs.append(single)
@@ -1145,12 +1101,12 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
             specs = pd.concat(specs, axis=0) if specs else pd.DataFrame().iloc[:, :-1]
         else:
             specs = pd.DataFrame()
-            self._logger.warning("no data acquired")
+            self._logger.warning('no data acquired')
 
         return {
-            "spectrogram_data": specs,
-            "spectrogram_acquisition_time": time.time() - t0,
-            "spectrogram_active_time": active_time,
+            'spectrogram_data': specs,
+            'spectrogram_acquisition_time': time.time() - t0,
+            'spectrogram_active_time': active_time,
         }
 
     def arm_spectrogram(self):
@@ -1165,7 +1121,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         """
         t0 = time.time()
 
-        if self.trigger_source.lower() == "mask":
+        if self.trigger_source.lower() == 'mask':
             max_trigger_time = self.trigger_post_time
         else:
             max_trigger_time = self.sweep_dwell_time
@@ -1175,7 +1131,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         with self.overlap_and_block(timeout=int(1e3 * 30 * max_trigger_time)):
             self.trigger_single(wait=False)
 
-        return {"spectrogram_active_time": time.time() - t0}
+        return {'spectrogram_active_time': time.time() - t0}
 
 
 class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
@@ -1185,9 +1141,7 @@ class RohdeSchwarzFSW26Base(RohdeSchwarzFSWBase):
     frequency_stop = attr.property.float(max=26.5e9, inherit=True)
 
 
-class RohdeSchwarzFSW26SpectrumAnalyzer(
-    RohdeSchwarzFSW26Base, _RSSpectrumAnalyzerMixIn
-):
+class RohdeSchwarzFSW26SpectrumAnalyzer(RohdeSchwarzFSW26Base, _RSSpectrumAnalyzerMixIn):
     pass
 
 
@@ -1210,9 +1164,7 @@ class RohdeSchwarzFSW43Base(RohdeSchwarzFSWBase):
     frequency_stop = attr.property.float(max=43.5e9, inherit=True)
 
 
-class RohdeSchwarzFSW43SpectrumAnalyzer(
-    RohdeSchwarzFSW43Base, _RSSpectrumAnalyzerMixIn
-):
+class RohdeSchwarzFSW43SpectrumAnalyzer(RohdeSchwarzFSW43Base, _RSSpectrumAnalyzerMixIn):
     pass
 
 

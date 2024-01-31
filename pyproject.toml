@@ -66,3 +66,17 @@ doc-html = {cmd = "sphinx-build -b html doc doc/html"}
 doc-latex = {cmd = "sphinx-build -b latex doc doc/latex"}
 doc-pdf = {cmd = "pdflatex doc/latex/ssmdevices-api.tex --output-directory=doc", env = {"TEXINPUTS" = "doc/latex"}}
 doc-rst = {cmd = "sphinx-apidoc -F . -o doc/rst"}
+
+[tool.ruff]
+target-version = "py39"
+extend-include = ["*.ipynb"]
+line-length = 100
+
+[tool.ruff.format]
+quote-style = "single"
+line-ending = "lf"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
+[tool.ruff.lint.extend-per-file-ignores]
+"**/__init__.py" = ["F401", "F403"]

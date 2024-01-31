@@ -1,13 +1,14 @@
 """
 Made by Michael Voecks
 """
+
 import labbench as lb
 from labbench import paramattr as attr
 import ssmdevices.lib
 
 
 class AndroidDebugBridge(lb.ShellBackend):
-    binary_path = attr.value.Path(ssmdevices.lib.path("adb.exe"), inherit=True)
+    binary_path = attr.value.Path(ssmdevices.lib.path('adb.exe'), inherit=True)
     timeout = attr.value.float(6, inherit=True)
 
     def devices(self):
@@ -20,7 +21,7 @@ class AndroidDebugBridge(lb.ShellBackend):
         """
         # with self.no_state_arguments:
         devices = (
-            self.run("devices", pipe=True, check_stderr=True, check_return=True)
+            self.run('devices', pipe=True, check_stderr=True, check_return=True)
             .strip()
             .rstrip()
             .splitlines()[1:]
@@ -28,10 +29,10 @@ class AndroidDebugBridge(lb.ShellBackend):
         if len(devices) > 0:
             # At least one device found, lets return it in a nice way
             for index in range(len(devices)):
-                devices[index] = devices[index].decode("utf-8").split("\t")
+                devices[index] = devices[index].decode('utf-8').split('\t')
             return devices
         else:
-            raise Exception("No devices found. Is the UE properly connected?")
+            raise Exception('No devices found. Is the UE properly connected?')
 
     def is_device_connected(self, serialNum):
         """Uses the devices function to check if a device (sepecified by the
@@ -52,10 +53,10 @@ class AndroidDebugBridge(lb.ShellBackend):
         # with self.no_state_arguments:
         if self.is_device_connected(deviceId):
             # Device is connected and ready to reboot, lets do
-            self.run("-s", str(deviceId), "reboot", check_return=True)
+            self.run('-s', str(deviceId), 'reboot', check_return=True)
         else:
             # Devices isn't connected, lets raise an error saying so
-            raise Exception("The specified device is not connected to the ADB server")
+            raise Exception('The specified device is not connected to the ADB server')
 
     def check_airplane_mode(self, deviceId):
         """Returns the status of airplane mode of device deviceId,
@@ -65,18 +66,18 @@ class AndroidDebugBridge(lb.ShellBackend):
         """
         if self.is_device_connected(deviceId):
             res = self.run(
-                "-s",
+                '-s',
                 str(deviceId),
-                "shell",
-                "settings",
-                "get",
-                "global",
-                "airplane_mode_on",
+                'shell',
+                'settings',
+                'get',
+                'global',
+                'airplane_mode_on',
                 pipe=True,
             )
-            return res.strip().rstrip().decode("utf-8")
+            return res.strip().rstrip().decode('utf-8')
         else:
-            raise Exception("The specified device is not connected to the ADB server")
+            raise Exception('The specified device is not connected to the ADB server')
 
     def set_airplane_mode(self, deviceId, status):
         """Sets the airplane_mode feature on the device specified by deviceId
@@ -87,35 +88,33 @@ class AndroidDebugBridge(lb.ShellBackend):
         if self.is_device_connected(deviceId):
             if status not in [0, 1]:
                 # invalid status argument
-                raise Exception(
-                    "The Airplane Mode feature can only be set to a value of 0 or 1"
-                )
+                raise Exception('The Airplane Mode feature can only be set to a value of 0 or 1')
             else:
                 self.foreground(
-                    "-s",
+                    '-s',
                     str(deviceId),
-                    "shell",
-                    "settings",
-                    "put",
-                    "global",
-                    "airplane_mode_on",
+                    'shell',
+                    'settings',
+                    'put',
+                    'global',
+                    'airplane_mode_on',
                     str(status),
                     pipe=True,
                     check_return=True,
                 )
                 self.foreground(
-                    "-s",
+                    '-s',
                     str(deviceId),
-                    "shell",
-                    "am",
-                    "broadcast",
-                    "-a",
-                    "android.intent.action.AIRPLANE_MODE",
+                    'shell',
+                    'am',
+                    'broadcast',
+                    '-a',
+                    'android.intent.action.AIRPLANE_MODE',
                     pipe=True,
                     check_return=True,
                 )
         else:
-            raise Exception("The specified device is not connected to the ADB server")
+            raise Exception('The specified device is not connected to the ADB server')
 
     def push_file(self, deviceId, local_filepath, device_filepath):
         """Takes a file at the location specified by local_filepath and copys
@@ -124,9 +123,9 @@ class AndroidDebugBridge(lb.ShellBackend):
         """
         if self.is_device_connected(deviceId):
             res = self.run(
-                "-s",
+                '-s',
                 str(deviceId),
-                "push",
+                'push',
                 local_filepath,
                 device_filepath,
                 pipe=True,
@@ -134,12 +133,12 @@ class AndroidDebugBridge(lb.ShellBackend):
             )
             res = res.strip().rstrip().splitlines()
             for val in res:
-                print(val.decode("utf-8"))
+                print(val.decode('utf-8'))
         else:
-            raise Exception("The specified device is not connected to the ADB server")
+            raise Exception('The specified device is not connected to the ADB server')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     with AndroidDebugBridge() as adb:
         devices = adb.devices()[0][0]  # Returns a list of tuples containing device Ids
         #  adb.reboot(devices[0][0])
@@ -148,6 +147,6 @@ if __name__ == "__main__":
         print(adb.check_airplane_mode(devices))
         adb.push_file(
             devices,
-            ssmdevices.lib.path("android", "iperf"),
-            "/data/local/tmp/iperf",
+            ssmdevices.lib.path('android', 'iperf'),
+            '/data/local/tmp/iperf',
         )

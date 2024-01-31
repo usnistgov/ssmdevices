@@ -13,6 +13,6 @@ def default_path(cls):
     global __path__
     import os
 
-    mod_split = cls.__module__.split(".", 1)[-1]
-    rel_path = (mod_split + "." + cls.__name__).replace(".", os.path.sep)
+    mod_split = cls.__module__.split('.', 1)[-1]
+    rel_path = (mod_split + '.' + cls.__name__).replace('.', os.path.sep)
     return os.path.join(__path__[0], rel_path)

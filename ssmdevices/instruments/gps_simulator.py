@@ -2,21 +2,22 @@
 
 :author: Duncan McGillivray <duncan.mcgillivray@nist.gov>, Daniel Kuester <daniel.kuester@nist.gov>
 """
-__all__ = ["SpirentGSS8000"]
+
+__all__ = ['SpirentGSS8000']
 
 import time, re
 import labbench as lb
 from labbench import paramattr as attr
 
 status_messages = (
-    b"no scenario",
-    b"loading",
-    b"ready",
-    b"arming",
-    b"armed",
-    b"running",
-    b"paused",
-    b"ended",
+    b'no scenario',
+    b'loading',
+    b'ready',
+    b'arming',
+    b'armed',
+    b'running',
+    b'paused',
+    b'ended',
 )
 
 
@@ -44,7 +45,7 @@ class SpirentGSS8000(lb.SerialDevice):
         # write scenario path as 'c:\folder\folder\name.scn'
         loadpath = self.fix_path_name(path)
         self.backend.read(self.backend.inWaiting())
-        self.backend.write("SC,%s\n" % (loadpath))
+        self.backend.write('SC,%s\n' % (loadpath))
         self.current_scenario
 
     def save_scenario(self, folderpath):
@@ -58,12 +59,12 @@ class SpirentGSS8000(lb.SerialDevice):
         writepath = self.fix_path_name(folderpath)
 
         self.backend.read(self.backend.inWaiting())
-        self.backend.write(b"SAVE_SCENARIO,with_changes,as_simgen,%s/\n" % (writepath))
+        self.backend.write(b'SAVE_SCENARIO,with_changes,as_simgen,%s/\n' % (writepath))
         self.current_scenario
 
     @staticmethod
     def fix_path_name(path):
-        return path.replace("\\", "/")
+        return path.replace('\\', '/')
 
     def write(self, key, returns=None):
         """Send a message to the spirent, and check the status message
@@ -74,30 +75,28 @@ class SpirentGSS8000(lb.SerialDevice):
                  exception if a data value is returned)
         """
         self.backend.read(self.backend.inWaiting())
-        self._logger.debug("write {}".format(repr(key)))
-        self.backend.write("{}\n".format(key))
+        self._logger.debug('write {}'.format(repr(key)))
+        self.backend.write('{}\n'.format(key))
 
         # Get the response
-        response = b""
-        while b"</msg>" not in response.lower():
+        response = b''
+        while b'</msg>' not in response.lower():
             response += self.backend.readline()
-        self._logger.debug(b"  <- {}".format(repr(response)))
+        self._logger.debug(b'  <- {}'.format(repr(response)))
         self.backend.read(self.backend.inWaiting())  # Clear out any remaining data
 
         # Pull the data/error message payload
-        data = re.match(rb".*<data>[\W*]*(.*)[\W*]</data>.*", response, flags=re.S)
+        data = re.match(rb'.*<data>[\W*]*(.*)[\W*]</data>.*', response, flags=re.S)
 
         if returns is None:
             if data is not None:
                 raise Exception(data.group(1))
             return
-        elif returns.lower() == b"value":
+        elif returns.lower() == b'value':
             return data.group(1)
-        if returns.lower() == b"status":
+        if returns.lower() == b'status':
             status = int(
-                re.match(
-                    rb".*<status>[\W*]*(\d+)[\W*]</status>.*", response, flags=re.S
-                ).group(1)
+                re.match(rb'.*<status>[\W*]*(\d+)[\W*]</status>.*', response, flags=re.S).group(1)
             )
             return status_messages[status]
         else:
@@ -108,34 +107,34 @@ class SpirentGSS8000(lb.SerialDevice):
             )
 
     def query(self, command):
-        return self.write(command + "\n", returns="value")
+        return self.write(command + '\n', returns='value')
 
     def run(self):
         """Start running the current scenario. Requires that there is time left in
         the scenario, otherwise run `rewind()` first.
         """
-        self.write(b"RU")
+        self.write(b'RU')
 
     def end(self):
         """Stop running the current scenario. If a scenario is not
         running, an exception is raised.
         """
-        self.write(b"-,EN")
+        self.write(b'-,EN')
 
     def rewind(self):
         """Rewind the current scenario to the beginning."""
-        self.write(b"RW")
+        self.write(b'RW')
 
     def abort(self):
         """Force stop the current scenario."""
-        self.write(b"-,EN,1,0")
+        self.write(b'-,EN,1,0')
 
     def reset(self):
         """End any currently running scenario, then rewind"""
-        if self.status != b"ended":
+        if self.status != b'ended':
             try:
                 self.end()
-            except:
+            except BaseException:
                 pass
 
         self.rewind()
@@ -143,31 +142,31 @@ class SpirentGSS8000(lb.SerialDevice):
     @attr.property.bytes(sets=False)
     def utc_time(self):
         """UTC time of the running scenario"""
-        utc_unformatted = self.query(b"-,UTC_TIME")
+        utc_unformatted = self.query(b'-,UTC_TIME')
         try:
-            utc_struct = time.strptime(utc_unformatted, "%d-%b-%Y %H:%M:%S.%f")
-            frac = utc_unformatted.split(".")[-1]
-        except:
-            utc_struct = time.strptime(utc_unformatted, "%d-%b-%Y %H:%M:%S")
-            frac = b"000"
+            utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S.%f')
+            frac = utc_unformatted.split('.')[-1]
+        except BaseException:
+            utc_struct = time.strptime(utc_unformatted, '%d-%b-%Y %H:%M:%S')
+            frac = b'000'
 
-        return time.strftime("%Y-%m-%d %H:%M:%S", utc_struct) + "." + frac
+        return time.strftime('%Y-%m-%d %H:%M:%S', utc_struct) + '.' + frac
 
     @attr.property.bool(sets=False)
     def running(self):
         """`True` if a scenario is running."""
-        return self.status == b"running"
+        return self.status == b'running'
 
     @attr.property.bytes(sets=False, only=status_messages, case=False)
     def status(self):
         """UTC time of the current running scenario."""
-        return self.write(b"NULL", returns=b"status")
+        return self.write(b'NULL', returns=b'status')
 
 
 # %%
-if __name__ == "__main__":
-    lb.debug_to_screen("DEBUG")
-    with SpirentGSS8000("COM17") as spirent:
+if __name__ == '__main__':
+    lb.debug_to_screen('DEBUG')
+    with SpirentGSS8000('COM17') as spirent:
         print(spirent.status)
         spirent.reset()
         spirent.run()

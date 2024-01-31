@@ -5,7 +5,7 @@ import platform
 import numpy as np
 from threading import Lock
 
-__all__ = ["MiniCircuitsUSBDevice", "SwitchAttenuatorBase"]
+__all__ = ['MiniCircuitsUSBDevice', 'SwitchAttenuatorBase']
 
 usb_enumerate_lock = Lock()
 usb_command_lock = Lock()
@@ -19,19 +19,19 @@ class MiniCircuitsUSBDevice(lb.Device):
 
     resource: str = attr.value.str(
         default=None,
-        help="serial number; must be set if more than one device is connected",
-        cache=True
+        help='serial number; must be set if more than one device is connected',
+        cache=True,
     )
 
     # annotated values can be passed as constructor arguments
     usb_path: bytes = attr.value.bytes(
         default=None,
         allow_none=True,
-        help="override `resource` to connect to a specific USB path",
+        help='override `resource` to connect to a specific USB path',
         cache=True,
     )
 
-    timeout: float = attr.value.float(default=1, min=0.5, label="s", cache=True)
+    timeout: float = attr.value.float(default=1, min=0.5, label='s', cache=True)
 
     def open(self):
         import hid
@@ -46,9 +46,7 @@ class MiniCircuitsUSBDevice(lb.Device):
         usb_registry[self.usb_path] = self.serial_number
 
         if self.usb_path is None:
-            self._logger.info(
-                "connected to {self.model} with serial {self.serial_number}"
-            )
+            self._logger.info('connected to {self.model} with serial {self.serial_number}')
 
     def close(self):
         if self.backend:
@@ -57,18 +55,18 @@ class MiniCircuitsUSBDevice(lb.Device):
     @classmethod
     def _parse_str(cls, data):
         """Convert a command response to a string."""
-        b = np.array(data[1:], dtype="uint8").tobytes()
-        return b.split(b"\x00", 1)[0].decode()
+        b = np.array(data[1:], dtype='uint8').tobytes()
+        return b.split(b'\x00', 1)[0].decode()
 
     def _cmd(self, *cmd):
         """Send up to 64 1-byte unsigned integers and return the response."""
         with usb_command_lock:
             if len(cmd) > 64:
-                raise ValueError("command key data length is limited to 64")
+                raise ValueError('command key data length is limited to 64')
 
             cmd = list(cmd) + (63 - len(cmd)) * [0]
 
-            if platform.system().lower() == "windows":
+            if platform.system().lower() == 'windows':
                 self.backend.write([0] + cmd[:-1])
             else:
                 self.backend.write(cmd)
@@ -81,12 +79,12 @@ class MiniCircuitsUSBDevice(lb.Device):
                     if d[0] == cmd[0]:
                         break
                     else:
-                        msg = "device responded to command code {}, but expected {} (full response {})".format(
+                        msg = 'device responded to command code {}, but expected {} (full response {})'.format(
                             d[0], cmd[0], repr(d)
                         )
             else:
                 if msg is None:
-                    raise TimeoutError("no response from device")
+                    raise TimeoutError('no response from device')
                 else:
                     raise lb.DeviceException(msg)
 
@@ -98,7 +96,7 @@ class MiniCircuitsUSBDevice(lb.Device):
         the subclass must have serial_number and model traits.
         """
         raise NotImplementedError(
-            "subclasses must implement this to return an instance for trial connection"
+            'subclasses must implement this to return an instance for trial connection'
         )
 
     @classmethod
@@ -116,18 +114,18 @@ class MiniCircuitsUSBDevice(lb.Device):
             for dev in hid.enumerate(cls._VID, cls._PID):
                 # Check for a cached serial number first
                 try:
-                    this_serial = usb_registry[dev["path"]]
-                    found[this_serial] = dev["path"]
+                    this_serial = usb_registry[dev['path']]
+                    found[this_serial] = dev['path']
                     continue
                 except KeyError:
                     pass
 
                 # Otherwise, connect to the device to learn its serial number
                 try:
-                    with cls._test_instance(dev["path"]) as inst:
+                    with cls._test_instance(dev['path']) as inst:
                         this_serial = inst.serial_number
-                        usb_registry[dev["path"]] = this_serial
-                        found[this_serial] = dev["path"]
+                        usb_registry[dev['path']] = this_serial
+                        found[this_serial] = dev['path']
                 except OSError as e:
                     # Device already open, skipping.
                     print(str(e))
@@ -135,10 +133,10 @@ class MiniCircuitsUSBDevice(lb.Device):
 
         if len(found) == 0:
             raise ConnectionError(
-                f"found no {cls.__name__} connected with vid={cls._VID}, pid={cls._PID}"
+                f'found no {cls.__name__} connected with vid={cls._VID}, pid={cls._PID}'
             )
 
-        names = ", ".join([repr(k) for k in found.keys()])
+        names = ', '.join([repr(k) for k in found.keys()])
 
         if serial is None:
             if len(found) == 1:
@@ -146,14 +144,14 @@ class MiniCircuitsUSBDevice(lb.Device):
                 return ret
             else:
                 raise ConnectionError(
-                    f"specify one of the available {cls.__name__} resources: {names}"
+                    f'specify one of the available {cls.__name__} resources: {names}'
                 )
 
         try:
             ret = found[serial]
         except KeyError:
             raise ConnectionError(
-                f"specified resource {repr(serial)}, but only {names} are available"
+                f'specified resource {repr(serial)}, but only {names} are available'
             )
         return ret
 
