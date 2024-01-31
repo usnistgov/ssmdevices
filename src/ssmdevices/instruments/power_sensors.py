@@ -31,6 +31,15 @@ class KeysightU2000XSeries(lb.VISADevice):
     # used for automatic connection
     make = attr.value.str('Keysight Technologies', inherit=True)
 
+    def open(self):
+        if type(self) is KeysightU2000XSeries:
+            warnings.warn(
+                'the generic base class KeysightU2000XSeries will be removed from the '
+                'ssmdevices.instruments namespace in a future release. instead, use '
+                'a specific model, such as KeysightU2044XA',
+                DeprecationWarning
+            )
+
     initiate_continuous = attr.property.bool(
         key='INIT:CONT', help='whether to enable triggering to acquire power samples'
     )
