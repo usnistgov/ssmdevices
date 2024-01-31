@@ -235,7 +235,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         """
 
         warnings.warn(
-            "setup_trace is deprecated. ",
+            "setup_trace is deprecated; use RohdeSchwarzNRPTrace instead",
             DeprecationWarning
         )
 
@@ -260,6 +260,42 @@ class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
     frequency = attr.property.float(inherit=True, max=18e9)
 
 
+class RohdeSchwarzNRPTrace(lb.Rack):
+    sensor: RohdeSchwarzNRPSeries
+
+    def setup(
+        self,
+        frequency: float,
+        trace_points: int,
+        sample_period: float,
+        trigger_level: float,
+        trigger_delay: float,
+        trigger_source: str,
+    ) -> None:
+        """establish trace operation.
+
+        Arguments:
+            frequency: in Hz
+            trace_points: number of points in the trace (perhaps as high as 5000)
+            sample_period: in s
+            trigger_level: in dBm
+            trigger_delay: in s
+            trigger_source: 'HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm'
+        """
+
+        self.sensor.reset()
+        self.sensor.frequency = frequency
+        self.sensor.function = 'XTIM:POW'
+        self.sensor.trace_points = trace_points
+        self.sensor.trace_time = trace_points * sample_period
+        self.sensor.trigger_level = 10 ** (trigger_level / 10.0)
+        self.sensor.trigger_delay = trigger_delay  # self.Ts / 2
+        self.sensor.trace_realtime = True
+        self.sensor.trigger_source = trigger_source  # 'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
+        self.sensor.initiate_continuous = False
+        self.sensor.wait()
+
+
 if __name__ == '__main__':
     from matplotlib import pyplot as plt
     import seaborn as sns
@@ -267,9 +303,9 @@ if __name__ == '__main__':
     sns.set(style='ticks')
 
     # Enable labbench debug messages
-    # log_to_screen()
+    lb.show_messages('info')
 
-    with KeysightU2000XSeries('USB0::0x2A8D::0x1E01::SG56360004::INSTR') as sensor:
+    with KeysightU2000XSeries() as sensor:
         print('Connected to ', sensor.identity)
 
         # Configure
