@@ -452,16 +452,13 @@ class AeroflexTM500(lb.TelnetDevice):
         return ret
 
 
-# if __name__ == '__main__':
-#     import labbench as lb
+if __name__ == '__main__':
+    import labbench as lb
 
-# AeroflexTM500.key_log_to_script(r'C:\Users\dkuester\Desktop\TM500_2Sec_8UEs_withTime.txt')
+    AeroflexTM500.key_log_to_script(r'C:\Users\dkuester\Desktop\TM500_2Sec_8UEs_withTime.txt')
 
-#    path = r'e:\TM500ScriptForPaulDebug'
-#    lb.show_messages('debug')
-#    tm500 = AeroflexTM500('10.133.0.202')
-#    with tm500:
-##    tm500.open()
-#        t0 = time.time()
-#        tm500.configure(path)
-#        print(time.time()-t0)
+    path = r'e:\TM500ScriptForPaulDebug'
+    lb.show_messages('debug')
+    tm500 = AeroflexTM500('10.133.0.202')
+    with tm500, lb.stopwatch():
+        tm500.configure(path)

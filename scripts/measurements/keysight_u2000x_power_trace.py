@@ -11,7 +11,8 @@ import seaborn as sns
 lb.show_messages('info')
 
 #%% Acquisition
-# may need to supply a resource argument if it cannot be found
+
+# pass in a specific a resource name if it cannot be autodetected
 sensor = KeysightU2044XA()
 
 with sensor:

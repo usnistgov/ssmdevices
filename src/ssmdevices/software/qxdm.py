@@ -417,38 +417,18 @@ class QXDM(lb.Win32ComDevice):
         #        lb.sleep(1)
         self._logger.debug(f'item store grew after {elapsed:0.2f}s')
 
-    # Deprecated
+if __name__ == '__main__':
+   import labbench as lb
+   import inspect
 
+   lb.show_messages('debug')
 
-#    def fetch(self):
-#        time_elapsed = time.time() - self._start_time
-#        if time_elapsed < self.min_acquisition_time:
-#            lb.sleep(self.min_acquisition_time - time_elapsed)
-#
-#        self.stop()
-#        lb.sleep(1)
-#
-#        # Quitting the application should force QXDM to write a "temporary" .isf file containing
-#        # whatever hasn't already been saved.  This needs to be renamed with the .isf base name.
-#        path = self.renameLatestISF('99-Final', self.max_cleanup_tries)
-#        self.clear_stale_isf(path)
-#        return path
-#    def _list_isf(self):
-#        return [e for e in os.listdir(self.cache_path)\
-#                if e.lower().endswith('.isf')]
-#
-
-# if __name__ == '__main__':
-#    import labbench as lb
-#
-#    lb.show_messages('debug')
-#
-#    # Connect to application
-#    with QXDM(8, cache_path=r'C:\Python Code\potato', concurrency=False) as qxdm:
-#        mod = inspect.getmodule(qxdm.backend._FlagAsMethod).__name__
-#        print(repr(qxdm.backend),dir(qxdm.backend))
-#        qxdm.configure(r'C:\Python Code\potato\180201_QXDMConfig.dmc')
-#        for i in range(1):
-#            qxdm.start()
-#            lb.sleep(10)
-#            qxdm.save(r'C:\python code\potato\junk-{}.isf'.format(i))
+   # Connect to application
+   with QXDM(8, cache_path=r'C:\Python Code\potato', concurrency=False) as qxdm:
+       mod = inspect.getmodule(qxdm.backend._FlagAsMethod).__name__
+       print(repr(qxdm.backend),dir(qxdm.backend))
+       qxdm.configure(r'180201_QXDMConfig.dmc')
+       for i in range(1):
+           qxdm.start()
+           lb.sleep(10)
+           qxdm.save(r'junk-{}.isf'.format(i))

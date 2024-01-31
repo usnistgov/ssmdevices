@@ -49,10 +49,11 @@ class SpirentGSS8000(lb.SerialDevice):
         self.backend.write('SC,%s\n' % (loadpath))
         self.current_scenario
 
-    def save_scenario(self, folderpath):
+    def save_scenario(self, folderpath: str):
         """Save the current GPS scenario to a file stored on the instrument.
 
-        :param path: Full path to scenario file on the instrument.
+        Arguments:
+            path: Full path to scenario file on the instrument.
 
         """
 
@@ -166,7 +167,6 @@ class SpirentGSS8000(lb.SerialDevice):
         return self.write(b'NULL', returns=b'status')
 
 
-# %%
 if __name__ == '__main__':
     lb.debug_to_screen('DEBUG')
     with SpirentGSS8000('COM17') as spirent:
