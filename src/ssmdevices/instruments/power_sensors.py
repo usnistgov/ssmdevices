@@ -5,7 +5,7 @@ __all__ = [
     'KeysightU2044XA',
     'RohdeSchwarzNRP8s',
     'RohdeSchwarzNRP18s',
-    'RohdeSchwarzNRPSeries',
+    'PowerTrace_RohdeSchwarzNRP',
 ]
 
 import labbench as lb
@@ -276,10 +276,10 @@ class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
     frequency = attr.property.float(inherit=True, max=18e9)
 
 
-class RohdeSchwarzNRPTraceMeasurement(lb.Rack):
+class PowerTrace_RohdeSchwarzNRP(lb.Rack):
     sensor: RohdeSchwarzNRPSeries
 
-    def setup(
+    def setup_trace(
         self,
         frequency: float,
         trace_points: int,
