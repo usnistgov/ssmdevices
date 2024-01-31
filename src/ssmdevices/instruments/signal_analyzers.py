@@ -6,6 +6,7 @@ import time
 import labbench as lb
 from labbench import paramattr as attr
 import typing
+from typing import Union, Literal
 
 if typing.TYPE_CHECKING:
     import pandas as pd
@@ -17,6 +18,7 @@ else:
 
 DataFrameType: typing.TypeAlias = 'pd.DataFrame'
 SeriesType: typing.TypeAlias = 'pd.Series'
+NumpyArrayType: typing.TypeAlias = 'np.ndarray'
 
 __all__ = [
     'KeysightN9951B',
@@ -62,12 +64,12 @@ class KeysightN9951B(lb.VISADevice):
         key='BAND', min=1e3, max=5.76e6, label='Hz'
     )
 
-    def fetch_trace(self, trace: int = 1):
+    def fetch_trace(self, trace: int = 1) -> DataFrameType:
         """Get trace x values and y values using XVAL? and DATA?
 
-
-        :param trace: which trace to pull from the fieldfox
-        :type trace: int"""
+        Arguments:
+            trace: which trace to pull from the fieldfox
+        """
 
         x_data = self.query(f'TRAC{trace}:XVAL?').split(',')
         y_data = self.query(f'TRAC{trace}:DATA?').split(',')
@@ -104,7 +106,9 @@ class KeysightN9951B(lb.VISADevice):
 
 
 @attr.method_kwarg.int('trace', min=1, max=6, help='trace index for analysis')
-@attr.method_kwarg.int('output_trigger_index', min=1, max=3, help='output trigger port index')
+@attr.method_kwarg.int(
+    'output_trigger_index', min=1, max=3, help='output trigger port index'
+)
 class RohdeSchwarzFSWBase(lb.VISADevice):
     _DATA_FORMATS = 'ASC,0', 'REAL,32', 'REAL,64', 'REAL,16'
     _CHANNEL_TYPES = 'SAN', 'IQ', 'RTIM', DEFAULT_CHANNEL_NAME
@@ -189,7 +193,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
         time_remaining = acquisition_time_sec
         active_time = 0
-        
+
         while active_time == 0:
             # Setup
             self.clear_spectrogram()
@@ -198,11 +202,11 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             lb.sleep(0.1)
 
             t0_active = time.time()
+
             # Try to trigger; block until timeout.
             with self.overlap_and_block(timeout=int(1e3 * time_remaining)):
                 self.trigger_single(wait=False)
             active_time += time.time() - t0_active
-            #             self.abort()
 
             self.backend.timeout = 50000
             single = self.fetch_spectrogram(timeout=50000, timestamps='fast')
@@ -236,11 +240,11 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     def status_preset(self):
         self.write('STAT:PRES')
 
-    def save_state(self, name, basedir=None):
-        """Save current state of the device to the default directory.
-        :param path: state file location on the instrument
-        :type path: string
+    def save_state(self, name: str, basedir: Union[str, None] = None):
+        """Save current state of the device to the default directory in the instrument.
 
+        Arguments:
+            path: state file location on the instrument
         """
         if basedir is None:
             path = name
@@ -251,11 +255,11 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self.write(f"MMEMory:STORe:STATe 1,'{path}'")
         self.wait()
 
-    def load_state(self, name, basedir=None):
+    def load_state(self, name: str, basedir: Union[str, None] = None):
         """Loads a previously saved state file in the instrument
 
-        :param path: state file location on the instrument
-        :type path: string
+        Arguments:
+            path: state file location on the instrument
         """
         if basedir is not None:
             path = basedir + '\\' + name
@@ -332,10 +336,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self.write('ABORT')
 
     def apply_channel_type(self, type_=None):
-        """Setup a channel with name DEFAULT_CHANNEL_NAME, that has measurement type self.channel_type
-
-        :return:
-        """
+        """setup a channel with name DEFAULT_CHANNEL_NAME, that has measurement type self.channel_type"""
         channel_list = self.query('INST:LIST?').replace("'", '').split(',')[1::2]
         if DEFAULT_CHANNEL_NAME in channel_list:
             self.write(
@@ -348,7 +349,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     def channel_preset(self):
         self.write('SYST:PRES:CHAN')
 
-    def query_ieee_array(self, msg):
+    def query_ieee_array(self, msg: str) -> NumpyArrayType:
         """An alternative to self.backend.query_binary_values for fetching block data. This
         implementation works around slowness between pyvisa and the instrument that seems to
         result from transferring in chunks of size self.backend.chunk_size as implemented
@@ -364,7 +365,8 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         >>> %timeit -n 1 -r 1 sa.query_ieee_array('TRAC2:DATA? SPEC')
         (~23 sec)
 
-        :param msg: The SCPI command to send
+        Arguments:
+            msg: The SCPI command to send
         :return: a numpy array containing the response.
         """
 
@@ -403,7 +405,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self._logger.debug('      -> {} bytes ({} values)'.format(data_size, data.size))
         return data
 
-    def fetch_horizontal(self, window=None, trace:int=None):
+    def fetch_horizontal(self, window=None, trace: int = None):
         if window is None:
             window = self.default_window
         if trace is None:
@@ -411,7 +413,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
         return self.query_ieee_array(f'TRAC{window}:DATA:X? TRACE{trace}')
 
-    def fetch_trace(self, trace=None, horizontal=False, window=None):
+    def fetch_trace(self, trace=None, horizontal=False, window=None) -> DataFrameType:
         """Fetch trace data with 'TRAC:DATA TRACE?' and return the result in
         a pandas series.fetch and return the current trace data. This does not
         initiate a trigger; this must be done separately if desired.
@@ -433,19 +435,19 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             count = inst.query('SENSE:SWEEP:COUNT?')
             self.write('SENSE:SWEEP:COUNT 1')
 
-        :param trace: The trace number to query (or None, the default, to use self.default_trace)
-        :param horizontal: Set the index of the returned Series by a call to :method:`fetch_horizontal`
-        :param window: The window number to query (or None, the default, to use self.default_window)
-        :return: a pd.Series object containing the returned data
+        Arguments:
+            trace: The trace number to query (or None, the default, to use self.default_trace)
+            horizontal: Set the index of the returned Series by a call to :method:`fetch_horizontal`
+            window: The window number to query (or None, the default, to use self.default_window)
         """
         if trace is None:
             trace = self.default_trace
         if window is None:
             window = self.default_window
         if hasattr(trace, '__iter__'):
-            return pd.concat([
-                self.fetch_trace(t, horizontal=horizontal) for t in trace
-            ])
+            return pd.concat(
+                [self.fetch_trace(t, horizontal=horizontal) for t in trace]
+            )
 
         if horizontal:
             index = self.fetch_horizontal(trace)
@@ -455,14 +457,14 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             values = self.query_ieee_array(f'TRAC{window}:DATA? TRACE{trace}')
             return pd.DataFrame(values)
 
-    def fetch_timestamps(self, window=None, all=True, timeout=50000):
+    def fetch_timestamps(self, window=None, all=True, timeout=50000) -> NumpyArrayType:
         """Fetch data timestamps associated with acquired data. Not all types of acquired data support timestamping,
         and not all modes support the trace argument. A choice that is incompatible with the current state
         of the signal analyzer should lead to a TimeoutError.
 
-        :param all: If True, acquire and return all available timestamps; if False, only the most current timestamp.
-        :param window: The window number corresponding to the desired timestamp data (or self.default_window when window=None)
-        :return: A number (when `all` is False) or a np.array (when `all` is True)
+        Arguments:
+            all: If True, acquire and return all available timestamps; if False, only the most current timestamp.
+            window: The window number corresponding to the desired timestamp data (or self.default_window when window=None)
         """
 
         if window is None:
@@ -488,16 +490,21 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             return ret
 
     def fetch_spectrogram(
-        self, window=None, freqs='exact', timestamps='exact', timeout=None
+        self,
+        window: Union[int, None] = None,
+        freqs: str = 'exact',
+        timestamps: str = 'exact',
+        timeout=None,
     ):
         """
         Fetch a spectrogram without initiating a new trigger. This has been tested in IQ Analyzer and real time
         spectrum analyzer modes. Not all instrument operating modes support trace selection; a choice that is
         incompatible with the current state of the signal analyzer should lead to a TimeoutError.
 
-        :param freqs: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on FFT parameters), or None (leaving the integer indices)
-        :param timestamps: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on sweep time), or None (leaving the integer indices)
-        :param window: The window number corresponding to the desired timestamp data (or self.default_window when window=None)
+        Arguments:
+            freqs: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on FFT parameters), or None (leaving the integer indices)
+            timestamps: 'exact' (to fetch the frequency axis), 'fast' (to guess at index values based on sweep time), or None (leaving the integer indices)
+            window: The window number corresponding to the desired timestamp data (or self.default_window when window=None)
         :return: a pandas DataFrame containing the acquired data
         """
         if timeout is None:
@@ -571,28 +578,18 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
         self.backend.timeout = old_timeout
 
-        # If there is a timeout, the return above will not happen.
-        # In this case, abort the acquisition and return
-        # None.
-        # self._logger.warning('received no spectrogram data')
-        self.abort()
-        self.wait()
-
-        # self.clear_status()
-        # self.wait()
-        return None
-
-    def fetch_marker(self, marker, axis):
+    def fetch_marker(
+        self, marker: int, axis: Union[Literal['X'], Literal['Y']]
+    ) -> float:
         """Get marker value
 
-        :param marker: marker number on instrument display
-        :type marker: int
-        :param axis: 'X' for x axis or 'Y' for y axis
-        :type axis: str
+        Arguments:
+            marker: marker number on instrument display
+            axis: 'X' for x axis or 'Y' for y axis
         """
         return float(self.query(f'CALC:MARK{marker}:{axis}?'))
 
-    def get_marker_enables(self):
+    def get_marker_enables(self) -> DataFrameType:
         markers = list(range(1, 17))
         states = [
             [
@@ -608,16 +605,11 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
         return df.astype(int).astype(bool)
 
-    def get_marker_power(self, marker):
+    def get_marker_power(self, marker: int) -> float:
         """Get marker value (on vertical axis)
 
-        :param marker: marker number on instrument display
-
-        :type marker: int
-
-        :param axis: 'X' for x axis or 'Y' for y axis
-
-        :type axis: str
+        Arguments:
+            marker: marker number on instrument display
         """
         return float(self.query(f'CALC:MARK{marker}:Y?'))
 
@@ -633,7 +625,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         return float(self.query(f'CALC:MARK{marker}:X?'))
 
     def set_marker_position(self, marker: int, position: float):
-        """Get marker position (on horizontal axis)
+        """get marker position (on horizontal axis)
 
         Arguments:
             marker: marker number on instrument display
@@ -641,10 +633,11 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         """
         return self.write(f'CALC:MARK{marker}:X {position}')
 
-    def trigger_output_pulse(self, port):
-        """
+    def trigger_output_pulse(self, port: int):
+        """trigger a pulse on a trigger output
 
-        :param port: Trigger port number
+        Arguments:
+            port: Trigger port number
 
         :return: None
         """
@@ -699,32 +692,23 @@ class _RSSpectrumAnalyzerMixIn(RohdeSchwarzFSWBase):
         values.dropna(how='all', inplace=True)
         return values
 
-    def fetch_marker_bpow(self, marker):
+    def fetch_marker_bpow(self, marker: int) -> float:
         """Get marker band power measurement
 
-        :param marker: marker number on instrument display
+        Arguments:
+            marker: marker number on instrument display
 
-        :type marker: int
-
-        :return: power in dBm
-
-        :rtype: float
         """
 
         mark_cmd = 'CALC:MARK' + str(marker) + ':FUNC:BPOW:RES?'
         marker_val = float(self.query(mark_cmd))
         return marker_val
 
-    def fetch_marker_bpow_span(self, marker):
+    def fetch_marker_bpow_span(self, marker: int) -> float:
         """Get marker band power measurement
 
-        :param marker: marker number on instrument display
-
-        :type marker: int
-
-        :return: bandwidth
-
-        :rtype: float
+        Arguments:
+            marker: marker number on instrument display
         """
 
         return float(self.query(f'CALC:MARK{marker}:FUNC:BPOW:SPAN?'))
@@ -909,14 +893,19 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         self.set_frequency_mask(thresholds, None)
 
     def set_frequency_mask(
-        self, thresholds, frequency_offsets=None, kind='upper', window=None
+        self,
+        thresholds: list[float],
+        frequency_offsets: list[float] = None,
+        kind=Union[Literal['upper'], Literal['lower']],
+        window: int = None,
     ):
         """Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
-        :param thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`), or a scalar to use a constant value across the band
-        :param array-like frequency_offsets: frequencies at which the mask is defined, or None (to specify across the whole band)
-        :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
-        :param window: The window number corresponding to the desired trigger setting (or self.default_window when window=None)
+        Arguments:
+            thresholds: trigger threshold at each frequency in db relative to the reference level (same size as `frequency_offsets`), or a scalar to use a constant value across the band
+            array-like frequency_offsets: frequencies at which the mask is defined, or None (to specify across the whole band)
+            kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
+            window: The window number corresponding to the desired trigger setting (or self.default_window when window=None)
         :return: None
         """
         if window is None:
@@ -944,12 +933,18 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
 
         self.write(f'CALC{window}:MASK:{kind} {plist}')
 
-    def get_frequency_mask(self, kind='upper', window=None, first_threshold_only=False):
+    def get_frequency_mask(
+        self,
+        kind: Union[Literal['upper'], Literal['lower']] = 'upper',
+        window: int = None,
+        first_threshold_only: bool = False,
+    ):
         """Define the frequency-dependent trigger threshold values for a frequency mask trigger.
 
-        :param kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
-        :param window: The window number corresponding to the desired trigger setting (or self.default_window when window=None)
-        :param bool first_threshold_only: if True, return only the threshold; otherwise, return a complete parameter dict
+        Arguments:
+            kind: either 'upper' or 'lower,' corresponding to a trigger on entering the upper trigger definition or on leaving the lower trigger definition
+            window: The window number corresponding to the desired trigger setting (or self.default_window when window=None)
+            bool first_threshold_only: if True, return only the threshold; otherwise, return a complete parameter dict
         :return: the threshold or a dictionary with keys "frequency_offsets" and "thresholds" and corresponding values (in Hz and dBm, respectively) of equal length
         """
 
@@ -970,27 +965,28 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
 
     def setup_spectrogram(
         self,
-        center_frequency,
-        analysis_bandwidth,
-        reference_level,
-        time_resolution,
-        acquisition_time,
-        input_attenuation=None,
-        trigger_threshold=None,
-        detector='SAMP',
-        analysis_window=None,
+        center_frequency: float,
+        analysis_bandwidth: float,
+        reference_level: float,
+        time_resolution: float,
+        acquisition_time: float,
+        input_attenuation: Union[float, None] = None,
+        trigger_threshold: Union[float, None] = None,
+        detector: Union[Literal['SAMP'], Literal['AVER']] = 'SAMP',
+        analysis_window: Union[str, None] = None,
     ):
         """Quick setup for a spectrogram measurement in RTSA mode.
 
-        :param center_frequency: in Hz
-        :param frequency_span: in Hz
-        :param reference_level: in dBm
-        :param time_resolution: in s
-        :param acquisition_time: in s
-        :param input_attenuation: in dB (or None to autoset based on the reference level)
-        :param trigger_threshold: in dB (or None to free run)
-        :param detector: 'SAMP' or 'AVER'
-        :param analysis_window: one of ['BLAC','FLAT','GAUS','HAMM','HANN','KAIS','RECT']
+        Arguments:
+            center_frequency: in Hz
+            frequency_span: in Hz
+            reference_level: in dBm
+            time_resolution: in s
+            acquisition_time: in s
+            input_attenuation: in dB (or None to autoset based on the reference level)
+            trigger_threshold: in dB (or None to free run)
+            detector: 'SAMP' or 'AVER'
+            analysis_window: one of ['BLAC','FLAT','GAUS','HAMM','HANN','KAIS','RECT']
         :return:
         """
 
@@ -1051,7 +1047,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
             self.sweep_dwell_time = acquisition_time
 
         # TODO: Parameterize somehow
-        for i in (2,3):
+        for i in (2, 3):
             self.output_trigger_direction('OUTP', output_trigger_index=i)
             self.output_trigger_type('DEV', output_trigger_index=i)
         if analysis_window is not None:
@@ -1070,9 +1066,10 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         """Trigger and fetch data, optionally in a loop that continues for a specified
         duration.
 
-        :param loop_time: time (in s) to spend looping repeated trigger-fetch cycles, or None to execute once
-        :param delay_time: delay time before starting (in s)
-        :param timestamps: 'fast' (with potential for rounding errors to ~ 10 ns) or 'exact' (slow and not recommended)
+        Arguments:
+            loop_time: time (in s) to spend looping repeated trigger-fetch cycles, or None to execute once
+            delay_time: delay time before starting (in s)
+            timestamps: 'fast' (with potential for rounding errors to ~ 10 ns) or 'exact' (slow and not recommended)
         :return: dictionary structured as {'spectrogram': pd.DataFrame, 'spectrogram_acquisition_time': float, 'spectrogram_active_time': float}
         """
         specs = []

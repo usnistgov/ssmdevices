@@ -168,11 +168,13 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
     @attr.method.bool(help='channel center frequency')
     @scope_channel_kwarg
     def spectrogram_enabled(self, enabled: bool = lb.Undefined, /, *, channel: int):
-        return all([
-            self.channel_enabled(enabled, channel),
-            self._only_spectrumview_enabled(enabled, channel),
-            self._only_spectrogram_enabled(enabled, channel),
-        ])
+        return all(
+            [
+                self.channel_enabled(enabled, channel),
+                self._only_spectrumview_enabled(enabled, channel),
+                self._only_spectrogram_enabled(enabled, channel),
+            ]
+        )
 
     def open(self):
         self._resolution_bandwidth_mode = 'MANUAL'

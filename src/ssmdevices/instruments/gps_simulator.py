@@ -5,7 +5,8 @@
 
 __all__ = ['SpirentGSS8000']
 
-import time, re
+import time
+import re
 import labbench as lb
 from labbench import paramattr as attr
 

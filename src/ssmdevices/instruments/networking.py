@@ -452,9 +452,8 @@ class AeroflexTM500(lb.TelnetDevice):
         return ret
 
 
-if __name__ == '__main__':
-    import labbench as lb
-from labbench import paramattr as attr
+# if __name__ == '__main__':
+#     import labbench as lb
 
 # AeroflexTM500.key_log_to_script(r'C:\Users\dkuester\Desktop\TM500_2Sec_8UEs_withTime.txt')
 

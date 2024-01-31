@@ -66,7 +66,9 @@ if __name__ == '__main__':
             na.save_trace_to_csv(f'VA_{atten.resource}_{name}.csv')
 
         # All done!
-        print(r"""ATTENTION USER: This program has completed. Your data is stored
+        print(
+            r"""ATTENTION USER: This program has completed. Your data is stored
                   on the VNA under: C:\Users\Public\Documents\Rhode-Schwarz\VNA
                   This data can be transfered to another computer via USB.
-               """)
+               """
+        )

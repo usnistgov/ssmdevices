@@ -37,7 +37,7 @@ class KeysightU2000XSeries(lb.VISADevice):
                 'the generic base class KeysightU2000XSeries will be removed from the '
                 'ssmdevices.instruments namespace in a future release. instead, use '
                 'a specific model, such as KeysightU2044XA',
-                DeprecationWarning
+                DeprecationWarning,
             )
 
     initiate_continuous = attr.property.bool(
@@ -113,8 +113,10 @@ class KeysightU2000XSeries(lb.VISADevice):
         if int(self.query('CAL?')) != 0:
             raise ValueError('calibration failed')
 
+
 class KeysightU2044XA(KeysightU2000XSeries):
     model = attr.value.str('U2044XA', inherit=True)
+
 
 class RohdeSchwarzNRPSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB.
@@ -213,7 +215,9 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         series = self.query_ascii_values('FETC?', container=pd.Series)
         if len(series) == 1:
             return float(series.iloc[0])
-        series.index = np.arange(len(series)) * (self.trace_time / float(self.trace_points))
+        series.index = np.arange(len(series)) * (
+            self.trace_time / float(self.trace_points)
+        )
         series.name = 'Power (dBm)'
         return series
 
@@ -247,8 +251,8 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
         """
 
         warnings.warn(
-            "setup_trace is deprecated; use RohdeSchwarzNRPTrace instead",
-            DeprecationWarning
+            'setup_trace is deprecated; use RohdeSchwarzNRPTrace instead',
+            DeprecationWarning,
         )
 
         self.reset()

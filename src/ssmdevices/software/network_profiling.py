@@ -1432,16 +1432,18 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
         # receive socket based on the remainder of the data
         est_rx_buffer0_start = ret.t_rx_end_buffer0 - ret.rx_buffer0_size / late_rate
 
-        ret = pd.DataFrame({
-            'bits_per_second': 8 * buffer_size / duration,
-            'duration': duration,
-            'delay': est_rx_buffer0_start
-            - ret.t_tx_start,  # ret.t_rx_start-ret.t_tx_start,
-            'queuing_duration': ret.t_tx_end - ret.t_tx_start,
-            'rx_buffer_count': ret.rx_buffer_count,
-            't_rx_end_buffer0': ret.t_rx_end_buffer0,
-            'timestamp': timestamp,
-        })
+        ret = pd.DataFrame(
+            {
+                'bits_per_second': 8 * buffer_size / duration,
+                'duration': duration,
+                'delay': est_rx_buffer0_start
+                - ret.t_tx_start,  # ret.t_rx_start-ret.t_tx_start,
+                'queuing_duration': ret.t_tx_end - ret.t_tx_start,
+                'rx_buffer_count': ret.rx_buffer_count,
+                't_rx_end_buffer0': ret.t_rx_end_buffer0,
+                'timestamp': timestamp,
+            }
+        )
 
         return ret.set_index('timestamp')
 

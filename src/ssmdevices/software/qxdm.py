@@ -440,8 +440,6 @@ class QXDM(lb.Win32ComDevice):
 
 # if __name__ == '__main__':
 #    import labbench as lb
-from labbench import paramattr as attr
-
 #
 #    lb.show_messages('debug')
 #
