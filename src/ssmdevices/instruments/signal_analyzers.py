@@ -62,9 +62,6 @@ class KeysightN9951B(lb.VISADevice):
         key='BAND', min=1e3, max=5.76e6, label='Hz'
     )
 
-    def grab_data(self):
-        pass
-
     def fetch_trace(self, trace: int = 1):
         """Get trace x values and y values using XVAL? and DATA?
 
@@ -106,6 +103,8 @@ class KeysightN9951B(lb.VISADevice):
         return self.write(f'CALC:MARK{marker}:X {position}')
 
 
+@attr.method_kwarg.int('trace', min=1, max=6, help='trace index for analysis')
+@attr.method_kwarg.int('output_trigger_index', min=1, max=3, help='output trigger port index')
 class RohdeSchwarzFSWBase(lb.VISADevice):
     _DATA_FORMATS = 'ASC,0', 'REAL,32', 'REAL,64', 'REAL,16'
     _CHANNEL_TYPES = 'SAN', 'IQ', 'RTIM', DEFAULT_CHANNEL_NAME
@@ -145,55 +144,19 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
     initiate_continuous = attr.property.bool(key='INIT:CONT')
 
-    reference_level = attr.property.float(
-        key='DISP:TRAC1:Y:RLEV', step=1e-3, label='dB'
-    )
-    reference_level_trace2 = attr.property.float(
-        key='DISP:TRAC2:Y:RLEV', step=1e-3, label='dB'
-    )
-    reference_level_trace3 = attr.property.float(
-        key='DISP:TRAC3:Y:RLEV', step=1e-3, label='dB'
-    )
-    reference_level_trace4 = attr.property.float(
-        key='DISP:TRAC4:Y:RLEV', step=1e-3, label='dB'
-    )
-    reference_level_trace5 = attr.property.float(
-        key='DISP:TRAC5:Y:RLEV', step=1e-3, label='dB'
-    )
-    reference_level_trace6 = attr.property.float(
-        key='DISP:TRAC6:Y:RLEV', step=1e-3, label='dB'
+    reference_level = attr.method.float(
+        key='DISP:TRAC{trace}:Y:RLEV', step=1e-3, label='dB'
     )
 
-    amplitude_offset = attr.property.float(
-        key='DISP:TRAC1:Y:RLEV:OFFS', step=1e-3, label='dB'
-    )
-    amplitude_offset_trace2 = attr.property.float(
-        key='DISP:TRAC2:Y:RLEV:OFFS', step=1e-3, label='dB'
-    )
-    amplitude_offset_trace3 = attr.property.float(
-        key='DISP:TRAC3:Y:RLEV:OFFS', step=1e-3, label='dB'
-    )
-    amplitude_offset_trace4 = attr.property.float(
-        key='DISP:TRAC4:Y:RLEV:OFFS', step=1e-3, label='dB'
-    )
-    amplitude_offset_trace5 = attr.property.float(
-        key='DISP:TRAC5:Y:RLEV:OFFS', step=1e-3, label='dB'
-    )
-    amplitude_offset_trace6 = attr.property.float(
-        key='DISP:TRAC6:Y:RLEV:OFFS', step=1e-3, label='dB'
+    amplitude_offset = attr.method.float(
+        key='DISP:TRAC{trace}:Y:RLEV:OFFS', step=1e-3, label='dB'
     )
 
-    output_trigger2_direction = attr.property.str(
-        key='OUTP:TRIG2:DIR', only=_TRIGGER_DIRECTIONS, case=False
+    output_trigger_direction = attr.method.str(
+        key='OUTP:TRIG{output_trigger_index}:DIR', only=_TRIGGER_DIRECTIONS, case=False
     )
-    output_trigger3_direction = attr.property.str(
-        key='OUTP:TRIG3:DIR', only=_TRIGGER_DIRECTIONS, case=False
-    )
-    output_trigger2_type = attr.property.str(
-        key='OUTP:TRIG2:OTYP', only=_TRIGGER_OUT_TYPES, case=False
-    )
-    output_trigger3_type = attr.property.str(
-        key='OUTP:TRIG3:OTYP', only=_TRIGGER_OUT_TYPES, case=False
+    output_trigger_type = attr.method.str(
+        key='OUTP:TRIG{output_trigger_index}:OTYP', only=_TRIGGER_OUT_TYPES, case=False
     )
 
     input_preamplifier_enabled = attr.property.bool(key='INP:GAIN:STATE')
@@ -441,7 +404,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self._logger.debug('      -> {} bytes ({} values)'.format(data_size, data.size))
         return data
 
-    def fetch_horizontal(self, window=None, trace=None):
+    def fetch_horizontal(self, window=None, trace:int=None):
         if window is None:
             window = self.default_window
         if trace is None:
@@ -1056,7 +1019,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         self.remove_window(1)
 
         # Level
-        self.reference_level = reference_level
+        self.reference_level(reference_level, trace=1)
         if input_attenuation is not None:
             self.input_attenuation = input_attenuation
             if reference_level <= -30 and input_attenuation <= 5:
@@ -1089,10 +1052,9 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
             self.sweep_dwell_time = acquisition_time
 
         # TODO: Parameterize somehow
-        self.output_trigger2_direction = 'OUTP'
-        self.output_trigger2_type = 'DEV'
-        self.output_trigger3_direction = 'OUTP'
-        self.output_trigger3_type = 'DEV'
+        for i in (2,3):
+            self.output_trigger_direction('OUTP', output_trigger_index=i)
+            self.output_trigger_type('DEV', output_trigger_index=i)
         if analysis_window is not None:
             self.sweep_window_type = 'BLAC'
 
