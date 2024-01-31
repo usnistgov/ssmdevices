@@ -4,7 +4,7 @@
 #     ssmdevices[scripts]
 
 import labbench as lb
-from ssmdevices.instruments import KeysightU2000XSeries
+from ssmdevices.instruments import KeysightU2044XA
 from matplotlib import pyplot as plt
 import seaborn as sns
 
@@ -12,7 +12,7 @@ lb.show_messages('info')
 
 #%% Acquisition
 # may need to supply a resource argument if it cannot be found
-sensor = KeysightU2000XSeries()
+sensor = KeysightU2044XA()
 
 with sensor:
     sensor.preset()
@@ -30,7 +30,7 @@ sns.set(style='ticks')
 
 fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(6,2))
 power.plot(ax=ax1)
-ax2.ylabel('Power level (dBm)')
+ax2.set_ylabel('Power level (dBm)')
 power.hist(ax=ax2)
-ax2.xlabel('Power level (dBm)')
-ax2.ylabel('Count')
+ax2.set_xlabel('Power level (dBm)')
+ax2.set_ylabel('Count')

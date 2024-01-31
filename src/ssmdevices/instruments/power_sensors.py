@@ -2,6 +2,7 @@
 
 __all__ = [
     'KeysightU2000XSeries',
+    'KeysightU2044XA',
     'RohdeSchwarzNRP8s',
     'RohdeSchwarzNRP18s',
     'RohdeSchwarzNRPSeries',
@@ -29,7 +30,6 @@ class KeysightU2000XSeries(lb.VISADevice):
 
     # used for automatic connection
     make = attr.value.str('Keysight Technologies', inherit=True)
-    model = attr.value.str('U204', inherit=True)
 
     initiate_continuous = attr.property.bool(
         key='INIT:CONT', help='whether to enable triggering to acquire power samples'
@@ -91,19 +91,21 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         Returns:
             a single number if trigger_count == 1, otherwise or pandas.Series"""
-        df = self.query_values('FETC?', container=pd.Series)
-        if len(df) == 1:
-            return df.iloc[0]
-        df.index = pd.Index(
-            self.sweep_aperture * np.arange(len(df)), name='Time elapsed (s)'
+        series = self.query_ascii_values('FETC?', container=pd.Series)
+        if len(series) == 1:
+            return series.iloc[0]
+        series.index = pd.Index(
+            self.sweep_aperture * np.arange(len(series)), name='Time elapsed (s)'
         )
-        df.columns.name = 'Power (dBm)'
-        return df
+        series.name = 'Power (dBm)'
+        return series
 
     def calibrate(self) -> None:
         if int(self.query('CAL?')) != 0:
             raise ValueError('calibration failed')
 
+class KeysightU2044XA(KeysightU2000XSeries):
+    model = attr.value.str('U2044XA', inherit=True)
 
 class RohdeSchwarzNRPSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB.
@@ -199,11 +201,12 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
     def fetch(self) -> typing.Union[SeriesType, float]:
         """Return a single number or pandas Series containing the power readings"""
-        df = self.query_values('FETC?', container=pd.Series)
-        if len(df) == 1:
-            return float(df.iloc[0])
-        df.index = np.arange(len(df)) * (self.trace_time / float(self.trace_points))
-        return df
+        series = self.query_ascii_values('FETC?', container=pd.Series)
+        if len(series) == 1:
+            return float(series.iloc[0])
+        series.index = np.arange(len(series)) * (self.trace_time / float(self.trace_points))
+        series.name = 'Power (dBm)'
+        return series
 
     def fetch_buffer(self):
         """Return a single number or pandas Series containing the power readings"""
