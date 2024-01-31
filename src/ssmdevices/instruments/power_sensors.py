@@ -260,7 +260,7 @@ class RohdeSchwarzNRP18s(RohdeSchwarzNRPSeries):
     frequency = attr.property.float(inherit=True, max=18e9)
 
 
-class RohdeSchwarzNRPTrace(lb.Rack):
+class RohdeSchwarzNRPTraceMeasurement(lb.Rack):
     sensor: RohdeSchwarzNRPSeries
 
     def setup(
