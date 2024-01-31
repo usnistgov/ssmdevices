@@ -180,7 +180,6 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             )
 
     def open(self):
-        # self.verify_channel_type()
         self.format = 'REAL,32'
 
     def acquire_spectrogram(self, acquisition_time_sec):
@@ -190,7 +189,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
         time_remaining = acquisition_time_sec
         active_time = 0
-        #        while time_remaining>0:
+        
         while active_time == 0:
             # Setup
             self.clear_spectrogram()
