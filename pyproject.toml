@@ -22,7 +22,8 @@ maintainers = [
 ]
 
 dependencies = [
-    "labbench =~ 0.35.0",
+    #"labbench =~ 0.35.0",
+    "labbench @ git+https://github.com/usnistgov/labbench",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
@@ -41,7 +42,6 @@ documentation = "https://pages.nist.gov/ssmdevices"
 dev = ["labbench[dev]"]
 doc = ["labbench[doc]"]
 
-
 [build-system]
 requires = [
     "pdm-pep517>=1.0",
@@ -50,10 +50,9 @@ build-backend = "pdm.pep517.api"
 
 [tool]
 [tool.pdm]
-
 [tool.pdm.version]
 source = "scm"
-write_to = "ssmdevices/_version.py"
+write_to = "src/ssmdevices/_version.py"
 write_template = "__version__ = '{}'"
 
 [tool.black]

@@ -10,6 +10,7 @@ __all__ = [
 import labbench as lb
 from labbench import paramattr as attr
 import typing
+import warnings
 
 if typing.TYPE_CHECKING:
     import pandas as pd
@@ -193,6 +194,9 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     def trigger_single(self):
         self.write('INIT')
 
+    def reset(self):
+        self.write('*RST')
+
     def fetch(self) -> typing.Union[SeriesType, float]:
         """Return a single number or pandas Series containing the power readings"""
         df = self.query_values('FETC?', container=pd.Series)
@@ -212,24 +216,30 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
     def setup_trace(
         self,
-        frequency,
-        trace_points,
-        sample_period,
-        trigger_level,
-        trigger_delay,
-        trigger_source,
-    ):
+        frequency: float,
+        trace_points: int,
+        sample_period: float,
+        trigger_level: float,
+        trigger_delay: float,
+        trigger_source: str,
+    ) -> None:
+        """establish trace operation.
+
+        Arguments:
+            frequency: in Hz
+            trace_points: number of points in the trace (perhaps as high as 5000)
+            sample_period: in s
+            trigger_level: in dBm
+            trigger_delay: in s
+            trigger_source: 'HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm'
         """
 
-        :param frequency: in Hz
-        :param trace_points: number of points in the trace (perhaps as high as 5000)
-        :param sample_period: in s
-        :param trigger_level: in dBm
-        :param trigger_delay: in s
-        :param trigger_source: 'HOLD: No trigger; IMM: Software; INT: Internal level trigger; EXT2: External trigger, 10 kOhm'
-        :return: None
-        """
-        self.write('*RST')
+        warnings.warn(
+            "setup_trace is deprecated. ",
+            DeprecationWarning
+        )
+
+        self.reset()
         self.frequency = frequency
         self.function = 'XTIM:POW'
         self.trace_points = trace_points
