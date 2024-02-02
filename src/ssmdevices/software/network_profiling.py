@@ -62,7 +62,7 @@ perf_counter()
 
 
 class _IPerfBase(lb.ShellBackend):
-    binary_path = attr.value.str(sets=False, help='path (or name in system PATH) of the iperf binary')
+    binary_path = attr.value.Path(sets=False, must_exist=True, help='path (or name in system PATH) of the iperf binary')
 
     timeout = attr.value.float(5, inherit=True)
 
