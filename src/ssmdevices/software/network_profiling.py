@@ -62,36 +62,9 @@ perf_counter()
 
 
 class _IPerfBase(lb.ShellBackend):
-    FLAGS = dict(
-        resource='-c',
-        server='-s',
-        port='-p',
-        interval='-i',
-        bind='-B',
-        udp='-u',
-        bit_rate='-b',
-        time='-t',
-        number='-n',
-        tcp_window_size='-w',
-        buffer_size='-l',
-        nodelay='-N',
-        mss='-M',
-    )
+    binary_path = attr.value.str(sets=False, help='path (or name in system PATH) of the iperf binary')
 
-    # address and network interface parameters
-    resource: str = attr.value.NetworkAddress(
-        None,
-        accept_port=False,
-        allow_none=True,
-        help='client host address (set None if server=True)',
-    )
-
-    server: bool = attr.value.bool(default=False, help='True to run as a server')
-    port: int = attr.value.int(default=5201, min=0, help='network port')
-    bind: str = attr.value.str(
-        default=None, allow_none=True, help='bind connection to specified IP'
-    )
-    timeout = attr.value.float(5)
+    timeout = attr.value.float(5, inherit=True)
 
     format: str = attr.value.str(
         default=None,
@@ -100,10 +73,36 @@ class _IPerfBase(lb.ShellBackend):
         help='data unit prefix in bits (k, m, g), bytes (K, M, G), or None for auto',
     )
 
+    # address and network interface parameters
+    resource: str = attr.value.NetworkAddress(
+        None,
+        key='-c',
+        accept_port=False,
+        allow_none=True,
+        help='client host address (set None if server=True)',
+    )
+    server: bool = attr.value.bool(
+        False,
+        key='-s',
+        help='True to run as a server'
+    )
+    port: int = attr.value.int(
+        default=5201,
+        key='-p',
+        min=0,
+        help='network port'
+    )
+    bind: str = attr.value.str(
+        default=None,
+        key='-B',
+        allow_none=True,
+        help='bind connection to specified IP'
+    )
     # timing and duration
     # (for time, default=None even though we know the default, because setting 10s conflicts with `number`)
     time: float = attr.value.float(
         None,
+        key='-t',
         min=0,
         max=16535,
         allow_none=True,
@@ -111,6 +110,7 @@ class _IPerfBase(lb.ShellBackend):
     )
     number: int = attr.value.int(
         None,
+        key='-n',
         min=-1,
         allow_none=True,
         help='the number of bytes to transmit before quitting',
@@ -118,6 +118,7 @@ class _IPerfBase(lb.ShellBackend):
 
     interval: float = attr.value.float(
         None,
+        key='-i',
         min=0.01,
         allow_none=True,
         label='s',
@@ -126,16 +127,20 @@ class _IPerfBase(lb.ShellBackend):
 
     # high level buffer commands
     udp: bool = attr.value.bool(
-        default=False, help='if True, to use UDP instead of TCP'
+        default=False,
+        key='-u',
+        help='if True, to use UDP instead of TCP'
     )
     bit_rate: str = attr.value.str(
         None,
+        key='-b',
         allow_none=True,
         label='bits/s',
         help='maximum bit rate, accepts KMG unit suffix; defaults 1Mbit/s UDP, no limit for TCP',
     )
     buffer_size: int = attr.value.int(
         None,
+        key='-l',
         min=1,
         allow_none=True,
         help='buffer size when generating traffic',
@@ -145,16 +150,21 @@ class _IPerfBase(lb.ShellBackend):
     # TCP parameters
     tcp_window_size: int = attr.value.int(
         None,
+        key='-w',
         min=1,
         allow_none=True,
-        help='window / socket size (default OS dependent?)',
+        help='window / socket size (default is OS dependent?)',
         label='bytes',
     )
     nodelay: bool = attr.value.bool(
-        None, default=False, help='set True to use nodelay (TCP traffic only)'
+        None,
+        key='-N',
+        default=False,
+        help='set True to use nodelay (TCP traffic only)'
     )
     mss: int = attr.value.int(
         None,
+        key='-M',
         min=10,
         allow_none=True,
         help='minimum segment size=MTU-40, TCP only',
@@ -162,12 +172,14 @@ class _IPerfBase(lb.ShellBackend):
     )
 
     def profile(self, block=True):
-        self._validate_flags()
+        self._validate_settings()
         duration = 0 if self.time is None else self.time + 2
         timeout = max((self.timeout, duration))
+        flags = lb.shell_options_from_keyed_values(self, hide_false=True)
 
         return self.run(
-            self.FLAGS,
+            self.binary_path,
+            *flags,
             background=not block,
             pipe=True,
             respawn=not block,
@@ -175,8 +187,8 @@ class _IPerfBase(lb.ShellBackend):
             timeout=timeout,
         )
 
-    def _validate_flags(self):
-        """update and validate value traits"""
+    def _validate_settings(self):
+        """validate configuration before a run"""
 
         # port availability
         if self.server:
@@ -226,15 +238,13 @@ class IPerf3(_IPerfBase):
 
     binary_path = attr.value.Path(ssmdevices.lib.path('iperf3.exe'), inherit=True)
 
-    FLAGS = dict(_IPerfBase.FLAGS, json='-J', reverse='-R', zerocopy='-Z')
-
     # IPerf3 only
     reverse: bool = attr.value.bool(
-        default=False, help='run in reverse mode (server sends, client receives)'
+        default=False, key='-R', help='run in reverse mode (server sends, client receives)'
     )
-    json: bool = attr.value.bool(default=False, help='output data in JSON format')
+    json: bool = attr.value.bool(default=False, key='-J', help='output data in JSON format')
     zerocopy: bool = attr.value.bool(
-        default=False, help="use a 'zero copy' method of sending data"
+        default=False, key='-Z', help="avoid buffer copies while sending data"
     )
 
 
@@ -244,12 +254,6 @@ class IPerf2(_IPerfBase):
     in the foreground or as a background thread.
     When running as an iperf client (server=False).
     """
-
-    FLAGS = dict(
-        _IPerfBase.FLAGS,
-        bidirectional='-d',
-        report_style='-y',
-    )
 
     DATAFRAME_COLUMNS = (
         'jitter_milliseconds',
@@ -266,6 +270,7 @@ class IPerf2(_IPerfBase):
     )
     report_style: str = attr.value.str(
         default='C',
+        key='-y',
         only=('C', None),
         allow_none=True,
         help='"C" for DataFrame table output, None for formatted text',
@@ -334,15 +339,17 @@ class IPerf2OnAndroid(IPerf2):
     )
 
     def profile(self, block=True):
-        self._validate_flags()
+        self._validate_settings()
         duration = 0 if self.time is None else self.time + 3
         timeout = max((self.timeout, duration))
+        flags = lb.shell_options_from_keyed_values(self, hide_false=True)
 
-        # the same flags as in IPerf, we just need to prepend a couple of other arguments first
+        # the same flags as in IPerf, we just need to prepend adb arguments first
         ret = self.run(
+            self.binary_path,
             'shell',
             self.remote_binary_path,
-            self.FLAGS,
+            *flags,
             background=not block,
             pipe=True,
             respawn=not block,
@@ -374,15 +381,20 @@ class IPerf2OnAndroid(IPerf2):
         lb.sleep(0.1)
         self._logger.debug('copying iperf onto phone')
         self.run(
-            'push', ssmdevices.lib.path('android', 'iperf'), self.remote_binary_path
+            self.binary_path,
+            'push',
+            ssmdevices.lib.path('android', 'iperf'),
+            self.remote_binary_path
         )
         self.wait_for_device(2)
-        self.run('shell', 'chmod', '777', self.remote_binary_path, check=False)
+        self.run(
+            self.binary_path, 'shell', 'chmod', '777', self.remote_binary_path, check=False
+        )
         self.wait_for_device(2)
 
         # Check that it's executable
         stdout = self.run(
-            'shell', self.remote_binary_path, '--help', timeout=2, pipe=True
+            self.binary_path, 'shell', self.remote_binary_path, '--help', timeout=2, pipe=True
         )
         if stdout.startswith(b'/system/bin/sh'):
             # adb dumps both stderr and stdout from the handset into stdout, so we get little
@@ -400,7 +412,7 @@ class IPerf2OnAndroid(IPerf2):
         # Now's where the fun really starts
 
         # Find and kill processes on the UE
-        out = self.run('shell', 'ps')
+        out = self.run(self.binary_path, 'shell', 'ps')
         for line in out.splitlines():
             line = line.decode(errors='replace')
             if self.remote_binary_path in line.lower():
@@ -475,7 +487,7 @@ class IPerf2OnAndroid(IPerf2):
         :param block: if truey, block until the device is ready to accept commands.
         """
         self._logger.info('rebooting')
-        self.run('reboot')
+        self.run(self.binary_path, 'reboot')
         if block:
             self.wait_for_device()
 
@@ -484,7 +496,7 @@ class IPerf2OnAndroid(IPerf2):
 
         :return: None
         """
-        self.run('wait-for-device')
+        self.run(self.binary_path, 'wait-for-device')
 
 
 class IPerf2BoundPair(IPerf2):
@@ -609,8 +621,8 @@ class IPerf2BoundPair(IPerf2):
             )
         )
 
-        self.children['client']._validate_flags()
-        self.children['server']._validate_flags()
+        self.children['client']._validate_settings()
+        self.children['server']._validate_settings()
 
         self.backend = lb.sequentially(
             self.children['server'], self.children['client']

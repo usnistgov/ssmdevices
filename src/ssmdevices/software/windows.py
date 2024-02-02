@@ -16,7 +16,7 @@ else:
 
 
 class WLANInfo(lb.ShellBackend):
-    """Parse calls to netsh to get information about WLAN interfaces."""
+    """parse calls to netsh to get information about WLAN interfaces on the host"""
 
     FLAGS = dict(
         interface='interface=',
@@ -24,10 +24,10 @@ class WLANInfo(lb.ShellBackend):
     )
 
     timeout = attr.value.float(5, inherit=True)
-    binary_path = attr.value.Path(r'C:\Windows\System32\netsh.exe', inherit=True)
+    binary_path = attr.value.Path(r'C:\Windows\System32\netsh.exe', must_exist=True)
 
-    only_bssid: bool = attr.value.bool(False, help='gather only BSSID information')
-    interface: str = attr.value.str(None, help='name of the interface to query')
+    only_bssid: bool = attr.value.bool(False, key='mode=bsside', help='gather only BSSID information')
+    interface: str = attr.value.str(None, key='interface', help='name of the interface to query')
 
     def wait(self):
         try:
@@ -52,8 +52,9 @@ class WLANInfo(lb.ShellBackend):
             return d
 
         # Execute the binary
+        flags = lb.shell_options_from_keyed_values(self, hide_false=True, join_str='=')
         txt = self.run(
-            'wlan', 'show', 'networks', self.FLAGS, check_return=True
+            self.binary_path, 'wlan', 'show', 'networks', *flags, check_return=True
         ).decode()
 
         # Parse into (key, value) pairs separated by whitespace and a colon
@@ -79,9 +80,9 @@ class WLANInfo(lb.ShellBackend):
             return d
 
         # Execute the binary
-
+        flags = lb.shell_options_from_keyed_values(self, hide_false=True, join_str='=')
         txt = self.run(
-            'wlan', 'show', 'interfaces', self.FLAGS, check_return=True
+            self.binary_path, 'wlan', 'show', 'interfaces', *flags, check_return=True
         ).decode()
 
         # Parse into (key, value) pairs separated by whitespace and a colon

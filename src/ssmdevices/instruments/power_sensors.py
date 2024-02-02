@@ -103,11 +103,11 @@ class KeysightU2000XSeries(lb.VISADevice):
         series = self.query_ascii_values('FETC?', container=pd.Series)
         if len(series) == 1:
             return series.iloc[0]
-        series.index = pd.Index(
-            self.sweep_aperture * np.arange(len(series)), name='Time elapsed (s)'
-        )
-        series.name = 'Power (dBm)'
-        return series
+        else:
+            ii = np.arange(len(series))
+            series.index = pd.Index(self.sweep_aperture * ii, name='Time elapsed (s)')
+            series.name = 'Power (dBm)'
+            return series
 
     def calibrate(self) -> None:
         if int(self.query('CAL?')) != 0:
@@ -305,7 +305,7 @@ class PowerTrace_RohdeSchwarzNRP(lb.Rack):
         self.sensor.trace_points = trace_points
         self.sensor.trace_time = trace_points * sample_period
         self.sensor.trigger_level = 10 ** (trigger_level / 10.0)
-        self.sensor.trigger_delay = trigger_delay  # self.Ts / 2
+        self.sensor.trigger_delay = trigger_delay
         self.sensor.trace_realtime = True
         self.sensor.trigger_source = trigger_source  # 'EXT2'  # Signal analyzer trigger output (10kOhm impedance)
         self.sensor.initiate_continuous = False
