@@ -20,14 +20,14 @@ def path(*subdirs, platform: Union[bool, str] = False) -> str:
 
     path = os.path.join(__path__[0], *subdirs)
 
-    if platform is False:
-        return path
-    else:
+    if platform is not False:
         children = list(os.listdir(path))
         if len(children) == 1:
-            return os.path.join(path, children[0])
+            path = os.path.join(path, children[0])
         elif len(children) == 0:
             raise IOError(f'no files in platform directory {path}')
         elif len(children) > 1:
             raise IOError(f'multiple files in platform directory {path}')
+        
+    return os.path.relpath(path, '.')
 
