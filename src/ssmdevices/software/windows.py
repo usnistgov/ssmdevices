@@ -18,12 +18,7 @@ else:
 class WLANInfo(lb.ShellBackend):
     """parse calls to netsh to get information about WLAN interfaces on the host"""
 
-    FLAGS = dict(
-        interface='interface=',
-        only_bssid='mode=bssid',
-    )
-
-    timeout = attr.value.float(5, inherit=True)
+    background_timeout = attr.value.float(5, inherit=True)
     binary_path = attr.value.Path(r'C:\Windows\System32\netsh.exe', must_exist=True)
 
     only_bssid: bool = attr.value.bool(False, key='mode=bsside', help='gather only BSSID information')

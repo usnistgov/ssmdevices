@@ -22,7 +22,11 @@ from queue import Empty, Queue
 from threading import Event, Thread
 from time import perf_counter
 from contextlib import AbstractContextManager, suppress
-from ._networking import find_free_port
+try:
+    from ._networking import find_free_port
+except ImportError as ex:
+    if 'relative import' in str(ex):
+        from _networking import find_free_port
 
 import labbench as lb
 from labbench import paramattr as attr
@@ -62,23 +66,21 @@ perf_counter()
 
 
 class _IPerfBase(lb.ShellBackend):
-    binary_path = attr.value.Path(sets=False, must_exist=True, help='path (or name in system PATH) of the iperf binary')
+    binary_name = attr.value.str(sets=False, help='path (or name in system PATH) of the iperf binary')
 
-    timeout = attr.value.float(5, inherit=True)
+    timeout = attr.value.float(5, help='timeout waiting for output before an exception is raised')
 
     format: str = attr.value.str(
         default=None,
-        only=(None, 'k', 'm', 'g', 'K', 'M', 'G'),
-        allow_none=True,
+        only=('k', 'm', 'g', 'K', 'M', 'G'),
         help='data unit prefix in bits (k, m, g), bytes (K, M, G), or None for auto',
     )
 
     # address and network interface parameters
-    resource: str = attr.value.NetworkAddress(
+    client: str = attr.value.NetworkAddress(
         None,
         key='-c',
         accept_port=False,
-        allow_none=True,
         help='client host address (set None if server=True)',
     )
     server: bool = attr.value.bool(
@@ -95,9 +97,9 @@ class _IPerfBase(lb.ShellBackend):
     bind: str = attr.value.str(
         default=None,
         key='-B',
-        allow_none=True,
         help='bind connection to specified IP'
     )
+
     # timing and duration
     # (for time, default=None even though we know the default, because setting 10s conflicts with `number`)
     time: float = attr.value.float(
@@ -115,26 +117,23 @@ class _IPerfBase(lb.ShellBackend):
         allow_none=True,
         help='the number of bytes to transmit before quitting',
     )
-
     interval: float = attr.value.float(
         None,
         key='-i',
         min=0.01,
-        allow_none=True,
         label='s',
         help='seconds between throughput reports',
     )
 
-    # high level buffer commands
+    # high-level buffer commands
     udp: bool = attr.value.bool(
-        default=False,
+        False,
         key='-u',
-        help='if True, to use UDP instead of TCP'
+        help='if True, use UDP instead of TCP'
     )
     bit_rate: str = attr.value.str(
         None,
         key='-b',
-        allow_none=True,
         label='bits/s',
         help='maximum bit rate, accepts KMG unit suffix; defaults 1Mbit/s UDP, no limit for TCP',
     )
@@ -142,7 +141,6 @@ class _IPerfBase(lb.ShellBackend):
         None,
         key='-l',
         min=1,
-        allow_none=True,
         help='buffer size when generating traffic',
         label='bytes',
     )
@@ -157,16 +155,14 @@ class _IPerfBase(lb.ShellBackend):
         label='bytes',
     )
     nodelay: bool = attr.value.bool(
-        None,
+        False,
         key='-N',
-        default=False,
         help='set True to use nodelay (TCP traffic only)'
     )
     mss: int = attr.value.int(
         None,
         key='-M',
         min=10,
-        allow_none=True,
         help='minimum segment size=MTU-40, TCP only',
         label='bytes',
     )
@@ -176,14 +172,15 @@ class _IPerfBase(lb.ShellBackend):
         duration = 0 if self.time is None else self.time + 2
         timeout = max((self.timeout, duration))
         flags = lb.shell_options_from_keyed_values(self, hide_false=True)
+        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
 
         return self.run(
-            self.binary_path,
+            binary_path,
             *flags,
             background=not block,
             pipe=True,
             respawn=not block,
-            check_stderr=True,
+            raise_on_stderr=True,
             timeout=timeout,
         )
 
@@ -192,12 +189,16 @@ class _IPerfBase(lb.ShellBackend):
 
         # port availability
         if self.server:
-            busy_ports = get_ipv4_occupied_ports(self.server)
+            try:
+                busy_ports = get_ipv4_occupied_ports(self.server)
+            except psutil.AccessDenied:
+                self._logger.warning('need administrator privileges on this platform to check for port access contention')
+                busy_ports = []
             while self.port in busy_ports:
                 prev_port = self.ports
                 # find an open server port
-                if self.port >= self._traits['port'].max:
-                    self.port = self._traits['port'].min
+                if self.port >= type(self).port.max:
+                    self.port = type(self).port.min
                 else:
                     self.port = self.port + 1
                 self._logger.info(
@@ -205,16 +206,17 @@ class _IPerfBase(lb.ShellBackend):
                 )
 
         # parameter conflict checks
-        if self.resource is not None and self.server:
+        if self.client is not None and self.server:
             raise ValueError(
-                'must set exactly one of (a) client operation by setting resource="(hostname here)", '
+                'must set exactly one of (a) client operation by setting client=<client address>, '
                 'or (b) server operation by setting server=True'
             )
+
         if self.udp:
             if self.mss is not None:
-                raise ValueError('the TCP MSS setting is incompatible with UDP')
+                raise ValueError('TCP MSS setting is incompatible with UDP')
             if self.nodelay:
-                raise ValueError('the TCP nodelay setting is incompatible with UDP')
+                raise ValueError('TCP nodelay is incompatible with UDP')
             if self.buffer_size is not None:
                 self._logger.warning(
                     'iperf may work improperly when setting udp=True with buffer_size'
@@ -236,7 +238,7 @@ class IPerf3(_IPerfBase):
     The default value is the path that installs with 64-bit cygwin.
     """
 
-    binary_path = attr.value.Path(ssmdevices.lib.path('iperf3.exe'), inherit=True)
+    binary_name = attr.value.str('iperf3', inherit=True)
 
     # IPerf3 only
     reverse: bool = attr.value.bool(
@@ -263,7 +265,7 @@ class IPerf2(_IPerfBase):
         'datagrams_out_of_order',
     )
 
-    binary_path = attr.value.Path(ssmdevices.lib.path('iperf.exe'), inherit=True)
+    binary_name = attr.value.str('iperf', inherit=True)
 
     bidirectional: bool = attr.value.bool(
         default=False, key='-d', help='send and receive simultaneously'
@@ -332,7 +334,7 @@ class IPerf2(_IPerfBase):
 
 class IPerf2OnAndroid(IPerf2):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
-    binary_path = attr.value.Path(ssmdevices.lib.path('adb.exe'), inherit=True)
+    binary_name = attr.value.str('adb', inherit=True)
 
     remote_binary_path: str = attr.value.str(
         default='/data/local/tmp/iperf', cache=True
@@ -344,16 +346,18 @@ class IPerf2OnAndroid(IPerf2):
         timeout = max((self.timeout, duration))
         flags = lb.shell_options_from_keyed_values(self, hide_false=True)
 
+        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
+
         # the same flags as in IPerf, we just need to prepend adb arguments first
         ret = self.run(
-            self.binary_path,
+            binary_path,
             'shell',
             self.remote_binary_path,
             *flags,
             background=not block,
             pipe=True,
             respawn=not block,
-            check_stderr=True,
+            raise_on_stderr=True,
             timeout=timeout,
         )
 
@@ -380,21 +384,22 @@ class IPerf2OnAndroid(IPerf2):
 
         lb.sleep(0.1)
         self._logger.debug('copying iperf onto phone')
+        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
         self.run(
-            self.binary_path,
+            binary_path,
             'push',
-            ssmdevices.lib.path('android', 'iperf'),
+            ssmdevices.lib.path('iperf', platform='android-amd64'),
             self.remote_binary_path
         )
         self.wait_for_device(2)
         self.run(
-            self.binary_path, 'shell', 'chmod', '777', self.remote_binary_path, check=False
+            binary_path, 'shell', 'chmod', '777', self.remote_binary_path, check=False
         )
         self.wait_for_device(2)
 
         # Check that it's executable
         stdout = self.run(
-            self.binary_path, 'shell', self.remote_binary_path, '--help', timeout=2, pipe=True
+            binary_path, 'shell', self.remote_binary_path, '--help', timeout=2, pipe=True
         )
         if stdout.startswith(b'/system/bin/sh'):
             # adb dumps both stderr and stdout from the handset into stdout, so we get little
@@ -412,7 +417,8 @@ class IPerf2OnAndroid(IPerf2):
         # Now's where the fun really starts
 
         # Find and kill processes on the UE
-        out = self.run(self.binary_path, 'shell', 'ps')
+        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
+        out = self.run(binary_path, 'shell', 'ps')
         for line in out.splitlines():
             line = line.decode(errors='replace')
             if self.remote_binary_path in line.lower():
@@ -460,9 +466,10 @@ class IPerf2OnAndroid(IPerf2):
         self._logger.debug('waiting for cellular data connection')
         t0 = time.time()
         out = ''
+        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
         while time.time() - t0 < timeout or timeout is None:
             out = sp.run(
-                [self.binary_path, 'shell', 'dumpsys', 'telephony.registry'],
+                [binary_path, 'shell', 'dumpsys', 'telephony.registry'],
                 stdout=sp.PIPE,
                 check=True,
                 timeout=timeout,
@@ -487,7 +494,8 @@ class IPerf2OnAndroid(IPerf2):
         :param block: if truey, block until the device is ready to accept commands.
         """
         self._logger.info('rebooting')
-        self.run(self.binary_path, 'reboot')
+        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
+        self.run(binary_path, 'reboot')
         if block:
             self.wait_for_device()
 
@@ -496,7 +504,8 @@ class IPerf2OnAndroid(IPerf2):
 
         :return: None
         """
-        self.run(self.binary_path, 'wait-for-device')
+        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
+        self.run(binary_path, 'wait-for-device')
 
 
 class IPerf2BoundPair(IPerf2):
@@ -507,10 +516,6 @@ class IPerf2BoundPair(IPerf2):
     """
 
     # add other settings
-    resource: str = attr.value.str(
-        None, help='unused - use sender and receiver instead'
-    )
-
     server: str = attr.value.NetworkAddress(
         None, accept_port=False, help='the ip address where the server listens'
     )
@@ -521,8 +526,8 @@ class IPerf2BoundPair(IPerf2):
     children = {}
 
     def open(self):
-        self.children = dict()
-        self.backend = None
+        self.children: dict[str, IPerf2] = dict()
+        self.backend: None = None
 
     def close(self):
         try:
@@ -592,41 +597,35 @@ class IPerf2BoundPair(IPerf2):
         if self.running():
             raise BlockingIOError(f'{self} is already running')
 
-        base_values = {
-            k: getattr(self, k)
-            for k in self.FLAGS.keys()
-            if getattr(self, k) is not self._traits[k].default
-        }
-
-        base_values.update(kws)
-
         # override parameters as necessary for each side of the link
-        self.children['client'] = IPerf2(
-            **dict(
-                base_values,
-                resource=self.client,
-                bind=f'{self.client}:{find_free_port()}',
-                server=False,
-            )
-        )
+        client = self.children['client'] = IPerf2()
+        server = self.children['server'] = IPerf2()
 
-        self.children['server'] = IPerf2(
-            **dict(
-                base_values,
-                resource=None,
-                bind=self.server,
-                server=True,
-                time=None,
-                number=None,
-            )
-        )
+        # seed defaults from self
+        for name, attr_def in lb.paramattr.get_class_attrs(self).items():
+            if isinstance(attr_def, lb.paramattr.value.Value) and attr_def.sets:
+                value = getattr(self, name)
+            else:
+                continue
 
-        self.children['client']._validate_settings()
-        self.children['server']._validate_settings()
+            if value != attr_def.default:
+                setattr(client, name, value)
+                setattr(server, name, value)
 
-        self.backend = lb.sequentially(
-            self.children['server'], self.children['client']
-        ).__enter__()
+        # override with client/server specifics
+        client.client=self.client
+        client.bind=f'{self.client}:{find_free_port()}'
+        client.server=False
+        client._validate_settings()
+
+        server.client=None
+        server.bind=self.server
+        server.server=True
+        server.time=None
+        server.number=None
+        server._validate_settings()
+
+        self.backend = lb.sequentially(server, client).__enter__()
 
 
 m1 = 0x5555555555555555
@@ -674,9 +673,6 @@ class TrafficProfiler_ClosedLoop(lb.Device):
         0,
         min=0,
         help='TCP or UDP port for networking, or 0 to let the operating system choose',
-    )
-    resource: str = attr.value.str(
-        help='skipped - use sender and receiver instead', cache=True
     )
     timeout: float = attr.value.float(
         2, min=1e-3, help='timeout before aborting the test', cache=True
@@ -1518,17 +1514,17 @@ if __name__ == '__main__':
     lb.show_messages('debug')
     #    ips = IPerf2(server=True, port=5050, interval=0.25, udp=True)
 
-    net = TrafficProfiler_ClosedLoopTCP(
-        server='Ethernet',
-        client='Ethernet',
-        receive_side='server',  # "WLAN_Client_DUT",
-        port=0,
-        tcp_nodelay=True,
-        timeout=2,
-    )
+    # net = TrafficProfiler_ClosedLoopTCP(
+    #     server='Ethernet',
+    #     client='Ethernet',
+    #     receive_side='server',  # "WLAN_Client_DUT",
+    #     port=0,
+    #     tcp_nodelay=True,
+    #     timeout=2,
+    # )
 
-    with net:
-        print(net.acquire(10 * net.mtu(), count=10))
+    # with net:
+    #     print(net.acquire(10 * net.mtu(), count=10))
 
     # ipc = IPerf2("127.0.0.1", port=5054, time=10, interval=0.25)
     # ipc.open()
@@ -1556,38 +1552,40 @@ if __name__ == '__main__':
     # #    print(ips_result)
     # print(ipc_result)
 
-# # IPerf2BoundPair example
-# if __name__ == '__main__':
-#     # 'debug' shows a lot of info to the screen.
-#     # set to 'info' for less, or 'warning' for even less
-#     lb.show_messages('debug')
+# IPerf2BoundPair example
+if __name__ == '__main__':
+    # 'debug' shows a lot of info to the screen.
+    # set to 'info' for less, or 'warning' for even less
+    lb.show_messages('debug')
 
-#     # When both network interfaces run on the same computer,
-#     # it is convenient to use IPerf2BoundPair, which runs both
-#     # an iperf server and an iperf client. each socket is bound
-#     # to these interfaces to ensure that traffic is routed through
-#     # the devices under test.
-#     iperf = IPerf2BoundPair(
-#         server='127.0.0.1',
-#         client='127.0.0.1',
+    # When both network interfaces run on the same computer,
+    # it is convenient to use IPerf2BoundPair, which runs both
+    # an iperf server and an iperf client. each socket is bound
+    # to these interfaces to ensure that traffic is routed through
+    # the devices under test.
+    iperf = IPerf2BoundPair(
+        server='127.0.0.1',
+        client='127.0.0.1',
 
-#         ### the parameters below set the corresponding iperf command line flags
-#         # tcp_window_size=8196# -w (default unknown?)
-#         # buffer_size='16k'   # -l (default unknown? possible strange results for UDP)
-#         interval=1,         # -i (default is no output until the end of process)
-#         # bidirectional=True, # -d (default is False)
-#         udp=True,           # -u (default is False (TCP))
-#         # bit_rate='1M'       # -b (default is no bit rate throttling)
-#         time=10,            # -t (how long to run the iperf client; iperf's default is 10s)
-#         # report_style='C',   # -y (we set this from python to 'C' by default for CSV table; set to None for text output)
-#         # number=-1,        # -n (by default, iperf uses -t to determine client test length; set -1 to run until killed)
-#         # nodelay=True,       # -N (default is False; TCP only)
-#         # mss=1460,           # -M (default 1460? - TCP only, of course)
-#     )
+        ### the parameters below set the corresponding iperf command line flags
+        # tcp_window_size=8196# -w (default unknown?)
+        # buffer_size='16k'   # -l (default unknown? possible strange results for UDP)
+        interval=1,         # -i (default is no output until the end of process)
+        # bidirectional=True, # -d (default is False)
+        udp=True,           # -u (default is False (TCP))
+        # bit_rate='1M'       # -b (default is no bit rate throttling)
+        time=10,            # -t (how long to run the iperf client; iperf's default is 10s)
+        # report_style='C',   # -y (we set this from python to 'C' by default for CSV table; set to None for text output)
+        # number=-1,        # -n (by default, iperf uses -t to determine client test length; set -1 to run until killed)
+        # nodelay=True,       # -N (default is False; TCP only)
+        # mss=1460,           # -M (default 1460? - TCP only, of course)
+    )
 
-#     # Approach 1: blocking (pipe).
-#     # Calling pipe() doesn't return until the test is done.
-#     # data = iperf.pipe(time=3)
+    # Approach 1: blocking (pipe).
+    # Calling pipe() doesn't return until the test is done.
+    iperf.time = 3
+    data = iperf.profile(block=True)
+    print(data)
 
 #     # Approach 2: non-blocking (background) call
 #     # background() returns immediately while iperf runs in the background.
