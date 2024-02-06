@@ -18,6 +18,7 @@ import subprocess as sp
 import time
 import traceback
 from io import StringIO
+from pathlib import Path
 from queue import Empty, Queue
 from threading import Event, Thread
 from time import perf_counter
@@ -66,8 +67,8 @@ perf_counter()
 
 
 class _IPerfBase(lb.ShellBackend):
-    binary_name = attr.value.str(sets=False, help='path (or name in system PATH) of the iperf binary')
-
+    binary_name = attr.value.str(sets=False, cache=True, help='path (or name in system PATH) of the iperf binary')
+    binary_path = attr.value.str(None, cache=True, help='explicit path to the iperf binary (set on open based on binary_name)')
     timeout = attr.value.float(5, help='timeout waiting for output before an exception is raised')
 
     format: str = attr.value.str(
@@ -172,10 +173,9 @@ class _IPerfBase(lb.ShellBackend):
         duration = 0 if self.time is None else self.time + 2
         timeout = max((self.timeout, duration))
         flags = lb.shell_options_from_keyed_values(self, hide_false=True)
-        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
 
         return self.run(
-            binary_path,
+            self.binary_path,
             *flags,
             background=not block,
             pipe=True,
@@ -183,6 +183,12 @@ class _IPerfBase(lb.ShellBackend):
             raise_on_stderr=True,
             timeout=timeout,
         )
+
+    def open(self):
+        if Path(self.binary_name).exists():
+            self.binary_path = self.binary_name
+        else:
+            self.binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
 
     def _validate_settings(self):
         """validate configuration before a run"""
@@ -194,6 +200,7 @@ class _IPerfBase(lb.ShellBackend):
             except psutil.AccessDenied:
                 self._logger.warning('need administrator privileges on this platform to check for port access contention')
                 busy_ports = []
+
             while self.port in busy_ports:
                 prev_port = self.ports
                 # find an open server port
@@ -312,22 +319,20 @@ class IPerf2(_IPerfBase):
             columns = columns + self.DATAFRAME_COLUMNS
 
         if isinstance(stdout, bytes):
-            stdout = stdout.decode()
-        data = pd.read_csv(
-            StringIO(stdout), header=None, index_col=False, names=columns
-        )
+            stdout_buf = StringIO(stdout.decode())
+        else:
+            stdout_buf = StringIO(stdout)
 
-        # throw out the last row (potantially a summary of the previous rows)
-        # if len(data) == 0:
-        #     data = data.append([None])
+        data = pd.read_csv(stdout_buf, header=None, index_col=False, names=columns)
+
         if data.shape[1] > 0:
             data.drop(
-                ['interval', 'transferred_bytes', 'test_id'], inplace=True, axis=1
+                ['interval', 'transferred_bytes', 'test_id'],
+                inplace=True, axis=1
             )
         data['timestamp'] = pd.to_datetime(data['timestamp'], format='%Y%m%d%H%M%S')
-        data['timestamp'] = data['timestamp'] + pd.TimedeltaIndex(
-            (data.index * self.interval) % 1, 's'
-        )
+        frac_sec = (data.index * self.interval) % 1
+        data['timestamp'] = data['timestamp'] + pd.TimedeltaIndex(frac_sec, 's')
 
         return data
 
@@ -335,10 +340,7 @@ class IPerf2(_IPerfBase):
 class IPerf2OnAndroid(IPerf2):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
     binary_name = attr.value.str('adb', inherit=True)
-
-    remote_binary_path: str = attr.value.str(
-        default='/data/local/tmp/iperf', cache=True
-    )
+    remote_binary_path: str = attr.value.str(default='/data/local/tmp/iperf', cache=True)
 
     def profile(self, block=True):
         self._validate_settings()
@@ -346,11 +348,9 @@ class IPerf2OnAndroid(IPerf2):
         timeout = max((self.timeout, duration))
         flags = lb.shell_options_from_keyed_values(self, hide_false=True)
 
-        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
-
         # the same flags as in IPerf, we just need to prepend adb arguments first
         ret = self.run(
-            binary_path,
+            self.binary_path,
             'shell',
             self.remote_binary_path,
             *flags,
@@ -372,35 +372,20 @@ class IPerf2OnAndroid(IPerf2):
             return ret
 
     def open(self):
-        """Open an adb connection to the handset, copy the iperf binary onto the phone, and
-        verify that iperf executes.
-        """
-        #            self._logger.warning('TODO: need to fix setup for android iperf, but ok for now')
-        #            devices = self.pipe('devices').strip().rstrip().splitlines()[1:]
-        #            if len(devices) == 0:
-        #                raise Exception('adb lists no devices. is the UE connected?')
-        self._logger.debug('awaiting USB connection to handset')
         self.wait_for_device(30)
-
-        lb.sleep(0.1)
+        
         self._logger.debug('copying iperf onto phone')
-        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
-        self.run(
-            binary_path,
-            'push',
-            ssmdevices.lib.path('iperf', platform='android-amd64'),
-            self.remote_binary_path
-        )
-        self.wait_for_device(2)
-        self.run(
-            binary_path, 'shell', 'chmod', '777', self.remote_binary_path, check=False
-        )
+        lb.sleep(0.1)
+        local_iperf_path = ssmdevices.lib.path('iperf', platform='android-amd64')
+        self.run(self.binary_path, 'push', local_iperf_path, self.remote_binary_path)
         self.wait_for_device(2)
 
-        # Check that it's executable
-        stdout = self.run(
-            binary_path, 'shell', self.remote_binary_path, '--help', timeout=2, pipe=True
-        )
+        # set permissions for execution
+        self.run(self.binary_path, 'shell', 'chmod', '777', self.remote_binary_path, check=False)
+        self.wait_for_device(2)
+
+        # validate
+        stdout = self.run(self.binary_path, 'shell', self.remote_binary_path, '--help', timeout=2, pipe=True)
         if stdout.startswith(b'/system/bin/sh'):
             # adb dumps both stderr and stdout from the handset into stdout, so we get little
             # from monitoring. if iperf ran correctly, however, there is no message from sh
@@ -411,14 +396,11 @@ class IPerf2OnAndroid(IPerf2):
     def kill(self, wait_time=3):
         """Kill the local process and the iperf process on the UE."""
 
-        # Kill the local adb process as normal
-        super().kill()
-
-        # Now's where the fun really starts
+        if self.binary_path is None:
+            return
 
         # Find and kill processes on the UE
-        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
-        out = self.run(binary_path, 'shell', 'ps')
+        out = self.run(self.binary_path, 'shell', 'ps')
         for line in out.splitlines():
             line = line.decode(errors='replace')
             if self.remote_binary_path in line.lower():
@@ -439,6 +421,9 @@ class IPerf2OnAndroid(IPerf2):
                     'timeout waiting for iperf process termination on UE'
                 )
 
+        # Kill the local adb process
+        super().kill()
+
     def read_stdout(self):
         """adb seems to forward stderr as stdout. Filter out some undesired
         resulting status messages.
@@ -456,20 +441,20 @@ class IPerf2OnAndroid(IPerf2):
 
         return self._format_output(out)
 
-    def wait_for_cell_data(self, timeout=60):
-        """Block until cellular data is available
+    def wait_for_cell_data(self, timeout: float=60):
+        """block until cellular data is available
 
-        :param timeout: how long to wait for a connection before raising a Timeout error
-        :return: None
+        Arguments:
+            timeout: wait time in seconds before raising TimeoutError
         """
 
         self._logger.debug('waiting for cellular data connection')
-        t0 = time.time()
+        t0 = time.perf_counter()
         out = ''
-        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
-        while time.time() - t0 < timeout or timeout is None:
+
+        while time.perf_counter() - t0 < timeout or timeout is None:
             out = sp.run(
-                [binary_path, 'shell', 'dumpsys', 'telephony.registry'],
+                [self.binary_path, 'shell', 'dumpsys', 'telephony.registry'],
                 stdout=sp.PIPE,
                 check=True,
                 timeout=timeout,
@@ -479,33 +464,29 @@ class IPerf2OnAndroid(IPerf2):
                 r'mDataConnectionState=([\-0-9]+)', out.decode(errors='replace')
             )
 
-            if len(con) > 0:
-                if con[0] == '2':
-                    break
+            if len(con) > 0 and con[0] == '2':
+                break
         else:
             raise TimeoutError('phone did not connect for cellular data before timeout')
-        self._logger.debug(
-            'cellular data available after {} s'.format(time.time() - t0)
-        )
+
+        self._logger.debug(f'cellular data available after {time.perf_counter() - t0} s')
 
     def reboot(self, block=True):
-        """Reboot the device.
+        """reboot the handset.
 
-        :param block: if truey, block until the device is ready to accept commands.
+        Arguments:
+            block: if truey, block until the device is ready to accept commands
         """
         self._logger.info('rebooting')
-        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
-        self.run(binary_path, 'reboot')
+        self.run(self.binary_path, 'reboot')
         if block:
             self.wait_for_device()
 
     def wait_for_device(self, timeout=30):
-        """Block until the device is ready to accept commands
+        """block until the device is ready to accept commands"""
 
-        :return: None
-        """
-        binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
-        self.run(binary_path, 'wait-for-device')
+        self._logger.debug('awaiting USB connection to handset')
+        self.run(self.binary_path, 'wait-for-device', timeout=timeout)
 
 
 class IPerf2BoundPair(IPerf2):
@@ -1552,12 +1533,7 @@ if __name__ == '__main__':
     # #    print(ips_result)
     # print(ipc_result)
 
-# IPerf2BoundPair example
-if __name__ == '__main__':
-    # 'debug' shows a lot of info to the screen.
-    # set to 'info' for less, or 'warning' for even less
-    lb.show_messages('debug')
-
+def test_iperf2_bound_pair():
     # When both network interfaces run on the same computer,
     # it is convenient to use IPerf2BoundPair, which runs both
     # an iperf server and an iperf client. each socket is bound
@@ -1581,11 +1557,20 @@ if __name__ == '__main__':
         # mss=1460,           # -M (default 1460? - TCP only, of course)
     )
 
-    # Approach 1: blocking (pipe).
-    # Calling pipe() doesn't return until the test is done.
     iperf.time = 3
     data = iperf.profile(block=True)
     print(data)
+
+
+# IPerf2BoundPair example
+if __name__ == '__main__':
+    # 'debug' shows a lot of info to the screen.
+    # set to 'info' for less, or 'warning' for even less
+    lb.show_messages('debug')
+
+
+    # Approach 1: blocking (pipe).
+    # Calling pipe() doesn't return until the test is done.
 
 #     # Approach 2: non-blocking (background) call
 #     # background() returns immediately while iperf runs in the background.
