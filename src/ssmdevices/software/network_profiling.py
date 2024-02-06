@@ -293,7 +293,7 @@ class IPerf2(_IPerfBase):
             return ret
 
     def read_stdout(self):
-        """retreive text from standard output, and parse into a pandas DataFrame if self.report_style is None"""
+        """retreive text from standard output. parse into a pandas DataFrame if self.report_style is None"""
         return self._format_output(super().read_stdout())
 
     def _format_output(self, stdout):
@@ -549,19 +549,26 @@ class IPerf2BoundPair(IPerf2):
             self.kill()
             return ret
 
-    def read_stdout(self, client_ret=None):
+    def read_stdout(self, client_ret: typing.Union[str, None]=None) -> typing.Union[dict, DataFrameType]:
+        try:
+            if client_ret is None:
+                client = self.children['client']
+            server = self.children['server']
+        except KeyError:
+            return dict(client=None, server=None)
+        
         if client_ret is None:
-            client = self.children['client'].read_stdout()
+            client_stdout = client.read_stdout()
         else:
-            client = client_ret
-        server = self.children['server'].read_stdout()
+            client_stdout = client_ret
+        server_stdout = server.read_stdout()
 
-        if isinstance(client, pd.DataFrame):
+        if isinstance(client_stdout, pd.DataFrame):
             # a single merged DataFrame
-            return self._merge_dataframes(client, server)
+            return self._merge_dataframes(client_stdout, server_stdout)
         else:
             # a dictionary of text results
-            return dict(client=client, server=server)
+            return dict(client=client_stdout, server=server_stdout)
 
     def _merge_dataframes(self, client, server):
         client.columns = [
@@ -1490,50 +1497,7 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
 #            print(f'{traffic.rate.median()} +/- {2*traffic.rate.std()} Mbps')
 #            print('medians\n',traffic.median(axis=0))
 
-# IPerf2 example
-if __name__ == '__main__':
-    lb.show_messages('debug')
-    #    ips = IPerf2(server=True, port=5050, interval=0.25, udp=True)
-
-    # net = TrafficProfiler_ClosedLoopTCP(
-    #     server='Ethernet',
-    #     client='Ethernet',
-    #     receive_side='server',  # "WLAN_Client_DUT",
-    #     port=0,
-    #     tcp_nodelay=True,
-    #     timeout=2,
-    # )
-
-    # with net:
-    #     print(net.acquire(10 * net.mtu(), count=10))
-
-    # ipc = IPerf2("127.0.0.1", port=5054, time=10, interval=0.25)
-    # ipc.open()
-
-    # ipc.acquire(block=False)
-
-    # time.sleep(5)
-    # ipc.kill()
-    # ipc_result = ipc.read_stdout()
-
-    #    with ipc:
-    #         for i in range(1):
-    #             # ips.start()
-    #             lb.sleep(1)
-    #             ipc.start()
-
-    #             lb.sleep(5)
-
-    #             ipc.kill()
-    #             # ips.kill()
-
-    #             # ips_result = ips.read_stdout()
-    #             ipc_result = ipc.read_stdout()
-
-    # #    print(ips_result)
-    # print(ipc_result)
-
-def test_iperf2_bound_pair():
+def test_iperf2_bound_pair_blocking():
     # When both network interfaces run on the same computer,
     # it is convenient to use IPerf2BoundPair, which runs both
     # an iperf server and an iperf client. each socket is bound
@@ -1557,34 +1521,107 @@ def test_iperf2_bound_pair():
         # mss=1460,           # -M (default 1460? - TCP only, of course)
     )
 
-    iperf.time = 3
-    data = iperf.profile(block=True)
-    print(data)
+    with iperf:
+        iperf.time = 3
+        data = iperf.profile(block=True)
+        print(data)
 
+
+def test_iperf2_bound_pair_background():
+    # When both network interfaces run on the same computer,
+    # it is convenient to use IPerf2BoundPair, which runs both
+    # an iperf server and an iperf client. each socket is bound
+    # to these interfaces to ensure that traffic is routed through
+    # the devices under test.
+    iperf = IPerf2BoundPair(
+        server='127.0.0.1',
+        client='127.0.0.1',
+
+        ### the parameters below set the corresponding iperf command line flags
+        # tcp_window_size=8196# -w (default unknown?)
+        # buffer_size='16k'   # -l (default unknown? possible strange results for UDP)
+        interval=1,         # -i (default is no output until the end of process)
+        # bidirectional=True, # -d (default is False)
+        udp=True,           # -u (default is False (TCP))
+        # bit_rate='1M'       # -b (default is no bit rate throttling)
+        time=10,            # -t (how long to run the iperf client; iperf's default is 10s)
+        report_style='C',   # -y (we set this from python to 'C' by default for CSV table; set to None for text output)
+        # number=-1,        # -n (by default, iperf uses -t to determine client test length; set -1 to run until killed)
+        # nodelay=True,       # -N (default is False; TCP only)
+        # mss=1460,           # -M (default 1460? - TCP only, of course)
+    )
+
+    # Approach 2: non-blocking (background) call
+    # background() returns immediately while iperf runs in the background.
+    # this allows other tasks here in the main thread
+
+    with iperf:
+        iperf.profile(block=False)
+        time.sleep(4) # replace this with other code for automating other equipment
+        data = iperf.read_stdout()
+        iperf.kill()
+        
+        # data is returned as a pandas dataframe.
+        # you can just dump it directly to a csv
+        data.to_csv(r'c:\users\dkuester\output.csv')
+
+        assert len(data) > 0
+
+
+def test_closed_loop():
+    lb.show_messages('debug')
+
+    # try the first interface available on the system
+    iface = tuple(list_network_interfaces('interface').keys())[0]
+
+    net = TrafficProfiler_ClosedLoopTCP(
+        server=iface,
+        client=iface,
+        receive_side='server',  # "WLAN_Client_DUT",
+        port=0,
+        tcp_nodelay=True,
+        timeout=2,
+    )
+
+    with net:
+        ret = net.profile_count(10 * net.mtu(), count=10)
+        assert len(ret) > 0
+
+
+def test_separate_iperf2():
+    lb.show_messages('debug')
+
+    server = IPerf2(server=True, port=5050, interval=0.25, udp=True)
+    client = IPerf2(client="127.0.0.1", port=5054, time=10, interval=0.25)
+
+    with server, client:
+        server.profile(block=False)
+
+        client.open()
+        client.profile(block=False)
+        time.sleep(5)
+        client.kill()
+        ipc_result = client.read_stdout()
+
+    # with client:
+    #     for i in range(1):
+    #         # ips.start()
+    #         lb.sleep(1)
+    #         client.start()
+
+    #         lb.sleep(5)
+
+    #         client.kill()
+    #         # ips.kill()
+
+    #         # ips_result = ips.read_stdout()
+    #         ipc_result = client.read_stdout()
+
+    #    print(ips_result)
+    print(ipc_result)
 
 # IPerf2BoundPair example
 if __name__ == '__main__':
     # 'debug' shows a lot of info to the screen.
     # set to 'info' for less, or 'warning' for even less
     lb.show_messages('debug')
-
-
-    # Approach 1: blocking (pipe).
-    # Calling pipe() doesn't return until the test is done.
-
-#     # Approach 2: non-blocking (background) call
-#     # background() returns immediately while iperf runs in the background.
-#     # this allows other tasks here in the main thread
-
-#     with iperf:
-#         iperf.start(time=3)
-#         time.sleep(4) # replace this with other code for automating other equipment
-#         iperf.kill()
-#         data = iperf.read_stdout()
-
-#         # data is returned as a pandas dataframe.
-#         # you can just dump it directly to a csv
-#         data.to_csv(r'c:\users\dkuester\output.csv')
-
-#         # or make a plot
-#         data.plot(x='timestamp', y=['server_bits_per_second', 'client_bits_per_second'])
