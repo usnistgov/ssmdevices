@@ -1516,18 +1516,15 @@ def test_iperf2_bound_pair_background():
         # mss=1460,           # -M (default 1460? - TCP only, of course)
     )
 
-    # Approach 2: non-blocking (background) call
-    # background() returns immediately while iperf runs in the background.
+    # profile returns immediately when block=False, leaving iperf running in the background.
     # this allows other tasks here in the main thread
-
     with iperf:
         iperf.profile(block=False)
         time.sleep(4) # replace this with other code for automating other equipment
         data = iperf.read_stdout()
         iperf.kill()
-        
+
         # data is returned as a pandas dataframe.
-        # you can just dump it directly to a csv
         data.to_csv(r'c:\users\dkuester\output.csv')
 
         assert len(data) > 0
