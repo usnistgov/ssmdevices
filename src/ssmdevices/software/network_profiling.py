@@ -1462,41 +1462,6 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
         self._logger.debug(f'interfaces ready after {elapsed:0.2f}s')
         return elapsed
 
-
-# Examples
-# ClosedLoopNetworkingTest example
-# if __name__ == '__main__':
-#     lb.show_messages('debug')
-#
-#     net = ClosedLoopTCPBenchmark(server='WLAN_AP_DUT',
-#                                  client='WLAN_Client_DUT',
-#                                  receiver='WLAN_Client_DUT',
-#                                  port=0,
-#                                  tcp_nodelay=True)
-#
-#     mss_mults = []
-#     binary_mults = []
-#     with net:
-#         for j in range(1):
-#             net.start_traffic(1460 * 10)
-#             print(net.is_running())
-#             lb.sleep(3)
-#             print(net.is_running())
-#             ret = net.stop_traffic()
-#             print(net.is_running())
-#            lb.logger.info(f'test {j}')
-#            ret = mss_mults.append(net.acquire(1460*10,count=1000))
-#            net.bytes = 4096*4
-#            binary_mults.append(net.acquire(1000))
-
-#            traffic = net.acquire(50)
-#            pylab.figure()
-#            traffic.hist(bins=51)
-#            traffic[['duration','delay']].plot(marker='.', lw=0)
-#            traffic['rate'] = net.bytes/traffic.duration*8/1e6
-#            print(f'{traffic.rate.median()} +/- {2*traffic.rate.std()} Mbps')
-#            print('medians\n',traffic.median(axis=0))
-
 def test_iperf2_bound_pair_blocking():
     # When both network interfaces run on the same computer,
     # it is convenient to use IPerf2BoundPair, which runs both
@@ -1601,27 +1566,5 @@ def test_separate_iperf2():
         client.profile(block=False)
         time.sleep(5)
         client.kill()
-        ipc_result = client.read_stdout()
-
-    # with client:
-    #     for i in range(1):
-    #         # ips.start()
-    #         lb.sleep(1)
-    #         client.start()
-
-    #         lb.sleep(5)
-
-    #         client.kill()
-    #         # ips.kill()
-
-    #         # ips_result = ips.read_stdout()
-    #         ipc_result = client.read_stdout()
-
-    #    print(ips_result)
-    print(ipc_result)
-
-# IPerf2BoundPair example
-if __name__ == '__main__':
-    # 'debug' shows a lot of info to the screen.
-    # set to 'info' for less, or 'warning' for even less
-    lb.show_messages('debug')
+        client_out = client.read_stdout()
+        assert len(client_out) > 0
