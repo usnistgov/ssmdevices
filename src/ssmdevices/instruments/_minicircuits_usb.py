@@ -108,6 +108,7 @@ class MiniCircuitsUSBDevice(lb.Device):
         Raise an exception if no devices are connected.
         """
         import hid
+        unknown_match = []
 
         with usb_enumerate_lock:
             found = {}
@@ -121,14 +122,16 @@ class MiniCircuitsUSBDevice(lb.Device):
                 except KeyError:
                     pass
 
-                # Otherwise, connect to the device to learn its serial number
                 try:
+                    # serial number is unfamiliar - probe the device
                     with cls._test_instance(dev['path']) as inst:
                         this_serial = inst.serial_number
                         usb_registry[dev['path']] = this_serial
                         found[this_serial] = dev['path']
+
                 except OSError:
-                    # likely permissions error; skip
+                    # potentially open in another process
+                    unknown_match.append(dev)
                     continue
 
         if len(found) == 0:
@@ -136,11 +139,11 @@ class MiniCircuitsUSBDevice(lb.Device):
                 f'found no {cls.__name__} connected with vid={hex(cls._VID)}, pid={hex(cls._PID)}'
             )
 
-            if hasattr(ex, 'add_note'):
+            if len(unknown_match) > 0 and hasattr(ex, 'add_note'):
                 # python>=3.10
-                ex.add_note('available:')
-                for dev in hid.enumerate(cls._VID, cls._PID):
-                    ex.add_note(f'vid={hex(dev["vendor_id"])}, pid={hex(dev["product_id"])}')
+                ex.add_note(f'hid failed to open these matches to vid={hex(cls._VID)} pid={hex(cls._PID)}:')
+                for dev in unknown_match:
+                    ex.add_note(f'\t{dev["path"]}')
 
             raise ex
 
