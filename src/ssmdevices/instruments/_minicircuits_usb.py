@@ -122,10 +122,14 @@ class MiniCircuitsUSBDevice(lb.Device):
                     pass
 
                 # Otherwise, connect to the device to learn its serial number
-                with cls._test_instance(dev['path']) as inst:
-                    this_serial = inst.serial_number
-                    usb_registry[dev['path']] = this_serial
-                    found[this_serial] = dev['path']
+                try:
+                    with cls._test_instance(dev['path']) as inst:
+                        this_serial = inst.serial_number
+                        usb_registry[dev['path']] = this_serial
+                        found[this_serial] = dev['path']
+                except OSError:
+                    # likely permissions error; skip
+                    continue
 
         if len(found) == 0:
             ex = ConnectionError(

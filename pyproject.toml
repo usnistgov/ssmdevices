@@ -39,7 +39,10 @@ repository = "https://github.com/usnistgov/ssmdevices"
 documentation = "https://pages.nist.gov/ssmdevices"
 
 [project.optional-dependencies]
-dev = ["labbench[dev]"]
+dev = [
+    "labbench[dev]",
+    "twine>=4.0.2",
+]
 doc = ["labbench[doc]"]
 scripts = [
     "seaborn",
