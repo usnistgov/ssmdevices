@@ -4,11 +4,11 @@
 """
 
 __all__ = [
-    'IPerf2',
-    'IPerf3',
-    'IPerf2OnAndroid',
-    'IPerf2BoundPair',
-    'TrafficProfiler_ClosedLoopTCP',
+    'LocalIPerf2',
+    'LocalIPerf3',
+    'AdbIPerf2',
+    'LocalIPerf2Pair',
+    'LocalPythonTrafficProfiler_ClosedLoopTCP',
 ]
 
 import datetime
@@ -32,7 +32,6 @@ except ImportError as ex:
 import labbench as lb
 from labbench import paramattr as attr
 import ssmdevices.lib
-
 import typing
 
 if typing.TYPE_CHECKING:
@@ -43,6 +42,7 @@ else:
     pd = lb.util.lazy_import('pandas')
     psutil = lb.util.lazy_import('psutil')
 
+lb.util.force_full_traceback(True)
 DataFrameType: typing.TypeAlias = 'pd.DataFrame'
 SeriesType: typing.TypeAlias = 'pd.Series'
 
@@ -66,10 +66,8 @@ if '_tcp_port_offset' not in dir():
 perf_counter()
 
 
-class _IPerfBase(lb.ShellBackend):
-    binary_name = attr.value.str(sets=False, cache=True, help='path (or name in system PATH) of the iperf binary')
-    binary_path = attr.value.str(None, cache=True, help='explicit path to the iperf binary (set on open based on binary_name)')
-    timeout = attr.value.float(5, help='timeout waiting for output before an exception is raised')
+class IPerf2Values(lb.paramattr.HasParamAttrs):
+    """base attributes shared by iperf2 and iperf3"""
 
     format: str = attr.value.str(
         default=None,
@@ -168,49 +166,8 @@ class _IPerfBase(lb.ShellBackend):
         label='bytes',
     )
 
-    def profile(self, block=True):
-        self._validate_settings()
-        duration = 0 if self.time is None else self.time + 2
-        timeout = max((self.timeout, duration))
-        flags = lb.shell_options_from_keyed_values(self, hide_false=True)
-
-        return self.run(
-            self.binary_path,
-            *flags,
-            background=not block,
-            pipe=True,
-            respawn=not block,
-            raise_on_stderr=True,
-            timeout=timeout,
-        )
-
-    def open(self):
-        if Path(self.binary_name).exists():
-            self.binary_path = self.binary_name
-        else:
-            self.binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
-
-    def _validate_settings(self):
+    def check_values(self):
         """validate configuration before a run"""
-
-        # port availability
-        if self.server:
-            try:
-                busy_ports = get_ipv4_occupied_ports(self.server)
-            except psutil.AccessDenied:
-                self._logger.warning('need administrator privileges on this platform to check for port access contention')
-                busy_ports = []
-
-            while self.port in busy_ports:
-                prev_port = self.ports
-                # find an open server port
-                if self.port >= type(self).port.max:
-                    self.port = type(self).port.min
-                else:
-                    self.port = self.port + 1
-                self._logger.info(
-                    f'requested port {prev_port} is in use - changing to {self.port}'
-                )
 
         # parameter conflict checks
         if self.client is not None and self.server:
@@ -238,8 +195,84 @@ class _IPerfBase(lb.ShellBackend):
             if self.number is not None:
                 raise ValueError('iperf server does not support the `number` argument')
 
+    def flags(self) -> list[str]:
+        self.check_values()
+        return lb.shell_options_from_keyed_values(self, hide_false=True)
 
-class IPerf3(_IPerfBase):
+
+class IPerf3Values(IPerf2Values):
+    """command line argument values specific to iperf3"""
+
+    reverse: bool = attr.value.bool(
+        default=False, key='-R',
+        help='run in reverse mode (server sends, client receives)',
+    )
+    json: bool = attr.value.bool(
+        default=False, key='-J',
+        help='output data in JSON format',
+    )
+    zerocopy: bool = attr.value.bool(
+        default=False, key='-Z',
+        help="whether to avoid buffer copies while sending data",
+    )
+
+
+class ShellIPerfBase(lb.ShellBackend):
+    binary_name = attr.value.str(sets=False, cache=True, help='path (or name in system PATH) of the binary')
+    binary_path = attr.value.str(None, cache=True, help='explicit path to the iperf binary (set automatically on open based on binary_name)')
+    timeout = attr.value.float(5, cache=True, help='timeout waiting for output before an exception is raised')
+
+    def open(self):
+        if Path(self.binary_name).exists():
+            self.binary_path = self.binary_name
+        else:
+            self.binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
+
+    def profile(self, *argv, block:bool=True):
+        if not hasattr(self, 'time'):
+            raise NotImplementedError('need to also inherit IPerf2Values or IPerf3Values to run the profiler')
+        
+        duration = 0 if self.time is None else self.time + 2
+        timeout = max((self.timeout, duration))
+
+        return super().run(
+            *argv,
+            *self.flags(),
+            background=not block,
+            pipe=True,
+            respawn=not block,
+            raise_on_stderr=True,
+            timeout=timeout,
+        )
+
+
+class LocalIPerfBase(ShellIPerfBase):
+    def profile(self, block: bool=True):
+        self.check_ports()
+        super().profile(self.binary_path, block=block)
+
+    def check_ports(self):
+        """check the availability of specified ports on the host"""
+        if self.server:
+            try:
+                busy_ports = get_ipv4_occupied_ports(self.server)
+            except psutil.AccessDenied:
+                self._logger.warning('need administrator privileges on this platform to check for port access contention')
+                busy_ports = []
+
+            while self.port in busy_ports:
+                prev_port = self.ports
+                # find an open server port
+                if self.port >= type(self).port.max:
+                    self.port = type(self).port.min
+                else:
+                    self.port = self.port + 1
+                self._logger.info(
+                    f'requested port {prev_port} is in use - changing to {self.port}'
+                )
+
+
+class LocalIPerf3(LocalIPerfBase, IPerf3Values):
     """Run an instance of iperf3, collecting output data in a background thread.
     When running as an iperf client (server=False),
     The default value is the path that installs with 64-bit cygwin.
@@ -247,7 +280,7 @@ class IPerf3(_IPerfBase):
 
     binary_name = attr.value.str('iperf3', inherit=True)
 
-    # IPerf3 only
+    # additional IPerf3-only
     reverse: bool = attr.value.bool(
         default=False, key='-R', help='run in reverse mode (server sends, client receives)'
     )
@@ -257,7 +290,7 @@ class IPerf3(_IPerfBase):
     )
 
 
-class IPerf2(_IPerfBase):
+class LocalIPerf2(LocalIPerfBase, IPerf2Values):
     """Run an instance of iperf to profile data transfer speed. It can
     operate as a server (listener) or client (sender), operating either
     in the foreground or as a background thread.
@@ -286,7 +319,7 @@ class IPerf2(_IPerfBase):
     )
 
     def profile(self, block=True):
-        ret = super().profile(block)
+        ret = super().profile(block=block)
         if block:
             return self._format_output(ret)
         else:
@@ -337,29 +370,13 @@ class IPerf2(_IPerfBase):
         return data
 
 
-class IPerf2OnAndroid(IPerf2):
+class AdbIPerf2(ShellIPerfBase, IPerf2Values):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
     binary_name = attr.value.str('adb', inherit=True)
-    remote_binary_path: str = attr.value.str(default='/data/local/tmp/iperf', cache=True)
+    remote_binary_path = attr.value.str('/data/local/tmp/iperf', cache=True, help='copy destination for iperf in the handset')
 
     def profile(self, block=True):
-        self._validate_settings()
-        duration = 0 if self.time is None else self.time + 3
-        timeout = max((self.timeout, duration))
-        flags = lb.shell_options_from_keyed_values(self, hide_false=True)
-
-        # the same flags as in IPerf, we just need to prepend adb arguments first
-        ret = self.run(
-            self.binary_path,
-            'shell',
-            self.remote_binary_path,
-            *flags,
-            background=not block,
-            pipe=True,
-            respawn=not block,
-            raise_on_stderr=True,
-            timeout=timeout,
-        )
+        ret = super().profile(self.binary_path, 'shell', self.remote_binary_path, block=block)
 
         if block:
             return self._format_output(ret)
@@ -373,7 +390,7 @@ class IPerf2OnAndroid(IPerf2):
 
     def open(self):
         self.wait_for_device(30)
-        
+
         self._logger.debug('copying iperf onto phone')
         lb.sleep(0.1)
         local_iperf_path = ssmdevices.lib.path('iperf', platform='android-amd64')
@@ -475,7 +492,7 @@ class IPerf2OnAndroid(IPerf2):
         """reboot the handset.
 
         Arguments:
-            block: if truey, block until the device is ready to accept commands
+            block: if truey, block until the device is again ready to accept commands
         """
         self._logger.info('rebooting')
         self.run(self.binary_path, 'reboot')
@@ -489,11 +506,11 @@ class IPerf2OnAndroid(IPerf2):
         self.run(self.binary_path, 'wait-for-device', timeout=timeout)
 
 
-class IPerf2BoundPair(IPerf2):
+class LocalIPerf2Pair(LocalIPerf2):
     """Configure and run an iperf client and a server pair on the host.
 
-    Outputs from  to interfaces in order to ensure that data is routed between them, not through
-    localhost or any other interface.
+    The socket connection between the two is bound to ensure routing across
+    the two specified network interfaces (instead of e.g., loopback).
     """
 
     # add other settings
@@ -507,7 +524,7 @@ class IPerf2BoundPair(IPerf2):
     children = {}
 
     def open(self):
-        self.children: dict[str, IPerf2] = dict()
+        self.children: dict[str, LocalIPerf2] = dict()
         self.backend: None = None
 
     def close(self):
@@ -586,8 +603,8 @@ class IPerf2BoundPair(IPerf2):
             raise BlockingIOError(f'{self} is already running')
 
         # override parameters as necessary for each side of the link
-        client = self.children['client'] = IPerf2()
-        server = self.children['server'] = IPerf2()
+        client = self.children['client'] = LocalIPerf2()
+        server = self.children['server'] = LocalIPerf2()
 
         # seed defaults from self
         for name, attr_def in lb.paramattr.get_class_attrs(self).items():
@@ -604,14 +621,14 @@ class IPerf2BoundPair(IPerf2):
         client.client=self.client
         client.bind=f'{self.client}:{find_free_port()}'
         client.server=False
-        client._validate_settings()
+        client.check_ports()
 
         server.client=None
         server.bind=self.server
         server.server=True
         server.time=None
         server.number=None
-        server._validate_settings()
+        server.check_ports()
 
         self.backend = lb.sequentially(server, client).__enter__()
 
@@ -639,11 +656,11 @@ def bit_errors(x):
     return ((x * h01) >> 56).sum()
 
 
-class TrafficProfiler_ClosedLoop(lb.Device):
+class LocalPythonTrafficProfiler(lb.Device):
     """Profile closed-loop traffic between two network interfaces
     on this computer. Takes advantage of the system clock as a common
-    basis for traffic delay measurement, with uncertainty approximately
-    equal to the system time resolution.
+    basis for traffic delay measurement, with uncertainty on the scale
+    of the the system clock tick resolution.
     """
 
     server: str = attr.value.str(
@@ -787,7 +804,7 @@ class PortBusyError(ConnectionError):
     pass
 
 
-class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
+class LocalPythonTrafficProfiler_ClosedLoopTCP(LocalPythonTrafficProfiler):
     _server = None
     PORT_WINERRS = (10013, 10048)
     CONN_WINERRS = (10051,)
@@ -971,18 +988,6 @@ class TrafficProfiler_ClosedLoopTCP(TrafficProfiler_ClosedLoop):
                         conn, (other_ip, _) = listen_sock.accept()
                     except socket.timeout:
                         continue
-                    #                    except OSError as e:
-                    #                        # Windows-specific errors
-                    #                        if hasattr(e, 'winerror') and e.winerror in self.port_winerrs:
-                    #                            self._logger.debug(f'port {port} is inaccessible')
-                    #                            raise PortBusyError
-                    #                        else:
-                    #                            raise
-                    #                    except AttributeError:
-                    #                        if listen_sock is None:
-                    #                            raise ConnectionError('no listener to provide server connection socket')
-                    #                        else:
-                    #                            raise
 
                     if other_ip == client_ip:
                         break
@@ -1468,7 +1473,7 @@ def test_iperf2_bound_pair_blocking():
     # an iperf server and an iperf client. each socket is bound
     # to these interfaces to ensure that traffic is routed through
     # the devices under test.
-    iperf = IPerf2BoundPair(
+    iperf = LocalIPerf2Pair(
         server='127.0.0.1',
         client='127.0.0.1',
 
@@ -1498,7 +1503,7 @@ def test_iperf2_bound_pair_background():
     # an iperf server and an iperf client. each socket is bound
     # to these interfaces to ensure that traffic is routed through
     # the devices under test.
-    iperf = IPerf2BoundPair(
+    iperf = LocalIPerf2Pair(
         server='127.0.0.1',
         client='127.0.0.1',
 
@@ -1530,16 +1535,16 @@ def test_iperf2_bound_pair_background():
         assert len(data) > 0
 
 
-def test_closed_loop():
+def test_local_python_closed_loop():
     lb.show_messages('debug')
 
     # try the first interface available on the system
     iface = tuple(list_network_interfaces('interface').keys())[0]
 
-    net = TrafficProfiler_ClosedLoopTCP(
+    net = LocalPythonTrafficProfiler_ClosedLoopTCP(
         server=iface,
         client=iface,
-        receive_side='server',  # "WLAN_Client_DUT",
+        receive_side='server',
         port=0,
         tcp_nodelay=True,
         timeout=2,
@@ -1553,8 +1558,8 @@ def test_closed_loop():
 def test_separate_iperf2():
     lb.show_messages('debug')
 
-    server = IPerf2(server=True, port=5050, interval=0.25, udp=True)
-    client = IPerf2(client="127.0.0.1", port=5054, time=10, interval=0.25)
+    server = LocalIPerf2(server=True, port=5050, interval=0.25, udp=True)
+    client = LocalIPerf2(client="127.0.0.1", port=5054, time=10, interval=0.25)
 
     with server, client:
         server.profile(block=False)

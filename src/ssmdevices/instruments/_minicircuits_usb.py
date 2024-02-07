@@ -26,8 +26,7 @@ class MiniCircuitsUSBDevice(lb.Device):
     # annotated values can be passed as constructor arguments
     usb_path: bytes = attr.value.bytes(
         default=None,
-        allow_none=True,
-        help='override `resource` to connect to a specific USB path',
+        help='if not None, override `resource` to connect to a specific USB path',
         cache=True,
     )
 
@@ -123,20 +122,23 @@ class MiniCircuitsUSBDevice(lb.Device):
                     pass
 
                 # Otherwise, connect to the device to learn its serial number
-                try:
-                    with cls._test_instance(dev['path']) as inst:
-                        this_serial = inst.serial_number
-                        usb_registry[dev['path']] = this_serial
-                        found[this_serial] = dev['path']
-                except OSError as e:
-                    # Device already open, skipping.
-                    print(str(e))
-                    pass
+                with cls._test_instance(dev['path']) as inst:
+                    this_serial = inst.serial_number
+                    usb_registry[dev['path']] = this_serial
+                    found[this_serial] = dev['path']
 
         if len(found) == 0:
-            raise ConnectionError(
-                f'found no {cls.__name__} connected with vid={cls._VID}, pid={cls._PID}'
+            ex = ConnectionError(
+                f'found no {cls.__name__} connected with vid={hex(cls._VID)}, pid={hex(cls._PID)}'
             )
+
+            if hasattr(ex, 'add_note'):
+                # python>=3.10
+                ex.add_note('available:')
+                for dev in hid.enumerate(cls._VID, cls._PID):
+                    ex.add_note(f'vid={hex(dev["vendor_id"])}, pid={hex(dev["product_id"])}')
+
+            raise ex
 
         names = ', '.join([repr(k) for k in found.keys()])
 
