@@ -136,7 +136,7 @@ class MiniCircuitsUSBDevice(lb.Device):
 
         if len(found) == 0:
             ex = ConnectionError(
-                f'found no {cls.__name__} connected with vid={hex(cls._VID)}, pid={hex(cls._PID)}'
+                f'found no USB HID devices matching the vendor and product of {cls.__qualname__}'
             )
 
             if len(unknown_match) > 0 and hasattr(ex, 'add_note'):

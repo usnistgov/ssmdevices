@@ -12,6 +12,9 @@ import labbench as lb
 from labbench import paramattr as attr
 import typing
 import warnings
+import contextlib
+import time
+import pyvisa
 
 if typing.TYPE_CHECKING:
     import pandas as pd
@@ -39,6 +42,9 @@ class KeysightU2000XSeries(lb.VISADevice):
                 'a specific model, such as KeysightU2044XA',
                 DeprecationWarning,
             )
+
+        self._clear()
+        self._event_status_enable()
 
     initiate_continuous = attr.property.bool(
         key='INIT:CONT', help='whether to enable triggering to acquire power samples'
@@ -109,9 +115,62 @@ class KeysightU2000XSeries(lb.VISADevice):
             series.name = 'Power (dBm)'
             return series
 
-    def calibrate(self) -> None:
-        if int(self.query('CAL?')) != 0:
-            raise ValueError('calibration failed')
+    def _clear(self):
+        self.write('*CLS')
+
+    def _event_status_enable(self, enable: bool):
+        self.write('*ESE 1')
+
+    @contextlib.contextmanager
+    def overlap_and_block(self, timeout=None, quiet=False):
+        """context manager that sends '*OPC' on entry, and performs
+        a blocking '*OPC?' query on exit.
+
+        By convention, these SCPI commands give a hint to the instrument
+        that commands sent inside this block may be executed concurrently.
+        The context exit then blocks until all of the commands have
+        completed.
+
+        Example::
+
+            with inst.overlap_and_block():
+                inst.write('long running command 1')
+                inst.write('long running command 2')
+
+        Arguments:
+            timeout: maximum time to wait for '*OPC?' reply, or None to use `self.backend.timeout`
+            quiet: Suppress timeout exceptions if this evaluates as True
+
+        Raises:
+            TimeoutError: on '*OPC?' query timeout
+        """
+
+        self._opc = True
+        yield
+        self._opc = False
+
+        # monitoring *ESR? is recommended by the programming manual
+        t0 = time.perf_counter()
+        while time.perf_counter() - t0 < timeout:
+            try:
+                register = int(self.query('*ESR?'))
+                time.sleep(0.1)
+            except pyvisa.errors.VisaIOError as ex:
+                raise ex
+            else:
+                if register & 1:
+                    # first bit == operation complete
+                    break
+        else:
+            raise TimeoutError('command failed')
+        
+    def zero(self):
+        with self.overlap_and_block(30):
+            self.write('CAL:ZERO:AUTO ONCE')
+
+    def calibrate(self):
+        with self.overlap_and_block(10):
+            self.write('CAL:AUTO ONCE')
 
 
 class KeysightU2044XA(KeysightU2000XSeries):
