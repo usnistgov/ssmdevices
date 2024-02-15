@@ -153,7 +153,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         t0 = time.perf_counter()
         while time.perf_counter() - t0 < timeout:
             try:
-                register = int(self.query('*ESR?'))
+                register = int(self.backend.query('*ESR?'))
                 time.sleep(0.1)
             except pyvisa.errors.VisaIOError as ex:
                 raise ex
