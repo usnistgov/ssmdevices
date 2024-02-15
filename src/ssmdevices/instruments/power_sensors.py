@@ -262,6 +262,8 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
     def preset(self):
         self.write('*PRE')
+        self._clear()
+        self._event_status_enable()
 
     def trigger_single(self):
         self.write('INIT')
