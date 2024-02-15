@@ -118,7 +118,7 @@ class KeysightU2000XSeries(lb.VISADevice):
     def _clear(self):
         self.write('*CLS')
 
-    def _event_status_enable(self, enable: bool):
+    def _event_status_enable(self):
         self.write('*ESE 1')
 
     @contextlib.contextmanager
