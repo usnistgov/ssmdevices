@@ -27,6 +27,14 @@ else:
 DataFrameType: typing.TypeAlias = 'pd.DataFrame'
 SeriesType: typing.TypeAlias = 'pd.Series'
 
+class KeysightU2000XSeriesError(IOError):
+    pass
+    # def __init__(self, description: str, err_code: int):
+    #     super().__init__(description, err_code)
+    #     self.err_code: int = err_code
+
+    # def __str__(self):
+    #     return f'{super().__str__()} (error code {self.err_code})'
 
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
@@ -100,12 +108,18 @@ class KeysightU2000XSeries(lb.VISADevice):
         self.write('SYST:PRES')
         if wait:
             self.wait()
+        self._clear()
+        self._event_status_enable()
 
-    def fetch(self) -> typing.Union[float, SeriesType]:
+    def fetch(self, precheck=True) -> typing.Union[float, SeriesType]:
         """return power readings from the instrument.
 
         Returns:
             a single number if trigger_count == 1, otherwise or pandas.Series"""
+        
+        if precheck:
+            self._check_errors()
+
         series = self.query_ascii_values('FETC?', container=pd.Series)
         if len(series) == 1:
             return series.iloc[0]
@@ -120,6 +134,15 @@ class KeysightU2000XSeries(lb.VISADevice):
 
     def _event_status_enable(self):
         self.write('*ESE 1')
+
+    def _check_errors(self):
+        code, text = self.query('SYST:ERR?').split(',', 1)
+        code = int(code)
+
+        if code == 0:
+            return
+        else:
+            raise KeysightU2000XSeriesError(code, text[1:-1])
 
     @contextlib.contextmanager
     def overlap_and_block(self, timeout=None, quiet=False):
@@ -163,7 +186,7 @@ class KeysightU2000XSeries(lb.VISADevice):
                     break
         else:
             raise TimeoutError('command failed')
-        
+
     def zero(self):
         with self.overlap_and_block(30):
             self.write('CAL:ZERO:AUTO ONCE')
@@ -262,8 +285,6 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
 
     def preset(self):
         self.write('*PRE')
-        self._clear()
-        self._event_status_enable()
 
     def trigger_single(self):
         self.write('INIT')
