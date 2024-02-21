@@ -46,7 +46,8 @@ dev = [
 doc = ["labbench[doc]"]
 scripts = [
     "seaborn",
-    "matplotlib"
+    "matplotlib",
+    "ipympl>=0.9.3",
 ]
 
 [build-system]

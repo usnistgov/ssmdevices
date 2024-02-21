@@ -1,0 +1,71 @@
+#!/usr/bin/env ipython
+# 
+# Run this from within ipython to see a live plot.
+#
+# Dependencies:
+#     pip install ssmdevices[scripts]
+
+# %%
+import labbench as lb
+from ssmdevices.instruments import KeysightU2044XA
+from matplotlib import pyplot as plt
+# import seaborn as sns
+import time
+from matplotlib import pyplot as plt
+import numpy as np
+from IPython import display
+
+%matplotlib widget
+
+lb.show_messages('info')
+
+# if resource autodetection fails,
+# pass in a specific a resource name here
+sensor = KeysightU2044XA()
+
+fig, ax = plt.subplots()
+
+with sensor:
+    # sensor.preset()
+    sensor.frequency = 1e9
+    sensor.measurement_rate = 'FAST'
+    sensor.trigger_count = 200
+    sensor.sweep_aperture = (10e-3)/200
+    sensor.trigger_source = 'IMM'
+    sensor.initiate_continuous = True
+
+    print('calibrating...')
+    # sensor.calibrate()
+
+    # print('zeroing...')
+    # sensor.zero()
+
+    line = None
+
+    while True:
+        power = sensor.fetch()
+        power_mW = 10**(power/10.)
+        power_on = power_mW[power > power.max()-15].sort_values().iloc[4*2:]
+        desc = (
+            f'mean "on" level: {10*np.log10(power_on.mean()):0.2f} dBm   '
+            f'mean level: {10*np.log10(power_mW.mean()):0.2f}'
+        )
+        if line is None:
+            # first plot
+            line, *_ = ax.plot(power.index, power.values)
+            text = ax.text(power.index[0], power.values.max()+3, desc)
+            ax.set_ylabel('Power (dBm)')
+            ax.set_xlabel('Time elapsed (s)')
+        else:
+            line.set_ydata(power.values)
+            ymin = max([-65, power.values.min()-3])
+            ymax = power.values.max()+2
+            ax.set_ylim([ymin, ymax])
+            text.set_text(desc)
+            text.set_y(ymax+1)
+
+        display.clear_output(wait=True)
+        display.display(fig, clear=True)
+        fig.canvas.draw()
+        
+        time.sleep(0.1)

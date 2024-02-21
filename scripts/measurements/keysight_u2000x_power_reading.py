@@ -5,8 +5,6 @@
 
 import labbench as lb
 from ssmdevices.instruments import KeysightU2044XA
-from matplotlib import pyplot as plt
-import seaborn as sns
 
 lb.show_messages('info')
 
@@ -19,19 +17,17 @@ with sensor:
     sensor.preset()
     sensor.frequency = 1e9
     sensor.measurement_rate = 'FAST'
-    sensor.trigger_count = 200
-    sensor.sweep_aperture = 20e-6
+    sensor.trigger_count = 1
+    sensor.sweep_aperture = 1e-3
     sensor.trigger_source = 'IMM'
     sensor.initiate_continuous = True
 
+    print('calibrating...')
+    sensor.calibrate()
+
+    # print('zeroing...')
+    # sensor.zero()
+
     power = sensor.fetch()
 
-#%% Display
-sns.set(style='ticks')
-
-fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(6,2))
-power.plot(ax=ax1)
-ax2.set_ylabel('Power level (dBm)')
-power.hist(ax=ax2)
-ax2.set_xlabel('Power level (dBm)')
-ax2.set_ylabel('Count')
+    print(f'Power level: {power:0.2f} dBm')
