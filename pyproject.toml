@@ -22,7 +22,7 @@ maintainers = [
 ]
 
 dependencies = [
-    "labbench ~= 0.35.0",
+    "labbench ~= 0.36.0",
     # "labbench @ git+https://github.com/usnistgov/labbench@master",
     "hidapi",
     "pywifi",
