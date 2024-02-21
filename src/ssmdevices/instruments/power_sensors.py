@@ -27,15 +27,6 @@ else:
 DataFrameType: typing.TypeAlias = 'pd.DataFrame'
 SeriesType: typing.TypeAlias = 'pd.Series'
 
-class KeysightU2000XSeriesError(IOError):
-    pass
-    # def __init__(self, description: str, err_code: int):
-    #     super().__init__(description, err_code)
-    #     self.err_code: int = err_code
-
-    # def __str__(self):
-    #     return f'{super().__str__()} (error code {self.err_code})'
-
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
@@ -129,30 +120,22 @@ class KeysightU2000XSeries(lb.VISADevice):
             series.name = 'Power (dBm)'
             return series
 
-    def _clear(self):
-        self.write('*CLS')
+    def zero(self):
+        with self.overlap_and_block(30):
+            self.write('CAL:ZERO:AUTO ONCE')
 
-    def _event_status_enable(self):
-        self.write('*ESE 1')
-
-    def _check_errors(self):
-        code, text = self.query('SYST:ERR?').split(',', 1)
-        code = int(code)
-
-        if code == 0:
-            return
-        else:
-            raise KeysightU2000XSeriesError(code, text[1:-1])
+    def calibrate(self):
+        with self.overlap_and_block(10):
+            self.write('CAL:AUTO ONCE')
 
     @contextlib.contextmanager
     def overlap_and_block(self, timeout=None, quiet=False):
         """context manager that sends '*OPC' on entry, and performs
         a blocking '*OPC?' query on exit.
 
-        By convention, these SCPI commands give a hint to the instrument
-        that commands sent inside this block may be executed concurrently.
-        The context exit then blocks until all of the commands have
-        completed.
+        These SCPI commands instruct the sensor to execute the commands
+        concurrently. On exit out of the python context block, execution
+        blocks until all of the commands have completed.
 
         Example::
 
@@ -172,6 +155,12 @@ class KeysightU2000XSeries(lb.VISADevice):
         yield
         self._opc = False
 
+        self._await_completion()
+        
+    def _await_completion(self, timeout: float=None):
+        if timeout is None:
+            timeout = self.timeout
+
         # monitoring *ESR? is recommended by the programming manual
         t0 = time.perf_counter()
         while time.perf_counter() - t0 < timeout:
@@ -187,13 +176,20 @@ class KeysightU2000XSeries(lb.VISADevice):
         else:
             raise TimeoutError('command failed')
 
-    def zero(self):
-        with self.overlap_and_block(30):
-            self.write('CAL:ZERO:AUTO ONCE')
+    def _clear(self):
+        self.write('*CLS')
 
-    def calibrate(self):
-        with self.overlap_and_block(10):
-            self.write('CAL:AUTO ONCE')
+    def _event_status_enable(self):
+        self.write('*ESE 1')
+
+    def _check_errors(self):
+        code, text = self.query('SYST:ERR?').split(',', 1)
+        code = int(code)
+
+        if code == 0:
+            return
+        else:
+            raise IOError(code, text[1:-1])
 
 
 class KeysightU2044XA(KeysightU2000XSeries):
