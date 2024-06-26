@@ -182,7 +182,7 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
 
 
 if __name__ == '__main__':
-    with TektronixMSO64BSpectrogram(something=1) as scope:
+    with TektronixMSO64BSpectrogram() as scope:
         scope.spectrogram_enabled(channel=1)
 
         scope.resolution_bandwidth = 10e3
