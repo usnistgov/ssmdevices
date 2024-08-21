@@ -6,6 +6,7 @@ import time
 import labbench as lb
 from labbench import paramattr as attr
 import typing
+import typing_extensions
 from typing import Union, Literal
 
 if typing.TYPE_CHECKING:
@@ -16,9 +17,9 @@ else:
     pd = lb.util.lazy_import('pandas')
     np = lb.util.lazy_import('numpy')
 
-DataFrameType: typing.TypeAlias = 'pd.DataFrame'
-SeriesType: typing.TypeAlias = 'pd.Series'
-NumpyArrayType: typing.TypeAlias = 'np.ndarray'
+DataFrameType: typing_extensions.TypeAlias = 'pd.DataFrame'
+SeriesType: typing_extensions.TypeAlias = 'pd.Series'
+NumpyArrayType: typing_extensions.TypeAlias = 'np.ndarray'
 
 __all__ = [
     'KeysightN9951B',
