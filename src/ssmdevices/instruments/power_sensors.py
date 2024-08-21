@@ -11,6 +11,7 @@ __all__ = [
 import labbench as lb
 from labbench import paramattr as attr
 import typing
+import typing_extensions
 import warnings
 import contextlib
 import time
@@ -24,8 +25,8 @@ else:
     pd = lb.util.lazy_import('pandas')
     np = lb.util.lazy_import('numpy')
 
-DataFrameType: typing.TypeAlias = 'pd.DataFrame'
-SeriesType: typing.TypeAlias = 'pd.Series'
+DataFrameType: typing_extensions.TypeAlias = 'pd.DataFrame'
+SeriesType: typing_extensions.TypeAlias = 'pd.Series'
 
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
