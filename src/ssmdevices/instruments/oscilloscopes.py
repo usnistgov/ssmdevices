@@ -2,6 +2,12 @@ __all__ = ['RigolTechnologiesMSO4014', 'TektronixMSO64B', 'TektronixMSO64BSpectr
 
 import labbench as lb
 from labbench import paramattr as attr
+import numpy as np
+try:
+    from tekhsi import TekHSIConnect, AcqWaitOn
+    from tm_data_types import AnalogWaveform
+except ImportError as e:
+    raise e("When using the TektronixMSO64B class, ensure tekhsi library is installed.")
 
 scope_channel_kwarg = attr.method_kwarg.int(
     'channel', min=1, max=4, help='hardware input port'
@@ -82,13 +88,133 @@ class TektronixMSO64B(lb.VISADevice):
         cache=True,
         help='input port termination impedance',
     )
+    # Trigger settings
+    trig_type = attr.property.str(
+        key='TRIGger:A:TYPE',  # Trigger A is hard coded, trigger B only applies to TRANSISTION trigger,\
+        # indicated by 'Sequence' on the display
+        only=(
+            'EDGE',
+            'WIDTH',
+            'TIMEOUT',
+            'RUNT',
+            'WINDOW',
+            'LOGIC',
+            'SETHOLD',
+        ),
+        help='Trigger mode for captures',
+    )
+    # Trig width only associated with width type trigger
+    trig_width_high = attr.property.float(
+        key='TRIGger:A:PULSEWidth:HIGHLimit', min=4e-9, max=5
+    )
+    trig_width_low = attr.property.float(
+        key='TRIGger:A:PULSEWidth:LOWLimit', min=8e-9, max=5
+    )
 
-    # vertical acquisition
+
+    trig_edge_slope = attr.property.str(
+        key='TRIGger:A:EDGE:SLOpe',
+        only=("RISE", "FALL", "EITHER")
+    )
+    trig_edge_source = attr.property.str(
+        key='TRIGger:A:EDGE:SOUrce',
+        only=('CH1', 'CH2', 'CH3', 'CH4', 'LINE', 'AUX'),
+        help='source for edge type trigger'
+    )
+
+    trig_level= attr.method.float(
+        key='TRIGger:A:LEVel:CH{channel}',
+    )
+
+    trig_mode = attr.property.str(
+        key='TRIGger:A:MODe',
+        only=("AUTO", "NORMAL")
+    )
+
+    trig_holdoff_by = attr.property.str(
+        key="TRIGger:A:HOLDoff:BY",
+        only=("TIME", "RANDOM")
+        )
+
+    trig_holdoff_time = attr.property.float(
+        key="TRIGger:A:HOLDoff:TIMe",
+        min=0,
+        max=10
+    )
+
+    # Acquisition settings
+    acq_type = attr.property.str(
+        key="ACQuire:STOPAfter",
+        only=("RUNSTOP", "SEQUENCE")
+    )
+    acq_mode = attr.property.str(
+        key="ACQuire:MODe",
+        only=("SAMPLE", "PEAKDETECT", "HIRES", "AVERAGE", "ENVELOPE")
+    )
+    acq_num_seq = attr.property.int(
+        key="ACQuire:SEQuence:NUMSEQuence",
+    )
+    acq_time_source = attr.property.str(
+        key="ROSc:SOUrce",
+        only=("INTERNAL", "EXTERNAL", "TRACKING")
+    )
+    acq_fastframe = attr.property.str(
+        key="HORizontal:FASTframe:STATE",
+        only=("ON", "OFF")
+    )
+
+    # vertical scale
     vertical_scale = attr.property.float(
         key='CH{channel}:SCALE',
         label='V',
         help='vertical scale of the specified channel',
     )
+
+    # Data storage
+    data_source = attr.property.str(
+        key='DATa:SOUrce',
+        only=('CH1',
+              'CH2',
+              'CH3',
+              'CH4'),
+        help='data source for acquisition'
+    )
+    data_start = attr.property.int(
+        key='DATa:START',
+        help='data collection start point'
+    )
+    data_stop = attr.property.int(
+        key='DATa:STOP',
+        help='data collection stop point'
+    )
+
+    # File operations
+    file_copy = attr.property.str(
+        key='FILESystem:COPy', help='copy a file within filesystem'
+    )
+    file_cwd = attr.property.str(
+        key='FILESystem:CWD',
+        help='current working directory'
+        )
+    file_read = attr.property.str(
+        key='FILESystem:READFile',
+        help='read the file over interface',
+    )
+
+    # Store/load
+    def load_setup(self, setup_file_name: str):
+        self.write(f"RECAll:SETUp \"{setup_file_name}\"")
+
+    def retrieve_waveform(self, channel, start, stop, tekhsi_port=5000):
+        # self.data_source=channel
+        # self.data_start=start
+        # self.data_stop= int(stop)
+        ip_addr = self.resource.split("::")[1]
+        print(f"Waiting for data on {ip_addr}:{tekhsi_port}")
+        with TekHSIConnect(f"{ip_addr}:{tekhsi_port}", [f"ch{channel}"]) as connect:
+            with connect.access_data(AcqWaitOn.AnyAcq):
+                wfm: AnalogWaveform = connect.get_data(f"ch{channel}")
+        return wfm
 
     def open(self):
         self._horizontal_mode = 'MANUAL'
