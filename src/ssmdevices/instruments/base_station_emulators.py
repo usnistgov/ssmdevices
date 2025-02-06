@@ -10,43 +10,93 @@ import time
 
 import labbench as lb
 from labbench import paramattr as attr
+import re
 
 __all__ = ['RohdeSchwarzCMW500']
 
-default_cmw_address = 'TCPIP0::10.0.0.3::inst0::INSTR'
+default_cmw_address = 'TCPIP0::10.0.0.9::inst0::INSTR'
 
 
 @attr.visa_keying(remap={False: 'OFF', True: 'ON'})
 class RohdeSchwarzCMW500(lb.VISADevice):
-    """A base station emulator"""
-
+    """ TODO: Update this docstring
+    A base station emulator
+    """
     UPDATE_RATE = 20
 
+    """
+    LTE signaling parameters
+    LTE Cell setup, order based on the LTE signaling menu on the CMW
+    """
+    # DL/UL Band, excluding channel/frequency
     # Enhancement would be to change the SIGN1 to be a variable of some sort, and potentially the PCC to be a variable(SCC)
-    channel_bandwidth = attr.method.str(
-        key='CONF:LTE:SIGN1:CELL:BAND:PCC:DL',
-        only=['B014', 'B030', 'B050', 'B100', 'B150', 'B200'],
-    )
-    lte_signaling = attr.method.bool(
-        key='SOUR:LTE:SIGN1:CELL:STAT',
-    )
-    scheduling_type = attr.method.str(
-        key='CONF:LTE:SIGN1:CONN:PCC:STYPE', only=['RMC', 'UDCH', 'UDTT']
-    )  # not comprehensive
+    @attr.property.int(min=1, max=255)
+    def operating_band(self):
+        resp = self.query('CONF:LTE:SIGN1:PCC:BAND?')
+        return int(re.sub('[^0-9]','', resp))
 
-    # channel_band             = attr.method.str(key=NEED TO FIND COMMAND,values =[NEED TO FIND BAND CODES'OB66'])
-    ue_attached = attr.method.bool(key='SENS:LTE:SIGN1:RRCS?')
-    ulrmc_num_rbs = attr.method.int(key='CONF:LTE:SIGN1:CONN:PCC:RMCUL', min=1, max=100)
-    ulrmc_modulation = attr.method.str(
+    @operating_band.setter
+    def _(self, int_value):
+        self.write(f'CONF:LTE:SIGN1:PCC:BAND OB{int_value}')
+
+    # ************ FDD: cyclic prefix(norm/ext), broadcast message len (nothing explicit, deeper in menus), partially empty subframes/slot
+    # rb number important
+    # Channel duplexing, FDD or TDD
+    duplex_mode = attr.property.str(
+        key='CONFigure:LTE:SIGN1:PCC:DMODE',
+        only=('TDD','FDD')
+    )
+    # Channel frequency
+    # UL and DL are both dependent, set DL in this case
+    ul_chan_freq = attr.property.float(key='CONF:LTE:SIGN1:RFS:PCC:CHAN:UL', sets=False)
+    dl_chan_freq = attr.property.float(key='CONF:LTE:SIGN1:RFS:PCC:CHAN:DL')
+
+    # Cell Bandwidth
+    @attr.property.int(only=(1.4, 3, 5, 10, 15, 20))
+    def cell_bw_mhz(self):
+        resp = self.query('CONFigure:LTE:SIGN:CELL:BANDwidth:PCC:DL?')
+        return int(re.sub('[^0-9]','', resp))
+
+    @cell_bw_mhz.setter
+    def _(self, int_val):
+        self.write(f'CONFigure:LTE:SIGN:CELL:BANDwidth:PCC:DL B{str(int_val).zfill(2)}0')
+
+    # RS EPRE
+    # TODO: implement dependencies to limit range of set point
+    rs_epre = attr.property.float(key='CONFigure:LTE:SIGN:DL:PCC:RSEPre:LEVel', help="range dependent on connector, external attenuation, and num rbs configured")
+
+    # PUSCH open loop nominal power
+    pusch_olnp = attr.property.float(
+        key='CONFigure:LTE:SIGN1:UL:SETA:PUSCh:OLNPower', min=-50, max=-20, help="software limited to -20dbm"
+        )
+    # PUSCH closed loop target power
+    pusch_cltp = attr.property.float(
+        key='CONF:LTE:SIGN1:UL:PCC:PUSC:TPC:CLTP', min=-50, max=-20, help="software limited to -20dbm"
+    )
+
+    # LTE scheduling
+    scheduling_type = attr.property.str(
+        key='CONF:LTE:SIGN1:CONN:PCC:STYPE', only=['RMC', 'UDCH', 'UDTT', 'CQI', 'EMAM', 'EMCS']
+    )
+
+    # Downlink allocation parameters, rb and modulation configuration
+    dl_num_rbs = attr.property.int(key='CONFigure:LTE:SIGN:CONNection:PCC:RMC:DL', min=0, max=100)
+
+
+    # Uplink allocation parameters, rb and modulation configuration
+    ulrmc_num_rbs = attr.property.int(key='CONF:LTE:SIGN1:CONN:PCC:RMCUL', min=1, max=100)
+    ulrmc_modulation = attr.property.str(
         key='CONF:LTE:SIGN1:CONN:PCC:RMC:UL', only=['QPSK', 'Q16']
     )
-    ulrmc_transblocksize = attr.method.int(
+    ulrmc_transblocksize = attr.property.int(
         key='CONF:LTE:SIGN1:CONN:PCC:RMC:UL', min=-1, max=100
     )
-    ul_chan_freq = attr.method.float(key='CONF:LTE:SIGN1:RFS:PCC:CHAN:UL', sets=False)
-    ue_target_power = attr.method.float(
-        key='CONF:LTE:SIGN1:UL:PCC:PUSC:TPC:CLTP', min=-50, max=-20
+
+    lte_signaling = attr.property.bool(
+        key='SOUR:LTE:SIGN1:CELL:STAT',
     )
+    ue_attached = attr.property.bool(key='SENS:LTE:SIGN1:RRCS?')
+
     ue_rsrp = attr.method.float(key='SENS:LTE:SIGN1:UER:PCC:RSRP?', sets=False)
     ue_rsrq = attr.method.float(key='SENS:LTE:SIGN1:UER:PCC:RSRQ?', sets=False)
     # spectrogram_num_avg      = attr.method.int(key='NEED TO FIND COMMAND',min=1,max=100)
@@ -82,8 +132,8 @@ class RohdeSchwarzCMW500(lb.VISADevice):
 
     @ulrmc_num_rbs.setter
     def _(self, value):
-        modulation = self.state.ulrmc_modulation
-        transblocksize = self.state.ulrmc_transblocksize
+        modulation = self.ulrmc_modulation
+        transblocksize = self.ulrmc_transblocksize
         if transblocksize == -1:
             transblocksize = 'KEEP'
         if transblocksize == 0:
@@ -96,8 +146,8 @@ class RohdeSchwarzCMW500(lb.VISADevice):
 
     @ulrmc_modulation.setter
     def _(self, value):
-        num_rbs = self.state.ulrmc_num_rbs
-        transblocksize = self.state.ulrmc_transblocksize
+        num_rbs = self.ulrmc_num_rbs
+        transblocksize = self.ulrmc_transblocksize
         if transblocksize == -1:
             transblocksize = 'KEEP'
         if transblocksize == 0:
@@ -110,8 +160,8 @@ class RohdeSchwarzCMW500(lb.VISADevice):
 
     @ulrmc_transblocksize.setter
     def _(self, value):
-        num_rbs = self.state.ulrmc_num_rbs
-        modulation = self.state.ulrmc_modulation
+        num_rbs = self.ulrmc_num_rbs
+        modulation = self.ulrmc_modulation
         if value == -1:
             value = 'KEEP'
         if value == 0:
@@ -183,7 +233,7 @@ class RohdeSchwarzCMW500(lb.VISADevice):
         May also want to add the ability to trigger the measurement
         SCPI = FETC:LTE:MEAS:MEV:TRAC:SEM:RBW:AVER?"""
         values = self.query_ascii_values('FETC:LTE:MEAS:MEV:TRAC:SEM:RBW30:AVER?')
-        cent_freq = self.state.ul_chan_freq
+        cent_freq = self.ul_chan_freq
         values.pop(0)
         freq_from_cent_list = []
         abs_freq_list = []
@@ -207,7 +257,7 @@ class RohdeSchwarzCMW500(lb.VISADevice):
         start rb,number of rb's and type of modulation to CMW for a given TTI.
         Available modulations for UL are QPSK and 16QAM (Q16).
         SCPI = CONF:LTE:SIGN1:CONN:PCC:UDTT:UL {tti},{start_rb},{num_rb},{mod}"""
-        self.state.scheduling_type = 'UDTT'
+        self.scheduling_type = 'UDTT'
         self.write(f'CONF:LTE:SIGN1:CONN:PCC:UDTT:UL {tti},{start_rb},{num_rb},{mod},0')
         ul_udtti = self.query(f'CONF:LTE:SIGN1:CONN:PCC:UDTT:UL? {tti}').split(',')
         if int(ul_udtti[0]) != start_rb:
@@ -228,11 +278,13 @@ class RohdeSchwarzCMW500(lb.VISADevice):
 def test_cmw_idn():
     """Use the IDN query to check that the manf and model # match the expected"""
     cmw500 = RohdeSchwarzCMW500(default_cmw_address)
-    cmw500.connect()
+    cmw500.open()
     cmw_identity = cmw500.query('*IDN?').split(',')
     if cmw_identity[0] == 'Rohde&Schwarz' and cmw_identity[1] == 'CMW':
+        cmw500.close()
         return True
     else:
+        cmw500.close()
         return False
 
 
@@ -247,14 +299,21 @@ def test_cmw():
         7.  shut the cell down.
     This requires the UE to be in a state that in can connect with the instrument"""
     cmw500 = RohdeSchwarzCMW500(default_cmw_address)
-    cmw500.connect()
-    cmw500.state.channel_bandwidth = 'B014'
-    # cmw500.state.channel_band = 'NEED VALUE'
-    cmw500.state.ue_target_power = -21
-    cmw500.state.ulrmc_num_rbs = 5
-    cmw500.state.lte_signaling = True
+    cmw500.open()
+    cmw500.operating_band=6
+    # print(cmw500.operating_band)
+    cmw500.duplex_mode = "FDD"
+    cmw500.cell_bw_mhz = 20
+    cmw500.ulrmc_transblocksize = 16
+    cmw500.dl_num_rbs = 16
+
+    cmw500.close()
+    return True
+    cmw500.pusch_cltp = -21
+    cmw500.ulrmc_num_rbs = 5
+    cmw500.lte_signaling = True
     cmw500.wait_for_ue_to_attach(timeout=60)
-    cmw500.state.lte_signaling = False
+    cmw500.lte_signaling = False
     cmw500.wait_for_cell_deactivate(timeout=60)
     return True
 
