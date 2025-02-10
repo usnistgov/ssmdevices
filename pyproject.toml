@@ -6,6 +6,7 @@ description = "a collection of lab automation drivers implemented with labbench"
 authors = [
     {name="Dan Kuester", email = "daniel.kuester@nist.gov"},
     {name="Keith Forsyth", email = "keith.forsyth@nist.gov"},
+    {name="Jordan Bernhardt", email = "jordan.bernhardt@nist.gov"},
     {name="Duncan McGillivray", email = "duncan.a.mcgillivray@nist.gov"},
     {name="Yao Ma", email = "yao.ma@nist.gov"},
     {name="John Ladbury", email = "john.ladbury@nist.gov"},
