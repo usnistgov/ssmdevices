@@ -12,7 +12,7 @@ In many cases the acquired data are returned in tabular form as [pandas](http://
 ## Getting started with `ssmdevices`
 ### Installation
 1. Ensure prerequisites are installed:
-    * python (3.9 – 3.12)
+    * python (3.9 – 3.13)
     * [`pip`](https://pypi.org/project/pip/) for package management
 2. Recommended module installation:
     * For python distributions based on anaconda:
