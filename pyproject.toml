@@ -1,7 +1,7 @@
 [project]
 name = "ssmdevices"
-version = "0.27.0"
 description = "a collection of lab automation drivers implemented with labbench"
+dynamic = ["version"]
 
 authors = [
     {name="Dan Kuester", email = "daniel.kuester@nist.gov"},
@@ -24,13 +24,12 @@ maintainers = [
 
 dependencies = [
     "labbench >= 0.36.0, <1.0",
-    # "labbench @ git+https://github.com/usnistgov/labbench@master",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
 ]
 
-requires-python = ">=3.9,<3.13"
+requires-python = ">=3.9,<3.14"
 readme = "README.md"
 license = {file = "LICENSE.md"}
 
@@ -89,7 +88,7 @@ python = ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
 [tool.hatch.envs.test.scripts]
 all = [
-    "pytest --cov-report xml:doc/reports/coverage.xml --cov-report term --cov=labbench tests",
+    "pytest tests",
 ]
 
 # documentation
@@ -100,9 +99,10 @@ env-vars = {TEXINPUTS="doc/latex"}
 [tool.hatch.envs.doc.scripts]
 html="sphinx-build -b html doc doc/html"
 latex="sphinx-build -b latex doc doc/latex"
-pdf="pdflatex doc/latex/labbench-api.tex --output-directory=doc" 
+pdf="pdflatex doc/latex/ssmdevices-api.tex --output-directory=doc" 
 rst="sphinx-apidoc -F . -o doc"
 
+# linters and formatters
 [tool.black]
 line-length = 100
 target-version = ["py39", "py310", "py311", "py312", "py313"]
@@ -121,13 +121,3 @@ docstring-code-line-length = "dynamic"
 [tool.ruff.lint.extend-per-file-ignores]
 "**/__init__.py" = ["F401", "F403", "E402"]
 "**/*.py" = ["EM102","G004"]
-
-
-[tool.ruff.format]
-quote-style = "single"
-line-ending = "lf"
-docstring-code-format = true
-docstring-code-line-length = "dynamic"
-
-[tool.ruff.lint.extend-per-file-ignores]
-"**/__init__.py" = ["F401", "F403", "E402"]
