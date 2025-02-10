@@ -280,6 +280,18 @@ class RohdeSchwarzCMW500(lb.VISADevice):
             else:
                 raise NotImplementedError(f'{ul_params["scheduling"]} scheduling type not handled')
 
+    # Control channel power offsets, all relative to RS EPRE
+    # PBCH
+    pbch_offset = attr.property.int(key='CONFigure:LTE:SIGN:DL:PCC:PBCH:POFFset', min=-30, max=0)
+    # PCFICH
+    pcfich_offset = attr.property.int(key='CONFigure:LTE:SIGN:DL:PCC:PBCH:POFFset', min=-30, max=0)
+    # PDCCH
+    pdcch_offset = attr.property.int(key='CONFigure:LTE:SIGN:DL:PCC:PDCCh:POFFset', min=-30, max=0)
+    # PSS
+    pss_offset = attr.property.int(key='CONFigure:LTE:SIGN:DL:PCC:PSS:POFFset', min=-30, max=0)
+    # SSS
+    sss_offset = attr.property.int(key='CONFigure:LTE:SIGN:DL:PCC:SSS:POFFset', min=-30, max=0)
+
     # System setup
     def save_state(self, config_name: str):
         # TODO: DOCME
@@ -287,6 +299,9 @@ class RohdeSchwarzCMW500(lb.VISADevice):
 
     def load_state(self, config_name: str):
         self.write(f'MMEMory:RCL {config_name}')
+
+    def reset_cmw(self):
+        self.write('*RST')
 
     # Trigger Settings
     trig_a_direction = attr.property.str(key='TRIGger:BASE:EXTA:DIRection', only=('IN', 'OUT'))
@@ -297,7 +312,6 @@ class RohdeSchwarzCMW500(lb.VISADevice):
     trig_b_source = attr.property.str(
         key='TRIGger:BASE:EXTB:SOURce', only=('LTE Sig1:FrameTrigger', 'LTE Sig1:PRACH Trigger', 'LTE Sig1:TPC Trigger')
     )
-
     # ulrmc_num_rbs = attr.property.int(key='CONF:LTE:SIGN1:CONN:PCC:RMCUL', min=1, max=100)
     # ulrmc_modulation = attr.property.str(key='CONF:LTE:SIGN1:CONN:PCC:RMC:UL', only=['QPSK', 'Q16'])
     # ulrmc_transblocksize = attr.property.int(key='CONF:LTE:SIGN1:CONN:PCC:RMC:UL', min=-1, max=100)
