@@ -2,7 +2,6 @@ __all__ = ['RigolTechnologiesMSO4014', 'TektronixMSO64B', 'TektronixMSO64BSpectr
 
 import labbench as lb
 from labbench import paramattr as attr
-import numpy as np
 try:
     from tekhsi import TekHSIConnect, AcqWaitOn
     from tm_data_types import AnalogWaveform
@@ -206,11 +205,8 @@ class TektronixMSO64B(lb.VISADevice):
         self.write(f"RECAll:SETUp \"{setup_file_name}\"")
 
     def retrieve_waveform(self, channel, start, stop, tekhsi_port=5000):
-        # self.data_source=channel
-        # self.data_start=start
-        # self.data_stop= int(stop)
         ip_addr = self.resource.split("::")[1]
-        print(f"Waiting for data on {ip_addr}:{tekhsi_port}")
+        lb.logger.info(f"Waiting for data on {ip_addr}:{tekhsi_port}")
         with TekHSIConnect(f"{ip_addr}:{tekhsi_port}", [f"ch{channel}"]) as connect:
             with connect.access_data(AcqWaitOn.AnyAcq):
                 wfm: AnalogWaveform = connect.get_data(f"ch{channel}")
