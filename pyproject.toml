@@ -49,6 +49,10 @@ scripts = [
     "matplotlib",
     "ipympl>=0.9.3",
 ]
+tek = [
+    "tekhsi>=2.27.2",
+    "tm_data_types<0.2.0,>=0.1.0"
+]
 
 [build-system]
 requires = [
