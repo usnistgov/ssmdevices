@@ -12,7 +12,7 @@ In many cases the acquired data are returned in tabular form as [pandas](http://
 ## Getting started with `ssmdevices`
 ### Installation
 1. Ensure prerequisites are installed:
-    * python (3.9 – 3.12)
+    * python (3.9 – 3.13)
     * [`pip`](https://pypi.org/project/pip/) for package management
 2. Recommended module installation:
     * For python distributions based on anaconda:
@@ -37,13 +37,14 @@ In many cases the acquired data are returned in tabular form as [pandas](http://
 | Name  |  Contact Info |
 |---|---|
 | Dan Kuester (maintainer)  |  <daniel.kuester@nist.gov> |
-| Paul Blanchard | formerly with NIST |
-| Alex Curtin | formerly with NIST |
 | Keith Forsyth  | <keith.forsyth@nist.gov>  |
-| Ryan Jacobs | formerly with NIST |
+| Jordan Bernhardt  | <jordan.bernhardt@nist.gov>  |
 | John Ladbury | <john.ladbury@nist.gov> |
 | Yao Ma | <yao.ma@nist.gov> |
 | Duncan McGillivray  | <duncan.a.mcgillivray@nist.gov>  |
+| Ryan Jacobs | formerly with NIST |
+| Paul Blanchard | formerly with NIST |
+| Alex Curtin | formerly with NIST |
 | Audrey Puls | formerly with NIST |
 | Andre Rosete        | formerly with NIST |
 | Michael Voecks | formerly with NIST |
