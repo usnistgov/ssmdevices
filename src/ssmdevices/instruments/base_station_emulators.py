@@ -14,7 +14,6 @@ import re
 
 __all__ = ['RohdeSchwarzCMW500']
 
-default_cmw_address = 'TCPIP0::10.0.0.9::inst0::INSTR'
 
 
 def field_as_int(x):
@@ -145,20 +144,27 @@ class RohdeSchwarzCMW500(lb.VISADevice):
 
         return field_dict
 
-    def _format_link_params(self, dl_param_dict):
+    def _format_link_params(self, param_dict):
         sched_type = self.scheduling_type
         if sched_type == 'RMC':
             output_string = 'N{},{},T{}'.format(
-                dl_param_dict['num_rbs'], dl_param_dict['modulation'], dl_param_dict['transblkszidx']
+                param_dict['num_rbs'], param_dict['modulation'], param_dict['transblkszidx']
             )
         elif sched_type == 'UDCH':
             output_string = '{},{},{},{}'.format(
-                dl_param_dict['num_rbs'],
-                dl_param_dict['start_rb'],
-                dl_param_dict['modulation'],
-                dl_param_dict['transblkszidx'],
+                param_dict['num_rbs'],
+                param_dict['start_rb'],
+                param_dict['modulation'],
+                param_dict['transblkszidx'],
             )
-        elif sched_type in ('UDTT', 'CQI', 'EMAM', 'EMCS'):
+        elif sched_type == 'UDTT':
+            raise NotImplementedError()
+            #TODO: fill lists with zeros for all ttis
+            for index in param_dict["num_rb"]:
+                if len(index) != 10:
+                    rbs_list = []
+
+        elif sched_type in ('CQI', 'EMAM', 'EMCS'):
             # TODO: check if uplink and downlink are the same for these scheduling types as they are implemented
             raise NotImplementedError(f'{sched_type} scheduling type not handled')
         else:
@@ -244,53 +250,53 @@ class RohdeSchwarzCMW500(lb.VISADevice):
         else:
             raise NotImplementedError(f'{ul_params["scheduling"]} scheduling type not handled')
 
-        @attr.property.any()
-        def ul_start_rb(self):
-            ul_params = self._get_link_params('ul')
-            if ul_params['scheduling'] == 'RMC':
-                return self.query('CONFigure:LTE:SIGN:CONNection:PCC:RMC:RBPosition:UL?')
-            elif ul_params['scheduling'] == 'UDCH':
-                return ul_params['start_rb']
+    @attr.property.any()
+    def ul_start_rb(self):
+        ul_params = self._get_link_params('ul')
+        if ul_params['scheduling'] == 'RMC':
+            return self.query('CONFigure:LTE:SIGN:CONNection:PCC:RMC:RBPosition:UL?')
+        elif ul_params['scheduling'] == 'UDCH':
+            return ul_params['start_rb']
 
-        @ul_start_rb.setter
-        def _(self, val):
-            ul_params = self._get_link_params('ul')
-            if ul_params['scheduling'] == 'RMC':
-                self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:RMC:RBPosition:UL {val}')
-            elif ul_params['scheduling'] == 'UDCH':
-                ul_params['start_rb'] = val
-                self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:UDCHannels:UL {self._format_link_params(ul_params)}')
-            else:
-                raise NotImplementedError(f'{ul_params["scheduling"]} scheduling type not handled')
+    @ul_start_rb.setter
+    def _(self, val):
+        ul_params = self._get_link_params('ul')
+        if ul_params['scheduling'] == 'RMC':
+            self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:RMC:RBPosition:UL {val}')
+        elif ul_params['scheduling'] == 'UDCH':
+            ul_params['start_rb'] = val
+            self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:UDCHannels:UL {self._format_link_params(ul_params)}')
+        else:
+            raise NotImplementedError(f'{ul_params["scheduling"]} scheduling type not handled')
 
-        @attr.property.str(only=('QPSK', 'Q16', 'Q64', 'Q256'))
-        def ul_modulation(self):
-            ul_params = self._get_link_params('ul')
-            return ul_params['modulation']
+    @attr.property.str(only=('QPSK', 'Q16', 'Q64', 'Q256'))
+    def ul_modulation(self):
+        ul_params = self._get_link_params('ul')
+        return ul_params['modulation']
 
-        @ul_modulation.setter
-        def _(self, str_val):
-            ul_params = self._get_link_params('ul')
-            ul_params['modulation'] = str_val
-            setter_string = self._format_link_params(ul_params)
-            if ul_params['scheduling'] == 'RMC':
-                self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:RMC:UL {setter_string}')
-            elif ul_params['scheduling'] == 'UDCH':
-                self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:UDCHannels:UL {setter_string}')
-            else:
-                raise NotImplementedError(f'{ul_params["scheduling"]} scheduling type not handled')
+    @ul_modulation.setter
+    def _(self, str_val):
+        ul_params = self._get_link_params('ul')
+        ul_params['modulation'] = str_val
+        setter_string = self._format_link_params(ul_params)
+        if ul_params['scheduling'] == 'RMC':
+            self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:RMC:UL {setter_string}')
+        elif ul_params['scheduling'] == 'UDCH':
+            self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:UDCHannels:UL {setter_string}')
+        else:
+            raise NotImplementedError(f'{ul_params["scheduling"]} scheduling type not handled')
 
     # Control channel power offsets, all relative to RS EPRE
     # PBCH
-    pbch_offset = attr.property.int(key='CONFigure:LTE:SIGN:DL:PCC:PBCH:POFFset', min=-30, max=0)
+    pbch_offset = attr.property.float(key='CONFigure:LTE:SIGN:DL:PCC:PBCH:POFFset', min=-30, max=0)
     # PCFICH
-    pcfich_offset = attr.property.int(key='CONFigure:LTE:SIGN:DL:PCC:PBCH:POFFset', min=-30, max=0)
+    pcfich_offset = attr.property.float(key='CONFigure:LTE:SIGN:DL:PCC:PBCH:POFFset', min=-30, max=0)
     # PDCCH
-    pdcch_offset = attr.property.int(key='CONFigure:LTE:SIGN:DL:PCC:PDCCh:POFFset', min=-30, max=0)
+    pdcch_offset = attr.property.float(key='CONFigure:LTE:SIGN:DL:PCC:PDCCh:POFFset', min=-30, max=0)
     # PSS
-    pss_offset = attr.property.int(key='CONFigure:LTE:SIGN:DL:PCC:PSS:POFFset', min=-30, max=0)
+    pss_offset = attr.property.float(key='CONFigure:LTE:SIGN:DL:PCC:PSS:POFFset', min=-30, max=0)
     # SSS
-    sss_offset = attr.property.int(key='CONFigure:LTE:SIGN:DL:PCC:SSS:POFFset', min=-30, max=0)
+    sss_offset = attr.property.float(key='CONFigure:LTE:SIGN:DL:PCC:SSS:POFFset', min=-30, max=0)
 
     # System setup
     def save_state(self, config_name: str):
@@ -305,6 +311,7 @@ class RohdeSchwarzCMW500(lb.VISADevice):
 
     # Trigger Settings
     trig_a_direction = attr.property.str(key='TRIGger:BASE:EXTA:DIRection', only=('IN', 'OUT'))
+    # TODO: make enum for the lte trigger types
     trig_a_source = attr.property.str(
         key='TRIGger:BASE:EXTA:SOURce', only=('LTE Sig1:FrameTrigger', 'LTE Sig1:PRACH Trigger', 'LTE Sig1:TPC Trigger')
     )
@@ -497,9 +504,9 @@ class RohdeSchwarzCMW500(lb.VISADevice):
         return True
 
 
-def test_cmw_idn():
+def test_cmw_idn(cmw_resource_string):
     """Use the IDN query to check that the manf and model # match the expected"""
-    cmw500 = RohdeSchwarzCMW500(default_cmw_address)
+    cmw500 = RohdeSchwarzCMW500(cmw_resource_string)
     cmw500.open()
     cmw_identity = cmw500.query('*IDN?').split(',')
     if cmw_identity[0] == 'Rohde&Schwarz' and cmw_identity[1] == 'CMW':
@@ -510,7 +517,7 @@ def test_cmw_idn():
         return False
 
 
-def test_cmw():
+def test_cmw(cmw_resource_string):
     """Test to:
         1.  connect to the instrument
         2.  set the bandwidth
@@ -520,33 +527,59 @@ def test_cmw():
         6.  wait for the UE to attach
         7.  shut the cell down.
     This requires the UE to be in a state that in can connect with the instrument"""
-    cmw500 = RohdeSchwarzCMW500(default_cmw_address)
-    cmw500.open()
-    cmw500.operating_band = 6
-    # print(cmw500.operating_band)
-    cmw500.duplex_mode = 'FDD'
-    cmw500.cell_bw_mhz = 20
-    # cmw500.ulrmc_transblocksize = 16
-    print(cmw500.dl_num_rbs)
-    cmw500.dl_num_rbs = 100
-    print(cmw500.dl_num_rbs)
-    print(cmw500.dl_start_rb)
-    cmw500.dl_num_rbs = 16
-    cmw500.scheduling_type = 'RMC'
-    cmw500.dl_start_rb = 0
-    cmw500.dl_modulation = 'Q256'
+    cmw500 = RohdeSchwarzCMW500(cmw_resource_string)
+    # import pprint
+    # pprint.pprint(dir(cmw500))
 
-    cmw500.close()
-    return True
-    cmw500.pusch_cltp = -21
-    cmw500.ulrmc_num_rbs = 5
+    cmw500.open()
+    cmw500.reset_cmw()
+    cmw500.operating_band = 66
+    print(cmw500.operating_band)
+    cmw500.duplex_mode = 'FDD'
+    print(cmw500.duplex_mode)
+    cmw500.cell_bw_mhz = 20
+    print(cmw500.cell_bw_mhz)
+    cmw500.rs_epre = -50
+    print(cmw500.rs_epre)
+    cmw500.scheduling_type = 'RMC'
+    print(cmw500.scheduling_type)
+    # DL stuff
+    cmw500.dl_num_rbs =100
+    print(cmw500.dl_num_rbs)
+    cmw500.dl_start_rb = 0
+    print(cmw500.dl_start_rb)
+    cmw500.dl_modulation = 'Q256'
+    print(cmw500.dl_modulation)
+    # UL stuff
+    cmw500.ul_num_rbs =100
+    print(cmw500.ul_num_rbs)
+    cmw500.ul_start_rb = 0
+    print(cmw500.ul_start_rb)
+    cmw500.ul_modulation = 'Q16'
+    print(cmw500.ul_modulation)
+    # other cell config
+    cmw500.pbch_offset = 0
+    print(cmw500.pbch_offset)
+    cmw500.pcfich_offset = 0
+    print(cmw500.pcfich_offset)
+    cmw500.pdcch_offset = 0
+    print(cmw500.pdcch_offset)
+    cmw500.pss_offset = 0
+    print(cmw500.pss_offset)
+    cmw500.sss_offset = 0
+    print(cmw500.sss_offset)
+
+
+    # cmw500.pusch_cltp = -21
+    # cmw500.ulrmc_num_rbs = 5
     cmw500.lte_signaling = True
-    cmw500.wait_for_ue_to_attach(timeout=60)
+    cmw500.wait_for_ue_to_attach(timeout=180)
     cmw500.lte_signaling = False
-    cmw500.wait_for_cell_deactivate(timeout=60)
+    cmw500.wait_for_cell_deactivate(timeout=180)
     return True
 
 
 if __name__ == '__main__':
-    # print('IDN test pass: ' + str(test_cmw_idn()))
-    print('UE Attach test pass: ' + str(test_cmw()))
+    default_cmw_address = 'TCPIP0::10.0.0.9::inst0::INSTR'
+    # print('IDN test pass: ' + str(test_cmw_idn(default_cmw_address)))
+    print('UE Attach test pass: ' + str(test_cmw(default_cmw_address)))
