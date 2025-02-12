@@ -1,11 +1,12 @@
 [project]
 name = "ssmdevices"
-version = "0.27.0"
 description = "a collection of lab automation drivers implemented with labbench"
+dynamic = ["version"]
 
 authors = [
     {name="Dan Kuester", email = "daniel.kuester@nist.gov"},
     {name="Keith Forsyth", email = "keith.forsyth@nist.gov"},
+    {name="Jordan Bernhardt", email = "jordan.bernhardt@nist.gov"},
     {name="Duncan McGillivray", email = "duncan.a.mcgillivray@nist.gov"},
     {name="Yao Ma", email = "yao.ma@nist.gov"},
     {name="John Ladbury", email = "john.ladbury@nist.gov"},
@@ -23,13 +24,12 @@ maintainers = [
 
 dependencies = [
     "labbench >= 0.36.0, <1.0",
-    # "labbench @ git+https://github.com/usnistgov/labbench@master",
     "hidapi",
     "pywifi",
     "brainstem>=2.9.26",
 ]
 
-requires-python = ">=3.9,<3.13"
+requires-python = ">=3.9,<3.14"
 readme = "README.md"
 license = {file = "LICENSE.md"}
 
@@ -49,30 +49,64 @@ scripts = [
     "matplotlib",
     "ipympl>=0.9.3",
 ]
+tek = [
+    "tekhsi>=2.27.2",
+    "tm_data_types<0.2.0,>=0.1.0"
+]
 
 [build-system]
-requires = [
-    "pdm-pep517>=1.0",
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ssmdevices"]
+
+[tool.hatch.build.targets.sdist]
+packages = ["src/ssmdevices"]
+
+[tool.hatch.version]
+path = "src/ssmdevices/_version.py"
+
+# the default virtual environment
+[tool.hatch.envs.default]
+features = ["dev"]
+path = ".venv"
+python = "3.13"
+
+[tool.hatch.envs.build]
+features = ["dev"]
+python = "3.13"
+
+# test environment
+[tool.hatch.envs.test]
+dependencies = [
+    "pytest"
 ]
-build-backend = "pdm.pep517.api"
 
-[tool]
-[tool.pdm]
-[tool.pdm.version]
-source = "scm"
-write_to = "src/ssmdevices/_version.py"
-write_template = "__version__ = '{}'"
+[[tool.hatch.envs.test.matrix]]
+python = ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
+[tool.hatch.envs.test.scripts]
+all = [
+    "pytest tests",
+]
+
+# documentation
+[tool.hatch.envs.doc]
+features = ["doc"]
+env-vars = {TEXINPUTS="doc/latex"}
+
+[tool.hatch.envs.doc.scripts]
+html="sphinx-build -b html doc doc/html"
+latex="sphinx-build -b latex doc doc/latex"
+pdf="pdflatex doc/latex/ssmdevices-api.tex --output-directory=doc" 
+rst="sphinx-apidoc -F . -o doc"
+
+# linters and formatters
 [tool.black]
 line-length = 100
-target-version = ["py39", "py310", "py311", "py312"]
+target-version = ["py39", "py310", "py311", "py312", "py313"]
 include = '\.pyi?$'
-
-[tool.pdm.scripts]
-doc-html = {cmd = "sphinx-build -b html doc doc/html"}
-doc-latex = {cmd = "sphinx-build -b latex doc doc/latex"}
-doc-pdf = {cmd = "pdflatex doc/latex/ssmdevices-api.tex --output-directory=doc", env = {"TEXINPUTS" = "doc/latex"}}
-doc-rst = {cmd = "sphinx-apidoc -F . -o doc/rst"}
 
 [tool.ruff]
 target-version = "py39"
@@ -86,3 +120,4 @@ docstring-code-line-length = "dynamic"
 
 [tool.ruff.lint.extend-per-file-ignores]
 "**/__init__.py" = ["F401", "F403", "E402"]
+"**/*.py" = ["EM102","G004"]

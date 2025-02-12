@@ -2,12 +2,6 @@ __all__ = ['RigolTechnologiesMSO4014', 'TektronixMSO64B', 'TektronixMSO64BSpectr
 
 import labbench as lb
 from labbench import paramattr as attr
-import numpy as np
-try:
-    from tekhsi import TekHSIConnect, AcqWaitOn
-    from tm_data_types import AnalogWaveform
-except ImportError as e:
-    raise e("When using the TektronixMSO64B class, ensure tekhsi library is installed.")
 
 scope_channel_kwarg = attr.method_kwarg.int(
     'channel', min=1, max=4, help='hardware input port'
@@ -164,13 +158,13 @@ class TektronixMSO64B(lb.VISADevice):
     )
 
     # vertical scale
-    vertical_scale = attr.property.float(
+    vertical_scale = attr.method.float(
         key='CH{channel}:SCALE',
         label='V',
         help='vertical scale of the specified channel',
     )
 
-    # Data storage
+    # Data storage, specifically for waveform retrieval over VISA (not implemented)
     data_source = attr.property.str(
         key='DATa:SOUrce',
         only=('CH1',
@@ -205,12 +199,25 @@ class TektronixMSO64B(lb.VISADevice):
     def load_setup(self, setup_file_name: str):
         self.write(f"RECAll:SETUp \"{setup_file_name}\"")
 
-    def retrieve_waveform(self, channel, start, stop, tekhsi_port=5000):
-        # self.data_source=channel
-        # self.data_start=start
-        # self.data_stop= int(stop)
+    def retrieve_waveform(self, channel, tekhsi_port=5000):
+        """
+        Retrieves the next waveform base on the scope's current acquisition settings.
+
+        args:
+        channel -- specifiy the channel number 1-4
+        tekhsi_port -- typically 5000, unless it is changed manually on the scope
+
+        returns:
+        wfm -- AnalogWaveform type with data, further manipulation needed. See tekhsi docs.
+        """
+        try:
+            from tekhsi import TekHSIConnect, AcqWaitOn
+            from tm_data_types import AnalogWaveform
+        except ImportError as e:
+            raise e("When using the TektronixMSO64B class, ensure tekhsi library is installed.")
+
         ip_addr = self.resource.split("::")[1]
-        print(f"Waiting for data on {ip_addr}:{tekhsi_port}")
+        self._logger.info(f"Waiting for data on {ip_addr}:{tekhsi_port}")
         with TekHSIConnect(f"{ip_addr}:{tekhsi_port}", [f"ch{channel}"]) as connect:
             with connect.access_data(AcqWaitOn.AnyAcq):
                 wfm: AnalogWaveform = connect.get_data(f"ch{channel}")
@@ -308,6 +315,22 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
 
 
 if __name__ == '__main__':
+    with TektronixMSO64B() as scope:
+        # Load some setup file onboard the scope
+        scope.load_setup("default_setup.set")
+        # Manually set some params
+        scope.sample_rate = 200e6
+        scope.record_length = 20e6
+        scope.trig_type = "EDGE"
+        scope.trig_edge_source = "CH1"
+        scope.trig_mode = "AUTO"
+        scope.trig_holdoff_by = "RANDOM"
+        scope.acq_type = "RUNSTOP"
+
+        # Collect data from scope after an acquisition
+        data = scope.retrieve_waveform(1)
+        print(data.normalized_vertical_values)
+
     with TektronixMSO64BSpectrogram() as scope:
         scope.spectrogram_enabled(channel=1)
 
