@@ -52,8 +52,8 @@ class RohdeSchwarzCMW500(lb.VISADevice):
     duplex_mode = attr.property.str(key='CONFigure:LTE:SIGN1:PCC:DMODE', only=('TDD', 'FDD'))
     # Channel frequency
     # UL and DL are both dependent, set DL in this case
-    ul_chan_freq = attr.property.float(key='CONF:LTE:SIGN1:RFS:PCC:CHAN:UL', sets=False)
-    dl_chan_freq = attr.property.float(key='CONF:LTE:SIGN1:RFS:PCC:CHAN:DL')
+    ul_chan_freq = attr.property.int(key='CONF:LTE:SIGN1:RFS:PCC:CHAN:UL', sets=False)
+    dl_chan_freq = attr.property.str(key='CONF:LTE:SIGN1:RFS:PCC:CHAN:DL')
 
     # Cell Bandwidth
     @attr.property.int(only=(1.4, 3, 5, 10, 15, 20))
@@ -262,7 +262,10 @@ class RohdeSchwarzCMW500(lb.VISADevice):
     def _(self, val):
         ul_params = self._get_link_params('ul')
         if ul_params['scheduling'] == 'RMC':
-            self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:RMC:RBPosition:UL {val}')
+            if val == 0:
+                self.write('CONFigure:LTE:SIGN:CONNection:PCC:RMC:RBPosition:UL LOW')
+            else:
+                self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:RMC:RBPosition:UL P{val}')
         elif ul_params['scheduling'] == 'UDCH':
             ul_params['start_rb'] = val
             self.write(f'CONFigure:LTE:SIGN:CONNection:PCC:UDCHannels:UL {self._format_link_params(ul_params)}')
@@ -313,7 +316,7 @@ class RohdeSchwarzCMW500(lb.VISADevice):
     trig_a_direction = attr.property.str(key='TRIGger:BASE:EXTA:DIRection', only=('IN', 'OUT'))
     # TODO: make enum for the lte trigger types
     trig_a_source = attr.property.str(
-        key='TRIGger:BASE:EXTA:SOURce', only=('LTE Sig1:FrameTrigger', 'LTE Sig1:PRACH Trigger', 'LTE Sig1:TPC Trigger')
+        key='TRIGger:BASE:EXTA:SOURce', only=('"LTE Sig1: FrameTrigger"', '"LTE Sig1: PRACH Trigger"', '"LTE Sig1:TPC Trigger"')
     )
     trig_b_direction = attr.property.str(key='TRIGger:BASE:EXTB:DIRection', only=('IN', 'OUT'))
     trig_b_source = attr.property.str(
@@ -455,7 +458,10 @@ class RohdeSchwarzCMW500(lb.VISADevice):
             if i % self.UPDATE_RATE == 0:
                 lb.logger.info('Waiting for UE to attach...')
         lb.logger.info('UE is Attached: ' + str(attached))
-        return attached
+        if attached:
+            return attached
+        else:
+            raise TimeoutError("UE attach timeout expired")
 
     def fetch_spectrogram(self):
         """a request to pull the spectrogram down from the cmw500, input

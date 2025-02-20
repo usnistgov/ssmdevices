@@ -136,6 +136,10 @@ class TektronixMSO64B(lb.VISADevice):
         max=10
     )
 
+    trig_aux_level = attr.property.float(
+        key='TRIGger:AUXLevel'
+    )
+
     # Acquisition settings
     acq_type = attr.property.str(
         key="ACQuire:STOPAfter",
@@ -155,6 +159,10 @@ class TektronixMSO64B(lb.VISADevice):
     acq_fastframe = attr.property.str(
         key="HORizontal:FASTframe:STATE",
         only=("ON", "OFF")
+    )
+    acq_state = attr.property.str(
+        key="ACQuire:STATe",
+        only=("OFF", "ON", "RUN", "STOP")
     )
 
     # vertical scale
@@ -217,7 +225,7 @@ class TektronixMSO64B(lb.VISADevice):
             raise e("When using the TektronixMSO64B class, ensure tekhsi library is installed.")
 
         ip_addr = self.resource.split("::")[1]
-        self._logger.info(f"Waiting for data on {ip_addr}:{tekhsi_port}")
+        # self._logger.info(f"Waiting for data on {ip_addr}:{tekhsi_port}")
         with TekHSIConnect(f"{ip_addr}:{tekhsi_port}", [f"ch{channel}"]) as connect:
             with connect.access_data(AcqWaitOn.AnyAcq):
                 wfm: AnalogWaveform = connect.get_data(f"ch{channel}")
