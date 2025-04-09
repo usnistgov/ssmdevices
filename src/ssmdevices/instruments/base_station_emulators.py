@@ -316,7 +316,7 @@ class RohdeSchwarzCMW500(lb.VISADevice):
     trig_a_direction = attr.property.str(key='TRIGger:BASE:EXTA:DIRection', only=('IN', 'OUT'))
     # TODO: make enum for the lte trigger types
     trig_a_source = attr.property.str(
-        key='TRIGger:BASE:EXTA:SOURce', only=('"LTE Sig1: FrameTrigger"', '"LTE Sig1: PRACH Trigger"', '"LTE Sig1:TPC Trigger"')
+        key='TRIGger:BASE:EXTA:SOURce', only=('"No Connection"', '"LTE Sig1: FrameTrigger"', '"LTE Sig1: PRACH Trigger"', '"LTE Sig1:TPC Trigger"')
     )
     trig_b_direction = attr.property.str(key='TRIGger:BASE:EXTB:DIRection', only=('IN', 'OUT'))
     trig_b_source = attr.property.str(
@@ -442,11 +442,12 @@ class RohdeSchwarzCMW500(lb.VISADevice):
         lb.logger.info('Packet Switching Activated: ' + str(packet_switched))
         return packet_switched
 
-    def wait_for_ue_to_attach(self, timeout=180):
+    def wait_for_ue_to_attach(self, timeout=180, query_time = None):
         """a blocking wait until the UE has attached,checking the RRC
         state as indicated by the CMW500
         SCPI = SENS:LTE:SIGN1:RRCS?"""
-        for i in range(timeout):
+        start_time = time.time()
+        while time.time() - start_time < timeout:
             ue_state = self.query('SENS:LTE:SIGN1:RRCS?')
             attached = None
             if ue_state == 'CONN':
@@ -454,9 +455,12 @@ class RohdeSchwarzCMW500(lb.VISADevice):
                 break
             if ue_state == 'IDLE':
                 attached = False
-            time.sleep(1)
-            if i % self.UPDATE_RATE == 0:
-                lb.logger.info('Waiting for UE to attach...')
+            if query_time is None:
+                time.sleep(1)
+            else:
+                time.sleep(query_time)
+            # if i % self.UPDATE_RATE == 0:
+            #     lb.logger.info('Waiting for UE to attach...')
         lb.logger.info('UE is Attached: ' + str(attached))
         if attached:
             return attached
@@ -579,13 +583,13 @@ def test_cmw(cmw_resource_string):
     # cmw500.pusch_cltp = -21
     # cmw500.ulrmc_num_rbs = 5
     cmw500.lte_signaling = True
-    cmw500.wait_for_ue_to_attach(timeout=180)
+    cmw500.wait_for_ue_to_attach(timeout=20)
     cmw500.lte_signaling = False
-    cmw500.wait_for_cell_deactivate(timeout=180)
+    cmw500.wait_for_cell_deactivate(timeout=20)
     return True
 
 
 if __name__ == '__main__':
-    default_cmw_address = 'TCPIP0::10.0.0.9::inst0::INSTR'
+    default_cmw_address = 'TCPIP0::10.0.0.5::inst0::INSTR'
     # print('IDN test pass: ' + str(test_cmw_idn(default_cmw_address)))
     print('UE Attach test pass: ' + str(test_cmw(default_cmw_address)))
