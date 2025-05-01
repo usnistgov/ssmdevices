@@ -11,6 +11,9 @@ __all__ = ['RohdeSchwarzSMW200A']
 
 @attr.visa_keying(remap={True: '0', False: '1'})
 class RohdeSchwarzSMW200A(lb.VISADevice):
+    make=attr.value.str('Rohde&Schwarz', inherit=True)
+    model=attr.value.str('SMW200A', inherit=True)
+
     frequency_center = attr.property.float(
         key=':freq', min=2e3, max=26.5e9, step=1e3, label='Hz'
     )
