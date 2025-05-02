@@ -9,7 +9,7 @@ from labbench import paramattr as attr
 __all__ = ['RohdeSchwarzSMW200A']
 
 
-@attr.visa_keying(remap={True: '0', False: '1'})
+@attr.visa_keying(remap={True: '1', False: '0'})
 class RohdeSchwarzSMW200A(lb.VISADevice):
     make=attr.value.str('Rohde&Schwarz', inherit=True)
     model=attr.value.str('SMW200A', inherit=True)

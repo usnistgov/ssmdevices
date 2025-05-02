@@ -164,7 +164,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         # monitoring *ESR? is recommended by the programming manual
         t0 = time.perf_counter()
-        while time.perf_counter() - t0 < timeout:
+        while timeout is None or time.perf_counter() - t0 < timeout:
             try:
                 register = int(self.backend.query('*ESR?'))
                 time.sleep(0.1)
