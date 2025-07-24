@@ -126,7 +126,7 @@ class KeysightU2000XSeries(lb.VISADevice):
             self.write('CAL:ZERO:AUTO ONCE')
 
     def calibrate(self):
-        with self.overlap_and_block(10):
+        with self.overlap_and_block(15):
             self.write('CAL:AUTO ONCE')
 
     @contextlib.contextmanager
@@ -156,8 +156,8 @@ class KeysightU2000XSeries(lb.VISADevice):
         yield
         self._opc = False
 
-        self._await_completion()
-        
+        self._await_completion(timeout)
+
     def _await_completion(self, timeout: float=None):
         if timeout is None:
             timeout = self.timeout
