@@ -28,6 +28,7 @@ else:
 DataFrameType: typing_extensions.TypeAlias = 'pd.DataFrame'
 SeriesType: typing_extensions.TypeAlias = 'pd.Series'
 
+
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
@@ -108,7 +109,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         Returns:
             a single number if trigger_count == 1, otherwise or pandas.Series"""
-        
+
         if precheck:
             self._check_errors()
 
@@ -158,7 +159,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         self._await_completion(timeout)
 
-    def _await_completion(self, timeout: float=None):
+    def _await_completion(self, timeout: float = None):
         if timeout is None:
             timeout = self.timeout
 

@@ -105,56 +105,41 @@ class TektronixMSO64B(lb.VISADevice):
         key='TRIGger:A:PULSEWidth:LOWLimit', min=8e-9, max=5
     )
 
-
     trig_edge_slope = attr.property.str(
-        key='TRIGger:A:EDGE:SLOpe',
-        only=("RISE", "FALL", "EITHER")
+        key='TRIGger:A:EDGE:SLOpe', only=('RISE', 'FALL', 'EITHER')
     )
     trig_edge_source = attr.property.str(
         key='TRIGger:A:EDGE:SOUrce',
         only=('CH1', 'CH2', 'CH3', 'CH4', 'LINE', 'AUX'),
-        help='source for edge type trigger'
+        help='source for edge type trigger',
     )
 
-    trig_level= attr.method.float(
+    trig_level = attr.method.float(
         key='TRIGger:A:LEVel:CH{channel}',
     )
 
-    trig_mode = attr.property.str(
-        key='TRIGger:A:MODe',
-        only=("AUTO", "NORMAL")
-    )
+    trig_mode = attr.property.str(key='TRIGger:A:MODe', only=('AUTO', 'NORMAL'))
 
     trig_holdoff_by = attr.property.str(
-        key="TRIGger:A:HOLDoff:BY",
-        only=("TIME", "RANDOM")
-        )
-
-    trig_holdoff_time = attr.property.float(
-        key="TRIGger:A:HOLDoff:TIMe",
-        min=0,
-        max=10
+        key='TRIGger:A:HOLDoff:BY', only=('TIME', 'RANDOM')
     )
+
+    trig_holdoff_time = attr.property.float(key='TRIGger:A:HOLDoff:TIMe', min=0, max=10)
 
     # Acquisition settings
-    acq_type = attr.property.str(
-        key="ACQuire:STOPAfter",
-        only=("RUNSTOP", "SEQUENCE")
-    )
+    acq_type = attr.property.str(key='ACQuire:STOPAfter', only=('RUNSTOP', 'SEQUENCE'))
     acq_mode = attr.property.str(
-        key="ACQuire:MODe",
-        only=("SAMPLE", "PEAKDETECT", "HIRES", "AVERAGE", "ENVELOPE")
+        key='ACQuire:MODe',
+        only=('SAMPLE', 'PEAKDETECT', 'HIRES', 'AVERAGE', 'ENVELOPE'),
     )
     acq_num_seq = attr.property.int(
-        key="ACQuire:SEQuence:NUMSEQuence",
+        key='ACQuire:SEQuence:NUMSEQuence',
     )
     acq_time_source = attr.property.str(
-        key="ROSc:SOUrce",
-        only=("INTERNAL", "EXTERNAL", "TRACKING")
+        key='ROSc:SOUrce', only=('INTERNAL', 'EXTERNAL', 'TRACKING')
     )
     acq_fastframe = attr.property.str(
-        key="HORizontal:FASTframe:STATE",
-        only=("ON", "OFF")
+        key='HORizontal:FASTframe:STATE', only=('ON', 'OFF')
     )
 
     # vertical scale
@@ -167,29 +152,17 @@ class TektronixMSO64B(lb.VISADevice):
     # Data storage, specifically for waveform retrieval over VISA (not implemented)
     data_source = attr.property.str(
         key='DATa:SOUrce',
-        only=('CH1',
-              'CH2',
-              'CH3',
-              'CH4'),
-        help='data source for acquisition'
+        only=('CH1', 'CH2', 'CH3', 'CH4'),
+        help='data source for acquisition',
     )
-    data_start = attr.property.int(
-        key='DATa:START',
-        help='data collection start point'
-    )
-    data_stop = attr.property.int(
-        key='DATa:STOP',
-        help='data collection stop point'
-    )
+    data_start = attr.property.int(key='DATa:START', help='data collection start point')
+    data_stop = attr.property.int(key='DATa:STOP', help='data collection stop point')
 
     # File operations
     file_copy = attr.property.str(
         key='FILESystem:COPy', help='copy a file within filesystem'
     )
-    file_cwd = attr.property.str(
-        key='FILESystem:CWD',
-        help='current working directory'
-        )
+    file_cwd = attr.property.str(key='FILESystem:CWD', help='current working directory')
     file_read = attr.property.str(
         key='FILESystem:READFile',
         help='read the file over interface',
@@ -197,7 +170,7 @@ class TektronixMSO64B(lb.VISADevice):
 
     # Store/load
     def load_setup(self, setup_file_name: str):
-        self.write(f"RECAll:SETUp \"{setup_file_name}\"")
+        self.write(f'RECAll:SETUp "{setup_file_name}"')
 
     def retrieve_waveform(self, channel, tekhsi_port=5000):
         """
@@ -214,13 +187,15 @@ class TektronixMSO64B(lb.VISADevice):
             from tekhsi import TekHSIConnect, AcqWaitOn
             from tm_data_types import AnalogWaveform
         except ImportError as e:
-            raise e("When using the TektronixMSO64B class, ensure tekhsi library is installed.")
+            raise e(
+                'When using the TektronixMSO64B class, ensure tekhsi library is installed.'
+            )
 
-        ip_addr = self.resource.split("::")[1]
-        self._logger.info(f"Waiting for data on {ip_addr}:{tekhsi_port}")
-        with TekHSIConnect(f"{ip_addr}:{tekhsi_port}", [f"ch{channel}"]) as connect:
+        ip_addr = self.resource.split('::')[1]
+        self._logger.info(f'Waiting for data on {ip_addr}:{tekhsi_port}')
+        with TekHSIConnect(f'{ip_addr}:{tekhsi_port}', [f'ch{channel}']) as connect:
             with connect.access_data(AcqWaitOn.AnyAcq):
-                wfm: AnalogWaveform = connect.get_data(f"ch{channel}")
+                wfm: AnalogWaveform = connect.get_data(f'ch{channel}')
         return wfm
 
     def open(self):
@@ -317,15 +292,15 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
 if __name__ == '__main__':
     with TektronixMSO64B() as scope:
         # Load some setup file onboard the scope
-        scope.load_setup("default_setup.set")
+        scope.load_setup('default_setup.set')
         # Manually set some params
         scope.sample_rate = 200e6
         scope.record_length = 20e6
-        scope.trig_type = "EDGE"
-        scope.trig_edge_source = "CH1"
-        scope.trig_mode = "AUTO"
-        scope.trig_holdoff_by = "RANDOM"
-        scope.acq_type = "RUNSTOP"
+        scope.trig_type = 'EDGE'
+        scope.trig_edge_source = 'CH1'
+        scope.trig_mode = 'AUTO'
+        scope.trig_holdoff_by = 'RANDOM'
+        scope.acq_type = 'RUNSTOP'
 
         # Collect data from scope after an acquisition
         data = scope.retrieve_waveform(1)

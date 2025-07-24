@@ -1,4 +1,4 @@
-""" Network test instruments
+"""Network test instruments
 
 Authors:
     Aziz Kord
@@ -455,7 +455,9 @@ class AeroflexTM500(lb.TelnetDevice):
 if __name__ == '__main__':
     import labbench as lb
 
-    AeroflexTM500.key_log_to_script(r'C:\Users\dkuester\Desktop\TM500_2Sec_8UEs_withTime.txt')
+    AeroflexTM500.key_log_to_script(
+        r'C:\Users\dkuester\Desktop\TM500_2Sec_8UEs_withTime.txt'
+    )
 
     path = r'e:\TM500ScriptForPaulDebug'
     lb.show_messages('debug')

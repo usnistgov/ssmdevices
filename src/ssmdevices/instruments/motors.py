@@ -5,7 +5,7 @@ Created on Wed Feb  7 10:05:35 2018
 
 @author: aec
 
-This is where we drive things that move: 
+This is where we drive things that move:
     for now this is just the ETS-Lindgren model 2005 Azimuth Positioner
 """
 

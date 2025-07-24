@@ -1,4 +1,4 @@
-""" Driver classes for signal generators.
+"""Driver classes for signal generators.
 :author: Ryan Jacobs <ryan.jacobs@nist.gov>, Aziz Kord <aziz.kord@nist.gov>, Daniel Kuester <daniel.kuester@nist.gov>
 Paul.Blanchard <paul.blanchard@nist.gov>
 """
@@ -11,8 +11,8 @@ __all__ = ['RohdeSchwarzSMW200A']
 
 @attr.visa_keying(remap={True: '1', False: '0'})
 class RohdeSchwarzSMW200A(lb.VISADevice):
-    make=attr.value.str('Rohde&Schwarz', inherit=True)
-    model=attr.value.str('SMW200A', inherit=True)
+    make = attr.value.str('Rohde&Schwarz', inherit=True)
+    model = attr.value.str('SMW200A', inherit=True)
 
     frequency_center = attr.property.float(
         key=':freq', min=2e3, max=26.5e9, step=1e3, label='Hz'
@@ -25,31 +25,29 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
         key='*OPT', sets=False, cache=True, help='installed license options'
     )
 
-    def save_state(self, FileName, num='4'):
+    def save_state(self, FileName: str, num: int = 4):
         """Save current state of the device to the default directory.
-        :param FileName: state file location on the instrument
-        :type FileName: string
 
-        :param num: state number in the saved filename
-        :type num: int
-
+        Arguments:
+            FileName: path to a state file local to the instrument OS
+            num: the index of the current state to save
         """
-        self.write('MMEMory:STORe:STATe {},"{}.savrcltxt"'.format(num, FileName))
+        if not FileName.lower().endswith('savrcltxt'):
+            FileName = FileName + '.savrcltxt'
+        self.write(f'MMEMory:STORe:STATe {num},"{FileName}"')
 
-    def load_state(self, FileName, opc=False, num='4'):
+    def load_state(self, FileName: str, num: int = 4):
         """Loads a previously saved state file in the instrument
 
-        :param FileName: state file location on the instrument
-        :type FileName: string
-
-        :param opc: set the VISA op complete flag?
-        :type opc: bool
-
-        :param num: state number in the saved filename
-        :type num: int
+        Arguments:
+            FileName: path to a state file local to the instrument OS
+            num: the state number to fill with the loaded state
         """
-        cmd = "MMEM:LOAD:STAT {},'{}.savrcltxt';*RCL {}".format(num, FileName, num)
-        self.write(cmd, opc=opc)
+        if not FileName.lower().endswith('savrcltxt'):
+            FileName = FileName + '.savrcltxt'
+
+        self.write(f"MMEM:LOAD:STAT {num},'{FileName}'; *RCL {num}")
+        self.wait()
 
 
 # Example code works nicely in this if statement, which only runs if we're

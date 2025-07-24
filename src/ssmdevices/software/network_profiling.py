@@ -23,6 +23,7 @@ from queue import Empty, Queue
 from threading import Event, Thread
 from time import perf_counter
 from contextlib import AbstractContextManager, suppress
+
 try:
     from ._networking import find_free_port
 except ImportError as ex:
@@ -82,21 +83,10 @@ class IPerf2Values(lb.paramattr.HasParamAttrs):
         accept_port=False,
         help='client host address (set None if server=True)',
     )
-    server: bool = attr.value.bool(
-        False,
-        key='-s',
-        help='True to run as a server'
-    )
-    port: int = attr.value.int(
-        default=5201,
-        key='-p',
-        min=0,
-        help='network port'
-    )
+    server: bool = attr.value.bool(False, key='-s', help='True to run as a server')
+    port: int = attr.value.int(default=5201, key='-p', min=0, help='network port')
     bind: str = attr.value.str(
-        default=None,
-        key='-B',
-        help='bind connection to specified IP'
+        default=None, key='-B', help='bind connection to specified IP'
     )
 
     # timing and duration
@@ -125,11 +115,7 @@ class IPerf2Values(lb.paramattr.HasParamAttrs):
     )
 
     # high-level buffer commands
-    udp: bool = attr.value.bool(
-        False,
-        key='-u',
-        help='if True, use UDP instead of TCP'
-    )
+    udp: bool = attr.value.bool(False, key='-u', help='if True, use UDP instead of TCP')
     bit_rate: str = attr.value.str(
         None,
         key='-b',
@@ -154,9 +140,7 @@ class IPerf2Values(lb.paramattr.HasParamAttrs):
         label='bytes',
     )
     nodelay: bool = attr.value.bool(
-        False,
-        key='-N',
-        help='set True to use nodelay (TCP traffic only)'
+        False, key='-N', help='set True to use nodelay (TCP traffic only)'
     )
     mss: int = attr.value.int(
         None,
@@ -204,23 +188,34 @@ class IPerf3Values(IPerf2Values):
     """command line argument values specific to iperf3"""
 
     reverse: bool = attr.value.bool(
-        default=False, key='-R',
+        default=False,
+        key='-R',
         help='run in reverse mode (server sends, client receives)',
     )
     json: bool = attr.value.bool(
-        default=False, key='-J',
+        default=False,
+        key='-J',
         help='output data in JSON format',
     )
     zerocopy: bool = attr.value.bool(
-        default=False, key='-Z',
-        help="whether to avoid buffer copies while sending data",
+        default=False,
+        key='-Z',
+        help='whether to avoid buffer copies while sending data',
     )
 
 
 class ShellIPerfBase(lb.ShellBackend):
-    binary_name = attr.value.str(sets=False, cache=True, help='path (or name in system PATH) of the binary')
-    binary_path = attr.value.str(None, cache=True, help='explicit path to the iperf binary (set automatically on open based on binary_name)')
-    timeout = attr.value.float(5, cache=True, help='timeout waiting for output before an exception is raised')
+    binary_name = attr.value.str(
+        sets=False, cache=True, help='path (or name in system PATH) of the binary'
+    )
+    binary_path = attr.value.str(
+        None,
+        cache=True,
+        help='explicit path to the iperf binary (set automatically on open based on binary_name)',
+    )
+    timeout = attr.value.float(
+        5, cache=True, help='timeout waiting for output before an exception is raised'
+    )
 
     def open(self):
         if Path(self.binary_name).exists():
@@ -228,10 +223,12 @@ class ShellIPerfBase(lb.ShellBackend):
         else:
             self.binary_path = ssmdevices.lib.path(self.binary_name, platform=True)
 
-    def profile(self, *argv, block:bool=True):
+    def profile(self, *argv, block: bool = True):
         if not hasattr(self, 'time'):
-            raise NotImplementedError('need to also inherit IPerf2Values or IPerf3Values to run the profiler')
-        
+            raise NotImplementedError(
+                'need to also inherit IPerf2Values or IPerf3Values to run the profiler'
+            )
+
         duration = 0 if self.time is None else self.time + 2
         timeout = max((self.timeout, duration))
 
@@ -247,7 +244,7 @@ class ShellIPerfBase(lb.ShellBackend):
 
 
 class LocalIPerfBase(ShellIPerfBase):
-    def profile(self, block: bool=True):
+    def profile(self, block: bool = True):
         self.check_ports()
         super().profile(self.binary_path, block=block)
 
@@ -257,7 +254,9 @@ class LocalIPerfBase(ShellIPerfBase):
             try:
                 busy_ports = get_ipv4_occupied_ports(self.server)
             except psutil.AccessDenied:
-                self._logger.warning('need administrator privileges on this platform to check for port access contention')
+                self._logger.warning(
+                    'need administrator privileges on this platform to check for port access contention'
+                )
                 busy_ports = []
 
             while self.port in busy_ports:
@@ -282,11 +281,15 @@ class LocalIPerf3(LocalIPerfBase, IPerf3Values):
 
     # additional IPerf3-only
     reverse: bool = attr.value.bool(
-        default=False, key='-R', help='run in reverse mode (server sends, client receives)'
+        default=False,
+        key='-R',
+        help='run in reverse mode (server sends, client receives)',
     )
-    json: bool = attr.value.bool(default=False, key='-J', help='output data in JSON format')
+    json: bool = attr.value.bool(
+        default=False, key='-J', help='output data in JSON format'
+    )
     zerocopy: bool = attr.value.bool(
-        default=False, key='-Z', help="avoid buffer copies while sending data"
+        default=False, key='-Z', help='avoid buffer copies while sending data'
     )
 
 
@@ -360,8 +363,7 @@ class LocalIPerf2(LocalIPerfBase, IPerf2Values):
 
         if data.shape[1] > 0:
             data.drop(
-                ['interval', 'transferred_bytes', 'test_id'],
-                inplace=True, axis=1
+                ['interval', 'transferred_bytes', 'test_id'], inplace=True, axis=1
             )
         data['timestamp'] = pd.to_datetime(data['timestamp'], format='%Y%m%d%H%M%S')
         frac_sec = (data.index * self.interval) % 1
@@ -373,10 +375,16 @@ class LocalIPerf2(LocalIPerfBase, IPerf2Values):
 class AdbIPerf2(ShellIPerfBase, IPerf2Values):
     # leave this as a string to avoid validation pitfalls if the host isn't POSIXey
     binary_name = attr.value.str('adb', inherit=True)
-    remote_binary_path = attr.value.str('/data/local/tmp/iperf', cache=True, help='copy destination for iperf in the handset')
+    remote_binary_path = attr.value.str(
+        '/data/local/tmp/iperf',
+        cache=True,
+        help='copy destination for iperf in the handset',
+    )
 
     def profile(self, block=True):
-        ret = super().profile(self.binary_path, 'shell', self.remote_binary_path, block=block)
+        ret = super().profile(
+            self.binary_path, 'shell', self.remote_binary_path, block=block
+        )
 
         if block:
             return self._format_output(ret)
@@ -398,11 +406,25 @@ class AdbIPerf2(ShellIPerfBase, IPerf2Values):
         self.wait_for_device(2)
 
         # set permissions for execution
-        self.run(self.binary_path, 'shell', 'chmod', '777', self.remote_binary_path, check=False)
+        self.run(
+            self.binary_path,
+            'shell',
+            'chmod',
+            '777',
+            self.remote_binary_path,
+            check=False,
+        )
         self.wait_for_device(2)
 
         # validate
-        stdout = self.run(self.binary_path, 'shell', self.remote_binary_path, '--help', timeout=2, pipe=True)
+        stdout = self.run(
+            self.binary_path,
+            'shell',
+            self.remote_binary_path,
+            '--help',
+            timeout=2,
+            pipe=True,
+        )
         if stdout.startswith(b'/system/bin/sh'):
             # adb dumps both stderr and stdout from the handset into stdout, so we get little
             # from monitoring. if iperf ran correctly, however, there is no message from sh
@@ -458,7 +480,7 @@ class AdbIPerf2(ShellIPerfBase, IPerf2Values):
 
         return self._format_output(out)
 
-    def wait_for_cell_data(self, timeout: float=60):
+    def wait_for_cell_data(self, timeout: float = 60):
         """block until cellular data is available
 
         Arguments:
@@ -486,7 +508,9 @@ class AdbIPerf2(ShellIPerfBase, IPerf2Values):
         else:
             raise TimeoutError('phone did not connect for cellular data before timeout')
 
-        self._logger.debug(f'cellular data available after {time.perf_counter() - t0} s')
+        self._logger.debug(
+            f'cellular data available after {time.perf_counter() - t0} s'
+        )
 
     def reboot(self, block=True):
         """reboot the handset.
@@ -566,14 +590,16 @@ class LocalIPerf2Pair(LocalIPerf2):
             self.kill()
             return ret
 
-    def read_stdout(self, client_ret: typing.Union[str, None]=None) -> typing.Union[dict, DataFrameType]:
+    def read_stdout(
+        self, client_ret: typing.Union[str, None] = None
+    ) -> typing.Union[dict, DataFrameType]:
         try:
             if client_ret is None:
                 client = self.children['client']
             server = self.children['server']
         except KeyError:
             return dict(client=None, server=None)
-        
+
         if client_ret is None:
             client_stdout = client.read_stdout()
         else:
@@ -618,16 +644,16 @@ class LocalIPerf2Pair(LocalIPerf2):
                 setattr(server, name, value)
 
         # override with client/server specifics
-        client.client=self.client
-        client.bind=f'{self.client}:{find_free_port()}'
-        client.server=False
+        client.client = self.client
+        client.bind = f'{self.client}:{find_free_port()}'
+        client.server = False
         client.check_ports()
 
-        server.client=None
-        server.bind=self.server
-        server.server=True
-        server.time=None
-        server.number=None
+        server.client = None
+        server.bind = self.server
+        server.server = True
+        server.time = None
+        server.number = None
         server.check_ports()
 
         self.backend = lb.sequentially(server, client).__enter__()
@@ -1467,6 +1493,7 @@ class LocalPythonTrafficProfiler_ClosedLoopTCP(LocalPythonTrafficProfiler):
         self._logger.debug(f'interfaces ready after {elapsed:0.2f}s')
         return elapsed
 
+
 def test_iperf2_bound_pair_blocking():
     # When both network interfaces run on the same computer,
     # it is convenient to use IPerf2BoundPair, which runs both
@@ -1476,15 +1503,14 @@ def test_iperf2_bound_pair_blocking():
     iperf = LocalIPerf2Pair(
         server='127.0.0.1',
         client='127.0.0.1',
-
         ### the parameters below set the corresponding iperf command line flags
         # tcp_window_size=8196# -w (default unknown?)
         # buffer_size='16k'   # -l (default unknown? possible strange results for UDP)
-        interval=1,         # -i (default is no output until the end of process)
+        interval=1,  # -i (default is no output until the end of process)
         # bidirectional=True, # -d (default is False)
-        udp=True,           # -u (default is False (TCP))
+        udp=True,  # -u (default is False (TCP))
         # bit_rate='1M'       # -b (default is no bit rate throttling)
-        time=10,            # -t (how long to run the iperf client; iperf's default is 10s)
+        time=10,  # -t (how long to run the iperf client; iperf's default is 10s)
         # report_style='C',   # -y (we set this from python to 'C' by default for CSV table; set to None for text output)
         # number=-1,        # -n (by default, iperf uses -t to determine client test length; set -1 to run until killed)
         # nodelay=True,       # -N (default is False; TCP only)
@@ -1506,16 +1532,15 @@ def test_iperf2_bound_pair_background():
     iperf = LocalIPerf2Pair(
         server='127.0.0.1',
         client='127.0.0.1',
-
         ### the parameters below set the corresponding iperf command line flags
         # tcp_window_size=8196# -w (default unknown?)
         # buffer_size='16k'   # -l (default unknown? possible strange results for UDP)
-        interval=1,         # -i (default is no output until the end of process)
+        interval=1,  # -i (default is no output until the end of process)
         # bidirectional=True, # -d (default is False)
-        udp=True,           # -u (default is False (TCP))
+        udp=True,  # -u (default is False (TCP))
         # bit_rate='1M'       # -b (default is no bit rate throttling)
-        time=10,            # -t (how long to run the iperf client; iperf's default is 10s)
-        report_style='C',   # -y (we set this from python to 'C' by default for CSV table; set to None for text output)
+        time=10,  # -t (how long to run the iperf client; iperf's default is 10s)
+        report_style='C',  # -y (we set this from python to 'C' by default for CSV table; set to None for text output)
         # number=-1,        # -n (by default, iperf uses -t to determine client test length; set -1 to run until killed)
         # nodelay=True,       # -N (default is False; TCP only)
         # mss=1460,           # -M (default 1460? - TCP only, of course)
@@ -1525,7 +1550,7 @@ def test_iperf2_bound_pair_background():
     # this allows other tasks here in the main thread
     with iperf:
         iperf.profile(block=False)
-        time.sleep(4) # replace this with other code for automating other equipment
+        time.sleep(4)  # replace this with other code for automating other equipment
         data = iperf.read_stdout()
         iperf.kill()
 
@@ -1559,7 +1584,7 @@ def test_separate_iperf2():
     lb.show_messages('debug')
 
     server = LocalIPerf2(server=True, port=5050, interval=0.25, udp=True)
-    client = LocalIPerf2(client="127.0.0.1", port=5054, time=10, interval=0.25)
+    client = LocalIPerf2(client='127.0.0.1', port=5054, time=10, interval=0.25)
 
     with server, client:
         server.profile(block=False)

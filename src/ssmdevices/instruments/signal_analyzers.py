@@ -54,7 +54,9 @@ class KeysightN9951B(lb.VISADevice):
 
     # the bounds on these two vary dynamically with the value of the other.
     # sets=False here to avoid accidents - use frequency_start and frequency_stop
-    frequency_span = attr.property.float(key='FREQ:SPAN', sets=False, min=2, max=44e9, label='Hz')
+    frequency_span = attr.property.float(
+        key='FREQ:SPAN', sets=False, min=2, max=44e9, label='Hz'
+    )
     frequency_center = attr.property.float(
         key='FREQ:CENT', sets=False, min=2, max=26.5e9, step=1e-9, label='Hz'
     )

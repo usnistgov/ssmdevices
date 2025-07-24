@@ -417,18 +417,19 @@ class QXDM(lb.Win32ComDevice):
         #        lb.sleep(1)
         self._logger.debug(f'item store grew after {elapsed:0.2f}s')
 
+
 if __name__ == '__main__':
-   import labbench as lb
-   import inspect
+    import labbench as lb
+    import inspect
 
-   lb.show_messages('debug')
+    lb.show_messages('debug')
 
-   # Connect to application
-   with QXDM(8, cache_path=r'C:\Python Code\potato', concurrency=False) as qxdm:
-       mod = inspect.getmodule(qxdm.backend._FlagAsMethod).__name__
-       print(repr(qxdm.backend),dir(qxdm.backend))
-       qxdm.configure(r'180201_QXDMConfig.dmc')
-       for i in range(1):
-           qxdm.start()
-           lb.sleep(10)
-           qxdm.save(r'junk-{}.isf'.format(i))
+    # Connect to application
+    with QXDM(8, cache_path=r'C:\Python Code\potato', concurrency=False) as qxdm:
+        mod = inspect.getmodule(qxdm.backend._FlagAsMethod).__name__
+        print(repr(qxdm.backend), dir(qxdm.backend))
+        qxdm.configure(r'180201_QXDMConfig.dmc')
+        for i in range(1):
+            qxdm.start()
+            lb.sleep(10)
+            qxdm.save(r'junk-{}.isf'.format(i))

@@ -108,6 +108,7 @@ class MiniCircuitsUSBDevice(lb.Device):
         Raise an exception if no devices are connected.
         """
         import hid
+
         unknown_match = []
 
         with usb_enumerate_lock:
@@ -141,7 +142,9 @@ class MiniCircuitsUSBDevice(lb.Device):
 
             if len(unknown_match) > 0 and hasattr(ex, 'add_note'):
                 # python>=3.10
-                ex.add_note(f'hid failed to open these matches to vid={hex(cls._VID)} pid={hex(cls._PID)}:')
+                ex.add_note(
+                    f'hid failed to open these matches to vid={hex(cls._VID)} pid={hex(cls._PID)}:'
+                )
                 for dev in unknown_match:
                     ex.add_note(f'\t{dev["path"]}')
 
