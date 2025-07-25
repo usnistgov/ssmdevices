@@ -25,29 +25,40 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
         key='*OPT', sets=False, cache=True, help='installed license options'
     )
 
-    def save_state(self, FileName: str, num: int = 4):
+    def save_state(self, path: str, num: int = 1):
         """Save current state of the device to the default directory.
 
         Arguments:
             FileName: path to a state file local to the instrument OS
-            num: the index of the current state to save
+            num: index of the intermediate memory state to use as buffer
         """
-        if not FileName.lower().endswith('savrcltxt'):
-            FileName = FileName + '.savrcltxt'
-        self.write(f'MMEMory:STORe:STATe {num},"{FileName}"')
+        if not path.lower().endswith('savrcltxt'):
+            path = path + '.savrcltxt'
 
-    def load_state(self, FileName: str, num: int = 4):
+        with self.overlap_and_block(timeout=5):
+            self.write(f'*SAV {num}')
+
+        with self.overlap_and_block(timeout=5):
+            self.write(f'MMEMory:STORe:STATe {num},"{path}"')
+
+    def load_state(self, path: str, num: int = 1):
         """Loads a previously saved state file in the instrument
 
         Arguments:
             FileName: path to a state file local to the instrument OS
-            num: the state number to fill with the loaded state
+            num: index of the intermediate memory state to load into
         """
-        if not FileName.lower().endswith('savrcltxt'):
-            FileName = FileName + '.savrcltxt'
+        if not path.lower().endswith('savrcltxt'):
+            path = path + '.savrcltxt'
 
-        self.write(f"MMEM:LOAD:STAT {num},'{FileName}'; *RCL {num}")
-        self.wait()
+        with self.overlap_and_block(timeout=5):
+            self.write(f"MMEM:LOAD:STAT {num},'{path}'")
+
+        self.apply_state(num)
+
+    def apply_state(self, num: int = 1):
+        with self.overlap_and_block(timeout=5):
+            self.write(f'*RCL {num}')
 
 
 # Example code works nicely in this if statement, which only runs if we're
