@@ -29,7 +29,7 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
         """Save current state of the device to the default directory.
 
         Arguments:
-            FileName: path to a state file local to the instrument OS
+            path: path to a state file local to the instrument OS
             num: index of the intermediate memory state to use as buffer
         """
         if not path.lower().endswith('savrcltxt'):
@@ -45,7 +45,7 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
         """Loads a previously saved state file in the instrument
 
         Arguments:
-            FileName: path to a state file local to the instrument OS
+            path: path to a state file local to the instrument OS
             num: index of the intermediate memory state to load into
         """
         if not path.lower().endswith('savrcltxt'):
