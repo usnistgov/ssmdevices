@@ -28,7 +28,10 @@ else:
 DataFrameType: typing_extensions.TypeAlias = 'pd.DataFrame'
 SeriesType: typing_extensions.TypeAlias = 'pd.Series'
 
+bus_kwarg = attr.method_kwarg.int('bus', min=1, max=4, help='subsystem bus index')
 
+
+@bus_kwarg
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
@@ -95,6 +98,13 @@ class KeysightU2000XSeries(lb.VISADevice):
         cache=True,
         help='a comma-separated list of installed license options',
     )
+    measurement = attr.method.str(
+        key='CALC{bus}:FEED',
+        cache=True,
+        only=['POW:PEAK', 'POW:PTAV', 'POW:AVER', 'POW:MIN'],
+        case=False,
+        help='configure the power measurement type for a given bus: peak, peak-to-average, average, or minimum',
+    )
 
     def preset(self, wait=True) -> None:
         """restore the instrument to its default state"""
@@ -104,7 +114,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         self._clear()
         self._event_status_enable()
 
-    def fetch(self, precheck=True) -> typing.Union[float, SeriesType]:
+    def fetch(self, precheck=True, bus: int = 1) -> typing.Union[float, SeriesType]:
         """return power readings from the instrument.
 
         Returns:
@@ -113,7 +123,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         if precheck:
             self._check_errors()
 
-        series = self.query_ascii_values('FETC?', container=pd.Series)
+        series = self.query_ascii_values('FETC{bus}?', container=pd.Series)
         if len(series) == 1:
             return series.iloc[0]
         else:
