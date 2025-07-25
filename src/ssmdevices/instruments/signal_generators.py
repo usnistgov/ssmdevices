@@ -41,7 +41,7 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
         with self.overlap_and_block(timeout=5):
             self.write(f'MMEMory:STORe:STATe {num},"{path}"')
 
-    def load_state(self, path: str, num: int = 1):
+    def load_state(self, path: str, num: int = 1, apply=True):
         """Loads a previously saved state file in the instrument
 
         Arguments:
@@ -54,7 +54,8 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
         with self.overlap_and_block(timeout=5):
             self.write(f"MMEM:LOAD:STAT {num},'{path}'")
 
-        self.apply_state(num)
+        if apply:
+            self.apply_state(num)
 
     def apply_state(self, num: int = 1):
         with self.overlap_and_block(timeout=5):
