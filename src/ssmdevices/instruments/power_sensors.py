@@ -49,6 +49,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         self._clear()
         self._event_status_enable()
+        self._format = 'REAL'
 
     initiate_continuous = attr.property.bool(
         key='INIT:CONT', help='whether to enable triggering to acquire power samples'
@@ -123,76 +124,26 @@ class KeysightU2000XSeries(lb.VISADevice):
 
     unit = attr.method.str(
         key='UNIT{bus}:POW',
-        only=['W', 'dBm'],
+        only=['W', 'DBM'],
         case=False,
-        help='the units for power readings',
+        help='power reading units',
     )
 
-    def query_ieee_array(self, msg: str):
-        """An alternative to self.backend.query_binary_values for fetching block data. This
-        implementation works around slowness between pyvisa and the instrument that seems to
-        result from transferring in chunks of size self.backend.chunk_size as implemented
-        in pyvisa.
+    _format = attr.property.str(
+        key='FORM',
+        only=['ASC', 'REAL'],
+        help='whether to return ASCII-formatted or IEEE 64-bit real floating point'
+    )
 
-        The performance of a transfer of a spectrogram with 100,000 time samples is impacted as follows:
-
-        # The pyvisa implementation
-        >>>  %timeit -n 1 -r 1 sa.backend.query_binary_values('TRAC2:DATA? SPEC', container=np.array)
-        (takes at least 10 minutes)
-
-        # This implementation
-        >>> %timeit -n 1 -r 1 sa.query_ieee_array('TRAC2:DATA? SPEC')
-        (~23 sec)
-
-        Arguments:
-            msg: The SCPI command to send
-        :return: a numpy array containing the response.
-        """
-
-        from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
-
-        self._logger.debug(f'query {msg}')
-
-        # The read_termination seems to cause unwanted behavior in self.backend.visalib.read
-        self.backend.read_termination, old_read_term = (
-            None,
-            self.backend.read_termination,
-        )
-        self.backend.write(msg)
-
-        try:
-            with self.backend.ignore_warning(
-                VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
-            ):
-                # Reproduce the behavior of pyvisa.util.from_ieee_block without
-                # a priori access to the entire buffer.
-                raw, _ = self.backend.visalib.read(self.backend.session, 2)
-                digits = int(raw.decode('ascii')[1])
-                raw, _ = self.backend.visalib.read(self.backend.session, digits)
-                data_size = int(raw.decode('ascii'))
-
-                # Read the actual data
-                raw, _ = self.backend.visalib.read(self.backend.session, data_size)
-
-                # Read termination characters so that the instrument doesn't show
-                # a "QUERY INTERRUPTED" error when there is unread buffer
-                self.backend.visalib.read(self.backend.session, len(old_read_term))
-        finally:
-            self.backend.read_termination = old_read_term
-
-        data = np.frombuffer(raw, np.float32)
-        self._logger.debug('      -> {} bytes ({} values)'.format(data_size, data.size))
-        return data
-
-    def preset(self, wait=True) -> None:
+    def preset(self) -> None:
         """restore the instrument to its default state"""
-        self.write('SYST:PRES')
-        if wait:
-            self.wait()
+        with self.overlap_and_block(5):
+            self.write('SYST:PRES')
+        self._format = 'REAL'
         self._clear()
         self._event_status_enable()
 
-    def fetch(self, precheck=True, bus: int = 1) -> typing.Union[float, SeriesType]:
+    def fetch(self, precheck=True, bus: int = 1, as_series=True) -> typing.Union[float, 'np.ndarray', SeriesType]:
         """return power readings from the instrument.
 
         Returns:
@@ -201,14 +152,20 @@ class KeysightU2000XSeries(lb.VISADevice):
         if precheck:
             self._check_errors()
 
-        series = self.query_ascii_values(f'FETC{bus}?', container=pd.Series)
-        if len(series) == 1:
-            return series.iloc[0]
-        else:
-            ii = np.arange(len(series))
-            series.index = pd.Index(self.sweep_aperture * ii, name='Time elapsed (s)')
-            series.name = 'Power (dBm)'
-            return series
+        self.write(f'FETC{bus}?')
+        d = self.backend.read_raw(termination=b'\n')
+        values = np.frombuffer(d[:-1], dtype='>f8')
+
+        if len(values) == 1:
+            return float(values[0])
+        elif not as_series:
+            return values
+
+        ii = np.arange(len(series))
+        index = pd.Index(self.sweep_aperture * ii, name='Time elapsed (s)')
+        series.name = 'Power (dBm)'
+
+        series = pd.Series(values, index=index, name='Power (dBm)')
 
     def zero(self):
         with self.overlap_and_block(30):
@@ -378,9 +335,14 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     def reset(self):
         self.write('*RST')
 
-    def fetch(self) -> typing.Union[SeriesType, float]:
+    def fetch(self, as_pandas=True) -> typing.Union[SeriesType, float]:
         """Return a single number or pandas Series containing the power readings"""
-        series = self.query_ascii_values('FETC?', container=pd.Series)
+        if as_pandas:
+            container=pd.Series
+        else:
+            container=np.ndarray
+
+        series = self.query_ascii_values('FETC?', container=container)
         if len(series) == 1:
             return float(series.iloc[0])
         series.index = np.arange(len(series)) * (
