@@ -26,18 +26,11 @@ __all__ = [
 ]
 
 bus_kwarg = attr.method_kwarg.int('bus', min=1, max=4, help='subsystem bus index')
-feed_kwarg = attr.method_kwarg.int('feed', min=1, max=2, help='feed index')
 
 
 @bus_kwarg
-@feed_kwarg
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
-
-    _BUSSES = {
-        'AVER': 1,
-        'PEAK': 2,
-    }
 
     # used for automatic connection
     make = attr.value.str('Keysight Technologies', inherit=True)
@@ -125,13 +118,6 @@ class KeysightU2000XSeries(lb.VISADevice):
     def _(self, /, value, *, bus=1):
         self.write(f'CALC{bus}:FEED "POW:{value} on SWEEP1"')
 
-    sweep_time = attr.method.float(
-        key='SWE{bus}:TIME',
-        only=['PEAK', 'PTAV', 'AVER', 'MIN'],
-        case=False,
-        help='configure the power measurement type for a given bus: peak, peak-to-average, average, or minimum',
-    )
-
     _unit = attr.method.str(
         key='UNIT{bus}:POW',
         only=['W', 'DBM'],
@@ -176,10 +162,10 @@ class KeysightU2000XSeries(lb.VISADevice):
             return values
 
         if self.detector_function == 'NORM':
-            time_step = self.sweep_time(bus=bus)
+            index = pd.Index(np.arange(len(series)), name='Power sample index')
         else:
             time_step = self.sweep_aperture
-        index = pd.Index(np.arange(len(series)) * time_step, name='Time elapsed (s)')
+            index = pd.Index(np.arange(len(series)) * time_step, name='Time elapsed (s)')
         series = pd.Series(values, index=index, name='Power (mW)')
 
     def setup_average(self, aperture: float, *, trigger_source='IMM', trigger_count=1, initiate_continuous=False):
