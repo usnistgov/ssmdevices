@@ -1,18 +1,9 @@
 # -*- coding: utf-8 -*-
 
-__all__ = [
-    'KeysightU2000XSeries',
-    'KeysightU2044XA',
-    'RohdeSchwarzNRP8s',
-    'RohdeSchwarzNRP18s',
-    'PowerTrace_RohdeSchwarzNRP',
-]
-
 from __future__ import annotations
 import labbench as lb
 from labbench import paramattr as attr
 import typing
-import typing_extensions
 import warnings
 import contextlib
 import time
@@ -26,8 +17,13 @@ else:
     pd = lb.util.lazy_import('pandas')
     np = lb.util.lazy_import('numpy')
 
-DataFrameType: typing_extensions.TypeAlias = 'pd.DataFrame'
-SeriesType: typing_extensions.TypeAlias = 'pd.Series'
+__all__ = [
+    'KeysightU2000XSeries',
+    'KeysightU2044XA',
+    'RohdeSchwarzNRP8s',
+    'RohdeSchwarzNRP18s',
+    'PowerTrace_RohdeSchwarzNRP',
+]
 
 bus_kwarg = attr.method_kwarg.int('bus', min=1, max=4, help='subsystem bus index')
 feed_kwarg = attr.method_kwarg.int('feed', min=1, max=2, help='feed index')
@@ -160,7 +156,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         self._unit('W', bus=2)
         self.validate_status()
 
-    def fetch(self, precheck=True, bus: int = 1, as_series=True) -> typing.Union[float, 'np.ndarray', SeriesType]:
+    def fetch(self, precheck=True, bus: int = 1, as_series=True) -> typing.Union[float, 'np.ndarray', 'pd.Series']:
         """return power readings from the instrument.
 
         Returns:
@@ -427,7 +423,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     def reset(self):
         self.write('*RST')
 
-    def fetch(self, as_pandas=True) -> typing.Union[SeriesType, float]:
+    def fetch(self, as_pandas=True) -> typing.Union['pd.Series', float]:
         """Return a single number or pandas Series containing the power readings"""
         if as_pandas:
             container=pd.Series
