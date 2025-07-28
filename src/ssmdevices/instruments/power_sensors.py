@@ -191,12 +191,12 @@ class KeysightU2000XSeries(lb.VISADevice):
         This is only supported for "peak and average" power sensors.
         """
         self.detector_function = 'NORM'
+        self.trigger_source = trigger_source
         self.measurement('AVER', bus=1)
         self.measurement('PEAK', bus=2)
         self.measurement_rate = 'FAST'
         self._unit('W', bus=1)
         self._unit('W', bus=2)
-        self.trigger_source = trigger_source
         self.trigger_count = trigger_count
         self.frequency = frequency
         self.initiate_continuous = initiate_continuous
