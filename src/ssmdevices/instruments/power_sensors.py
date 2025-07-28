@@ -225,6 +225,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         t0 = time.perf_counter()
 
         i = 0
+        fetch_kws = {'precheck': False, 'as_series': True, 'quiet': True}
 
         while True:
             if init_each:
@@ -233,11 +234,11 @@ class KeysightU2000XSeries(lb.VISADevice):
                 else:
                     self.initiate_single()
 
-            average = self.fetch(bus=1, precheck=False, as_series=False).mean()
+            average = self.fetch(bus=1, **fetch_kws).mean()
             averages.append(average)
 
             if measure_peak:
-                peak = self.fetch(bus=2, precheck=False, as_series=False).max()
+                peak = self.fetch(bus=2, **fetch_kws).max()
                 peaks.append(peak)
 
             i += 1
