@@ -191,8 +191,8 @@ class KeysightU2000XSeries(lb.VISADevice):
         """
         self._unit('W', bus=1)
         self._unit('W', bus=2)
-        self.trigger_source = trigger_source
         self.detector_function = 'NORM'
+        self.trigger_source = trigger_source
         self.measurement('AVER', bus=1)
         self.measurement('PEAK', bus=2)
         self.measurement_rate = 'FAST'
