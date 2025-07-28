@@ -168,7 +168,7 @@ class KeysightU2000XSeries(lb.VISADevice):
             index = pd.Index(np.arange(len(series)) * time_step, name='Time elapsed (s)')
         series = pd.Series(values, index=index, name='Power (mW)')
 
-    def setup_average(self, aperture: float, *, trigger_source='IMM', trigger_count=1, initiate_continuous=False):
+    def setup_average(self, frequency: float, aperture: float, *, trigger_source='IMM', trigger_count=1, initiate_continuous=False):
         """setup the instrument in a measurement in average-power mode.
 
         Args:
@@ -180,25 +180,26 @@ class KeysightU2000XSeries(lb.VISADevice):
         self._unit('W', bus=1)
         self.trigger_count = trigger_count
         self.trigger_source = trigger_source
-        self.initiate_continuous = initiate_continuous
         self.sweep_aperture = aperture  # longest capture
+        self.frequency = frequency
+        self.initiate_continuous = initiate_continuous
         self.validate_status()
 
-    def setup_peak_average(self, *, trigger_source: str = 'INT', trigger_count=200, initiate_continuous=True):
+    def setup_peak_average(self, frequency, *, trigger_source: str = 'IMM', trigger_count=200, initiate_continuous=True):
         """setup the instrument in a "peak and average" power measurement.
 
         This is only supported for "peak and average" power sensors.
         """
-        self._unit('W', bus=1)
-        self._unit('W', bus=2)
         self.detector_function = 'NORM'
-        self.trigger_source = trigger_source
         self.measurement('AVER', bus=1)
         self.measurement('PEAK', bus=2)
         self.measurement_rate = 'FAST'
+        self._unit('W', bus=1)
+        self._unit('W', bus=2)
+        self.trigger_source = trigger_source
         self.trigger_count = trigger_count
+        self.frequency = frequency
         self.initiate_continuous = initiate_continuous
-        self.wait()
         self.validate_status()
 
     def initiate_single(self):
