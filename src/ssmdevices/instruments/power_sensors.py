@@ -221,10 +221,12 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         while True:
             if init_each:
-                self.initiate_single(bypass_trigger)
+                self.initiate_single()
 
                 if bypass_trigger:
                     self._force_trigger()
+
+                self.wait()
 
             average = self.fetch(bus=1, precheck=False, as_series=False).mean()
             averages.append(average)
