@@ -166,7 +166,7 @@ class KeysightU2000XSeries(lb.VISADevice):
             return values
 
         if kws.get('quiet', False):
-            mode = self.query('DET:FUNC?')
+            mode = self.backend.query('DET:FUNC?')
         else:
             mode = self.detector_function
         if mode == 'NORM':
@@ -233,7 +233,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         while True:
             if init_each:
-                self.write('INIT:IMM')
+                self.backend.write('INIT:IMM')
 
             average = self.fetch(bus=1, **fetch_kws).mean()
             averages.append(average)
