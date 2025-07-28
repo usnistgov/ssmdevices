@@ -121,6 +121,13 @@ class KeysightU2000XSeries(lb.VISADevice):
     def _(self, /, value, *, bus=1):
         self.write(f'CALC{bus}:FEED "POW:{value}"')
 
+    unit = attr.method.str(
+        key='UNIT{bus}:POW',
+        only=['W', 'dBm'],
+        case=False,
+        help='the units for power readings',
+    )
+
     def query_ieee_array(self, msg: str):
         """An alternative to self.backend.query_binary_values for fetching block data. This
         implementation works around slowness between pyvisa and the instrument that seems to
