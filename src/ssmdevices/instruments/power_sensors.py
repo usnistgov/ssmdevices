@@ -224,7 +224,7 @@ class KeysightU2000XSeries(lb.VISADevice):
     def _force_trigger(self):
         self.write('TRIG')
 
-    def accumulate(self, duration: float, force_immediate=False) -> float | tuple:
+    def accumulate_readings(self, duration: float, bypass_trigger=False) -> float | tuple:
         self.validate_status()
         
         init_each = not self.initiate_continuous
@@ -236,9 +236,9 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         while True:
             if init_each:
-                self.initiate_single(force_immediate)
+                self.initiate_single(bypass_trigger)
 
-            if force_immediate:
+            if bypass_trigger:
                 self._force_trigger()
                 self.wait()
 
