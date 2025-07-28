@@ -163,10 +163,10 @@ class KeysightU2000XSeries(lb.VISADevice):
             return values
 
         if self.detector_function == 'NORM':
-            index = pd.Index(np.arange(len(series)), name='Power sample index')
+            index = pd.Index(np.arange(len(values)), name='Power sample index')
         else:
             time_step = self.sweep_aperture
-            index = pd.Index(np.arange(len(series)) * time_step, name='Time elapsed (s)')
+            index = pd.Index(np.arange(len(values)) * time_step, name='Time elapsed (s)')
         series = pd.Series(values, index=index, name='Power (mW)')
 
     def setup_average(self, frequency: float, aperture: float, *, trigger_source='IMM', trigger_count=1, initiate_continuous=False):
