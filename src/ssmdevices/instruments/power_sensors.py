@@ -165,12 +165,16 @@ class KeysightU2000XSeries(lb.VISADevice):
         elif not as_series:
             return values
 
-        if self.detector_function == 'NORM':
+        if kws.get('quiet', False):
+            mode = self.query('DET:FUNC?')
+        else:
+            mode = self.detector_function
+        if mode == 'NORM':
             index = pd.Index(np.arange(len(values)), name='Power sample index')
         else:
             time_step = self.sweep_aperture
             index = pd.Index(np.arange(len(values)) * time_step, name='Time elapsed (s)')
-        
+
         return pd.Series(values, index=index, name='Power (mW)')
 
     def setup_average(self, frequency: float, aperture: float, *, trigger_source='IMM', trigger_count=1, initiate_continuous=False):
@@ -229,10 +233,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         while True:
             if init_each:
-                if bypass_trigger:
-                    self._force_trigger()
-                else:
-                    self.initiate_single()
+                self.write('INIT:IMM')
 
             average = self.fetch(bus=1, **fetch_kws).mean()
             averages.append(average)
