@@ -2,6 +2,7 @@ __all__ = ['RigolTechnologiesMSO4014', 'TektronixMSO64B', 'TektronixMSO64BSpectr
 
 import labbench as lb
 from labbench import paramattr as attr
+import numpy as np
 
 scope_channel_kwarg = attr.method_kwarg.int(
     'channel', min=1, max=4, help='hardware input port'
@@ -136,6 +137,10 @@ class TektronixMSO64B(lb.VISADevice):
         max=10
     )
 
+    trig_aux_level = attr.property.float(
+        key='TRIGger:AUXLevel'
+    )
+
     # Acquisition settings
     acq_type = attr.property.str(
         key="ACQuire:STOPAfter",
@@ -155,6 +160,10 @@ class TektronixMSO64B(lb.VISADevice):
     acq_fastframe = attr.property.str(
         key="HORizontal:FASTframe:STATE",
         only=("ON", "OFF")
+    )
+    acq_state = attr.property.str(
+        key="ACQuire:STATe",
+        only=("OFF", "ON", "RUN", "STOP")
     )
 
     # vertical scale
@@ -194,8 +203,16 @@ class TektronixMSO64B(lb.VISADevice):
         key='FILESystem:READFile',
         help='read the file over interface',
     )
+    file_mkdir = attr.property.str(
+        key='FILESystem:MKDir',
+        gets=False
+    )
 
     # Store/load
+    save_local_wfm = attr.method.str(
+        key='SAVe:WAVEform CH{channel},',
+        gets=False
+    )
     def load_setup(self, setup_file_name: str):
         self.write(f"RECAll:SETUp \"{setup_file_name}\"")
 
@@ -226,7 +243,7 @@ class TektronixMSO64B(lb.VISADevice):
     def open(self):
         self._horizontal_mode = 'MANUAL'
         self.write(':VERBose 0')
-        self.write(':HEADer 0')
+        # self.write(':HEADer 0')
 
 
 class TektronixMSO64BSpectrogram(TektronixMSO64B):
@@ -315,21 +332,48 @@ class TektronixMSO64BSpectrogram(TektronixMSO64B):
 
 
 if __name__ == '__main__':
+    from time import sleep
     with TektronixMSO64B() as scope:
         # Load some setup file onboard the scope
-        scope.load_setup("default_setup.set")
-        # Manually set some params
-        scope.sample_rate = 200e6
-        scope.record_length = 20e6
-        scope.trig_type = "EDGE"
-        scope.trig_edge_source = "CH1"
-        scope.trig_mode = "AUTO"
-        scope.trig_holdoff_by = "RANDOM"
-        scope.acq_type = "RUNSTOP"
+        # scope.load_setup("default_setup.set")
+        # # Manually set some params
+        # scope.sample_rate = 200e6
+        scope.record_length = 500e6
+        # scope.trig_type = "EDGE"
+        # scope.trig_edge_source = "CH1"
+        # scope.trig_mode = "AUTO"
+        # scope.trig_holdoff_by = "RANDOM"
+        # scope.acq_type = "RUNSTOP"
 
         # Collect data from scope after an acquisition
-        data = scope.retrieve_waveform(1)
-        print(data.normalized_vertical_values)
+        print("stop")
+        scope.acq_state = "STOP"
+        print(scope.acq_state)
+        # scope.acq_type = "SEQUENCE"
+        # print("mkdir")
+        # scope.file_mkdir = '"E:/test"'
+        scope.acq_state = "RUN"
+        scope.write("CLEAR")
+        # # print(scope.query("ACQuire:STATe?"))
+        # print("trigger")
+        # scope.write('FILESYSTEM:CWD "E:/test"')
+        scope.write("TRIGger FORCe")
+        while eval(getattr(scope, "acq_state")):
+            sleep(0.5)
+
+        print(scope.acq_state)
+        scope.write('SAVe:WAVEform CH1,"E:/test1/output.wfm"')
+        print(scope.query("FILESystem:LDIR?"))
+        # scope.save_local_wfm('"E:/test/output.wfm"', channel=1)
+        
+        # scope.save_local_wfm('"E:/test/out.wfm"', channel=1)
+        
+        # from tm_data_types import write_file
+        # data = scope.retrieve_waveform(1)
+        # write_file("no_signal.wfm", data)
+        # np.save("out1", data.y_axis_values)
+        exit()
+        # print(data.normalized_vertical_values)
 
     with TektronixMSO64BSpectrogram() as scope:
         scope.spectrogram_enabled(channel=1)
