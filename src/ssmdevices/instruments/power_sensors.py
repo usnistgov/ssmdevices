@@ -155,7 +155,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         self.write(f'FETC{bus}?')
         d = self.backend.read_raw()
-        values = np.frombuffer(d[:-1], dtype='>f8')/1000
+        values = np.frombuffer(d[:-1], dtype='>f8')*1000
 
         if len(values) == 1:
             return float(values[0])
