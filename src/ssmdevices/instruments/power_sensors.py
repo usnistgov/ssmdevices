@@ -29,6 +29,7 @@ bus_kwarg = attr.method_kwarg.int('bus', min=1, max=4, help='subsystem bus index
 
 
 @bus_kwarg
+@attr.visa_keying(remap={True: '1', False: '0'})
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
