@@ -143,7 +143,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         self._unit('W', bus=2)
         self.validate_status()
 
-    def fetch(self, precheck=True, bus: int = 1, as_series=True) -> typing.Union[float, 'np.ndarray', 'pd.Series']:
+    def fetch(self, precheck=True, bus: int = 1, as_series=True, **kws) -> typing.Union[float, 'np.ndarray', 'pd.Series']:
         """return power readings from the instrument.
 
         Returns:
@@ -153,7 +153,10 @@ class KeysightU2000XSeries(lb.VISADevice):
         if precheck:
             self.validate_status()
 
-        self.write(f'FETC{bus}?')
+        if kws.get('quiet', False):
+            self.backend.write(f'FETC{bus}?')
+        else:
+            self.write(f'FETC{bus}?')
         d = self.backend.read_raw()
         values = np.frombuffer(d[:-1], dtype='>f8')*1000
 
@@ -221,6 +224,8 @@ class KeysightU2000XSeries(lb.VISADevice):
         peaks = []
         t0 = time.perf_counter()
 
+        i = 0
+
         while True:
             if init_each:
                 if bypass_trigger:
@@ -235,8 +240,12 @@ class KeysightU2000XSeries(lb.VISADevice):
                 peak = self.fetch(bus=2, precheck=False, as_series=False).max()
                 peaks.append(peak)
 
+            i += 1
+
             if time.perf_counter() - t0 >= duration:
                 break
+
+        self._logger.debug(f'accumulated on {i} triggers')
 
         average = 10 * np.log10(np.mean(averages))
         if measure_peak:
