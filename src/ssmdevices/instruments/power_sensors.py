@@ -129,7 +129,7 @@ class KeysightU2000XSeries(lb.VISADevice):
     _format = attr.property.str(
         key='FORM',
         only=['ASC', 'REAL'],
-        help='whether to return ASCII-formatted or IEEE 64-bit real floating point'
+        help='whether to return ASCII-formatted or IEEE 64-bit real floating point',
     )
 
     def preset(self) -> None:
@@ -143,7 +143,9 @@ class KeysightU2000XSeries(lb.VISADevice):
         self._unit('W', bus=2)
         self.validate_status()
 
-    def fetch(self, precheck=True, bus: int = 1, as_series=True, **kws) -> typing.Union[float, 'np.ndarray', 'pd.Series']:
+    def fetch(
+        self, precheck=True, bus: int = 1, as_series=True, **kws
+    ) -> typing.Union[float, 'np.ndarray', 'pd.Series']:
         """return power readings from the instrument.
 
         Returns:
@@ -158,7 +160,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         else:
             self.write(f'FETC{bus}?')
         d = self.backend.read_raw()
-        values = np.frombuffer(d[:-1], dtype='>f8')*1000
+        values = np.frombuffer(d[:-1], dtype='>f8') * 1000
 
         if len(values) == 1:
             return float(values[0])
@@ -173,11 +175,21 @@ class KeysightU2000XSeries(lb.VISADevice):
             index = pd.Index(np.arange(len(values)), name='Power sample index')
         else:
             time_step = self.sweep_aperture
-            index = pd.Index(np.arange(len(values)) * time_step, name='Time elapsed (s)')
+            index = pd.Index(
+                np.arange(len(values)) * time_step, name='Time elapsed (s)'
+            )
 
         return pd.Series(values, index=index, name='Power (mW)')
 
-    def setup_average(self, frequency: float, aperture: float, *, trigger_source='IMM', trigger_count=1, initiate_continuous=False):
+    def setup_average(
+        self,
+        frequency: float,
+        aperture: float,
+        *,
+        trigger_source='IMM',
+        trigger_count=1,
+        initiate_continuous=False,
+    ):
         """setup the instrument in a measurement in average-power mode.
 
         Args:
@@ -194,7 +206,14 @@ class KeysightU2000XSeries(lb.VISADevice):
         self.initiate_continuous = initiate_continuous
         self.validate_status()
 
-    def setup_peak_average(self, frequency, *, trigger_source: str = 'IMM', trigger_count=200, initiate_continuous=True):
+    def setup_peak_average(
+        self,
+        frequency,
+        *,
+        trigger_source: str = 'IMM',
+        trigger_count=200,
+        initiate_continuous=True,
+    ):
         """setup the instrument in a "peak and average" power measurement.
 
         This is only supported for "peak and average" power sensors.
@@ -427,9 +446,9 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     def fetch(self, as_pandas=True) -> typing.Union['pd.Series', float]:
         """Return a single number or pandas Series containing the power readings"""
         if as_pandas:
-            container=pd.Series
+            container = pd.Series
         else:
-            container=np.ndarray
+            container = np.ndarray
 
         series = self.query_ascii_values('FETC?', container=container)
         if len(series) == 1:
