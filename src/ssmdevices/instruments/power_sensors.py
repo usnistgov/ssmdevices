@@ -167,7 +167,8 @@ class KeysightU2000XSeries(lb.VISADevice):
         else:
             time_step = self.sweep_aperture
             index = pd.Index(np.arange(len(values)) * time_step, name='Time elapsed (s)')
-        series = pd.Series(values, index=index, name='Power (mW)')
+        
+        return pd.Series(values, index=index, name='Power (mW)')
 
     def setup_average(self, frequency: float, aperture: float, *, trigger_source='IMM', trigger_count=1, initiate_continuous=False):
         """setup the instrument in a measurement in average-power mode.
@@ -221,10 +222,10 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         while True:
             if init_each:
-                self.initiate_single()
-
                 if bypass_trigger:
                     self._force_trigger()
+                else:
+                    self.initiate_single()
 
             average = self.fetch(bus=1, precheck=False, as_series=False).mean()
             averages.append(average)
