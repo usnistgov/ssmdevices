@@ -231,7 +231,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         self.write('*ESE 1')
 
     def _check_errors(self):
-        code, text = self.query('SYST:ERR?').split(',', 1)
+        code, text = self.query('SYST:ERR?', retry=True).split(',', 1)
         code = int(code)
 
         if code == 0:
