@@ -8,6 +8,7 @@ __all__ = [
     'PowerTrace_RohdeSchwarzNRP',
 ]
 
+from __future__ import annotations
 import labbench as lb
 from labbench import paramattr as attr
 import typing
@@ -36,6 +37,11 @@ feed_kwarg = attr.method_kwarg.int('feed', min=1, max=2, help='feed index')
 @feed_kwarg
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
+
+    _BUSSES = {
+        'AVER': 1,
+        'PEAK': 2,
+    }
 
     # used for automatic connection
     make = attr.value.str('Keysight Technologies', inherit=True)
@@ -106,7 +112,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         key='DET:FUNC',
         only=['NORM', 'AVER'],
         case=False,
-        help='configure the power measurement type for a given bus: peak, peak-to-average, average, or minimum',
+        help='configure the instrument to support peak-and-average mode ("NORM") or averaging mode',
     )
 
     @attr.method.str(
@@ -123,7 +129,14 @@ class KeysightU2000XSeries(lb.VISADevice):
     def _(self, /, value, *, bus=1):
         self.write(f'CALC{bus}:FEED "POW:{value} on SWEEP1"')
 
-    unit = attr.method.str(
+    sweep_time = attr.method.float(
+        key='SWE{bus}:TIME',
+        only=['PEAK', 'PTAV', 'AVER', 'MIN'],
+        case=False,
+        help='configure the power measurement type for a given bus: peak, peak-to-average, average, or minimum',
+    )
+
+    _unit = attr.method.str(
         key='UNIT{bus}:POW',
         only=['W', 'DBM'],
         case=False,
@@ -143,30 +156,108 @@ class KeysightU2000XSeries(lb.VISADevice):
         self._clear()
         self._event_status_enable()
         self._format = 'REAL'
+        self._unit('W', bus=1)
+        self._unit('W', bus=2)
+        self.validate_status()
 
     def fetch(self, precheck=True, bus: int = 1, as_series=True) -> typing.Union[float, 'np.ndarray', SeriesType]:
         """return power readings from the instrument.
 
         Returns:
-            a single number if trigger_count == 1, otherwise or pandas.Series"""
+            a number of sample count equal to self.trigger_count
+        """
 
         if precheck:
-            self._check_errors()
+            self.validate_status()
 
         self.write(f'FETC{bus}?')
         d = self.backend.read_raw()
-        values = np.frombuffer(d[:-1], dtype='>f8')
+        values = np.frombuffer(d[:-1], dtype='>f8')/1000
 
         if len(values) == 1:
             return float(values[0])
         elif not as_series:
             return values
 
-        ii = np.arange(len(series))
-        index = pd.Index(self.sweep_aperture * ii, name='Time elapsed (s)')
-        series.name = 'Power (dBm)'
+        if self.detector_function == 'NORM':
+            time_step = self.sweep_time(bus=bus)
+        else:
+            time_step = self.sweep_aperture
+        index = pd.Index(np.arange(len(series)) * time_step, name='Time elapsed (s)')
+        series = pd.Series(values, index=index, name='Power (mW)')
 
-        series = pd.Series(values, index=index, name='Power (dBm)')
+    def setup_average(self, aperture: float, *, trigger_source='IMM', trigger_count=1, initiate_continuous=False):
+        """setup the instrument in a measurement in average-power mode.
+
+        Args:
+            aperture (float): time duration of each acquired average power sample
+            trigger_count (float): the number of samples to acquire per trigger
+        """
+        self.detector_function = 'AVER'
+        self.measurement_rate = 'FAST'
+        self._unit('W', bus=1)
+        self.trigger_count = trigger_count
+        self.trigger_source = trigger_source
+        self.initiate_continuous = initiate_continuous
+        self.sweep_aperture = aperture  # longest capture
+        self.validate_status()
+
+    def setup_peak_average(self, *, trigger_source: str = 'INT', trigger_count=200, initiate_continuous=True):
+        """setup the instrument in a "peak and average" power measurement.
+
+        This is only supported for "peak and average" power sensors.
+        """
+        self._unit('W', bus=1)
+        self._unit('W', bus=2)
+        self.trigger_source = trigger_source
+        self.detector_function = 'NORM'
+        self.measurement('AVER', bus=1)
+        self.measurement('PEAK', bus=2)
+        self.measurement_rate = 'FAST'
+        self.trigger_count = trigger_count
+        self.initiate_continuous = initiate_continuous
+        self.validate_status()
+
+    def initiate_single(self):
+        self.write('INIT:IMM')
+
+    def _force_trigger(self):
+        self.write('TRIG')
+
+    def accumulate(self, duration: float, force_immediate=False) -> float | tuple:
+        self.validate_status()
+        
+        init_each = not self.initiate_continuous
+        measure_peak = self.detector_function == 'NORM'
+
+        averages = []
+        peaks = []
+        t0 = time.perf_counter()
+
+        while True:
+            if init_each:
+                self.initiate_single(force_immediate)
+
+            if force_immediate:
+                self._force_trigger()
+                self.wait()
+
+            average = self.fetch(bus=1, precheck=False, as_series=False).mean()
+            averages.append(average)
+
+            if measure_peak:
+                peak = self.fetch(bus=2, precheck=False, as_series=False).max()
+                peaks.append(peak)
+
+            if time.perf_counter() - t0 >= duration:
+                break
+
+        average = 10 * np.log10(np.mean(averages))
+        if measure_peak:
+            peak = 10 * np.log10(np.max(peaks))
+            return average, peak
+        else:
+            return average
 
     def zero(self):
         with self.overlap_and_block(30):
@@ -230,7 +321,7 @@ class KeysightU2000XSeries(lb.VISADevice):
     def _event_status_enable(self):
         self.write('*ESE 1')
 
-    def _check_errors(self):
+    def validate_status(self):
         code, text = self.query('SYST:ERR?', timeout=5, retry=True).split(',', 1)
         code = int(code)
 
