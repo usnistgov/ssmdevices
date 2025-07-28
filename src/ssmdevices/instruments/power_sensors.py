@@ -29,9 +29,11 @@ DataFrameType: typing_extensions.TypeAlias = 'pd.DataFrame'
 SeriesType: typing_extensions.TypeAlias = 'pd.Series'
 
 bus_kwarg = attr.method_kwarg.int('bus', min=1, max=4, help='subsystem bus index')
+feed_kwarg = attr.method_kwarg.int('feed', min=1, max=2, help='feed index')
 
 
 @bus_kwarg
+@feed_kwarg
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
@@ -108,19 +110,18 @@ class KeysightU2000XSeries(lb.VISADevice):
     )
 
     @attr.method.str(
-        key='CALC{bus}:FEED',
         only=['PEAK', 'PTAV', 'AVER', 'MIN'],
         case=False,
         help='configure the power measurement type for a given bus: peak, peak-to-average, average, or minimum',
     )
     @bus_kwarg
     def measurement(self, /, *, bus=1):
-        response = self.query(f'CALC{bus}:FEED?')
+        response, *_ = self.query(f'CALC{bus}:FEED1?').split()
         return response.rsplit(':', 1)[1]
 
     @measurement.setter
     def _(self, /, value, *, bus=1):
-        self.write(f'CALC{bus}:FEED "POW:{value}"')
+        self.write(f'CALC{bus}:FEED "POW:{value} on SWEEP1"')
 
     unit = attr.method.str(
         key='UNIT{bus}:POW',
