@@ -98,13 +98,84 @@ class KeysightU2000XSeries(lb.VISADevice):
         cache=True,
         help='a comma-separated list of installed license options',
     )
-    measurement = attr.method.str(
-        key='CALC{bus}:FEED',
-        cache=True,
-        only=['POW:PEAK', 'POW:PTAV', 'POW:AVER', 'POW:MIN'],
+
+    detector_function = attr.property.str(
+        key='DET:FUNC',
+        only=['NORM', 'AVER'],
         case=False,
         help='configure the power measurement type for a given bus: peak, peak-to-average, average, or minimum',
     )
+
+    @attr.method.str(
+        key='CALC{bus}:FEED',
+        only=['PEAK', 'PTAV', 'AVER', 'MIN'],
+        case=False,
+        help='configure the power measurement type for a given bus: peak, peak-to-average, average, or minimum',
+    )
+    @bus_kwarg
+    def measurement(self, /, *, bus=1):
+        response = self.query(f'CALC{bus}:FEED?')
+        return response.rsplit(':', 1)[1]
+
+    @measurement.setter
+    def _(self, /, value, *, bus=1):
+        self.write(f'CALC{bus}:FEED "POW:{value}"')
+
+    def query_ieee_array(self, msg: str):
+        """An alternative to self.backend.query_binary_values for fetching block data. This
+        implementation works around slowness between pyvisa and the instrument that seems to
+        result from transferring in chunks of size self.backend.chunk_size as implemented
+        in pyvisa.
+
+        The performance of a transfer of a spectrogram with 100,000 time samples is impacted as follows:
+
+        # The pyvisa implementation
+        >>>  %timeit -n 1 -r 1 sa.backend.query_binary_values('TRAC2:DATA? SPEC', container=np.array)
+        (takes at least 10 minutes)
+
+        # This implementation
+        >>> %timeit -n 1 -r 1 sa.query_ieee_array('TRAC2:DATA? SPEC')
+        (~23 sec)
+
+        Arguments:
+            msg: The SCPI command to send
+        :return: a numpy array containing the response.
+        """
+
+        from pyvisa.constants import VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
+
+        self._logger.debug(f'query {msg}')
+
+        # The read_termination seems to cause unwanted behavior in self.backend.visalib.read
+        self.backend.read_termination, old_read_term = (
+            None,
+            self.backend.read_termination,
+        )
+        self.backend.write(msg)
+
+        try:
+            with self.backend.ignore_warning(
+                VI_SUCCESS_DEV_NPRESENT, VI_SUCCESS_MAX_CNT
+            ):
+                # Reproduce the behavior of pyvisa.util.from_ieee_block without
+                # a priori access to the entire buffer.
+                raw, _ = self.backend.visalib.read(self.backend.session, 2)
+                digits = int(raw.decode('ascii')[1])
+                raw, _ = self.backend.visalib.read(self.backend.session, digits)
+                data_size = int(raw.decode('ascii'))
+
+                # Read the actual data
+                raw, _ = self.backend.visalib.read(self.backend.session, data_size)
+
+                # Read termination characters so that the instrument doesn't show
+                # a "QUERY INTERRUPTED" error when there is unread buffer
+                self.backend.visalib.read(self.backend.session, len(old_read_term))
+        finally:
+            self.backend.read_termination = old_read_term
+
+        data = np.frombuffer(raw, np.float32)
+        self._logger.debug('      -> {} bytes ({} values)'.format(data_size, data.size))
+        return data
 
     def preset(self, wait=True) -> None:
         """restore the instrument to its default state"""
@@ -123,7 +194,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         if precheck:
             self._check_errors()
 
-        series = self.query_ascii_values('FETC{bus}?', container=pd.Series)
+        series = self.query_ascii_values(f'FETC{bus}?', container=pd.Series)
         if len(series) == 1:
             return series.iloc[0]
         else:
