@@ -137,11 +137,11 @@ class KeysightU2000XSeries(lb.VISADevice):
 
     def preset(self) -> None:
         """restore the instrument to its default state"""
-        with self.overlap_and_block(5):
-            self.write('SYST:PRES')
-        self._format = 'REAL'
+        self.write('SYST:PRES')
+        self.wait()
         self._clear()
         self._event_status_enable()
+        self._format = 'REAL'
 
     def fetch(self, precheck=True, bus: int = 1, as_series=True) -> typing.Union[float, 'np.ndarray', SeriesType]:
         """return power readings from the instrument.
