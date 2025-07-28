@@ -246,7 +246,7 @@ class KeysightU2000XSeries(lb.VISADevice):
             if time.perf_counter() - t0 >= duration:
                 break
 
-        self._logger.debug(f'accumulated on {i} triggers')
+        self._logger.debug(f'accumulated readings from {i} triggers')
 
         average = 10 * np.log10(np.mean(averages))
         if measure_peak:
