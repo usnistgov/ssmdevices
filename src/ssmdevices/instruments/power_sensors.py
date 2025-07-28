@@ -197,7 +197,8 @@ class KeysightU2000XSeries(lb.VISADevice):
         self.measurement('PEAK', bus=2)
         self.measurement_rate = 'FAST'
         self.trigger_count = trigger_count
-        self.initiate_continuous = initiate_continuous
+        with self.overlap_and_block(5):
+            self.initiate_continuous = initiate_continuous
         self.validate_status()
 
     def initiate_single(self):
