@@ -5,6 +5,7 @@ Paul.Blanchard <paul.blanchard@nist.gov>
 
 import labbench as lb
 from labbench import paramattr as attr
+from numbers import Number
 
 __all__ = ['RohdeSchwarzSMW200A']
 
@@ -32,6 +33,9 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
             path: path to a state file local to the instrument OS
             num: index of the intermediate memory state to use as buffer
         """
+        if not isinstance(num, Number) or num < 1:
+            raise TypeError('"num" argument must be positive integer')
+
         if not path.lower().endswith('savrcltxt'):
             path = path + '.savrcltxt'
 
@@ -48,6 +52,8 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
             path: path to a state file local to the instrument OS
             num: index of the intermediate memory state to load into
         """
+        if not isinstance(num, Number) or num < 1:
+            raise TypeError('"num" argument must be positive integer')
         if not path.lower().endswith('savrcltxt'):
             path = path + '.savrcltxt'
 
@@ -58,6 +64,9 @@ class RohdeSchwarzSMW200A(lb.VISADevice):
             self.apply_state(num)
 
     def apply_state(self, num: int = 1):
+        if not isinstance(num, Number) or num < 1:
+            raise TypeError('"num" argument must be positive integer')
+
         with self.overlap_and_block(timeout=5):
             self.write(f'*RCL {num}')
 
