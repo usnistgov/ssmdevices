@@ -248,7 +248,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         t0 = time.perf_counter()
 
         i = 0
-        fetch_kws = {'precheck': False, 'as_series': True, 'quiet': True}
+        fetch_kws = {'precheck': False, 'as_series': False, 'quiet': True}
 
         while True:
             if init_each:
