@@ -2,7 +2,7 @@
 """
 Author: Keith Forsyth
 
-Instrument driver for CMW500 base station emulator, initially created with intent of controlling band, 
+Instrument driver for CMW500 base station emulator, initially created with intent of controlling band,
 power, and scheduling dynamics for UE IQ UL acquisitions.
 """
 

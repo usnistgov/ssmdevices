@@ -25,10 +25,14 @@ def path(*subdirs, platform: Union[bool, str] = False) -> str:
     if platform is not False:
         children = [p for p in path.iterdir() if p.stem.lower() == subdirs[-1].lower()]
         if len(children) == 1:
-            path = path/children[0]
+            path = path / children[0]
         elif len(children) == 0:
-            raise IOError(f'no files matched {platform_name} in platform directory {path}')
+            raise IOError(
+                f'no files matched {platform_name} in platform directory {path}'
+            )
         elif len(children) > 1:
-            raise IOError(f'multiple files matched {platform_name} in platform directory {path}')
+            raise IOError(
+                f'multiple files matched {platform_name} in platform directory {path}'
+            )
 
     return str(path.relative_to(Path('.').absolute()))

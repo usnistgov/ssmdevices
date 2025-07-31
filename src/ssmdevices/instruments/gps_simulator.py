@@ -1,4 +1,4 @@
-""" GPS simulator control classes
+"""GPS simulator control classes
 
 :author: Duncan McGillivray <duncan.mcgillivray@nist.gov>, Daniel Kuester <daniel.kuester@nist.gov>
 """

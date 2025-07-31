@@ -1,17 +1,9 @@
 # -*- coding: utf-8 -*-
 
-__all__ = [
-    'KeysightU2000XSeries',
-    'KeysightU2044XA',
-    'RohdeSchwarzNRP8s',
-    'RohdeSchwarzNRP18s',
-    'PowerTrace_RohdeSchwarzNRP',
-]
-
+from __future__ import annotations
 import labbench as lb
 from labbench import paramattr as attr
 import typing
-import typing_extensions
 import warnings
 import contextlib
 import time
@@ -25,9 +17,19 @@ else:
     pd = lb.util.lazy_import('pandas')
     np = lb.util.lazy_import('numpy')
 
-DataFrameType: typing_extensions.TypeAlias = 'pd.DataFrame'
-SeriesType: typing_extensions.TypeAlias = 'pd.Series'
+__all__ = [
+    'KeysightU2000XSeries',
+    'KeysightU2044XA',
+    'RohdeSchwarzNRP8s',
+    'RohdeSchwarzNRP18s',
+    'PowerTrace_RohdeSchwarzNRP',
+]
 
+bus_kwarg = attr.method_kwarg.int('bus', min=1, max=4, help='subsystem bus index')
+
+
+@bus_kwarg
+@attr.visa_keying(remap={True: '1', False: '0'})
 class KeysightU2000XSeries(lb.VISADevice):
     """Coaxial power sensors connected by USB"""
 
@@ -45,6 +47,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         self._clear()
         self._event_status_enable()
+        self._format = 'REAL'
 
     initiate_continuous = attr.property.bool(
         key='INIT:CONT', help='whether to enable triggering to acquire power samples'
@@ -95,31 +98,182 @@ class KeysightU2000XSeries(lb.VISADevice):
         help='a comma-separated list of installed license options',
     )
 
-    def preset(self, wait=True) -> None:
+    detector_function = attr.property.str(
+        key='DET:FUNC',
+        only=['NORM', 'AVER'],
+        case=False,
+        help='configure the instrument to support peak-and-average mode ("NORM") or averaging mode',
+    )
+
+    @attr.method.str(
+        only=['PEAK', 'PTAV', 'AVER', 'MIN'],
+        case=False,
+        help='configure the power measurement type for a given bus: peak, peak-to-average, average, or minimum',
+    )
+    @bus_kwarg
+    def measurement(self, /, *, bus=1):
+        response, *_ = self.query(f'CALC{bus}:FEED1?').split()
+        return response.rsplit(':', 1)[1]
+
+    @measurement.setter
+    def _(self, /, value, *, bus=1):
+        self.write(f'CALC{bus}:FEED "POW:{value} on SWEEP1"')
+
+    _unit = attr.method.str(
+        key='UNIT{bus}:POW',
+        only=['W', 'DBM'],
+        case=False,
+        help='power reading units',
+    )
+
+    _format = attr.property.str(
+        key='FORM',
+        only=['ASC', 'REAL'],
+        help='whether to return ASCII-formatted or IEEE 64-bit real floating point',
+    )
+
+    def preset(self) -> None:
         """restore the instrument to its default state"""
         self.write('SYST:PRES')
-        if wait:
-            self.wait()
+        self.wait()
         self._clear()
         self._event_status_enable()
+        self._format = 'REAL'
+        self._unit('W', bus=1)
+        self._unit('W', bus=2)
+        self.validate_status()
 
-    def fetch(self, precheck=True) -> typing.Union[float, SeriesType]:
+    def fetch(
+        self, precheck=True, bus: int = 1, as_series=True, **kws
+    ) -> typing.Union[float, 'np.ndarray', 'pd.Series']:
         """return power readings from the instrument.
 
         Returns:
-            a single number if trigger_count == 1, otherwise or pandas.Series"""
-        
-        if precheck:
-            self._check_errors()
+            a number of sample count equal to self.trigger_count
+        """
 
-        series = self.query_ascii_values('FETC?', container=pd.Series)
-        if len(series) == 1:
-            return series.iloc[0]
+        if precheck:
+            self.validate_status()
+
+        if kws.get('quiet', False):
+            self.backend.write(f'FETC{bus}?')
         else:
-            ii = np.arange(len(series))
-            series.index = pd.Index(self.sweep_aperture * ii, name='Time elapsed (s)')
-            series.name = 'Power (dBm)'
-            return series
+            self.write(f'FETC{bus}?')
+        d = self.backend.read_raw()
+        values = np.frombuffer(d[:-1], dtype='>f8') * 1000
+
+        if len(values) == 1:
+            return float(values[0])
+        elif not as_series:
+            return values
+
+        if kws.get('quiet', False):
+            mode = self.backend.query('DET:FUNC?')
+        else:
+            mode = self.detector_function
+        if mode == 'NORM':
+            index = pd.Index(np.arange(len(values)), name='Power sample index')
+        else:
+            time_step = self.sweep_aperture
+            index = pd.Index(
+                np.arange(len(values)) * time_step, name='Time elapsed (s)'
+            )
+
+        return pd.Series(values, index=index, name='Power (mW)')
+
+    def setup_average(
+        self,
+        frequency: float,
+        aperture: float,
+        *,
+        trigger_source='IMM',
+        trigger_count=1,
+        initiate_continuous=False,
+    ):
+        """setup the instrument in a measurement in average-power mode.
+
+        Args:
+            aperture (float): time duration of each acquired average power sample
+            trigger_count (float): the number of samples to acquire per trigger
+        """
+        self.detector_function = 'AVER'
+        self.measurement_rate = 'FAST'
+        self._unit('W', bus=1)
+        self.trigger_count = trigger_count
+        self.trigger_source = trigger_source
+        self.sweep_aperture = aperture  # longest capture
+        self.frequency = frequency
+        self.initiate_continuous = initiate_continuous
+        self.validate_status()
+
+    def setup_peak_average(
+        self,
+        frequency,
+        *,
+        trigger_source: str = 'IMM',
+        trigger_count=200,
+        initiate_continuous=True,
+    ):
+        """setup the instrument in a "peak and average" power measurement.
+
+        This is only supported for "peak and average" power sensors.
+        """
+        self.detector_function = 'NORM'
+        self.trigger_source = 'INT' if trigger_source == 'IMM' else trigger_source
+        self.measurement('AVER', bus=1)
+        self.measurement('PEAK', bus=2)
+        self.measurement_rate = 'FAST'
+        self._unit('W', bus=1)
+        self._unit('W', bus=2)
+        self.trigger_count = trigger_count
+        self.frequency = frequency
+        self.initiate_continuous = initiate_continuous
+        self.trigger_source = trigger_source
+        self.validate_status()
+
+    def initiate_single(self):
+        self.write('INIT:IMM')
+
+    def _force_trigger(self):
+        self.write('TRIG')
+
+    def accumulate(self, duration: float, bypass_trigger=False) -> float | tuple:
+        self.validate_status()
+
+        init_each = not self.initiate_continuous
+        measure_peak = self.detector_function == 'NORM'
+
+        averages = []
+        peaks = []
+        t0 = time.perf_counter()
+
+        i = 0
+        fetch_kws = {'precheck': False, 'as_series': False, 'quiet': True}
+
+        while True:
+            if init_each:
+                self.backend.write('INIT:IMM')
+
+            average = self.fetch(bus=1, **fetch_kws).mean()
+            averages.append(average)
+
+            if measure_peak:
+                peak = self.fetch(bus=2, **fetch_kws).max()
+                peaks.append(peak)
+
+            i += 1
+
+            if time.perf_counter() - t0 >= duration:
+                break
+
+        self._logger.debug(f'accumulated readings from {i} triggers')
+
+        average = 10 * np.log10(np.abs(np.mean(averages)))
+        if measure_peak:
+            peak = 10 * np.log10(np.abs(np.max(peaks)))
+            return average, peak
+        else:
+            return average
 
     def zero(self):
         with self.overlap_and_block(30):
@@ -158,7 +312,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
         self._await_completion(timeout)
 
-    def _await_completion(self, timeout: float=None):
+    def _await_completion(self, timeout: float = None):
         if timeout is None:
             timeout = self.timeout
 
@@ -183,8 +337,8 @@ class KeysightU2000XSeries(lb.VISADevice):
     def _event_status_enable(self):
         self.write('*ESE 1')
 
-    def _check_errors(self):
-        code, text = self.query('SYST:ERR?').split(',', 1)
+    def validate_status(self):
+        code, text = self.query('SYST:ERR?', timeout=5, retry=True).split(',', 1)
         code = int(code)
 
         if code == 0:
@@ -289,9 +443,14 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     def reset(self):
         self.write('*RST')
 
-    def fetch(self) -> typing.Union[SeriesType, float]:
+    def fetch(self, as_pandas=True) -> typing.Union['pd.Series', float]:
         """Return a single number or pandas Series containing the power readings"""
-        series = self.query_ascii_values('FETC?', container=pd.Series)
+        if as_pandas:
+            container = pd.Series
+        else:
+            container = np.ndarray
+
+        series = self.query_ascii_values('FETC?', container=container)
         if len(series) == 1:
             return float(series.iloc[0])
         series.index = np.arange(len(series)) * (
