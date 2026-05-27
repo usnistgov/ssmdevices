@@ -77,8 +77,8 @@ class SpirentGSS8000(lb.SerialDevice):
                  exception if a data value is returned)
         """
         self.backend.read(self.backend.inWaiting())
-        self._logger.debug('write {}'.format(repr(key)))
-        self.backend.write('{}\n'.format(key))
+        self._logger.debug(f'write {repr(key)}')
+        self.backend.write(f'{key}\n')
 
         # Get the response
         response = b''

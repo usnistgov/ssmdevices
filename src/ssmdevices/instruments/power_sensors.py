@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import annotations
 import labbench as lb
 from labbench import paramattr as attr
@@ -145,7 +143,7 @@ class KeysightU2000XSeries(lb.VISADevice):
 
     def fetch(
         self, precheck=True, bus: int = 1, as_series=True, **kws
-    ) -> typing.Union[float, 'np.ndarray', 'pd.Series']:
+    ) -> float | np.ndarray | pd.Series:
         """return power readings from the instrument.
 
         Returns:
@@ -344,7 +342,7 @@ class KeysightU2000XSeries(lb.VISADevice):
         if code == 0:
             return
         else:
-            raise IOError(code, text[1:-1])
+            raise OSError(code, text[1:-1])
 
 
 class KeysightU2044XA(KeysightU2000XSeries):
@@ -443,7 +441,7 @@ class RohdeSchwarzNRPSeries(lb.VISADevice):
     def reset(self):
         self.write('*RST')
 
-    def fetch(self, as_pandas=True) -> typing.Union['pd.Series', float]:
+    def fetch(self, as_pandas=True) -> pd.Series | float:
         """Return a single number or pandas Series containing the power readings"""
         if as_pandas:
             container = pd.Series
