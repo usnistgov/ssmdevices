@@ -475,7 +475,7 @@ class AdbIPerf2(ShellIPerfBase, IPerf2Values):
             if b':' not in line:
                 out.append(line)
             else:
-                self._logger.warning('stdout: {}'.format(repr(line)))
+                self._logger.warning(f'stdout: {repr(line)}')
         out = b'\n'.join(out)
 
         return self._format_output(out)
@@ -1433,7 +1433,7 @@ class LocalPythonTrafficProfiler_ClosedLoopTCP(LocalPythonTrafficProfiler):
         self._logger.debug('making dataframe')
         start = worker_data.pop('start', None)
         if start is None:
-            raise IOError('the run did not return data')
+            raise OSError('the run did not return data')
 
         buffer_size = worker_data.pop('bytes')
 

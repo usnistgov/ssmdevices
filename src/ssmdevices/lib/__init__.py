@@ -27,11 +27,11 @@ def path(*subdirs, platform: Union[bool, str] = False) -> str:
         if len(children) == 1:
             path = path / children[0]
         elif len(children) == 0:
-            raise IOError(
+            raise OSError(
                 f'no files matched {platform_name} in platform directory {path}'
             )
         elif len(children) > 1:
-            raise IOError(
+            raise OSError(
                 f'multiple files matched {platform_name} in platform directory {path}'
             )
 

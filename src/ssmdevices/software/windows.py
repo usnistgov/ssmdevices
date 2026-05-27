@@ -228,7 +228,7 @@ class WLANClient(lb.Device):
         else:
             self._logger.debug(f'failed to connect to AP with SSID {repr(self.ssid)}')
             raise TimeoutError(
-                'tried to connect but only achieved the {} state '.format(repr(s))
+                f'tried to connect but only achieved the {repr(s)} state '
             )
 
         t2 = time.perf_counter()
@@ -240,7 +240,7 @@ class WLANClient(lb.Device):
             raise TimeoutError('tried to connect, but got no AP scan information')
 
         time_elapsed = time.perf_counter() - t0
-        self._logger.debug('connected WLAN interface to {}'.format(self.ssid))
+        self._logger.debug(f'connected WLAN interface to {self.ssid}')
 
         self.backend.scan()
 
@@ -276,7 +276,7 @@ class WLANClient(lb.Device):
             lb.sleep(0.05)
         else:
             raise TimeoutError(
-                'tried to disconnect but only achieved the {} state '.format(repr(s))
+                f'tried to disconnect but only achieved the {repr(s)} state '
             )
 
         self._logger.debug('disconnected WLAN interface')

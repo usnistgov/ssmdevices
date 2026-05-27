@@ -18,7 +18,7 @@ __all__ = ['AeroflexTM500']
 
 class TM500Error(ValueError):
     def __init__(self, msg, errcode=None):
-        super(TM500Error, self).__init__(msg)
+        super().__init__(msg)
         self.errcode = errcode
 
 
@@ -84,16 +84,16 @@ class AeroflexTM500(lb.TelnetDevice):
             )
 
         config_path = os.path.join(self.config_root, scenario_name) + '.conf'
-        self._logger.debug('arming TM500 scenario {}'.format(repr(config_path)))
+        self._logger.debug(f'arming TM500 scenario {repr(config_path)}')
 
         t0 = time.time()
-        with open(config_path, 'r') as f:
+        with open(config_path) as f:
             seq = f.readlines()
         self._reconnect()
         ret = self._send(seq)
         if self.data_root is not None:
-            self._send('#$$DATA_LOG_FOLDER 1 "{}"'.format(self.data_root))
-        self._logger.debug('armed in {:.2f}s'.format(time.time() - t0))
+            self._send(f'#$$DATA_LOG_FOLDER 1 "{self.data_root}"')
+        self._logger.debug(f'armed in {time.time() - t0:.2f}s')
         self.__latest['scenario_name'] = scenario_name
         return ret
 
@@ -125,7 +125,7 @@ class AeroflexTM500(lb.TelnetDevice):
             self._send('WAIT FOR "I: CMPI DTE RDA TEST GROUP STOPPED IND" TIMEOUT 300')
         except TM500Error as e:
             self._logger.debug(
-                'exception on attempt to stop scenario: {}'.format(str(e))
+                f'exception on attempt to stop scenario: {str(e)}'
             )
         else:
             if self.__latest.setdefault('data', None) is None:
@@ -148,7 +148,7 @@ class AeroflexTM500(lb.TelnetDevice):
             )
         except TM500Error as e:
             self._logger.debug(
-                'exception on attempt to cleanup scenario: {}'.format(str(e))
+                f'exception on attempt to cleanup scenario: {str(e)}'
             )
 
         self.__latest['scenario_name'] = None
@@ -184,7 +184,7 @@ class AeroflexTM500(lb.TelnetDevice):
         else:
             raise TimeoutError('no message confirming reboot')
 
-        self._logger.debug('tm500 rebooted after {}s'.format(time.time() - t0))
+        self._logger.debug(f'tm500 rebooted after {time.time() - t0}s')
 
     @staticmethod
     def command_log_to_script(path):
@@ -357,7 +357,7 @@ class AeroflexTM500(lb.TelnetDevice):
         elif msg.strip().lower().startswith(b'wait for') and b'timeout' in msg.lower():
             timeout = int(msg.lower().rsplit(b'timeout', 1)[1].strip())
 
-        self._logger.debug('write {}'.format(repr(msg)))
+        self._logger.debug(f'write {repr(msg)}')
         self.backend.write(msg + b'\r')
 
         if not confirm:
@@ -382,18 +382,18 @@ class AeroflexTM500(lb.TelnetDevice):
                 code = int(ret.strip().split(b'0x', 1)[1].split(maxsplit=1)[0], 16)
                 if i == 0 and code != 0:
                     raise TM500Error(
-                        'Error in message {}: {}'.format(repr(msg), repr(ret)), code
+                        f'Error in message {repr(msg)}: {repr(ret)}', code
                     )
         except TimeoutError:
             raise TimeoutError(
-                'timeout waiting for response to command {}'.format(repr(msg))
+                f'timeout waiting for response to command {repr(msg)}'
             )
 
         # Receive any other data received during the delay
         extra = self.backend.read_very_eager().strip().rstrip()
         if extra:
             if extra.count(b'\r') <= 1:
-                self._logger.debug('extra -> {}'.format(extra.decode()))
+                self._logger.debug(f'extra -> {extra.decode()}')
             else:
                 self._logger.debug('extra -> ({} lines)'.format(extra.count(b'\r')))
         return ret.decode('ascii')
@@ -424,7 +424,7 @@ class AeroflexTM500(lb.TelnetDevice):
         lb.sleep(0.5)
 
         self._logger.info(
-            'converted TM500 logs from binary in {:0.2f}s'.format(time.time() - t0)
+            f'converted TM500 logs from binary in {time.time() - t0:0.2f}s'
         )
 
         return ret

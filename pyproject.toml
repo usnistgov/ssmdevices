@@ -84,7 +84,7 @@ dependencies = [
 ]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.9", "3.10", "3.11", "3.12", "3.13"]
+python = ["3.12", "3.13", "3.14"]
 
 [tool.hatch.envs.test.scripts]
 all = [
@@ -103,13 +103,8 @@ pdf="pdflatex doc/latex/ssmdevices-api.tex --output-directory=doc"
 rst="sphinx-apidoc -F . -o doc"
 
 # linters and formatters
-[tool.black]
-line-length = 100
-target-version = ["py39", "py310", "py311", "py312", "py313"]
-include = '\.pyi?$'
-
 [tool.ruff]
-target-version = "py39"
+target-version = "py312"
 extend-include = ["*.ipynb"]
 
 [tool.ruff.format]

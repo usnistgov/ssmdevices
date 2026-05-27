@@ -80,7 +80,7 @@ class QPST(lb.Win32ComDevice):
             else:
                 break
         else:
-            raise IOError(f'qpst connection failure on COM{port}')
+            raise OSError(f'qpst connection failure on COM{port}')
 
         return ret
 
@@ -184,7 +184,7 @@ class QXDM(lb.Win32ComDevice):
         file size.
         """
         if not os.path.isfile(config_path):
-            raise Exception('config_path {} does not exist.'.format(repr(config_path)))
+            raise Exception(f'config_path {repr(config_path)} does not exist.')
         self._min_acquisition_time = min_acquisition_time
 
         basename = os.path.splitext(os.path.basename(config_path))[0] + '-live.dmc'
@@ -212,7 +212,7 @@ class QXDM(lb.Win32ComDevice):
 
         tree.write(path_out)
         self._load_config(path_out)
-        self._logger.debug('loaded modified configuration at {}'.format(repr(path_out)))
+        self._logger.debug(f'loaded modified configuration at {repr(path_out)}')
 
     def save(self, path=None, saveNm=None):
         """Stop the run and save the data in a file at the specified path.
@@ -233,13 +233,13 @@ class QXDM(lb.Win32ComDevice):
         if path is None:
             now = datetime.datetime.now()
             fmt = lb.Host.time_format.replace(' ', '_').replace(':', '')
-            timestamp = '{}.{}'.format(now.strftime(fmt), now.microsecond)
+            timestamp = f'{now.strftime(fmt)}.{now.microsecond}'
             if saveNm is not None:
                 path = os.path.join(
-                    self.cache_path, '{}-{}.isf'.format(saveNm, timestamp)
+                    self.cache_path, f'{saveNm}-{timestamp}.isf'
                 )
             else:
-                path = os.path.join(self.cache_path, 'qxdm-{}.isf'.format(timestamp))
+                path = os.path.join(self.cache_path, f'qxdm-{timestamp}.isf')
         else:
             path = os.path.abspath(path)
 
@@ -264,7 +264,7 @@ class QXDM(lb.Win32ComDevice):
         self._set_com_port(self.resource)
         if wait:
             self._wait_for_start()
-        self._logger.debug('running after setup for {}s'.format(time.time() - t0))
+        self._logger.debug(f'running after setup for {time.time() - t0}s')
 
         self._start_time = time.time()
 
@@ -301,7 +301,7 @@ class QXDM(lb.Win32ComDevice):
                 for target in 'qpst', 'qxdm', 'atmnserver':
                     if proc.name().lower().startswith(target.lower()):
                         self._logger.debug(
-                            'killing zombie process {}'.format(proc.name())
+                            f'killing zombie process {proc.name()}'
                         )
                         proc.kill()
             except psutil.NoSuchProcess:
@@ -334,7 +334,7 @@ class QXDM(lb.Win32ComDevice):
 
                 # validate
                 if ret == -1:
-                    raise IOError('Connection error')
+                    raise OSError('Connection error')
                 actual = self._get_com_port()
                 if str(actual) == str(com_port):
                     break
@@ -432,4 +432,4 @@ if __name__ == '__main__':
         for i in range(1):
             qxdm.start()
             lb.sleep(10)
-            qxdm.save(r'junk-{}.isf'.format(i))
+            qxdm.save(fr'junk-{i}.isf')

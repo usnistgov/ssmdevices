@@ -408,7 +408,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
             self.backend.read_termination = old_read_term
 
         data = np.frombuffer(raw, np.float32)
-        self._logger.debug('      -> {} bytes ({} values)'.format(data_size, data.size))
+        self._logger.debug(f'      -> {data_size} bytes ({data.size} values)')
         return data
 
     def fetch_horizontal(self, window=None, trace: int = None):

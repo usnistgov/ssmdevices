@@ -132,7 +132,7 @@ class AcronameUSBHub2x4(lb.Device):
         """
         if channel == 'all':
             channels = list(range(4))
-        elif isinstance(channel, collections.Iterable):
+        elif isinstance(channel, collections.abc.Iterable):
             channels = channel
         else:
             channels = [channel]
@@ -156,7 +156,7 @@ class AcronameUSBHub2x4(lb.Device):
         """
         if channel == 'all':
             channels = list(range(4))
-        elif isinstance(channel, collections.Iterable):
+        elif isinstance(channel, collections.abc.Iterable):
             channels = channel
         else:
             channels = [channel]
