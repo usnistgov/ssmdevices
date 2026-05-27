@@ -1,7 +1,7 @@
 from typing import Union
 
 
-def path(*subdirs, platform: Union[bool, str] = False) -> str:
+def path(*subdirs, platform: bool | str = False) -> str:
     """return a path to a distribution file inside ssmdevices.lib.
 
     Args:

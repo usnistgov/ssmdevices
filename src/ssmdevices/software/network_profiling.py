@@ -590,9 +590,7 @@ class LocalIPerf2Pair(LocalIPerf2):
             self.kill()
             return ret
 
-    def read_stdout(
-        self, client_ret: typing.Union[str, None] = None
-    ) -> typing.Union[dict, DataFrameType]:
+    def read_stdout(self, client_ret: str | None = None) -> dict | DataFrameType:
         try:
             if client_ret is None:
                 client = self.children['client']
@@ -850,7 +848,7 @@ class LocalPythonTrafficProfiler_ClosedLoopTCP(LocalPythonTrafficProfiler):
                 while perf_counter() - t0 < 1:
                     try:
                         buf = sock.recv(bytes_)
-                    except socket.timeout:
+                    except TimeoutError:
                         break
                     if len(buf) == 0:
                         break
@@ -958,7 +956,7 @@ class LocalPythonTrafficProfiler_ClosedLoopTCP(LocalPythonTrafficProfiler):
 
             # This exception needs to come first, because it is a subclass
             # of OSError (at least on windows)
-            except socket.timeout:
+            except TimeoutError:
                 if sock is not None:
                     self._close_sockets(sock, bytes_=bytes_)
                 msg = f'client socket timed out in attempt to connect to the server at {server_ip}:{port}'
@@ -1012,7 +1010,7 @@ class LocalPythonTrafficProfiler_ClosedLoopTCP(LocalPythonTrafficProfiler):
                         listen_sock.settimeout(0.051 + timeout - (perf_counter() - t0))
                         self._sock = listen_sock
                         conn, (other_ip, _) = listen_sock.accept()
-                    except socket.timeout:
+                    except TimeoutError:
                         continue
 
                     if other_ip == client_ip:
@@ -1210,7 +1208,7 @@ class LocalPythonTrafficProfiler_ClosedLoopTCP(LocalPythonTrafficProfiler):
                         else:
                             t2 = perf_counter()
                         i += 1
-                    except socket.timeout as e:
+                    except TimeoutError as e:
                         raise TimeoutError(' '.join(e.args))
 
                 return t0, t1, t2, rx_buffer0_size, i
@@ -1283,7 +1281,7 @@ class LocalPythonTrafficProfiler_ClosedLoopTCP(LocalPythonTrafficProfiler):
                     t1 = perf_counter()
                     if delay > 0:
                         time.sleep(delay)
-                except socket.timeout:
+                except TimeoutError:
                     ex = IOError('timed out attempting to send data')
                 else:
                     ex = None

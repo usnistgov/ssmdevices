@@ -246,7 +246,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
     def status_preset(self):
         self.write('STAT:PRES')
 
-    def save_state(self, name: str, basedir: Union[str, None] = None):
+    def save_state(self, name: str, basedir: str | None = None):
         """Save current state of the device to the default directory in the instrument.
 
         Arguments:
@@ -261,7 +261,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
         self.write(f"MMEMory:STORe:STATe 1,'{path}'")
         self.wait()
 
-    def load_state(self, name: str, basedir: Union[str, None] = None):
+    def load_state(self, name: str, basedir: str | None = None):
         """Loads a previously saved state file in the instrument
 
         Arguments:
@@ -497,7 +497,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
     def fetch_spectrogram(
         self,
-        window: Union[int, None] = None,
+        window: int | None = None,
         freqs: str = 'exact',
         timestamps: str = 'exact',
         timeout=None,
@@ -584,9 +584,7 @@ class RohdeSchwarzFSWBase(lb.VISADevice):
 
         self.backend.timeout = old_timeout
 
-    def fetch_marker(
-        self, marker: int, axis: Union[Literal['X'], Literal['Y']]
-    ) -> float:
+    def fetch_marker(self, marker: int, axis: Literal['X'] | Literal['Y']) -> float:
         """Get marker value
 
         Arguments:
@@ -941,7 +939,7 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
 
     def get_frequency_mask(
         self,
-        kind: Union[Literal['upper'], Literal['lower']] = 'upper',
+        kind: Literal['upper'] | Literal['lower'] = 'upper',
         window: int = None,
         first_threshold_only: bool = False,
     ):
@@ -976,10 +974,10 @@ class _RSRealTimeMixIn(RohdeSchwarzFSWBase):
         reference_level: float,
         time_resolution: float,
         acquisition_time: float,
-        input_attenuation: Union[float, None] = None,
-        trigger_threshold: Union[float, None] = None,
-        detector: Union[Literal['SAMP'], Literal['AVER']] = 'SAMP',
-        analysis_window: Union[str, None] = None,
+        input_attenuation: float | None = None,
+        trigger_threshold: float | None = None,
+        detector: Literal['SAMP'] | Literal['AVER'] = 'SAMP',
+        analysis_window: str | None = None,
     ):
         """Quick setup for a spectrogram measurement in RTSA mode.
 
