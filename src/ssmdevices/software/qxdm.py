@@ -235,9 +235,7 @@ class QXDM(lb.Win32ComDevice):
             fmt = lb.Host.time_format.replace(' ', '_').replace(':', '')
             timestamp = f'{now.strftime(fmt)}.{now.microsecond}'
             if saveNm is not None:
-                path = os.path.join(
-                    self.cache_path, f'{saveNm}-{timestamp}.isf'
-                )
+                path = os.path.join(self.cache_path, f'{saveNm}-{timestamp}.isf')
             else:
                 path = os.path.join(self.cache_path, f'qxdm-{timestamp}.isf')
         else:
@@ -300,9 +298,7 @@ class QXDM(lb.Win32ComDevice):
                 proc = psutil.Process(pid)
                 for target in 'qpst', 'qxdm', 'atmnserver':
                     if proc.name().lower().startswith(target.lower()):
-                        self._logger.debug(
-                            f'killing zombie process {proc.name()}'
-                        )
+                        self._logger.debug(f'killing zombie process {proc.name()}')
                         proc.kill()
             except psutil.NoSuchProcess:
                 pass
@@ -432,4 +428,4 @@ if __name__ == '__main__':
         for i in range(1):
             qxdm.start()
             lb.sleep(10)
-            qxdm.save(fr'junk-{i}.isf')
+            qxdm.save(rf'junk-{i}.isf')

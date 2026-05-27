@@ -124,9 +124,7 @@ class AeroflexTM500(lb.TelnetDevice):
             self._send('forw mte DeConfigRdaStopTestCase')
             self._send('WAIT FOR "I: CMPI DTE RDA TEST GROUP STOPPED IND" TIMEOUT 300')
         except TM500Error as e:
-            self._logger.debug(
-                f'exception on attempt to stop scenario: {str(e)}'
-            )
+            self._logger.debug(f'exception on attempt to stop scenario: {str(e)}')
         else:
             if self.__latest.setdefault('data', None) is None:
                 self._logger.debug('there is no active logging to stop')
@@ -147,9 +145,7 @@ class AeroflexTM500(lb.TelnetDevice):
                 'SDLI LTE_RRC_STATUS 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000'
             )
         except TM500Error as e:
-            self._logger.debug(
-                f'exception on attempt to cleanup scenario: {str(e)}'
-            )
+            self._logger.debug(f'exception on attempt to cleanup scenario: {str(e)}')
 
         self.__latest['scenario_name'] = None
         self.__latest['data'] = None
@@ -381,13 +377,9 @@ class AeroflexTM500(lb.TelnetDevice):
                 ret = ret + self.backend.read_until(b'\r', timeout=timeout)
                 code = int(ret.strip().split(b'0x', 1)[1].split(maxsplit=1)[0], 16)
                 if i == 0 and code != 0:
-                    raise TM500Error(
-                        f'Error in message {repr(msg)}: {repr(ret)}', code
-                    )
+                    raise TM500Error(f'Error in message {repr(msg)}: {repr(ret)}', code)
         except TimeoutError:
-            raise TimeoutError(
-                f'timeout waiting for response to command {repr(msg)}'
-            )
+            raise TimeoutError(f'timeout waiting for response to command {repr(msg)}')
 
         # Receive any other data received during the delay
         extra = self.backend.read_very_eager().strip().rstrip()
